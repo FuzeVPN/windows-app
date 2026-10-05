@@ -132,6 +132,28 @@ void main() {
     expect(accepted, isNot(contains('windows_error=')));
   });
 
+  test('logs only the fixed certificate role references', () async {
+    for (final role in ['ca', 'server']) {
+      messenger.setMockMethodCallHandler(
+        channel,
+        (_) async => {
+          'trusted': false,
+          'certificate_role': role,
+          'trust_status': 0,
+          'windows_error': 2148204815,
+        },
+      );
+      expect(await trust.verifyApiCertificate(certificate, hostname), isNull);
+      final line = DiagnosticLog.recentLines.last;
+      expect(
+        line,
+        contains(role == 'ca' ? 'code=ca_chain' : 'code=server_certificate'),
+      );
+      expect(line, isNot(contains(hostname)));
+      expect(line, isNot(contains('BEGIN CERTIFICATE')));
+    }
+  });
+
   test('rejects malformed or contradictory native responses', () async {
     final invalidResponses = <Object?>[
       null,
@@ -155,6 +177,9 @@ void main() {
       {'trusted': false, 'anchor_der': Uint8List(1)},
       {'trusted': false, 'unexpected': 'private text'},
       {'trusted': false, 0: 'private text'},
+      {'trusted': false, 'certificate_role': null},
+      {'trusted': false, 'certificate_role': 0},
+      {'trusted': false, 'certificate_role': 'private text'},
       {'trusted': false, 'trust_status': 0},
       {'trusted': false, 'windows_error': 0},
       {'trusted': false, 'trust_status': null, 'windows_error': 0},

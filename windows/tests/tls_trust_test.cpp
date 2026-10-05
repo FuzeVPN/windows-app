@@ -126,6 +126,8 @@ int main(int argc, char** argv) {
     const std::filesystem::path fixtures = argv[1];
     const auto root = ReadCertificate(fixtures / "root.pem");
     const auto intermediate = ReadCertificate(fixtures / "intermediate.pem");
+    const auto expired_intermediate =
+        ReadCertificate(fixtures / "expired-intermediate.pem");
     const auto valid = ReadCertificate(fixtures / "valid.pem");
     const auto expired = ReadCertificate(fixtures / "expired.pem");
     const auto client_only = ReadCertificate(fixtures / "client-only.pem");
@@ -147,12 +149,35 @@ int main(int argc, char** argv) {
 
     const auto accepted = fuzevpn_tls::VerifyApiCertificate(
         valid, "api.fuzevpn.com", options);
-    Require(accepted.trusted && accepted.trust_status == 0 &&
+    Require(accepted.trusted && !accepted.certificate_is_ca &&
+                accepted.trust_status == 0 &&
                 accepted.windows_error == 0,
             "valid synthetic SSL server chain must be accepted");
     Require(accepted.anchor_der == root && accepted.anchor_der != valid &&
                 accepted.anchor_der != intermediate,
             "only the exclusive trusted root may be returned as an anchor");
+
+    // Dart's bad-certificate callback can supply an issuer, not the peer leaf.
+    // A CA has no API DNS name; its chain must be verified without treating it
+    // as a server leaf. The subsequent Dart TLS handshake still checks the leaf.
+    const auto accepted_issuer = fuzevpn_tls::VerifyApiCertificate(
+        intermediate, "api.fuzevpn.com", options);
+    Require(accepted_issuer.trusted && accepted_issuer.certificate_is_ca &&
+                accepted_issuer.trust_status == 0 &&
+                accepted_issuer.windows_error == 0 &&
+                accepted_issuer.anchor_der == root,
+            "trusted intermediate input must recover only its root anchor");
+    RequireRejected(fuzevpn_tls::VerifyApiCertificate(
+                        root, "api.fuzevpn.com", options),
+                    "the input certificate can never be its own recovered root");
+    RequireRejected(fuzevpn_tls::VerifyApiCertificate(
+                        expired_intermediate, "api.fuzevpn.com", options),
+                    "expired intermediate must not recover an anchor");
+    auto tampered_intermediate = intermediate;
+    tampered_intermediate.back() ^= 1;
+    RequireRejected(fuzevpn_tls::VerifyApiCertificate(
+                        tampered_intermediate, "api.fuzevpn.com", options),
+                    "tampered intermediate signature must be rejected");
 
     RequireRejected(fuzevpn_tls::VerifyApiCertificate(
                         wrong_host, "api.fuzevpn.com", options),
@@ -167,9 +192,12 @@ int main(int argc, char** argv) {
     RequireRejected(fuzevpn_tls::VerifyApiCertificate(
                         expired, "api.fuzevpn.com", options),
                     "expired SSL server certificate must be rejected");
-    RequireRejected(fuzevpn_tls::VerifyApiCertificate(
-                        client_only, "api.fuzevpn.com", options),
+    const auto client_only_result = fuzevpn_tls::VerifyApiCertificate(
+        client_only, "api.fuzevpn.com", options);
+    RequireRejected(client_only_result,
                     "client-authentication-only certificate must be rejected");
+    Require(!client_only_result.certificate_is_ca,
+            "client-authentication leaf must not be classified as a CA");
 
     auto bad_signature = valid;
     bad_signature.back() ^= 1;
@@ -179,9 +207,12 @@ int main(int argc, char** argv) {
     RequireRejected(fuzevpn_tls::VerifyApiCertificate(
                         {}, "api.fuzevpn.com", options),
                     "empty certificate must be rejected");
-    RequireRejected(fuzevpn_tls::VerifyApiCertificate(
-                        {0x30, 0x02, 0x01}, "api.fuzevpn.com", options),
+    const auto malformed = fuzevpn_tls::VerifyApiCertificate(
+        {0x30, 0x02, 0x01}, "api.fuzevpn.com", options);
+    RequireRejected(malformed,
                     "malformed DER must be rejected");
+    Require(!malformed.certificate_is_ca,
+            "malformed certificate cannot be classified as a CA");
     auto truncated = valid;
     truncated.pop_back();
     RequireRejected(fuzevpn_tls::VerifyApiCertificate(
@@ -205,6 +236,9 @@ int main(int argc, char** argv) {
     RequireRejected(fuzevpn_tls::VerifyApiCertificate(
                         valid, "api.fuzevpn.com", untrusted_options),
                     "available issuer chain without trusted root must fail");
+    RequireRejected(fuzevpn_tls::VerifyApiCertificate(
+                        intermediate, "api.fuzevpn.com", untrusted_options),
+                    "untrusted intermediate must not recover an anchor");
 
     MemoryStore peer_roots;
     peer_roots.Add(self_signed_leaf);

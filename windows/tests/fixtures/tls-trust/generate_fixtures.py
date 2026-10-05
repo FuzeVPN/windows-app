@@ -75,6 +75,9 @@ def main():
         "intermediate.pem": certificate(
             intermediate_name, intermediate_key.public_key(), root_name,
             root_key, ca=True, path_length=0),
+        "expired-intermediate.pem": certificate(
+            intermediate_name, intermediate_key.public_key(), root_name,
+            root_key, ca=True, path_length=0, expired=True),
         "valid.pem": certificate(leaf_name, leaf_key.public_key(),
                                  intermediate_name, intermediate_key),
         "expired.pem": certificate(leaf_name, leaf_key.public_key(),

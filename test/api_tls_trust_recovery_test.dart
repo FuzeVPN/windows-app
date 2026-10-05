@@ -9,6 +9,7 @@ import 'package:fuzevpn_windows/core/api_client.dart';
 import 'package:fuzevpn_windows/core/diagnostic_log.dart';
 
 const _fixture = 'test/fixtures/tls-trust';
+const _chainFixture = 'test/fixtures/tls-trust-chain';
 
 Future<HttpServer> _server() => HttpServer.bindSecure(
   InternetAddress.loopbackIPv4,
@@ -21,10 +22,105 @@ Future<HttpServer> _server() => HttpServer.bindSecure(
 Future<Uint8List> _root() =>
     File('$_fixture/root-certificate.der').readAsBytes();
 
+Future<HttpServer> _chainServer([String chain = 'server-chain.pem']) =>
+    HttpServer.bindSecure(
+      InternetAddress.loopbackIPv4,
+      0,
+      SecurityContext()
+        ..useCertificateChain('$_chainFixture/$chain')
+        ..usePrivateKey('$_chainFixture/server-private-key.pem'),
+    );
+
+Future<Uint8List> _chainRoot() =>
+    File('$_chainFixture/root-certificate.der').readAsBytes();
+
 List<String> _since(int position) =>
     DiagnosticLog.recentLines.skip(position).toList();
 
 void main() {
+  test(
+    'an issuer callback recovers a complete server chain with strict TLS',
+    () async {
+      final server = await _chainServer();
+      addTearDown(() => server.close(force: true));
+      var httpRequests = 0;
+      server.listen((request) async {
+        httpRequests++;
+        request.response.headers.contentType = ContentType.json;
+        request.response.write(jsonEncode({'locations': []}));
+        await request.response.close();
+      });
+      final intermediate = await File(
+        '$_chainFixture/intermediate-certificate.der',
+      ).readAsBytes();
+      var verifications = 0;
+      final api = ApiClient(
+        baseUri: Uri.parse('https://api-bootstrap.invalid:${server.port}'),
+        resolveApiAddresses: () async => ['127.0.0.1'],
+        securityContext: SecurityContext(withTrustedRoots: false),
+        verifyApiCertificate: (certificate, hostname) async {
+          verifications++;
+          // Dart passes the issuer whose own issuer cannot be located, not
+          // necessarily the certificate authenticating the TLS server.
+          expect(certificate, intermediate);
+          expect(hostname, 'api-bootstrap.invalid');
+          expect(httpRequests, 0);
+          return _chainRoot();
+        },
+      );
+      addTearDown(api.close);
+      final position = DiagnosticLog.recentLines.length;
+      expect(await api.locations(), isEmpty);
+      expect(verifications, 1);
+      expect(httpRequests, 1);
+      final lines = _since(position).join('\n');
+      expect(lines, contains('reason=certificate_issuer_missing'));
+      expect(lines, contains('event=tls_retry_started'));
+      expect(lines, contains('event=tls_completed'));
+      expect(lines, contains('http_status=200'));
+    },
+  );
+
+  for (final entry in const {
+    'wrong-host-chain.pem': 'certificate_hostname_mismatch',
+    'expired-chain.pem': 'certificate_expired',
+  }.entries) {
+    test('CA recovery cannot accept a server with ${entry.value}', () async {
+      final server = await _chainServer(entry.key);
+      addTearDown(() => server.close(force: true));
+      var httpRequests = 0;
+      server.listen((request) async {
+        httpRequests++;
+        await request.response.close();
+      });
+      final intermediate = await File(
+        '$_chainFixture/intermediate-certificate.der',
+      ).readAsBytes();
+      var verifications = 0;
+      final api = ApiClient(
+        baseUri: Uri.parse('https://api-bootstrap.invalid:${server.port}'),
+        resolveApiAddresses: () async => ['127.0.0.1'],
+        securityContext: SecurityContext(withTrustedRoots: false),
+        verifyApiCertificate: (certificate, _) async {
+          verifications++;
+          expect(certificate, intermediate);
+          expect(httpRequests, 0);
+          return _chainRoot();
+        },
+      );
+      addTearDown(api.close);
+      final position = DiagnosticLog.recentLines.length;
+      await expectLater(api.locations(), throwsA(isA<HandshakeException>()));
+      expect(verifications, 1);
+      expect(httpRequests, 0);
+      final lines = _since(position).join('\n');
+      expect(lines, contains('event=windows_trust_completed'));
+      expect(lines, contains('event=tls_retry_started'));
+      expect(lines, contains('reason=${entry.value}'));
+      expect(lines, isNot(contains('http_status=')));
+    });
+  }
+
   test(
     'missing issuer recovers with an OS verified anchor and strict TLS replay',
     () async {

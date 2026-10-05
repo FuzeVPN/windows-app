@@ -45,6 +45,25 @@ bool CompleteDerEnvelope(const std::vector<uint8_t>& bytes) {
   return length == bytes.size() - header;
 }
 
+bool IsExplicitCertificateAuthority(PCCERT_CONTEXT certificate) {
+  if (certificate == nullptr || certificate->pCertInfo == nullptr) return false;
+  const auto* constraints = CertFindExtension(
+      szOID_BASIC_CONSTRAINTS2, certificate->pCertInfo->cExtension,
+      certificate->pCertInfo->rgExtension);
+  if (constraints == nullptr) return false;
+  CERT_BASIC_CONSTRAINTS2_INFO* decoded = nullptr;
+  DWORD decoded_size = 0;
+  if (!CryptDecodeObjectEx(
+          X509_ASN_ENCODING, X509_BASIC_CONSTRAINTS2,
+          constraints->Value.pbData, constraints->Value.cbData,
+          CRYPT_DECODE_ALLOC_FLAG, nullptr, &decoded, &decoded_size)) {
+    return false;
+  }
+  const bool is_ca = decoded != nullptr && decoded->fCA != FALSE;
+  LocalFree(decoded);
+  return is_ca;
+}
+
 bool IsRootCertificate(PCCERT_CONTEXT certificate) {
   if (certificate == nullptr || certificate->pCertInfo == nullptr ||
       !CertCompareCertificateName(X509_ASN_ENCODING,
@@ -97,6 +116,8 @@ TlsTrustVerification VerifyApiCertificate(
     verification.windows_error = GetLastError();
     return verification;
   }
+  verification.certificate_is_ca =
+      IsExplicitCertificateAuthority(certificate.get());
 
   LPSTR server_auth = const_cast<LPSTR>(szOID_PKIX_KP_SERVER_AUTH);
   CERT_CHAIN_PARA chain_parameters = {};
@@ -138,10 +159,19 @@ TlsTrustVerification VerifyApiCertificate(
   CERT_CHAIN_POLICY_PARA policy_parameters = {};
   policy_parameters.cbSize = sizeof(policy_parameters);
   policy_parameters.dwFlags = 0;
-  policy_parameters.pvExtraPolicyPara = &ssl_parameters;
+  // Dart/BoringSSL passes the certificate failing at the current chain depth,
+  // which can be an issuer CA when its parent is missing. A CA has no server
+  // hostname identity to validate. Its BASE policy still requires an OS-trusted
+  // chain with serverAuth usage; the strict TLS retry verifies the actual leaf
+  // and API hostname. Never turn missing/malformed BasicConstraints into a CA.
+  const auto policy = verification.certificate_is_ca
+                          ? CERT_CHAIN_POLICY_BASE
+                          : CERT_CHAIN_POLICY_SSL;
+  policy_parameters.pvExtraPolicyPara =
+      verification.certificate_is_ca ? nullptr : &ssl_parameters;
   CERT_CHAIN_POLICY_STATUS policy_status = {};
   policy_status.cbSize = sizeof(policy_status);
-  if (!CertVerifyCertificateChainPolicy(CERT_CHAIN_POLICY_SSL, chain.get(),
+  if (!CertVerifyCertificateChainPolicy(policy, chain.get(),
                                         &policy_parameters, &policy_status)) {
     verification.windows_error = GetLastError();
     return verification;

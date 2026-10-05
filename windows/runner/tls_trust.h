@@ -17,6 +17,9 @@ inline constexpr DWORD kUrlRetrievalTimeoutMs = 5000;
 
 struct TlsTrustVerification {
   bool trusted = false;
+  // Set only by successfully decoding an explicit BasicConstraints CA=true.
+  // False includes malformed/missing constraints: those use the server policy.
+  bool certificate_is_ca = false;
   std::vector<uint8_t> anchor_der;
   uint32_t trust_status = 0;
   uint32_t windows_error = 0;
@@ -31,8 +34,13 @@ struct TlsTrustOptions {
 };
 
 // This may retrieve missing issuers/roots using standard Windows policy. Call
-// it on a worker thread. Only an OS-verified root of a complete SSL server chain
-// can be returned, and only for the application's fixed API hostname.
+// it on a worker thread. The Dart bad-certificate callback may supply a chain
+// issuer instead of the server leaf. Explicit CA inputs use strict BASE chain
+// policy; other inputs require SSL policy and the exact API hostname. Only a
+// distinct, OS-trusted, self-signed root of a complete chain can be returned.
+// This never accepts a TLS connection: the caller must retry strict TLS, which
+// verifies the actual server leaf and hostname before any HTTP data is sent.
+// The channel exposes only the safe role ca|server, never certificate names.
 TlsTrustVerification VerifyApiCertificate(
     const std::vector<uint8_t>& certificate_der, const std::string& hostname,
     const TlsTrustOptions& options = {});

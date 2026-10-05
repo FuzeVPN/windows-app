@@ -6,6 +6,7 @@ the Windows certificate stores and have no connection to the live FuzeVPN API.
 
 - `root.pem`: synthetic self-signed CA, path length 1.
 - `intermediate.pem`: CA signed by the synthetic root, path length 0.
+- `expired-intermediate.pem`: CA signed by the root but expired in 2019.
 - `valid.pem`: server-authentication certificate for `api.fuzevpn.com`, signed
   exclusively by the synthetic test CA, not any publicly trusted authority.
 - `expired.pem`: server certificate expired on 1 January 2019.

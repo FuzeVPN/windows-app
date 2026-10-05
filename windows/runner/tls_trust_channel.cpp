@@ -186,6 +186,9 @@ struct TlsTrustChannel::Impl {
       EncodableMap value;
       value.emplace(EncodableValue("trusted"),
                     EncodableValue(verification.trusted));
+      value.emplace(EncodableValue("certificate_role"),
+                    EncodableValue(verification.certificate_is_ca ? "ca"
+                                                                 : "server"));
       value.emplace(EncodableValue("trust_status"),
                     EncodableValue(static_cast<int64_t>(verification.trust_status)));
       value.emplace(EncodableValue("windows_error"),

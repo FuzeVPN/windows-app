@@ -3,8 +3,9 @@ import 'package:flutter/services.dart';
 
 import 'diagnostic_log.dart';
 
-/// Asks Windows to validate the public API certificate and return its trust
-/// anchor. It never accepts arbitrary hosts or retains certificate contents.
+/// Asks Windows to validate a public certificate from the API chain and return
+/// its root. A callback may provide an issuer rather than the server leaf;
+/// the caller must retry strict TLS to authenticate the actual server.
 class WindowsTlsTrust {
   const WindowsTlsTrust();
 
@@ -16,6 +17,7 @@ class WindowsTlsTrust {
     'anchor_der',
     'trust_status',
     'windows_error',
+    'certificate_role',
   };
 
   Future<Uint8List?> verifyApiCertificate(
@@ -52,6 +54,17 @@ class WindowsTlsTrust {
         'Incomplete Windows TLS verification status.',
       );
     }
+    final certificateRole = value['certificate_role'];
+    if (value.containsKey('certificate_role') &&
+        certificateRole != 'ca' &&
+        certificateRole != 'server') {
+      throw const FormatException('Invalid Windows TLS certificate role.');
+    }
+    final verificationCode = switch (certificateRole) {
+      'ca' => 'ca_chain',
+      'server' => 'server_certificate',
+      _ => null,
+    };
     final trusted = value['trusted'] as bool;
     final trustStatus = value['trust_status'] as int?;
     final windowsError = value['windows_error'] as int?;
@@ -70,6 +83,7 @@ class WindowsTlsTrust {
       await DiagnosticLog.record(
         area: 'tls_trust',
         event: 'rejected',
+        code: verificationCode,
         stage: 'windows_certificate_verification',
         trustStatus: trustStatus,
         windowsError: windowsError == 0 ? null : windowsError,
@@ -84,6 +98,7 @@ class WindowsTlsTrust {
     await DiagnosticLog.record(
       area: 'tls_trust',
       event: 'trusted',
+      code: verificationCode,
       stage: 'windows_certificate_verification',
       trustStatus: trustStatus,
       windowsError: windowsError == 0 ? null : windowsError,

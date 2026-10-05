@@ -16,12 +16,18 @@ TLS failures classify the detail from both Dart exception fields into fixed
 references (issuer missing, expired certificate, hostname mismatch and others).
 Their BoringSSL status is labelled `tls_error`, not a Windows error code.
 For a missing issuer on the fixed API host, Windows builds and verifies the
-SSL server chain in a background worker. Only a successful policy check can
-return its trusted root. The client then creates a fresh trust context and
-performs at most one new, fully verified TLS handshake. A failed Windows check,
-unavailable bridge, cancellation or rejected retry never permits HTTP traffic.
-The local trace includes each verification/retry stage and numeric trust status;
-certificates themselves are never included in the trace or diagnostic report.
+certificate chain in a background worker. Dart's bad-certificate callback can
+provide the failing issuer rather than the server leaf. An explicitly marked
+CA requires strict BASE chain policy and server-authentication usage; a server
+leaf requires SSL policy with the exact API hostname. Only successful policy
+verification can return a distinct, trusted, self-signed root. The client then
+creates a fresh trust context and performs at most one new TLS handshake,
+which verifies the actual server leaf, chain and hostname before any HTTP data.
+A failed Windows check, unavailable bridge, cancellation or rejected retry
+never permits HTTP traffic. The local trace includes verification/retry stages,
+numeric trust status and fixed certificate roles (`ca_chain` or
+`server_certificate`); certificate contents are never included in the trace
+or diagnostic report.
 Each address attempt is retained even if a later attempt fails differently.
 Its API rejects arbitrary messages and does not accept
 tokens, keys, tunnel configurations or raw API bodies. On Windows it lives in
