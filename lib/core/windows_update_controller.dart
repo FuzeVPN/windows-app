@@ -89,6 +89,8 @@ class WindowsUpdateController extends ChangeNotifier {
         durationMs: durationMs,
         windowsError: failure?.windowsError,
         httpStatus: failure?.statusCode,
+        reason: failure?.tlsReason,
+        errorKind: failure?.code == 'tls_handshake_failed' ? 'tls' : null,
         requestId: requestId ?? _traceRequestId,
       ),
     );
@@ -706,10 +708,11 @@ class WindowsUpdateController extends ChangeNotifier {
         stage: 'update_check',
       );
     }
-    if (error is HandshakeException) {
-      return const WindowsUpdateFailure(
+    if (error is TlsException) {
+      return WindowsUpdateFailure(
         'tls_handshake_failed',
         stage: 'update_check',
+        tlsReason: DiagnosticLog.tlsFailureReason(error),
       );
     }
     if (error is SocketException || error is HttpException) {

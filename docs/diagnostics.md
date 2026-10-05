@@ -12,6 +12,9 @@ Persistent socket errors carry a connection identifier rather than attributing
 the error to the request that originally opened the connection.
 Observed HTTP statuses and numeric Windows errors are retained; a locally
 synthesized error is never presented as an HTTP response from the server.
+TLS failures classify the detail from both Dart exception fields into fixed
+references (issuer missing, expired certificate, hostname mismatch and others).
+Their BoringSSL status is labelled `tls_error`, not a Windows error code.
 Each address attempt is retained even if a later attempt fails differently.
 Its API rejects arbitrary messages and does not accept
 tokens, keys, tunnel configurations or raw API bodies. On Windows it lives in

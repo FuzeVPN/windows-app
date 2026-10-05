@@ -478,6 +478,7 @@ String _updateDiagnostics(BuildContext context, WindowsUpdateFailure failure) {
     );
   }
   if (failure.statusCode case final status?) lines.add('HTTP : $status');
+  if (failure.tlsReason case final reason?) lines.add('TLS : $reason');
   if (failure.windowsError case final code?) {
     lines.add(
       context.tr('Code Windows : {code}').replaceAll('{code}', '$code'),

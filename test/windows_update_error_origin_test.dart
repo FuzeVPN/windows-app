@@ -13,6 +13,75 @@ import 'package:fuzevpn_windows/l10n/app_localizations.dart';
 import 'package:fuzevpn_windows/windows_update_panel.dart';
 
 void main() {
+  for (final reason in [
+    (
+      detail:
+          'CERTIFICATE_VERIFY_FAILED: unable to get local issuer certificate',
+      expected: 'certificate_issuer_missing',
+    ),
+    (
+      detail: 'CERTIFICATE_VERIFY_FAILED: certificate has expired',
+      expected: 'certificate_expired',
+    ),
+  ]) {
+    test(
+      'native TLS ${reason.expected} preserves reason without a Win32 code',
+      () async {
+        final controller = _controller(
+          _FailingApi(
+            HandshakeException(
+              'Handshake error in client',
+              OSError('${reason.detail} private/path: secret', -1),
+            ),
+          ),
+        );
+        await controller.checkForUpdates();
+        expect(controller.error?.code, 'tls_handshake_failed');
+        expect(controller.error?.tlsReason, reason.expected);
+        expect(controller.error?.windowsError, isNull);
+        expect(controller.error?.statusCode, isNull);
+        expect(controller.error.toString(), isNot(contains('private')));
+        expect(controller.error.toString(), isNot(contains('secret')));
+        final failureLines = DiagnosticLog.recentLines.where(
+          (line) =>
+              line.contains(' area=update ') &&
+              line.contains('code=tls_handshake_failed'),
+        );
+        expect(failureLines.last, contains('reason=${reason.expected}'));
+        expect(failureLines.last, isNot(contains('windows_error=')));
+        expect(failureLines.last, isNot(contains('private')));
+      },
+    );
+  }
+
+  testWidgets('TLS issuer detail is visible without sentinel Win32 or raw text', (
+    tester,
+  ) async {
+    final controller = _controller(
+      _FailingApi(
+        const HandshakeException(
+          'Handshake error in client',
+          OSError(
+            'CERTIFICATE_VERIFY_FAILED: unable to get local issuer certificate (private/file.cc: secret)',
+            -1,
+          ),
+        ),
+      ),
+    );
+    await controller.checkForUpdates();
+    await tester.pumpWidget(_host(controller));
+    await tester.pumpAndSettle();
+    expect(
+      find.textContaining('TLS : certificate_issuer_missing'),
+      findsOneWidget,
+    );
+    expect(find.textContaining('Code Windows :'), findsNothing);
+    expect(find.textContaining('HTTP :'), findsNothing);
+    expect(find.textContaining('private/file.cc'), findsNothing);
+    expect(find.textContaining('secret'), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
   test(
     'separate update controllers use distinct trace correlation IDs',
     () async {

@@ -44,7 +44,10 @@ class DiagnosticCheckView {
     this.code,
     this.windowsError,
     this.httpStatus,
-  });
+    String? tlsReason,
+    // Keep a public named argument while validating its private backing field.
+    // ignore: prefer_initializing_formals
+  }) : _tlsReason = tlsReason;
   final String id;
   final String label;
   final String result;
@@ -52,6 +55,9 @@ class DiagnosticCheckView {
   final String? code;
   final int? windowsError;
   final int? httpStatus;
+  final String? _tlsReason;
+  String? get tlsReason =>
+      DiagnosticLog.tlsFailureReasons.contains(_tlsReason) ? _tlsReason : null;
 }
 
 // A local error reference is deliberately narrower than arbitrary exception
@@ -122,10 +128,12 @@ class _LocalDiagnosticApiFailure {
     this.code,
     this.windowsError,
     this.httpStatus,
+    this.tlsReason,
   );
   final String code;
   final int? windowsError;
   final int? httpStatus;
+  final String? tlsReason;
 }
 
 final _diagnosticApiFailures = Expando<_LocalDiagnosticApiFailure>();
@@ -259,6 +267,7 @@ extension AppDiagnostics on AppController {
             code: code,
             windowsError: failure?.windowsError,
             httpStatus: failure?.httpStatus,
+            tlsReason: failure?.tlsReason,
           );
         })
         .toList(growable: false);
@@ -439,7 +448,6 @@ extension AppDiagnostics on AppController {
       final nativeCode = switch (error) {
         ApiException error => error.windowsError,
         SocketException error => error.osError?.errorCode,
-        TlsException error => error.osError?.errorCode,
         _ => null,
       };
       final windowsError =
@@ -457,10 +465,16 @@ extension AppDiagnostics on AppController {
               observedStatus <= 599
           ? observedStatus
           : null;
+      // Dart's TLS osError code belongs to the TLS implementation, not Win32.
+      // Only a canonical reason from its bounded allowlist reaches the UI.
+      final tlsReason = error is TlsException
+          ? DiagnosticLog.tlsFailureReason(error)
+          : null;
       _diagnosticApiFailures[this] = _LocalDiagnosticApiFailure(
         code,
         windowsError,
         httpStatus,
+        tlsReason,
       );
       final localUnavailable =
           httpStatus == null &&

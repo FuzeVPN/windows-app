@@ -678,6 +678,13 @@ class _DiagnosticCheckTile extends StatelessWidget {
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ],
+                if (check.tlsReason case final reason?) ...[
+                  const SizedBox(height: 8),
+                  SelectableText(
+                    'TLS : $reason',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ],
                 if (check.windowsError case final windowsError?) ...[
                   const SizedBox(height: 8),
                   Text(
@@ -730,7 +737,9 @@ String? _diagnosticGuidance(DiagnosticCheckView check) {
       'api_transport_unsupported' =>
         'FuzeVPN ne peut pas utiliser la configuration réseau de cet ordinateur pour joindre le service.',
       'tls_handshake_failed' =>
-        'La négociation de la connexion sécurisée a échoué. La cause n’est pas encore identifiée.',
+        check.tlsReason == null
+            ? 'La négociation de la connexion sécurisée a échoué. La cause n’est pas encore identifiée.'
+            : 'La connexion sécurisée au service n’a pas pu être vérifiée.',
       'storage_access_denied' ||
       'storage_corrupt' ||
       'storage_decryption_failed' ||

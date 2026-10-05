@@ -34,6 +34,62 @@ class DiagnosticLog {
 
   static List<String> get recentLines => List.unmodifiable(_recent);
 
+  static const tlsFailureReasons = <String>{
+    'certificate_expired',
+    'certificate_not_yet_valid',
+    'certificate_hostname_mismatch',
+    'certificate_issuer_missing',
+    'certificate_self_signed',
+    'certificate_revoked',
+    'certificate_verify_failed',
+    'protocol_rejected',
+    'handshake_rejected',
+    'peer_closed',
+  };
+
+  /// Dart puts BoringSSL's verification detail in OSError.message, separate
+  /// from the generic HandshakeException.message. Inspect both in memory,
+  /// returning only fixed references; neither source message is exported.
+  static String? tlsFailureReason(TlsException error) {
+    final detail = '${error.message} ${error.osError?.message ?? ''}'
+        .toUpperCase();
+    if (detail.contains('CERTIFICATE_VERIFY_FAILED')) {
+      if (detail.contains('CERTIFICATE HAS EXPIRED')) {
+        return 'certificate_expired';
+      }
+      if (detail.contains('CERTIFICATE IS NOT YET VALID')) {
+        return 'certificate_not_yet_valid';
+      }
+      if (detail.contains('HOSTNAME MISMATCH') ||
+          detail.contains('IP ADDRESS MISMATCH')) {
+        return 'certificate_hostname_mismatch';
+      }
+      if (detail.contains('UNABLE TO GET LOCAL ISSUER CERTIFICATE') ||
+          detail.contains('UNABLE TO GET ISSUER CERTIFICATE') ||
+          detail.contains('UNABLE TO VERIFY THE FIRST CERTIFICATE')) {
+        return 'certificate_issuer_missing';
+      }
+      if (detail.contains('SELF-SIGNED CERTIFICATE') ||
+          detail.contains('SELF SIGNED CERTIFICATE')) {
+        return 'certificate_self_signed';
+      }
+      if (detail.contains('CERTIFICATE REVOKED')) {
+        return 'certificate_revoked';
+      }
+      return 'certificate_verify_failed';
+    }
+    if (detail.contains('WRONG_VERSION_NUMBER') ||
+        detail.contains('UNSUPPORTED_PROTOCOL') ||
+        detail.contains('ALERT_PROTOCOL_VERSION')) {
+      return 'protocol_rejected';
+    }
+    if (detail.contains('HANDSHAKE_FAILURE')) return 'handshake_rejected';
+    if (detail.contains('CONNECTION TERMINATED DURING HANDSHAKE')) {
+      return 'peer_closed';
+    }
+    return null;
+  }
+
   static int nextRequestId() {
     _nextRequestId = (_nextRequestId % 0x7ffffffe) + 1;
     return _nextRequestId;
@@ -62,6 +118,7 @@ class DiagnosticLog {
     String? stage,
     int? durationMs,
     int? windowsError,
+    int? tlsError,
     int? httpStatus,
     int? requestId,
     int? connectionId,
@@ -91,6 +148,7 @@ class DiagnosticLog {
       if (_inRange(durationMs, 0, 86400000)) 'duration_ms=$durationMs',
       if (_inRange(windowsError, -0x80000000, 0xffffffff))
         'windows_error=$windowsError',
+      if (_inRange(tlsError, -0x80000000, 0x7fffffff)) 'tls_error=$tlsError',
       if (_inRange(httpStatus, 100, 599)) 'http_status=$httpStatus',
       if (_inRange(requestId, 1, 0x7fffffff)) 'request_id=$requestId',
       if (_inRange(connectionId, 1, 0x7fffffff)) 'connection_id=$connectionId',
@@ -130,6 +188,7 @@ class DiagnosticLog {
     String kind = 'unexpected';
     String? reason;
     int? windowsError;
+    int? tlsError;
     int? httpStatus;
     if (error is DiagnosticFailureDetails) {
       final reference = error.diagnosticFailureCode;
@@ -141,18 +200,9 @@ class DiagnosticLog {
       code = 'tls_handshake_failed';
       kind = 'tls';
       final tls = error as TlsException;
-      windowsError = tls.osError?.errorCode;
-      // Classify known TLS reasons without recording certificate contents,
-      // endpoint addresses or the unrestricted exception message.
-      final message = tls.message.toUpperCase();
-      if (message.contains('CERTIFICATE_VERIFY_FAILED')) {
-        reason = 'certificate_verify_failed';
-      } else if (message.contains('WRONG_VERSION_NUMBER') ||
-          message.contains('UNSUPPORTED_PROTOCOL')) {
-        reason = 'protocol_rejected';
-      } else if (message.contains('HANDSHAKE_FAILURE')) {
-        reason = 'handshake_rejected';
-      }
+      // This is BoringSSL's status (often -1), not a Windows system code.
+      tlsError = tls.osError?.errorCode;
+      reason = tlsFailureReason(tls);
     } else if (error is SocketException) {
       code = 'network_error';
       kind = 'socket';
@@ -191,6 +241,7 @@ class DiagnosticLog {
       stage: stage,
       durationMs: durationMs,
       windowsError: windowsError,
+      tlsError: tlsError,
       httpStatus: httpStatus,
       requestId: requestId,
       connectionId: connectionId,

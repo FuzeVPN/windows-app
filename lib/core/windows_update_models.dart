@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MPL-2.0
 import 'dart:convert';
 
+import 'diagnostic_log.dart';
+
 /// Public MSI-compatible version, independent of the Flutter build revision.
 class WindowsUpdateVersion implements Comparable<WindowsUpdateVersion> {
   WindowsUpdateVersion._(List<int> parts)
@@ -182,7 +184,10 @@ class WindowsUpdateFailure implements Exception {
     this.stage,
     this.windowsError,
     this.trustStatus,
-  });
+    String? tlsReason,
+    // Keep a public named argument while validating its private backing field.
+    // ignore: prefer_initializing_formals
+  }) : _tlsReason = tlsReason;
 
   /// Retain only documented native diagnostics. Native messages and arbitrary
   /// detail values can contain file paths, download credentials or user data.
@@ -284,6 +289,11 @@ class WindowsUpdateFailure implements Exception {
   final String? stage;
   final int? windowsError;
   final int? trustStatus;
+  final String? _tlsReason;
+
+  /// Only bounded TLS classifications may reach UI, logs or error text.
+  String? get tlsReason =>
+      DiagnosticLog.tlsFailureReasons.contains(_tlsReason) ? _tlsReason : null;
 
   WindowsUpdateFailure withStage(String? fallbackStage) => stage != null
       ? this
@@ -293,6 +303,7 @@ class WindowsUpdateFailure implements Exception {
           stage: fallbackStage,
           windowsError: windowsError,
           trustStatus: trustStatus,
+          tlsReason: tlsReason,
         );
 
   @override
@@ -301,5 +312,6 @@ class WindowsUpdateFailure implements Exception {
       '${stage == null ? '' : ', stage: $stage'}'
       '${statusCode == null ? '' : ', HTTP: $statusCode'}'
       '${windowsError == null ? '' : ', Windows: $windowsError'}'
+      '${tlsReason == null ? '' : ', TLS: $tlsReason'}'
       '${trustStatus == null ? '' : ', trust: $trustStatus'})';
 }

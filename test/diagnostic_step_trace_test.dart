@@ -63,6 +63,87 @@ void main() {
   );
 
   test(
+    'TLS native details are classified without becoming Windows errors',
+    () async {
+      const reasons = <String, String>{
+        'certificate has expired': 'certificate_expired',
+        'certificate is not yet valid': 'certificate_not_yet_valid',
+        'Hostname mismatch': 'certificate_hostname_mismatch',
+        'unable to get local issuer certificate': 'certificate_issuer_missing',
+        'unable to verify the first certificate': 'certificate_issuer_missing',
+        'self signed certificate in certificate chain':
+            'certificate_self_signed',
+        'certificate revoked': 'certificate_revoked',
+        'unrecognized verification detail': 'certificate_verify_failed',
+      };
+      final position = DiagnosticLog.recentLines.length;
+      for (final entry in reasons.entries) {
+        final error = HandshakeException(
+          'Handshake error in client',
+          OSError('CERTIFICATE_VERIFY_FAILED: ${entry.key}; private data', -1),
+        );
+        expect(DiagnosticLog.tlsFailureReason(error), entry.value);
+        await DiagnosticLog.recordFailure(
+          area: 'trace_test',
+          event: 'native_tls_failed',
+          stage: 'tls_handshake',
+          error: error,
+        );
+      }
+      final lines = _since(position).join('\n');
+      expect(lines, contains('reason=certificate_issuer_missing'));
+      expect(lines, contains('tls_error=-1'));
+      expect(lines, isNot(contains('windows_error=')));
+      expect(lines, isNot(contains('private data')));
+      expect(lines, isNot(contains('unrecognized verification detail')));
+      expect(
+        DiagnosticLog.tlsFailureReason(
+          const HandshakeException('private unexpected TLS detail'),
+        ),
+        isNull,
+      );
+    },
+  );
+
+  test('real certificate rejection retains the native TLS reason', () async {
+    final server = await _server();
+    addTearDown(() => server.close(force: true));
+    var httpReached = false;
+    server.listen((request) async {
+      httpReached = true;
+      await request.response.close();
+    });
+    final api = ApiClient(
+      baseUri: Uri.parse('https://api-bootstrap.invalid:${server.port}'),
+      resolveApiAddresses: () async => ['127.0.0.1'],
+      securityContext: SecurityContext(withTrustedRoots: false),
+    );
+    addTearDown(api.close);
+    final position = DiagnosticLog.recentLines.length;
+    try {
+      await api.locations();
+      fail('An untrusted certificate must be rejected.');
+    } on HandshakeException catch (error) {
+      expect(error.message, isNot(contains('CERTIFICATE_VERIFY_FAILED')));
+      expect(error.osError?.message, contains('CERTIFICATE_VERIFY_FAILED'));
+      expect(error.osError?.errorCode, -1);
+      expect(
+        DiagnosticLog.tlsFailureReason(error),
+        anyOf('certificate_self_signed', 'certificate_issuer_missing'),
+      );
+    }
+    final lines = _since(position).join('\n');
+    expect(httpReached, isFalse);
+    expect(lines, contains('event=tcp_completed'));
+    expect(lines, contains('event=attempt_failed code=tls_handshake_failed'));
+    expect(lines, contains('tls_error=-1'));
+    expect(lines, contains('reason=certificate_'));
+    expect(lines, isNot(contains('windows_error=-1')));
+    expect(lines, isNot(contains('http_status=')));
+    expect(lines, isNot(contains('api-bootstrap.invalid')));
+  });
+
+  test(
     'persistent socket failures reference a connection, not a request',
     () async {
       final position = DiagnosticLog.recentLines.length;

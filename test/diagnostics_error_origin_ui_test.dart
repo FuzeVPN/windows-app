@@ -65,6 +65,22 @@ Future<void> _mount(WidgetTester tester, _UiController app) async {
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  test('local TLS view admits canonical reasons only', () {
+    const known = DiagnosticCheckView(
+      'Connexion de l’application',
+      'failed',
+      0,
+      tlsReason: 'certificate_issuer_missing',
+    );
+    const untrusted = DiagnosticCheckView(
+      'Connexion de l’application',
+      'failed',
+      0,
+      tlsReason: 'secret-should-not-appear',
+    );
+    expect(known.tlsReason, 'certificate_issuer_missing');
+    expect(untrusted.tlsReason, isNull);
+  });
   setUp(() {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(
@@ -157,7 +173,15 @@ void main() {
   }
 
   for (final item
-      in <({Object failure, String code, String message, int windowsError})>[
+      in <
+        ({
+          Object failure,
+          String code,
+          String message,
+          int? windowsError,
+          String? tlsReason,
+        })
+      >[
         (
           failure: const SocketException(
             'secret-should-not-appear',
@@ -165,18 +189,23 @@ void main() {
           ),
           code: 'network_unreachable',
           windowsError: 10061,
+          tlsReason: null,
           message:
               'La tentative de connexion réseau a échoué. Cela ne permet pas de déterminer si le service est indisponible.',
         ),
         (
           failure: const HandshakeException(
             'secret-should-not-appear',
-            OSError('private_os_error', -2146893019),
+            OSError(
+              'CERTIFICATE_VERIFY_FAILED: unable to get local issuer certificate / secret-should-not-appear',
+              -1,
+            ),
           ),
           code: 'tls_handshake_failed',
-          windowsError: -2146893019,
+          windowsError: null,
+          tlsReason: 'certificate_issuer_missing',
           message:
-              'La négociation de la connexion sécurisée a échoué. La cause n’est pas encore identifiée.',
+              'La connexion sécurisée au service n’a pas pu être vérifiée.',
         ),
       ]) {
     testWidgets('${item.code} describes only the failed connection attempt', (
@@ -192,12 +221,25 @@ void main() {
       expect(check.label, 'Connexion de l’application');
       expect(check.httpStatus, isNull);
       expect(check.windowsError, item.windowsError);
+      expect(check.tlsReason, item.tlsReason);
       await _mount(tester, app);
       expect(find.text(item.message), findsOneWidget);
       expect(find.text('Connexion de l’application'), findsOneWidget);
       expect(find.text('Accès aux services FuzeVPN'), findsNothing);
       expect(find.text('Code d’erreur : ${item.code}'), findsOneWidget);
-      expect(find.text('Code Windows : ${item.windowsError}'), findsOneWidget);
+      if (item.windowsError != null) {
+        expect(
+          find.text('Code Windows : ${item.windowsError}'),
+          findsOneWidget,
+        );
+      } else {
+        expect(find.textContaining('Code Windows :'), findsNothing);
+      }
+      if (item.tlsReason != null) {
+        expect(find.text('TLS : ${item.tlsReason}'), findsOneWidget);
+      } else {
+        expect(find.textContaining('TLS :'), findsNothing);
+      }
       expect(find.textContaining('private_os_error'), findsNothing);
       expect(find.textContaining('secret-should-not-appear'), findsNothing);
       expect(find.textContaining('momentanément indisponible'), findsNothing);
