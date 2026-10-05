@@ -301,10 +301,16 @@ void main() {
           ..section = AppSection.help;
         await controller.runUserDiagnostic();
         final check = controller.diagnosticChecks.firstWhere(
-          (c) => c.label == 'Accès aux services FuzeVPN',
+          (c) => c.id == 'api_reachability',
         );
         expect(check.result, 'unknown');
         expect(check.code, item.code);
+        expect(
+          check.label,
+          item.code == 'api_bootstrap_unavailable'
+              ? 'Résolution réseau'
+              : 'Moteur VPN',
+        );
         expect(check.windowsError, 5);
         expect(
           controller.preparedDiagnosticReport!.json.toString(),
@@ -314,6 +320,8 @@ void main() {
         expect(find.text('Accès à l’API'), findsNothing);
         expect(find.text(item.message), findsOneWidget);
         expect(find.text('Code Windows : 5'), findsOneWidget);
+        expect(find.text('Code d’erreur : ${item.code}'), findsOneWidget);
+        expect(find.text('Accès aux services FuzeVPN'), findsNothing);
         expect(find.text('Ancienneté de la mesure : 0 s'), findsOneWidget);
         expect(wg.connectCalls, 0);
         expect(wg.disconnectCalls, 0);
@@ -340,17 +348,19 @@ void main() {
       )..section = AppSection.help;
       await controller.runUserDiagnostic();
       final check = controller.diagnosticChecks.firstWhere(
-        (c) => c.label == 'Accès aux services FuzeVPN',
+        (c) => c.id == 'api_reachability',
       );
       expect(check.result, 'failed');
       await _pump(tester, controller);
       expect(
         find.text(
-          'Le service de connexion est momentanément indisponible. Réessayez plus tard.',
+          'Le service a renvoyé une réponse HTTP en erreur. Consultez le code d’erreur.',
         ),
         findsOneWidget,
       );
       expect(find.textContaining('ne peut pas résoudre'), findsNothing);
+      expect(find.text('HTTP : 503'), findsOneWidget);
+      expect(find.text('Code d’erreur : server_error'), findsOneWidget);
       await _close(tester, controller);
     },
   );

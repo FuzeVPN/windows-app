@@ -138,6 +138,9 @@ class AppController extends ChangeNotifier {
               ? 'manual_installation_required'
               : 'failed',
           code: failure.code,
+          stage: failure.stage,
+          windowsError: failure.windowsError,
+          httpStatus: failure.statusCode,
         ),
       );
       _emitDiagnosticFailure(
@@ -551,13 +554,42 @@ class AppController extends ChangeNotifier {
   }
 
   Future<void> initialize() async {
-    final savedTheme = await _safe(_store.themeMode());
+    final clock = Stopwatch()..start();
+    _traceControllerPhase('startup', 'initialize', 'begin');
+    try {
+      await _initialize();
+      _traceControllerPhase(
+        'startup',
+        'initialize',
+        'completed',
+        code: _disposed ? 'cancelled' : 'initialized',
+        durationMs: clock.elapsedMilliseconds,
+      );
+    } catch (error) {
+      _traceControllerFailure(
+        'startup',
+        'initialize',
+        error,
+        durationMs: clock.elapsedMilliseconds,
+      );
+      rethrow;
+    }
+  }
+
+  Future<void> _initialize() async {
+    final savedTheme = await _traceOptionalLoad(
+      _store.themeMode(),
+      stage: 'preferences_theme',
+    );
     themeMode = switch (savedTheme) {
       'dark' => ThemeMode.dark,
       'system' => ThemeMode.system,
       _ => ThemeMode.light,
     };
-    final savedProtocol = await _safe(_store.vpnProtocol());
+    final savedProtocol = await _traceOptionalLoad(
+      _store.vpnProtocol(),
+      stage: 'preferences_protocol',
+    );
     protocolPreference = switch (savedProtocol) {
       'auto' => VpnProtocolPreference.automatic,
       'openvpn' => VpnProtocolPreference.openVpn,
@@ -568,38 +600,98 @@ class AppController extends ChangeNotifier {
       VpnProtocolPreference.automatic ||
       VpnProtocolPreference.wireGuard => VpnProtocol.wireGuard,
     };
+    final securityClock = Stopwatch()..start();
+    _traceControllerPhase('startup', 'preferences_security', 'begin');
     try {
       _applySecuritySettings(await _store.securitySettings());
-    } catch (_) {
+      _traceControllerPhase(
+        'startup',
+        'preferences_security',
+        'completed',
+        durationMs: securityClock.elapsedMilliseconds,
+      );
+    } catch (error) {
+      _traceControllerFailure(
+        'startup',
+        'preferences_security',
+        error,
+        durationMs: securityClock.elapsedMilliseconds,
+      );
       _applySecuritySettings(SecuritySettings.secureDefaults);
+      _traceControllerPhase(
+        'startup',
+        'preferences_security',
+        'fallback',
+        code: 'secure_defaults',
+      );
       securitySettingsError =
           'Les réglages de sécurité enregistrés sont illisibles. Les protections par défaut restent activées.';
     }
     launchWithWindows =
-        await _safe<bool>(_window.isLaunchAtStartupEnabled()) ?? false;
+        await _traceOptionalLoad<bool>(
+          _window.isLaunchAtStartupEnabled(),
+          stage: 'windows_startup_preference',
+        ) ??
+        false;
     autoConnectOnLaunch =
-        await _safe<String?>(_store.autoConnectOnLaunch()) == 'true';
+        await _traceOptionalLoad<String?>(
+          _store.autoConnectOnLaunch(),
+          stage: 'preferences_auto_connect',
+        ) ==
+        'true';
     windowsNotificationsEnabled =
-        await _safe<String?>(_store.windowsNotifications()) != 'false';
+        await _traceOptionalLoad<String?>(
+          _store.windowsNotifications(),
+          stage: 'preferences_notifications',
+        ) !=
+        'false';
     favoriteLocationIds = {
-      ...?await _safe<List<String>>(_store.favoriteLocationIds()),
+      ...?await _traceOptionalLoad<List<String>>(
+        _store.favoriteLocationIds(),
+        stage: 'preferences_favorites',
+      ),
     };
     recentLocationIds = [
-      ...?await _safe<List<String>>(_store.recentLocationIds()),
+      ...?await _traceOptionalLoad<List<String>>(
+        _store.recentLocationIds(),
+        stage: 'preferences_recent_locations',
+      ),
     ];
+    _traceControllerPhase('startup', 'native_preferences', 'begin');
     _configureNativeNetworkProtection();
+    _traceControllerPhase('startup', 'native_preferences', 'completed');
+    _traceControllerPhase('startup', 'connectivity_listener', 'begin');
     _window.startConnectivityListener(_handleWindowsConnectivityEvent);
     _windowListenerStarted = true;
+    _traceControllerPhase('startup', 'connectivity_listener', 'completed');
     language = AppLanguageLocale.fromStorage(
-      await _safe<String?>(_store.appLanguage()),
+      await _traceOptionalLoad<String?>(
+        _store.appLanguage(),
+        stage: 'preferences_language',
+      ),
     );
-    final savedLocation = await _safe(_store.selectedLocation());
-    currentDeviceId = await _safe<String?>(_store.currentDeviceId());
+    final savedLocation = await _traceOptionalLoad(
+      _store.selectedLocation(),
+      stage: 'preferences_selected_location',
+    );
+    currentDeviceId = await _traceOptionalLoad<String?>(
+      _store.currentDeviceId(),
+      stage: 'stored_device_binding',
+    );
     final token = await _readSavedSessionToken();
     _sessionValidationPending = token != null || _sessionStorageUnavailable;
     // Resolve native protection before making GUI API requests. A retained
     // lock may outlive this window, and only the native cache can resume it.
+    final runtimeClock = Stopwatch()..start();
+    _traceControllerPhase('startup', 'runtime_observation', 'begin');
     await Future.wait([_loadTunnelState(), _loadOpenVpnRuntime()]);
+    _traceControllerPhase(
+      'startup',
+      'runtime_observation',
+      'completed',
+      code: _runtimeVerificationPending ? 'verification_pending' : 'observed',
+      durationMs: runtimeClock.elapsedMilliseconds,
+    );
     if (_disposed) return;
     final retainedProtocol = _retainedProtectionProtocol;
     if (token != null &&
@@ -627,6 +719,14 @@ class AppController extends ChangeNotifier {
       isLoadingLocations = false;
       apiReachable = false;
       devicesReachable = false;
+      _traceControllerPhase(
+        'startup',
+        'initial_remote_data',
+        'deferred',
+        code: _runtimeVerificationPending
+            ? 'runtime_verification_pending'
+            : 'retained_protection',
+      );
     }
     isInitialized = true;
     _scheduleRuntimeVerificationRetry();
@@ -645,9 +745,24 @@ class AppController extends ChangeNotifier {
   }
 
   Future<void> _loadOpenVpnRuntime() async {
+    final clock = Stopwatch()..start();
+    _traceControllerPhase('runtime_state', 'openvpn_availability', 'begin');
     try {
       openVpnRuntimeAvailable = await _openVpn.isAvailable();
-    } catch (_) {
+      _traceControllerPhase(
+        'runtime_state',
+        'openvpn_availability',
+        'completed',
+        code: openVpnRuntimeAvailable ? 'available' : 'unavailable',
+        durationMs: clock.elapsedMilliseconds,
+      );
+    } catch (error) {
+      _traceControllerFailure(
+        'runtime_state',
+        'openvpn_availability',
+        error,
+        durationMs: clock.elapsedMilliseconds,
+      );
       openVpnRuntimeAvailable = false;
     }
     notifyListeners();
@@ -659,6 +774,71 @@ class AppController extends ChangeNotifier {
     } catch (_) {
       return null;
     }
+  }
+
+  // Tracing is best-effort and records fixed phase names and bounded metadata.
+  // It must not change the optional-load fallback or persist returned values.
+  Future<T?> _traceOptionalLoad<T>(
+    Future<T> action, {
+    required String stage,
+    String area = 'startup',
+  }) async {
+    final clock = Stopwatch()..start();
+    _traceControllerPhase(area, stage, 'begin');
+    try {
+      final value = await action;
+      _traceControllerPhase(
+        area,
+        stage,
+        'completed',
+        durationMs: clock.elapsedMilliseconds,
+      );
+      return value;
+    } catch (error) {
+      _traceControllerFailure(
+        area,
+        stage,
+        error,
+        durationMs: clock.elapsedMilliseconds,
+      );
+      return null;
+    }
+  }
+
+  void _traceControllerPhase(
+    String area,
+    String stage,
+    String event, {
+    String? code,
+    int? durationMs,
+  }) {
+    unawaited(
+      DiagnosticLog.record(
+        area: area,
+        event: event,
+        stage: stage,
+        code: code,
+        durationMs: durationMs,
+      ),
+    );
+  }
+
+  void _traceControllerFailure(
+    String area,
+    String stage,
+    Object error, {
+    String event = 'failed',
+    int? durationMs,
+  }) {
+    unawaited(
+      DiagnosticLog.recordFailure(
+        area: area,
+        event: event,
+        error: error,
+        stage: stage,
+        durationMs: durationMs,
+      ),
+    );
   }
 
   Future<void> _forgetCurrentDeviceBinding() async {
@@ -745,11 +925,13 @@ class AppController extends ChangeNotifier {
   // These local traces deliberately use a separate area from automatic report
   // hooks. Only fixed stages, tri-state values and platform error codes enter
   // the log; exception messages/details and native payloads never do.
-  void _traceNativeState(String stage, bool? value) {
+  void _traceNativeState(String stage, bool? value, {int? durationMs}) {
     unawaited(
       DiagnosticLog.record(
         area: 'runtime_state',
         event: stage,
+        stage: stage,
+        durationMs: durationMs,
         code: value == null
             ? 'unknown'
             : value
@@ -759,7 +941,7 @@ class AppController extends ChangeNotifier {
     );
   }
 
-  void _traceNativeStateFailure(String stage, Object error) {
+  void _traceNativeStateFailure(String stage, Object error, {int? durationMs}) {
     if (_collectingStartupState) {
       _runtimeVerificationFailureCode ??= switch (error) {
         PlatformException() => error.code,
@@ -775,20 +957,21 @@ class AppController extends ChangeNotifier {
       }
     }
     unawaited(
-      DiagnosticLog.record(
+      DiagnosticLog.recordFailure(
         area: 'runtime_state',
         event: '${stage}_failed',
-        code: switch (error) {
-          PlatformException() => error.code,
-          MissingPluginException() => 'missing_plugin',
-          FormatException() => 'invalid_response',
-          _ => 'unknown_error',
-        },
+        stage: stage,
+        error: error,
+        durationMs: durationMs,
       ),
     );
   }
 
   Future<T?> _readNativeState<T>(Future<T> action, {String? traceStage}) async {
+    final clock = Stopwatch()..start();
+    if (traceStage != null) {
+      _traceControllerPhase('runtime_state', traceStage, 'begin');
+    }
     try {
       final value = await action;
       if (traceStage != null) {
@@ -796,12 +979,16 @@ class AppController extends ChangeNotifier {
           bool() => value,
           NetworkProtectionStatus() => value.active,
           _ => null,
-        });
+        }, durationMs: clock.elapsedMilliseconds);
       }
       return value;
     } catch (error) {
       if (traceStage != null) {
-        _traceNativeStateFailure(traceStage, error);
+        _traceNativeStateFailure(
+          traceStage,
+          error,
+          durationMs: clock.elapsedMilliseconds,
+        );
         _traceNativeState(traceStage, null);
       }
       return null;
@@ -869,6 +1056,8 @@ class AppController extends ChangeNotifier {
 
   Future<void> refreshLocations([String? savedLocation]) async {
     if (_disposed) return;
+    final clock = Stopwatch()..start();
+    _traceControllerPhase('locations', 'catalogue_refresh', 'begin');
     final epoch = ++_locationsRefreshEpoch;
     final sessionEpoch = _sessionEpoch;
     bool current() =>
@@ -879,7 +1068,16 @@ class AppController extends ChangeNotifier {
     notifyListeners();
     try {
       final refreshed = await _api.locations();
-      if (!current()) return;
+      if (!current()) {
+        _traceControllerPhase(
+          'locations',
+          'catalogue_refresh',
+          'discarded',
+          code: 'superseded',
+          durationMs: clock.elapsedMilliseconds,
+        );
+        return;
+      }
       final preferredId =
           selectedLocation?.id ?? savedLocation ?? _unavailableLocationId;
       locations = refreshed;
@@ -892,7 +1090,19 @@ class AppController extends ChangeNotifier {
           ? preferredId
           : null;
       apiReachable = true;
-    } catch (_) {
+      _traceControllerPhase(
+        'locations',
+        'catalogue_refresh',
+        'completed',
+        durationMs: clock.elapsedMilliseconds,
+      );
+    } catch (error) {
+      _traceControllerFailure(
+        'locations',
+        'catalogue_refresh',
+        error,
+        durationMs: clock.elapsedMilliseconds,
+      );
       if (current()) apiReachable = false;
     } finally {
       if (!_disposed && epoch == _locationsRefreshEpoch) {
@@ -950,6 +1160,8 @@ class AppController extends ChangeNotifier {
 
   Future<void> refreshDevices() async {
     if (_disposed || _isSigningOut) return;
+    final clock = Stopwatch()..start();
+    _traceControllerPhase('devices', 'device_catalogue_refresh', 'begin');
     final refreshEpoch = ++_devicesRefreshEpoch;
     var mutationEpoch = _devicesMutationEpoch;
     final sessionEpoch = _sessionEpoch;
@@ -966,12 +1178,30 @@ class AppController extends ChangeNotifier {
       }
     }
 
-    final token = await _safe(_store.token());
+    final token = await _traceOptionalLoad(
+      _store.token(),
+      stage: 'device_catalogue_session_storage',
+      area: 'storage',
+    );
     if (!current()) {
+      _traceControllerPhase(
+        'devices',
+        'device_catalogue_refresh',
+        'discarded',
+        code: 'superseded',
+        durationMs: clock.elapsedMilliseconds,
+      );
       finishLoading();
       return;
     }
     if (token == null || profile == null) {
+      _traceControllerPhase(
+        'devices',
+        'device_catalogue_refresh',
+        'skipped',
+        code: 'session_unavailable',
+        durationMs: clock.elapsedMilliseconds,
+      );
       devices = const [];
       deviceErrorMessage = null;
       isLoadingDevices = false;
@@ -1010,7 +1240,19 @@ class AppController extends ChangeNotifier {
         realDeviceLocation = currentLocation;
       }
       devicesReachable = true;
-    } catch (_) {
+      _traceControllerPhase(
+        'devices',
+        'device_catalogue_refresh',
+        'completed',
+        durationMs: clock.elapsedMilliseconds,
+      );
+    } catch (error) {
+      _traceControllerFailure(
+        'devices',
+        'device_catalogue_refresh',
+        error,
+        durationMs: clock.elapsedMilliseconds,
+      );
       if (!current()) return;
       devicesReachable = false;
       deviceErrorMessage =
@@ -1085,6 +1327,8 @@ class AppController extends ChangeNotifier {
     String userId,
     int generation,
   ) async {
+    final clock = Stopwatch()..start();
+    _traceControllerPhase('account', 'subscription_refresh', 'begin');
     bool current() =>
         _isCurrentSession(epoch, userId) &&
         generation == _subscriptionGeneration;
@@ -1092,12 +1336,26 @@ class AppController extends ChangeNotifier {
       final token = await _store.token();
       if (!current()) return;
       if (token == null || token.isEmpty) {
+        _traceControllerPhase(
+          'account',
+          'subscription_refresh',
+          'skipped',
+          code: 'session_unavailable',
+          durationMs: clock.elapsedMilliseconds,
+        );
         _clearSubscriptionState();
         notifyListeners();
         return;
       }
       // The native state can change while protected storage is being read.
       if (_subscriptionApiBlocked) {
+        _traceControllerPhase(
+          'account',
+          'subscription_refresh',
+          'deferred',
+          code: 'runtime_not_ready',
+          durationMs: clock.elapsedMilliseconds,
+        );
         subscriptionErrorMessage = _runtimeVerificationPending
             ? _runtimeVerificationFailureMessage
             : 'Déconnectez le VPN pour consulter votre abonnement.';
@@ -1106,7 +1364,19 @@ class AppController extends ChangeNotifier {
       final loaded = await _api.subscription(token);
       if (!current()) return;
       subscription = loaded;
+      _traceControllerPhase(
+        'account',
+        'subscription_refresh',
+        'completed',
+        durationMs: clock.elapsedMilliseconds,
+      );
     } on ApiException catch (error) {
+      _traceControllerFailure(
+        'account',
+        'subscription_refresh',
+        error,
+        durationMs: clock.elapsedMilliseconds,
+      );
       if (!current()) return;
       if (error.isUnauthorized) {
         // The in-memory cache is invalidated before any protected-store work.
@@ -1117,11 +1387,24 @@ class AppController extends ChangeNotifier {
         subscriptionErrorMessage =
             'Les informations de votre abonnement ne peuvent pas être chargées pour le moment. Réessayez.';
       }
-    } catch (_) {
+    } catch (error) {
+      _traceControllerFailure(
+        'account',
+        'subscription_refresh',
+        error,
+        durationMs: clock.elapsedMilliseconds,
+      );
       if (!current()) return;
       subscriptionErrorMessage =
           'Les informations de votre abonnement ne peuvent pas être chargées pour le moment. Réessayez.';
     } finally {
+      _traceControllerPhase(
+        'account',
+        'subscription_refresh',
+        'finished',
+        code: current() ? 'current_session' : 'superseded',
+        durationMs: clock.elapsedMilliseconds,
+      );
       if (current()) {
         isLoadingSubscription = false;
         _subscriptionRequest = null;
@@ -1131,17 +1414,39 @@ class AppController extends ChangeNotifier {
   }
 
   Future<void> _loadProfile(String? token) async {
-    if (token == null) return;
+    final clock = Stopwatch()..start();
+    if (token == null) {
+      _traceControllerPhase(
+        'account',
+        'session_validation',
+        'skipped',
+        code: 'no_saved_session',
+      );
+      return;
+    }
+    _traceControllerPhase('account', 'session_validation', 'begin');
     final sessionEpoch = _sessionEpoch;
     try {
       final loaded = await _api.me(token);
-      if (_disposed || _isSigningOut || sessionEpoch != _sessionEpoch) return;
+      if (_disposed || _isSigningOut || sessionEpoch != _sessionEpoch) {
+        _traceControllerPhase(
+          'account',
+          'session_validation',
+          'discarded',
+          code: 'superseded',
+          durationMs: clock.elapsedMilliseconds,
+        );
+        return;
+      }
       profile = loaded;
       _sessionValidationPending = false;
       _sessionStorageUnavailable = false;
       _savedSessionVerificationErrorMessage = null;
       _cancelSavedSessionVerificationRetry();
-      _traceSavedSessionVerification('saved_session_verification_succeeded');
+      _traceSavedSessionVerification(
+        'saved_session_verification_succeeded',
+        durationMs: clock.elapsedMilliseconds,
+      );
       _bindDiagnosticSession();
       notifyListeners();
     } on ApiException catch (error) {
@@ -1151,7 +1456,11 @@ class AppController extends ChangeNotifier {
         _sessionStorageUnavailable = false;
         _savedSessionVerificationErrorMessage = null;
         _cancelSavedSessionVerificationRetry();
-        _traceSavedSessionVerification('saved_session_verification_rejected');
+        _traceSavedSessionVerification(
+          'saved_session_verification_rejected',
+          error: error,
+          durationMs: clock.elapsedMilliseconds,
+        );
         await _safe<void>(_store.clearToken());
       } else {
         _sessionValidationPending = true;
@@ -1165,6 +1474,8 @@ class AppController extends ChangeNotifier {
         _traceSavedSessionVerification(
           'saved_session_verification_pending',
           code: error.diagnosticErrorCode,
+          error: error,
+          durationMs: clock.elapsedMilliseconds,
         );
       }
     } catch (error) {
@@ -1181,25 +1492,29 @@ class AppController extends ChangeNotifier {
             : 'Le service de connexion est momentanément indisponible. Réessayez plus tard.';
         _traceSavedSessionVerification(
           'saved_session_verification_pending',
-          code:
-              error is SocketException ||
-                  error is HttpException ||
-                  error is HandshakeException ||
-                  error is TimeoutException
-              ? 'api_transport_unavailable'
-              : 'profile_unavailable',
+          error: error,
+          durationMs: clock.elapsedMilliseconds,
         );
       }
     }
   }
 
   Future<String?> _readSavedSessionToken() async {
+    final clock = Stopwatch()..start();
+    _traceControllerPhase('storage', 'saved_session_storage', 'begin');
     final epoch = _sessionEpoch;
     try {
       final token = await _store.token();
       if (_disposed || _isSigningOut || epoch != _sessionEpoch) return null;
       _sessionStorageUnavailable = false;
       _savedSessionVerificationErrorMessage = null;
+      _traceControllerPhase(
+        'storage',
+        'saved_session_storage',
+        'completed',
+        code: token == null ? 'absent' : 'present',
+        durationMs: clock.elapsedMilliseconds,
+      );
       return token;
     } catch (error) {
       if (!_disposed && !_isSigningOut && epoch == _sessionEpoch) {
@@ -1211,24 +1526,39 @@ class AppController extends ChangeNotifier {
             'Votre session enregistrée ne peut pas être lue. Réessayez la vérification.';
         _traceSavedSessionVerification(
           'saved_session_storage_unavailable',
-          code:
-              error is PlatformException &&
-                  const {
-                    'storage_access_denied',
-                    'storage_corrupt',
-                    'storage_decryption_failed',
-                    'storage_io_error',
-                  }.contains(error.code)
-              ? error.code
-              : 'storage_unavailable',
+          error: error,
+          stage: 'saved_session_storage',
+          durationMs: clock.elapsedMilliseconds,
         );
       }
       return null;
     }
   }
 
-  void _traceSavedSessionVerification(String event, {String? code}) {
-    unawaited(DiagnosticLog.record(area: 'account', event: event, code: code));
+  void _traceSavedSessionVerification(
+    String event, {
+    String? code,
+    Object? error,
+    String stage = 'session_validation',
+    int? durationMs,
+  }) {
+    if (error != null) {
+      _traceControllerFailure(
+        'account',
+        stage,
+        error,
+        event: event,
+        durationMs: durationMs,
+      );
+      return;
+    }
+    _traceControllerPhase(
+      'account',
+      stage,
+      event,
+      code: code,
+      durationMs: durationMs,
+    );
   }
 
   void _cancelSavedSessionVerificationRetry() {
@@ -1268,18 +1598,30 @@ class AppController extends ChangeNotifier {
     final sessionEpoch = _sessionEpoch;
     _collectingStartupState = true;
     var stage = 'startup_wireguard_connected';
+    final queryClock = Stopwatch()..start();
     var disconnectAttempted = false;
     try {
+      _traceControllerPhase('runtime_state', stage, 'begin');
       final wireGuardConnected = await _wireguard.isConnected();
-      _traceNativeState(stage, wireGuardConnected);
+      _traceNativeState(
+        stage,
+        wireGuardConnected,
+        durationMs: queryClock.elapsedMilliseconds,
+      );
       if (_disposed || sessionEpoch != _sessionEpoch) return;
       if (wireGuardConnected) {
         _runtimeInteractionStarted = true;
         activeProtocol = VpnProtocol.wireGuard;
       }
       stage = 'startup_openvpn_connected';
+      queryClock.reset();
+      _traceControllerPhase('runtime_state', stage, 'begin');
       final openVpnConnected = await _openVpn.isConnected();
-      _traceNativeState(stage, openVpnConnected);
+      _traceNativeState(
+        stage,
+        openVpnConnected,
+        durationMs: queryClock.elapsedMilliseconds,
+      );
       if (_disposed || sessionEpoch != _sessionEpoch) return;
       if (openVpnConnected) {
         _runtimeInteractionStarted = true;
@@ -1351,7 +1693,11 @@ class AppController extends ChangeNotifier {
       notifyListeners();
     } catch (error) {
       if (_disposed || sessionEpoch != _sessionEpoch) return;
-      _traceNativeStateFailure(stage, error);
+      _traceNativeStateFailure(
+        stage,
+        error,
+        durationMs: queryClock.elapsedMilliseconds,
+      );
       // A failed observation cannot confirm absence. Initial uncertainty is
       // distinct from a previous tunnel/protection that needs to be stopped.
       await _restoreNetworkStateAfterFailedDisconnect(
@@ -2570,6 +2916,8 @@ class AppController extends ChangeNotifier {
         runtimeOwnedByAnotherUser) {
       return;
     }
+    final clock = Stopwatch()..start();
+    _traceControllerPhase('account', 'saved_session_recovery', 'begin');
     final epoch = _sessionEpoch;
     _sessionRecoveryInProgress = true;
     notifyListeners();
@@ -2602,9 +2950,26 @@ class AppController extends ChangeNotifier {
           !isConnectionBusy) {
         await quickConnect();
       }
+    } catch (error) {
+      _traceControllerFailure(
+        'account',
+        'saved_session_recovery',
+        error,
+        durationMs: clock.elapsedMilliseconds,
+      );
+      rethrow;
     } finally {
       _sessionRecoveryInProgress = false;
       _scheduleSavedSessionVerificationRetry();
+      _traceControllerPhase(
+        'account',
+        'saved_session_recovery',
+        'finished',
+        code: savedSessionVerificationPending
+            ? 'verification_pending'
+            : 'settled',
+        durationMs: clock.elapsedMilliseconds,
+      );
       if (!_disposed) notifyListeners();
     }
   }

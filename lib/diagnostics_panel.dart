@@ -141,6 +141,66 @@ class _DiagnosticsPanelState extends State<_DiagnosticsPanel> {
     ),
   );
 
+  Future<void> _copyLocalDiagnostic() async {
+    var message = 'Diagnostic local copié.';
+    try {
+      await Clipboard.setData(
+        ClipboardData(text: controller.diagnosticLocalExport),
+      );
+    } catch (_) {
+      message = 'Le diagnostic local n’a pas pu être copié. Réessayez.';
+    }
+    if (!mounted) return;
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(context.tr(message))));
+  }
+
+  Future<void> _showLocalTrace() {
+    final trace = controller.diagnosticLocalTrace.join('\n');
+    return showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        scrollable: true,
+        icon: const Icon(Icons.timeline_outlined),
+        titleTextStyle: Theme.of(context).textTheme.headlineSmall,
+        title: Text(context.tr('Chronologie locale')),
+        content: SizedBox(
+          width: 720,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                context.tr(
+                  'Ces étapes restent sur cet appareil. Copier le diagnostic permet de les partager manuellement.',
+                ),
+              ),
+              const SizedBox(height: 16),
+              if (trace.isEmpty)
+                Text(context.tr('Aucune étape enregistrée pour cette session.'))
+              else
+                SelectableText(
+                  trace,
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton.icon(
+            onPressed: _copyLocalDiagnostic,
+            icon: const Icon(Icons.copy_outlined),
+            label: Text(context.tr('Copier le diagnostic local')),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(context.tr('Fermer')),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final account = controller.profile?.userId;
@@ -202,6 +262,16 @@ class _DiagnosticsPanelState extends State<_DiagnosticsPanel> {
                       icon: const Icon(Icons.send_outlined),
                       label: Text(context.tr('Envoyer ce rapport')),
                     ),
+                  OutlinedButton.icon(
+                    onPressed: _showLocalTrace,
+                    icon: const Icon(Icons.timeline_outlined),
+                    label: Text(context.tr('Chronologie locale')),
+                  ),
+                  OutlinedButton.icon(
+                    onPressed: _copyLocalDiagnostic,
+                    icon: const Icon(Icons.copy_outlined),
+                    label: Text(context.tr('Copier le diagnostic local')),
+                  ),
                 ],
               ),
               if (busy) ...[
@@ -594,6 +664,20 @@ class _DiagnosticCheckTile extends StatelessWidget {
                     ),
                   ),
                 ],
+                if (check.result == 'failed' || check.result == 'unknown') ...[
+                  const SizedBox(height: 8),
+                  SelectableText(
+                    '${context.tr('Code d’erreur')} : ${check.code ?? 'unknown_error'}',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ],
+                if (check.httpStatus case final httpStatus?) ...[
+                  const SizedBox(height: 8),
+                  Text(
+                    'HTTP : $httpStatus',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ],
                 if (check.windowsError case final windowsError?) ...[
                   const SizedBox(height: 8),
                   Text(
@@ -614,9 +698,14 @@ class _DiagnosticCheckTile extends StatelessWidget {
 
 String? _diagnosticGuidance(DiagnosticCheckView check) {
   if (check.result != 'failed' && check.result != 'unknown') return null;
-  if (check.label == 'Accès aux services FuzeVPN') {
+  if (check.id == 'api_reachability') {
+    if (check.httpStatus != null) {
+      return 'Le service a renvoyé une réponse HTTP en erreur. Consultez le code d’erreur.';
+    }
     return switch (check.code) {
-      'api_bootstrap_unavailable' || 'api_resolution_unavailable' =>
+      'api_bootstrap_unavailable' ||
+      'api_resolution_unavailable' ||
+      'endpoint_resolution_failed' =>
         'FuzeVPN ne peut pas résoudre l’adresse du service de connexion.',
       'runtime_detection_failed' || 'service_configuration_mismatch' =>
         'Windows n’a pas permis de vérifier l’installation de FuzeVPN.',
@@ -628,6 +717,8 @@ String? _diagnosticGuidance(DiagnosticCheckView check) {
       'broker_busy' ||
       'service_unavailable' ||
       'runtime_unavailable' ||
+      'native_bridge_unavailable' ||
+      'native_operation_failed' ||
       'broker_write_failed' ||
       'broker_response_timeout' ||
       'broker_protocol_error' =>
@@ -639,13 +730,30 @@ String? _diagnosticGuidance(DiagnosticCheckView check) {
       'api_transport_unsupported' =>
         'FuzeVPN ne peut pas utiliser la configuration réseau de cet ordinateur pour joindre le service.',
       'tls_handshake_failed' =>
-        'La connexion sécurisée au service n’a pas pu être vérifiée.',
-      'storage_access_denied' || 'storage_failure' =>
+        'La négociation de la connexion sécurisée a échoué. La cause n’est pas encore identifiée.',
+      'storage_access_denied' ||
+      'storage_corrupt' ||
+      'storage_decryption_failed' ||
+      'storage_error' ||
+      'storage_failure' ||
+      'storage_io_error' ||
+      'storage_unavailable' ||
+      'secure_storage_corrupt' ||
+      'secure_storage_read_failed' ||
+      'secure_storage_write_failed' =>
         'L’accès au stockage protégé a échoué. Relancez l’application, puis contactez l’assistance si le problème persiste.',
-      'network_unreachable' || 'request_timeout' || 'network_timeout' =>
-        'Impossible de joindre le service de connexion. Vérifiez votre connexion Internet puis réessayez.',
+      'network_unreachable' ||
+      'network_error' ||
+      'network_unavailable' ||
+      'request_timeout' ||
+      'network_timeout' =>
+        'La tentative de connexion réseau a échoué. Cela ne permet pas de déterminer si le service est indisponible.',
+      'api_resolver_invalid_response' ||
+      'invalid_api_response' ||
+      'invalid_response' =>
+        'La réponse reçue n’a pas pu être interprétée. Consultez le code d’erreur.',
       _ =>
-        'Le service de connexion est momentanément indisponible. Réessayez plus tard.',
+        'La vérification n’a pas abouti. La cause n’est pas encore identifiée.',
     };
   }
   if (check.label == 'Kill switch' || check.label == 'Protection WebRTC') {

@@ -40,22 +40,92 @@ class DiagnosticCheckView {
     this.label,
     this.result,
     this.ageMs, {
+    this.id = 'unknown',
     this.code,
     this.windowsError,
+    this.httpStatus,
   });
+  final String id;
   final String label;
   final String result;
   final int? ageMs;
   final String? code;
   final int? windowsError;
+  final int? httpStatus;
+}
+
+// A local error reference is deliberately narrower than arbitrary exception
+// text. These additional native references are not part of the API v1 schema.
+const _localDiagnosticCodes = {
+  'api_resolver_invalid_response',
+  'maintenance_in_progress',
+  'network_unreachable',
+  'runtime_detection_failed',
+  'runtime_owned_by_another_user',
+};
+
+String? _localDiagnosticCode(String? code) => code == null
+    ? null
+    : diagnosticCodes.contains(code) || _localDiagnosticCodes.contains(code)
+    ? code
+    : 'unknown_error';
+
+String _diagnosticApiCheckLabel(String? code, int? httpStatus) {
+  if (httpStatus != null) return 'Accès aux services FuzeVPN';
+  return switch (code) {
+    'api_bootstrap_unavailable' ||
+    'api_resolution_unavailable' ||
+    'api_resolver_invalid_response' ||
+    'endpoint_resolution_failed' => 'Résolution réseau',
+    'storage_access_denied' ||
+    'storage_corrupt' ||
+    'storage_decryption_failed' ||
+    'storage_error' ||
+    'storage_failure' ||
+    'storage_io_error' ||
+    'storage_unavailable' ||
+    'secure_storage_corrupt' ||
+    'secure_storage_read_failed' ||
+    'secure_storage_write_failed' => 'Stockage protégé',
+    'broker_unavailable' ||
+    'broker_busy' ||
+    'broker_write_failed' ||
+    'broker_response_timeout' ||
+    'broker_protocol_error' ||
+    'runtime_detection_failed' ||
+    'runtime_status_unavailable' ||
+    'runtime_unavailable' ||
+    'runtime_owned_by_another_user' ||
+    'service_configuration_mismatch' ||
+    'service_unavailable' ||
+    'native_bridge_unavailable' ||
+    'native_operation_failed' ||
+    'maintenance_in_progress' => 'Moteur VPN',
+    'permission_denied' => 'Autorisations',
+    'network_unreachable' ||
+    'network_error' ||
+    'network_unavailable' ||
+    'network_timeout' ||
+    'request_timeout' ||
+    'tls_handshake_failed' ||
+    'api_transport_unsupported' ||
+    'invalid_api_response' ||
+    'invalid_response' => 'Connexion de l’application',
+    _ => 'Vérification technique',
+  };
 }
 
 // Native detail is for the local view only. The versioned report retains its
 // existing code schema and never includes raw exception text or details.
 class _LocalDiagnosticApiFailure {
-  const _LocalDiagnosticApiFailure(this.code, this.windowsError);
+  const _LocalDiagnosticApiFailure(
+    this.code,
+    this.windowsError,
+    this.httpStatus,
+  );
   final String code;
   final int? windowsError;
+  final int? httpStatus;
 }
 
 final _diagnosticApiFailures = Expando<_LocalDiagnosticApiFailure>();
@@ -135,6 +205,17 @@ extension AppDiagnostics on AppController {
           '  ',
         ).convert(preparedDiagnosticReport!.json);
 
+  /// Only the bounded, identifier-only in-memory trace is exposed locally.
+  /// It remains separate from the versioned report sent to the server.
+  List<String> get diagnosticLocalTrace => DiagnosticLog.recentLines;
+
+  String get diagnosticLocalExport => [
+    '--- report ---',
+    diagnosticPreview ?? '{}',
+    '--- local_trace ---',
+    ...diagnosticLocalTrace,
+  ].join('\n');
+
   List<DiagnosticCheckView> get diagnosticChecks {
     final values = diagnosticResults?['checks'];
     if (values is! List) return const [];
@@ -143,10 +224,17 @@ extension AppDiagnostics on AppController {
         .map(
           (check) => DiagnosticCheck.fromMap(Map<String, Object?>.from(check)),
         )
-        .map(
-          (check) => DiagnosticCheckView(
+        .map((check) {
+          final failure = check.id == 'api_reachability'
+              ? _diagnosticApiFailures[this]
+              : null;
+          final code = _localDiagnosticCode(failure?.code ?? check.code);
+          return DiagnosticCheckView(
             switch (check.id) {
-              'api_reachability' => 'Accès aux services FuzeVPN',
+              'api_reachability' =>
+                check.result == 'passed'
+                    ? 'Accès aux services FuzeVPN'
+                    : _diagnosticApiCheckLabel(code, failure?.httpStatus),
               'service_availability' => 'Moteur VPN',
               'driver_availability' => 'Pilote VPN',
               'secure_storage' => 'Stockage protégé',
@@ -167,14 +255,12 @@ extension AppDiagnostics on AppController {
             },
             check.result,
             check.ageMs,
-            code: check.id == 'api_reachability'
-                ? _diagnosticApiFailures[this]?.code ?? check.code
-                : check.code,
-            windowsError: check.id == 'api_reachability'
-                ? _diagnosticApiFailures[this]?.windowsError
-                : null,
-          ),
-        )
+            id: check.id,
+            code: code,
+            windowsError: failure?.windowsError,
+            httpStatus: failure?.httpStatus,
+          );
+        })
         .toList(growable: false);
   }
 
@@ -341,23 +427,55 @@ extension AppDiagnostics on AppController {
         ).toJson(),
       );
     } catch (error) {
-      final code = switch (error) {
+      final code = _localDiagnosticCode(switch (error) {
         ApiException error => error.diagnosticErrorCode,
-        HandshakeException _ => 'tls_handshake_failed',
+        PlatformException error => error.code,
+        TlsException _ => 'tls_handshake_failed',
         SocketException _ => 'network_unreachable',
         TimeoutException _ => 'request_timeout',
         FormatException _ => 'invalid_api_response',
-        _ => 'api_error',
+        _ => 'unexpected_error',
+      })!;
+      final nativeCode = switch (error) {
+        ApiException error => error.windowsError,
+        SocketException error => error.osError?.errorCode,
+        TlsException error => error.osError?.errorCode,
+        _ => null,
       };
-      final windowsError = error is ApiException ? error.windowsError : null;
+      final windowsError =
+          nativeCode != null &&
+              nativeCode >= -0x80000000 &&
+              nativeCode <= 0xffffffff
+          ? nativeCode
+          : null;
+      final observedStatus = error is ApiException
+          ? error.observedHttpStatus
+          : null;
+      final httpStatus =
+          observedStatus != null &&
+              observedStatus >= 100 &&
+              observedStatus <= 599
+          ? observedStatus
+          : null;
       _diagnosticApiFailures[this] = _LocalDiagnosticApiFailure(
         code,
         windowsError,
+        httpStatus,
       );
       final localUnavailable =
-          error is ApiException &&
-          error.localErrorCode != null &&
-          error.observedHttpStatus == null;
+          httpStatus == null &&
+          (error is PlatformException ||
+              error is ApiException && error.localErrorCode != null ||
+              const {
+                'Moteur VPN',
+                'Stockage protégé',
+                'Résolution réseau',
+                'Autorisations',
+                'Vérification technique',
+              }.contains(_diagnosticApiCheckLabel(code, null)) ||
+              code == 'api_transport_unsupported' ||
+              code == 'unknown_error' ||
+              code == 'unexpected_error');
       checks.add(
         DiagnosticCheck(
           id: 'api_reachability',

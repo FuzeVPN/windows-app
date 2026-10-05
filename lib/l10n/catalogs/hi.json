@@ -554,5 +554,19 @@
   "FuzeVPN ne peut pas utiliser la configuration réseau de cet ordinateur pour joindre le service.": "FuzeVPN इस कंप्यूटर की नेटवर्क सेटिंग से सेवा तक नहीं पहुँच सकता।",
   "La connexion sécurisée au service n’a pas pu être vérifiée.": "सेवा से सुरक्षित कनेक्शन सत्यापित नहीं हो सका।",
   "Cette mise à jour nécessite une installation manuelle depuis le site FuzeVPN.": "इस अपडेट को FuzeVPN वेबसाइट से मैन्युअल रूप से इंस्टॉल करना होगा।",
-  "Ouvrir le site FuzeVPN": "FuzeVPN वेबसाइट खोलें"
+  "Ouvrir le site FuzeVPN": "FuzeVPN वेबसाइट खोलें",
+  "Aucune étape enregistrée pour cette session.": "इस सत्र के लिए कोई चरण दर्ज नहीं है।",
+  "Ces étapes restent sur cet appareil. Copier le diagnostic permet de les partager manuellement.": "ये चरण इसी डिवाइस पर रहते हैं। निदान कॉपी करके आप उन्हें स्वयं साझा कर सकते हैं।",
+  "Chronologie locale": "स्थानीय घटनाक्रम",
+  "Connexion de l’application": "ऐप का कनेक्शन",
+  "Copier le diagnostic local": "स्थानीय निदान कॉपी करें",
+  "Diagnostic local copié.": "स्थानीय निदान कॉपी हो गया।",
+  "La négociation de la connexion sécurisée a échoué. La cause n’est pas encore identifiée.": "सुरक्षित कनेक्शन स्थापित करने की बातचीत विफल हुई। कारण अभी पहचाना नहीं गया है।",
+  "La recherche de mise à jour a échoué.": "अपडेट की जाँच विफल हुई।",
+  "La réponse reçue n’a pas pu être interprétée. Consultez le code d’erreur.": "प्राप्त उत्तर को समझा नहीं जा सका। त्रुटि कोड देखें।",
+  "La tentative de connexion réseau a échoué. Cela ne permet pas de déterminer si le service est indisponible.": "नेटवर्क से कनेक्ट करने का प्रयास विफल हुआ। इससे यह तय नहीं होता कि सेवा अनुपलब्ध है या नहीं।",
+  "La vérification n’a pas abouti. La cause n’est pas encore identifiée.": "जाँच पूरी नहीं हुई। कारण अभी पहचाना नहीं गया है।",
+  "Le diagnostic local n’a pas pu être copié. Réessayez.": "स्थानीय निदान कॉपी नहीं हो सका। फिर कोशिश करें।",
+  "Le service a renvoyé une réponse HTTP en erreur. Consultez le code d’erreur.": "सेवा ने HTTP त्रुटि वाला उत्तर भेजा। त्रुटि कोड देखें।",
+  "Résolution réseau": "नेटवर्क नाम का समाधान"
 }

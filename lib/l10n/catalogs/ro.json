@@ -554,5 +554,19 @@
   "FuzeVPN ne peut pas utiliser la configuration réseau de cet ordinateur pour joindre le service.": "FuzeVPN nu poate folosi configurația de rețea a acestui computer pentru a accesa serviciul.",
   "La connexion sécurisée au service n’a pas pu être vérifiée.": "Conexiunea securizată cu serviciul nu a putut fi verificată.",
   "Cette mise à jour nécessite une installation manuelle depuis le site FuzeVPN.": "Această actualizare necesită instalare manuală de pe site-ul FuzeVPN.",
-  "Ouvrir le site FuzeVPN": "Deschide site-ul FuzeVPN"
+  "Ouvrir le site FuzeVPN": "Deschide site-ul FuzeVPN",
+  "Aucune étape enregistrée pour cette session.": "Nu există etape înregistrate pentru această sesiune.",
+  "Ces étapes restent sur cet appareil. Copier le diagnostic permet de les partager manuellement.": "Aceste etape rămân pe acest dispozitiv. Copierea diagnosticului permite distribuirea lor manuală.",
+  "Chronologie locale": "Cronologie locală",
+  "Connexion de l’application": "Conexiunea aplicației",
+  "Copier le diagnostic local": "Copiază diagnosticul local",
+  "Diagnostic local copié.": "Diagnosticul local a fost copiat.",
+  "La négociation de la connexion sécurisée a échoué. La cause n’est pas encore identifiée.": "Negocierea conexiunii securizate a eșuat. Cauza nu a fost încă identificată.",
+  "La recherche de mise à jour a échoué.": "Căutarea actualizării a eșuat.",
+  "La réponse reçue n’a pas pu être interprétée. Consultez le code d’erreur.": "Răspunsul primit nu a putut fi interpretat. Consultă codul erorii.",
+  "La tentative de connexion réseau a échoué. Cela ne permet pas de déterminer si le service est indisponible.": "Încercarea de conectare la rețea a eșuat. Acest lucru nu stabilește dacă serviciul este indisponibil.",
+  "La vérification n’a pas abouti. La cause n’est pas encore identifiée.": "Verificarea nu s-a încheiat. Cauza nu a fost încă identificată.",
+  "Le diagnostic local n’a pas pu être copié. Réessayez.": "Diagnosticul local nu a putut fi copiat. Încearcă din nou.",
+  "Le service a renvoyé une réponse HTTP en erreur. Consultez le code d’erreur.": "Serviciul a returnat un răspuns HTTP cu eroare. Consultă codul erorii.",
+  "Résolution réseau": "Rezolvarea numelor de rețea"
 }

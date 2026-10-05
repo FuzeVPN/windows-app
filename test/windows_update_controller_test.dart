@@ -805,6 +805,7 @@ void main() {
       api.failure = const ApiException(
         statusCode: 401,
         errorCode: 'unauthorized',
+        observedHttpStatus: 401,
       );
       await controller.checkForUpdates();
       expect(controller.error?.code, 'update_request_failed');

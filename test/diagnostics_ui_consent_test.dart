@@ -223,7 +223,7 @@ void main() {
     await _mount(tester, app);
     expect(
       find.text(
-        'Impossible de joindre le service de connexion. Vérifiez votre connexion Internet puis réessayez.',
+        'La tentative de connexion réseau a échoué. Cela ne permet pas de déterminer si le service est indisponible.',
       ),
       findsOneWidget,
     );

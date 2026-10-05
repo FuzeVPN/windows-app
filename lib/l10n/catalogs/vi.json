@@ -554,5 +554,19 @@
   "FuzeVPN ne peut pas utiliser la configuration réseau de cet ordinateur pour joindre le service.": "FuzeVPN không thể dùng cấu hình mạng của máy tính này để truy cập dịch vụ.",
   "La connexion sécurisée au service n’a pas pu être vérifiée.": "Không thể xác minh kết nối bảo mật tới dịch vụ.",
   "Cette mise à jour nécessite une installation manuelle depuis le site FuzeVPN.": "Bản cập nhật này cần được cài đặt thủ công từ trang web FuzeVPN.",
-  "Ouvrir le site FuzeVPN": "Mở trang web FuzeVPN"
+  "Ouvrir le site FuzeVPN": "Mở trang web FuzeVPN",
+  "Aucune étape enregistrée pour cette session.": "Không có bước nào được ghi lại cho phiên này.",
+  "Ces étapes restent sur cet appareil. Copier le diagnostic permet de les partager manuellement.": "Các bước này chỉ được lưu trên thiết bị này. Sao chép chẩn đoán cho phép bạn chia sẻ chúng thủ công.",
+  "Chronologie locale": "Dòng thời gian cục bộ",
+  "Connexion de l’application": "Kết nối của ứng dụng",
+  "Copier le diagnostic local": "Sao chép chẩn đoán cục bộ",
+  "Diagnostic local copié.": "Đã sao chép chẩn đoán cục bộ.",
+  "La négociation de la connexion sécurisée a échoué. La cause n’est pas encore identifiée.": "Đàm phán kết nối bảo mật thất bại. Chưa xác định được nguyên nhân.",
+  "La recherche de mise à jour a échoué.": "Kiểm tra bản cập nhật thất bại.",
+  "La réponse reçue n’a pas pu être interprétée. Consultez le code d’erreur.": "Không thể diễn giải phản hồi nhận được. Hãy xem mã lỗi.",
+  "La tentative de connexion réseau a échoué. Cela ne permet pas de déterminer si le service est indisponible.": "Lần thử kết nối mạng thất bại. Điều này không xác định được liệu dịch vụ có đang không khả dụng hay không.",
+  "La vérification n’a pas abouti. La cause n’est pas encore identifiée.": "Kiểm tra chưa hoàn tất. Chưa xác định được nguyên nhân.",
+  "Le diagnostic local n’a pas pu être copié. Réessayez.": "Không thể sao chép chẩn đoán cục bộ. Hãy thử lại.",
+  "Le service a renvoyé une réponse HTTP en erreur. Consultez le code d’erreur.": "Dịch vụ trả về phản hồi lỗi HTTP. Hãy xem mã lỗi.",
+  "Résolution réseau": "Phân giải tên mạng"
 }

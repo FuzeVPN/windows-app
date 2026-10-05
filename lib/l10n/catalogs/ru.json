@@ -554,5 +554,19 @@
   "FuzeVPN ne peut pas utiliser la configuration réseau de cet ordinateur pour joindre le service.": "FuzeVPN не может использовать настройки сети этого компьютера для доступа к сервису.",
   "La connexion sécurisée au service n’a pas pu être vérifiée.": "Не удалось проверить защищённое соединение с сервисом.",
   "Cette mise à jour nécessite une installation manuelle depuis le site FuzeVPN.": "Это обновление необходимо установить вручную с сайта FuzeVPN.",
-  "Ouvrir le site FuzeVPN": "Открыть сайт FuzeVPN"
+  "Ouvrir le site FuzeVPN": "Открыть сайт FuzeVPN",
+  "Aucune étape enregistrée pour cette session.": "Для этого сеанса нет записанных этапов.",
+  "Ces étapes restent sur cet appareil. Copier le diagnostic permet de les partager manuellement.": "Эти этапы остаются на этом устройстве. Скопировав диагностику, вы сможете передать их вручную.",
+  "Chronologie locale": "Локальная хронология",
+  "Connexion de l’application": "Подключение приложения",
+  "Copier le diagnostic local": "Скопировать локальную диагностику",
+  "Diagnostic local copié.": "Локальная диагностика скопирована.",
+  "La négociation de la connexion sécurisée a échoué. La cause n’est pas encore identifiée.": "Не удалось согласовать защищённое соединение. Причина пока не установлена.",
+  "La recherche de mise à jour a échoué.": "Не удалось проверить наличие обновления.",
+  "La réponse reçue n’a pas pu être interprétée. Consultez le code d’erreur.": "Не удалось обработать полученный ответ. Проверьте код ошибки.",
+  "La tentative de connexion réseau a échoué. Cela ne permet pas de déterminer si le service est indisponible.": "Попытка сетевого подключения не удалась. Это не позволяет определить, недоступна ли служба.",
+  "La vérification n’a pas abouti. La cause n’est pas encore identifiée.": "Проверка не завершена. Причина пока не установлена.",
+  "Le diagnostic local n’a pas pu être copié. Réessayez.": "Не удалось скопировать локальную диагностику. Повторите попытку.",
+  "Le service a renvoyé une réponse HTTP en erreur. Consultez le code d’erreur.": "Служба вернула ответ HTTP с ошибкой. Проверьте код ошибки.",
+  "Résolution réseau": "Разрешение сетевых имён"
 }

@@ -554,5 +554,19 @@
   "FuzeVPN ne peut pas utiliser la configuration réseau de cet ordinateur pour joindre le service.": "FuzeVPN nemůže použít nastavení sítě tohoto počítače k přístupu ke službě.",
   "La connexion sécurisée au service n’a pas pu être vérifiée.": "Zabezpečené připojení ke službě se nepodařilo ověřit.",
   "Cette mise à jour nécessite une installation manuelle depuis le site FuzeVPN.": "Tuto aktualizaci je nutné nainstalovat ručně z webu FuzeVPN.",
-  "Ouvrir le site FuzeVPN": "Otevřít web FuzeVPN"
+  "Ouvrir le site FuzeVPN": "Otevřít web FuzeVPN",
+  "Aucune étape enregistrée pour cette session.": "Pro tuto relaci nejsou zaznamenány žádné kroky.",
+  "Ces étapes restent sur cet appareil. Copier le diagnostic permet de les partager manuellement.": "Tyto kroky zůstávají v tomto zařízení. Zkopírováním diagnostiky je můžete sdílet ručně.",
+  "Chronologie locale": "Místní časová osa",
+  "Connexion de l’application": "Připojení aplikace",
+  "Copier le diagnostic local": "Kopírovat místní diagnostiku",
+  "Diagnostic local copié.": "Místní diagnostika zkopírována.",
+  "La négociation de la connexion sécurisée a échoué. La cause n’est pas encore identifiée.": "Vyjednání zabezpečeného připojení selhalo. Příčina dosud nebyla zjištěna.",
+  "La recherche de mise à jour a échoué.": "Kontrola aktualizací selhala.",
+  "La réponse reçue n’a pas pu être interprétée. Consultez le code d’erreur.": "Přijatou odpověď nebylo možné zpracovat. Zkontrolujte kód chyby.",
+  "La tentative de connexion réseau a échoué. Cela ne permet pas de déterminer si le service est indisponible.": "Pokus o síťové připojení selhal. Z toho nelze určit, zda je služba nedostupná.",
+  "La vérification n’a pas abouti. La cause n’est pas encore identifiée.": "Kontrola nebyla dokončena. Příčina dosud nebyla zjištěna.",
+  "Le diagnostic local n’a pas pu être copié. Réessayez.": "Místní diagnostiku se nepodařilo zkopírovat. Zkuste to znovu.",
+  "Le service a renvoyé une réponse HTTP en erreur. Consultez le code d’erreur.": "Služba vrátila chybovou odpověď HTTP. Zkontrolujte kód chyby.",
+  "Résolution réseau": "Překlad síťových názvů"
 }

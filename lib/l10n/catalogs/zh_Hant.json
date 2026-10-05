@@ -554,5 +554,19 @@
   "FuzeVPN ne peut pas utiliser la configuration réseau de cet ordinateur pour joindre le service.": "FuzeVPN 無法使用此電腦的網路設定存取服務。",
   "La connexion sécurisée au service n’a pas pu être vérifiée.": "無法驗證與服務的安全連線。",
   "Cette mise à jour nécessite une installation manuelle depuis le site FuzeVPN.": "此更新需要從 FuzeVPN 網站手動安裝。",
-  "Ouvrir le site FuzeVPN": "開啟 FuzeVPN 網站"
+  "Ouvrir le site FuzeVPN": "開啟 FuzeVPN 網站",
+  "Aucune étape enregistrée pour cette session.": "本次工作階段沒有已記錄的步驟。",
+  "Ces étapes restent sur cet appareil. Copier le diagnostic permet de les partager manuellement.": "這些步驟保留在此裝置上。複製診斷後，您可以手動分享這些記錄。",
+  "Chronologie locale": "本機時間軸",
+  "Connexion de l’application": "應用程式連線",
+  "Copier le diagnostic local": "複製本機診斷",
+  "Diagnostic local copié.": "已複製本機診斷。",
+  "La négociation de la connexion sécurisée a échoué. La cause n’est pas encore identifiée.": "安全連線協商失敗，尚未確定原因。",
+  "La recherche de mise à jour a échoué.": "檢查更新失敗。",
+  "La réponse reçue n’a pas pu être interprétée. Consultez le code d’erreur.": "無法解析收到的回應，請查看錯誤代碼。",
+  "La tentative de connexion réseau a échoué. Cela ne permet pas de déterminer si le service est indisponible.": "網路連線嘗試失敗，但這無法確定服務是否無法使用。",
+  "La vérification n’a pas abouti. La cause n’est pas encore identifiée.": "檢查未完成，尚未確定原因。",
+  "Le diagnostic local n’a pas pu être copié. Réessayez.": "無法複製本機診斷，請重試。",
+  "Le service a renvoyé une réponse HTTP en erreur. Consultez le code d’erreur.": "服務傳回了 HTTP 錯誤回應，請查看錯誤代碼。",
+  "Résolution réseau": "網路名稱解析"
 }

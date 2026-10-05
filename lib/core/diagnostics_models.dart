@@ -213,8 +213,16 @@ const diagnosticCodes = <String>{
   'wireguard_stop_timeout',
 };
 
-String diagnosticCode(String value) =>
-    diagnosticCodes.contains(value) ? value : 'unknown_error';
+String diagnosticCode(String value) {
+  // Preserve meaningful version-1 report categories for local-only codes.
+  // The server schema is intentionally not expanded by a new client trace.
+  final canonical = switch (value) {
+    'network_unreachable' => 'network_error',
+    'api_resolver_invalid_response' => 'native_operation_failed',
+    _ => value,
+  };
+  return diagnosticCodes.contains(canonical) ? canonical : 'unknown_error';
+}
 
 const diagnosticStages = <String>{
   'unknown',

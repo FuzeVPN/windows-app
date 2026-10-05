@@ -554,5 +554,19 @@
   "FuzeVPN ne peut pas utiliser la configuration réseau de cet ordinateur pour joindre le service.": "لا يستطيع FuzeVPN استخدام إعدادات الشبكة لهذا الكمبيوتر للوصول إلى الخدمة.",
   "La connexion sécurisée au service n’a pas pu être vérifiée.": "تعذر التحقق من الاتصال الآمن بالخدمة.",
   "Cette mise à jour nécessite une installation manuelle depuis le site FuzeVPN.": "يتطلب هذا التحديث تثبيتًا يدويًا من موقع FuzeVPN.",
-  "Ouvrir le site FuzeVPN": "فتح موقع FuzeVPN"
+  "Ouvrir le site FuzeVPN": "فتح موقع FuzeVPN",
+  "Aucune étape enregistrée pour cette session.": "لم تُسجَّل أي خطوات لهذه الجلسة.",
+  "Ces étapes restent sur cet appareil. Copier le diagnostic permet de les partager manuellement.": "تبقى هذه الخطوات على هذا الجهاز. يتيح نسخ التشخيص مشاركتها يدويًا.",
+  "Chronologie locale": "التسلسل الزمني المحلي",
+  "Connexion de l’application": "اتصال التطبيق",
+  "Copier le diagnostic local": "نسخ التشخيص المحلي",
+  "Diagnostic local copié.": "تم نسخ التشخيص المحلي.",
+  "La négociation de la connexion sécurisée a échoué. La cause n’est pas encore identifiée.": "فشل التفاوض على الاتصال الآمن. لم يُحدَّد السبب بعد.",
+  "La recherche de mise à jour a échoué.": "فشل البحث عن تحديث.",
+  "La réponse reçue n’a pas pu être interprétée. Consultez le code d’erreur.": "تعذر تفسير الاستجابة المستلمة. راجع رمز الخطأ.",
+  "La tentative de connexion réseau a échoué. Cela ne permet pas de déterminer si le service est indisponible.": "فشلت محاولة الاتصال بالشبكة. لا يكفي ذلك لتحديد ما إذا كانت الخدمة غير متاحة.",
+  "La vérification n’a pas abouti. La cause n’est pas encore identifiée.": "لم يكتمل الفحص. لم يُحدَّد السبب بعد.",
+  "Le diagnostic local n’a pas pu être copié. Réessayez.": "تعذر نسخ التشخيص المحلي. حاول مرة أخرى.",
+  "Le service a renvoyé une réponse HTTP en erreur. Consultez le code d’erreur.": "أعادت الخدمة استجابة HTTP تتضمن خطأ. راجع رمز الخطأ.",
+  "Résolution réseau": "حل أسماء الشبكة"
 }

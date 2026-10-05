@@ -554,5 +554,19 @@
   "FuzeVPN ne peut pas utiliser la configuration réseau de cet ordinateur pour joindre le service.": "FuzeVPN bu bilgisayarın ağ yapılandırmasını kullanarak hizmete ulaşamıyor.",
   "La connexion sécurisée au service n’a pas pu être vérifiée.": "Hizmete güvenli bağlantı doğrulanamadı.",
   "Cette mise à jour nécessite une installation manuelle depuis le site FuzeVPN.": "Bu güncelleme, FuzeVPN web sitesinden elle kurulmalıdır.",
-  "Ouvrir le site FuzeVPN": "FuzeVPN web sitesini aç"
+  "Ouvrir le site FuzeVPN": "FuzeVPN web sitesini aç",
+  "Aucune étape enregistrée pour cette session.": "Bu oturum için kaydedilmiş adım yok.",
+  "Ces étapes restent sur cet appareil. Copier le diagnostic permet de les partager manuellement.": "Bu adımlar bu cihazda kalır. Tanılamayı kopyalayarak bunları elle paylaşabilirsiniz.",
+  "Chronologie locale": "Yerel zaman çizelgesi",
+  "Connexion de l’application": "Uygulama bağlantısı",
+  "Copier le diagnostic local": "Yerel tanılamayı kopyala",
+  "Diagnostic local copié.": "Yerel tanılama kopyalandı.",
+  "La négociation de la connexion sécurisée a échoué. La cause n’est pas encore identifiée.": "Güvenli bağlantı görüşmesi başarısız oldu. Nedeni henüz belirlenemedi.",
+  "La recherche de mise à jour a échoué.": "Güncelleme araması başarısız oldu.",
+  "La réponse reçue n’a pas pu être interprétée. Consultez le code d’erreur.": "Alınan yanıt yorumlanamadı. Hata kodunu kontrol edin.",
+  "La tentative de connexion réseau a échoué. Cela ne permet pas de déterminer si le service est indisponible.": "Ağ bağlantısı denemesi başarısız oldu. Bu durum, hizmetin kullanılamadığını belirlemek için yeterli değildir.",
+  "La vérification n’a pas abouti. La cause n’est pas encore identifiée.": "Kontrol tamamlanamadı. Nedeni henüz belirlenemedi.",
+  "Le diagnostic local n’a pas pu être copié. Réessayez.": "Yerel tanılama kopyalanamadı. Yeniden deneyin.",
+  "Le service a renvoyé une réponse HTTP en erreur. Consultez le code d’erreur.": "Hizmet bir HTTP hata yanıtı döndürdü. Hata kodunu kontrol edin.",
+  "Résolution réseau": "Ağ adı çözümleme"
 }

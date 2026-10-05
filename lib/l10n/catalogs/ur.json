@@ -554,5 +554,19 @@
   "FuzeVPN ne peut pas utiliser la configuration réseau de cet ordinateur pour joindre le service.": "FuzeVPN اس کمپیوٹر کی نیٹ ورک ترتیبات سے سروس تک رسائی نہیں حاصل کر سکتا۔",
   "La connexion sécurisée au service n’a pas pu être vérifiée.": "سروس سے محفوظ کنکشن کی تصدیق نہیں ہو سکی۔",
   "Cette mise à jour nécessite une installation manuelle depuis le site FuzeVPN.": "یہ اپ ڈیٹ FuzeVPN کی ویب سائٹ سے دستی طور پر انسٹال کرنا ہوگا۔",
-  "Ouvrir le site FuzeVPN": "FuzeVPN کی ویب سائٹ کھولیں"
+  "Ouvrir le site FuzeVPN": "FuzeVPN کی ویب سائٹ کھولیں",
+  "Aucune étape enregistrée pour cette session.": "اس سیشن کے لیے کوئی مرحلہ درج نہیں ہے۔",
+  "Ces étapes restent sur cet appareil. Copier le diagnostic permet de les partager manuellement.": "یہ مراحل اسی ڈیوائس پر رہتے ہیں۔ تشخیص کاپی کر کے آپ انہیں خود شیئر کر سکتے ہیں۔",
+  "Chronologie locale": "مقامی زمانی ترتیب",
+  "Connexion de l’application": "ایپ کا کنکشن",
+  "Copier le diagnostic local": "مقامی تشخیص کاپی کریں",
+  "Diagnostic local copié.": "مقامی تشخیص کاپی ہو گئی۔",
+  "La négociation de la connexion sécurisée a échoué. La cause n’est pas encore identifiée.": "محفوظ کنکشن قائم کرنے کے لیے گفت و شنید ناکام ہوئی۔ وجہ ابھی معلوم نہیں ہو سکی۔",
+  "La recherche de mise à jour a échoué.": "اپ ڈیٹ کی جانچ ناکام ہوئی۔",
+  "La réponse reçue n’a pas pu être interprétée. Consultez le code d’erreur.": "موصولہ جواب کی تشریح نہیں ہو سکی۔ خرابی کا کوڈ دیکھیں۔",
+  "La tentative de connexion réseau a échoué. Cela ne permet pas de déterminer si le service est indisponible.": "نیٹ ورک سے جڑنے کی کوشش ناکام ہوئی۔ اس سے یہ معلوم نہیں ہوتا کہ سروس دستیاب نہیں ہے یا نہیں۔",
+  "La vérification n’a pas abouti. La cause n’est pas encore identifiée.": "جانچ مکمل نہیں ہوئی۔ وجہ ابھی معلوم نہیں ہو سکی۔",
+  "Le diagnostic local n’a pas pu être copié. Réessayez.": "مقامی تشخیص کاپی نہیں ہو سکی۔ دوبارہ کوشش کریں۔",
+  "Le service a renvoyé une réponse HTTP en erreur. Consultez le code d’erreur.": "سروس نے خرابی والا HTTP جواب بھیجا۔ خرابی کا کوڈ دیکھیں۔",
+  "Résolution réseau": "نیٹ ورک ناموں کی تعیین"
 }

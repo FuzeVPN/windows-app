@@ -554,5 +554,19 @@
   "FuzeVPN ne peut pas utiliser la configuration réseau de cet ordinateur pour joindre le service.": "FuzeVPN cannot use this computer’s network configuration to reach the service.",
   "La connexion sécurisée au service n’a pas pu être vérifiée.": "The secure connection to the service could not be verified.",
   "Cette mise à jour nécessite une installation manuelle depuis le site FuzeVPN.": "This update requires manual installation from the FuzeVPN website.",
-  "Ouvrir le site FuzeVPN": "Open the FuzeVPN website"
+  "Ouvrir le site FuzeVPN": "Open the FuzeVPN website",
+  "Aucune étape enregistrée pour cette session.": "No steps recorded for this session.",
+  "Ces étapes restent sur cet appareil. Copier le diagnostic permet de les partager manuellement.": "These steps remain on this device. Copying the diagnostic lets you share them manually.",
+  "Chronologie locale": "Local timeline",
+  "Connexion de l’application": "Application connection",
+  "Copier le diagnostic local": "Copy local diagnostic",
+  "Diagnostic local copié.": "Local diagnostic copied.",
+  "La négociation de la connexion sécurisée a échoué. La cause n’est pas encore identifiée.": "The secure connection negotiation failed. The cause has not yet been identified.",
+  "La recherche de mise à jour a échoué.": "The update check failed.",
+  "La réponse reçue n’a pas pu être interprétée. Consultez le code d’erreur.": "The received response could not be interpreted. Check the error code.",
+  "La tentative de connexion réseau a échoué. Cela ne permet pas de déterminer si le service est indisponible.": "The network connection attempt failed. This does not establish whether the service is unavailable.",
+  "La vérification n’a pas abouti. La cause n’est pas encore identifiée.": "The check did not complete. The cause has not yet been identified.",
+  "Le diagnostic local n’a pas pu être copié. Réessayez.": "The local diagnostic could not be copied. Try again.",
+  "Le service a renvoyé une réponse HTTP en erreur. Consultez le code d’erreur.": "The service returned an HTTP error response. Check the error code.",
+  "Résolution réseau": "Network resolution"
 }

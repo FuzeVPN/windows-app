@@ -554,5 +554,19 @@
   "FuzeVPN ne peut pas utiliser la configuration réseau de cet ordinateur pour joindre le service.": "FuzeVPN nie może użyć konfiguracji sieci tego komputera, aby połączyć się z usługą.",
   "La connexion sécurisée au service n’a pas pu être vérifiée.": "Nie udało się zweryfikować bezpiecznego połączenia z usługą.",
   "Cette mise à jour nécessite une installation manuelle depuis le site FuzeVPN.": "Ta aktualizacja wymaga ręcznej instalacji ze strony FuzeVPN.",
-  "Ouvrir le site FuzeVPN": "Otwórz stronę FuzeVPN"
+  "Ouvrir le site FuzeVPN": "Otwórz stronę FuzeVPN",
+  "Aucune étape enregistrée pour cette session.": "Brak zapisanych etapów dla tej sesji.",
+  "Ces étapes restent sur cet appareil. Copier le diagnostic permet de les partager manuellement.": "Te etapy pozostają na tym urządzeniu. Skopiowanie diagnostyki pozwala udostępnić je ręcznie.",
+  "Chronologie locale": "Lokalna oś czasu",
+  "Connexion de l’application": "Połączenie aplikacji",
+  "Copier le diagnostic local": "Kopiuj lokalną diagnostykę",
+  "Diagnostic local copié.": "Lokalna diagnostyka została skopiowana.",
+  "La négociation de la connexion sécurisée a échoué. La cause n’est pas encore identifiée.": "Negocjowanie bezpiecznego połączenia nie powiodło się. Przyczyna nie została jeszcze ustalona.",
+  "La recherche de mise à jour a échoué.": "Sprawdzanie aktualizacji nie powiodło się.",
+  "La réponse reçue n’a pas pu être interprétée. Consultez le code d’erreur.": "Nie udało się zinterpretować otrzymanej odpowiedzi. Sprawdź kod błędu.",
+  "La tentative de connexion réseau a échoué. Cela ne permet pas de déterminer si le service est indisponible.": "Próba połączenia sieciowego nie powiodła się. Nie pozwala to ustalić, czy usługa jest niedostępna.",
+  "La vérification n’a pas abouti. La cause n’est pas encore identifiée.": "Sprawdzanie nie zostało ukończone. Przyczyna nie została jeszcze ustalona.",
+  "Le diagnostic local n’a pas pu être copié. Réessayez.": "Nie udało się skopiować lokalnej diagnostyki. Spróbuj ponownie.",
+  "Le service a renvoyé une réponse HTTP en erreur. Consultez le code d’erreur.": "Usługa zwróciła odpowiedź HTTP z błędem. Sprawdź kod błędu.",
+  "Résolution réseau": "Rozpoznawanie nazw sieciowych"
 }

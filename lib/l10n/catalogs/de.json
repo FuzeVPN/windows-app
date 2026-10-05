@@ -554,5 +554,19 @@
   "FuzeVPN ne peut pas utiliser la configuration réseau de cet ordinateur pour joindre le service.": "FuzeVPN kann mit der Netzwerkkonfiguration dieses Computers den Dienst nicht erreichen.",
   "La connexion sécurisée au service n’a pas pu être vérifiée.": "Die sichere Verbindung zum Dienst konnte nicht überprüft werden.",
   "Cette mise à jour nécessite une installation manuelle depuis le site FuzeVPN.": "Dieses Update muss manuell über die FuzeVPN-Website installiert werden.",
-  "Ouvrir le site FuzeVPN": "FuzeVPN-Website öffnen"
+  "Ouvrir le site FuzeVPN": "FuzeVPN-Website öffnen",
+  "Aucune étape enregistrée pour cette session.": "Für diese Sitzung wurden keine Schritte aufgezeichnet.",
+  "Ces étapes restent sur cet appareil. Copier le diagnostic permet de les partager manuellement.": "Diese Schritte bleiben auf diesem Gerät. Durch Kopieren der Diagnose können Sie sie manuell weitergeben.",
+  "Chronologie locale": "Lokaler Ablauf",
+  "Connexion de l’application": "Verbindung der Anwendung",
+  "Copier le diagnostic local": "Lokale Diagnose kopieren",
+  "Diagnostic local copié.": "Lokale Diagnose kopiert.",
+  "La négociation de la connexion sécurisée a échoué. La cause n’est pas encore identifiée.": "Die Aushandlung der sicheren Verbindung ist fehlgeschlagen. Die Ursache ist noch nicht bekannt.",
+  "La recherche de mise à jour a échoué.": "Die Suche nach Updates ist fehlgeschlagen.",
+  "La réponse reçue n’a pas pu être interprétée. Consultez le code d’erreur.": "Die empfangene Antwort konnte nicht interpretiert werden. Prüfen Sie den Fehlercode.",
+  "La tentative de connexion réseau a échoué. Cela ne permet pas de déterminer si le service est indisponible.": "Der Netzwerkverbindungsversuch ist fehlgeschlagen. Daraus lässt sich nicht ableiten, ob der Dienst nicht verfügbar ist.",
+  "La vérification n’a pas abouti. La cause n’est pas encore identifiée.": "Die Prüfung wurde nicht abgeschlossen. Die Ursache ist noch nicht bekannt.",
+  "Le diagnostic local n’a pas pu être copié. Réessayez.": "Die lokale Diagnose konnte nicht kopiert werden. Versuchen Sie es erneut.",
+  "Le service a renvoyé une réponse HTTP en erreur. Consultez le code d’erreur.": "Der Dienst hat eine HTTP-Fehlerantwort zurückgegeben. Prüfen Sie den Fehlercode.",
+  "Résolution réseau": "Namensauflösung"
 }

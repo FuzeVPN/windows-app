@@ -554,5 +554,19 @@
   "FuzeVPN ne peut pas utiliser la configuration réseau de cet ordinateur pour joindre le service.": "FuzeVPN نمی‌تواند با تنظیمات شبکه این رایانه به سرویس دسترسی پیدا کند.",
   "La connexion sécurisée au service n’a pas pu être vérifiée.": "اتصال امن به سرویس تأیید نشد.",
   "Cette mise à jour nécessite une installation manuelle depuis le site FuzeVPN.": "این به‌روزرسانی باید به‌صورت دستی از وب‌سایت FuzeVPN نصب شود.",
-  "Ouvrir le site FuzeVPN": "باز کردن وب‌سایت FuzeVPN"
+  "Ouvrir le site FuzeVPN": "باز کردن وب‌سایت FuzeVPN",
+  "Aucune étape enregistrée pour cette session.": "هیچ مرحله‌ای برای این نشست ثبت نشده است.",
+  "Ces étapes restent sur cet appareil. Copier le diagnostic permet de les partager manuellement.": "این مراحل روی همین دستگاه باقی می‌مانند. با کپی عیب‌یابی می‌توانید آن‌ها را به‌صورت دستی به اشتراک بگذارید.",
+  "Chronologie locale": "خط زمانی محلی",
+  "Connexion de l’application": "اتصال برنامه",
+  "Copier le diagnostic local": "کپی عیب‌یابی محلی",
+  "Diagnostic local copié.": "عیب‌یابی محلی کپی شد.",
+  "La négociation de la connexion sécurisée a échoué. La cause n’est pas encore identifiée.": "مذاکره برای برقراری اتصال امن ناموفق بود. علت هنوز مشخص نشده است.",
+  "La recherche de mise à jour a échoué.": "بررسی به‌روزرسانی ناموفق بود.",
+  "La réponse reçue n’a pas pu être interprétée. Consultez le code d’erreur.": "پاسخ دریافت‌شده قابل تفسیر نبود. کد خطا را بررسی کنید.",
+  "La tentative de connexion réseau a échoué. Cela ne permet pas de déterminer si le service est indisponible.": "تلاش برای اتصال به شبکه ناموفق بود. این نتیجه مشخص نمی‌کند که آیا سرویس در دسترس نیست.",
+  "La vérification n’a pas abouti. La cause n’est pas encore identifiée.": "بررسی کامل نشد. علت هنوز مشخص نشده است.",
+  "Le diagnostic local n’a pas pu être copié. Réessayez.": "عیب‌یابی محلی کپی نشد. دوباره تلاش کنید.",
+  "Le service a renvoyé une réponse HTTP en erreur. Consultez le code d’erreur.": "سرویس یک پاسخ HTTP همراه با خطا برگرداند. کد خطا را بررسی کنید.",
+  "Résolution réseau": "تفکیک نام‌های شبکه"
 }

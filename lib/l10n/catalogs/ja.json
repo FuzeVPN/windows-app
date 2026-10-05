@@ -554,5 +554,19 @@
   "FuzeVPN ne peut pas utiliser la configuration réseau de cet ordinateur pour joindre le service.": "FuzeVPNはこのコンピューターのネットワーク設定でサービスに接続できません。",
   "La connexion sécurisée au service n’a pas pu être vérifiée.": "サービスへの安全な接続を確認できませんでした。",
   "Cette mise à jour nécessite une installation manuelle depuis le site FuzeVPN.": "この更新は、FuzeVPNのウェブサイトから手動でインストールする必要があります。",
-  "Ouvrir le site FuzeVPN": "FuzeVPNのウェブサイトを開く"
+  "Ouvrir le site FuzeVPN": "FuzeVPNのウェブサイトを開く",
+  "Aucune étape enregistrée pour cette session.": "このセッションの処理は記録されていません。",
+  "Ces étapes restent sur cet appareil. Copier le diagnostic permet de les partager manuellement.": "これらの処理記録はこのデバイスに保存されます。診断をコピーすると、手動で共有できます。",
+  "Chronologie locale": "ローカルの処理履歴",
+  "Connexion de l’application": "アプリの接続",
+  "Copier le diagnostic local": "ローカル診断をコピー",
+  "Diagnostic local copié.": "ローカル診断をコピーしました。",
+  "La négociation de la connexion sécurisée a échoué. La cause n’est pas encore identifiée.": "安全な接続のネゴシエーションに失敗しました。原因はまだ特定されていません。",
+  "La recherche de mise à jour a échoué.": "更新の確認に失敗しました。",
+  "La réponse reçue n’a pas pu être interprétée. Consultez le code d’erreur.": "受信した応答を解釈できませんでした。エラーコードを確認してください。",
+  "La tentative de connexion réseau a échoué. Cela ne permet pas de déterminer si le service est indisponible.": "ネットワーク接続の試行に失敗しました。これだけではサービスが利用できないかどうかは判断できません。",
+  "La vérification n’a pas abouti. La cause n’est pas encore identifiée.": "確認が完了しませんでした。原因はまだ特定されていません。",
+  "Le diagnostic local n’a pas pu être copié. Réessayez.": "ローカル診断をコピーできませんでした。もう一度お試しください。",
+  "Le service a renvoyé une réponse HTTP en erreur. Consultez le code d’erreur.": "サービスからHTTPエラー応答を受信しました。エラーコードを確認してください。",
+  "Résolution réseau": "ネットワーク名前解決"
 }

@@ -554,5 +554,19 @@
   "FuzeVPN ne peut pas utiliser la configuration réseau de cet ordinateur pour joindre le service.": "FuzeVPN не може використати мережеві налаштування цього комп’ютера для доступу до сервісу.",
   "La connexion sécurisée au service n’a pas pu être vérifiée.": "Не вдалося перевірити захищене з’єднання із сервісом.",
   "Cette mise à jour nécessite une installation manuelle depuis le site FuzeVPN.": "Це оновлення потрібно встановити вручну із сайту FuzeVPN.",
-  "Ouvrir le site FuzeVPN": "Відкрити сайт FuzeVPN"
+  "Ouvrir le site FuzeVPN": "Відкрити сайт FuzeVPN",
+  "Aucune étape enregistrée pour cette session.": "Для цього сеансу немає записаних етапів.",
+  "Ces étapes restent sur cet appareil. Copier le diagnostic permet de les partager manuellement.": "Ці етапи залишаються на цьому пристрої. Скопіювавши діагностику, ви зможете поділитися ними вручну.",
+  "Chronologie locale": "Локальна хронологія",
+  "Connexion de l’application": "З’єднання застосунку",
+  "Copier le diagnostic local": "Копіювати локальну діагностику",
+  "Diagnostic local copié.": "Локальну діагностику скопійовано.",
+  "La négociation de la connexion sécurisée a échoué. La cause n’est pas encore identifiée.": "Не вдалося узгодити захищене з’єднання. Причину ще не визначено.",
+  "La recherche de mise à jour a échoué.": "Не вдалося перевірити наявність оновлення.",
+  "La réponse reçue n’a pas pu être interprétée. Consultez le code d’erreur.": "Не вдалося інтерпретувати отриману відповідь. Перегляньте код помилки.",
+  "La tentative de connexion réseau a échoué. Cela ne permet pas de déterminer si le service est indisponible.": "Спроба мережевого з’єднання не вдалася. Це не дозволяє визначити, чи недоступна служба.",
+  "La vérification n’a pas abouti. La cause n’est pas encore identifiée.": "Перевірку не завершено. Причину ще не визначено.",
+  "Le diagnostic local n’a pas pu être copié. Réessayez.": "Не вдалося скопіювати локальну діагностику. Спробуйте ще раз.",
+  "Le service a renvoyé une réponse HTTP en erreur. Consultez le code d’erreur.": "Служба повернула відповідь HTTP із помилкою. Перегляньте код помилки.",
+  "Résolution réseau": "Визначення мережевих імен"
 }

@@ -554,5 +554,19 @@
   "FuzeVPN ne peut pas utiliser la configuration réseau de cet ordinateur pour joindre le service.": "FuzeVPN kan inte nå tjänsten med datorns nätverksinställningar.",
   "La connexion sécurisée au service n’a pas pu être vérifiée.": "Den säkra anslutningen till tjänsten kunde inte verifieras.",
   "Cette mise à jour nécessite une installation manuelle depuis le site FuzeVPN.": "Den här uppdateringen måste installeras manuellt från FuzeVPN:s webbplats.",
-  "Ouvrir le site FuzeVPN": "Öppna FuzeVPN:s webbplats"
+  "Ouvrir le site FuzeVPN": "Öppna FuzeVPN:s webbplats",
+  "Aucune étape enregistrée pour cette session.": "Inga steg har registrerats för den här sessionen.",
+  "Ces étapes restent sur cet appareil. Copier le diagnostic permet de les partager manuellement.": "Dessa steg finns kvar på den här enheten. Genom att kopiera diagnostiken kan du dela dem manuellt.",
+  "Chronologie locale": "Lokalt händelseförlopp",
+  "Connexion de l’application": "Appens anslutning",
+  "Copier le diagnostic local": "Kopiera lokal diagnostik",
+  "Diagnostic local copié.": "Lokal diagnostik kopierad.",
+  "La négociation de la connexion sécurisée a échoué. La cause n’est pas encore identifiée.": "Förhandlingen om en säker anslutning misslyckades. Orsaken har ännu inte identifierats.",
+  "La recherche de mise à jour a échoué.": "Sökningen efter uppdateringar misslyckades.",
+  "La réponse reçue n’a pas pu être interprétée. Consultez le code d’erreur.": "Det mottagna svaret kunde inte tolkas. Kontrollera felkoden.",
+  "La tentative de connexion réseau a échoué. Cela ne permet pas de déterminer si le service est indisponible.": "Försöket att ansluta till nätverket misslyckades. Det visar inte om tjänsten är otillgänglig.",
+  "La vérification n’a pas abouti. La cause n’est pas encore identifiée.": "Kontrollen slutfördes inte. Orsaken har ännu inte identifierats.",
+  "Le diagnostic local n’a pas pu être copié. Réessayez.": "Den lokala diagnostiken kunde inte kopieras. Försök igen.",
+  "Le service a renvoyé une réponse HTTP en erreur. Consultez le code d’erreur.": "Tjänsten returnerade ett HTTP-felsvar. Kontrollera felkoden.",
+  "Résolution réseau": "Namnuppslagning i nätverket"
 }

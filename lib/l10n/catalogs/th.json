@@ -554,5 +554,19 @@
   "FuzeVPN ne peut pas utiliser la configuration réseau de cet ordinateur pour joindre le service.": "FuzeVPN ไม่สามารถใช้การตั้งค่าเครือข่ายของคอมพิวเตอร์นี้เพื่อเข้าถึงบริการได้",
   "La connexion sécurisée au service n’a pas pu être vérifiée.": "ไม่สามารถตรวจสอบการเชื่อมต่อที่ปลอดภัยกับบริการได้",
   "Cette mise à jour nécessite une installation manuelle depuis le site FuzeVPN.": "การอัปเดตนี้ต้องติดตั้งด้วยตนเองจากเว็บไซต์ FuzeVPN",
-  "Ouvrir le site FuzeVPN": "เปิดเว็บไซต์ FuzeVPN"
+  "Ouvrir le site FuzeVPN": "เปิดเว็บไซต์ FuzeVPN",
+  "Aucune étape enregistrée pour cette session.": "ไม่มีขั้นตอนที่บันทึกไว้สำหรับเซสชันนี้",
+  "Ces étapes restent sur cet appareil. Copier le diagnostic permet de les partager manuellement.": "ขั้นตอนเหล่านี้จะอยู่บนอุปกรณ์นี้ การคัดลอกการวินิจฉัยช่วยให้คุณแชร์ได้ด้วยตนเอง",
+  "Chronologie locale": "ลำดับเหตุการณ์ในเครื่อง",
+  "Connexion de l’application": "การเชื่อมต่อของแอป",
+  "Copier le diagnostic local": "คัดลอกการวินิจฉัยในเครื่อง",
+  "Diagnostic local copié.": "คัดลอกการวินิจฉัยในเครื่องแล้ว",
+  "La négociation de la connexion sécurisée a échoué. La cause n’est pas encore identifiée.": "การเจรจาเชื่อมต่อที่ปลอดภัยล้มเหลว ยังไม่ทราบสาเหตุ",
+  "La recherche de mise à jour a échoué.": "การตรวจสอบการอัปเดตล้มเหลว",
+  "La réponse reçue n’a pas pu être interprétée. Consultez le code d’erreur.": "ไม่สามารถแปลผลคำตอบที่ได้รับได้ โปรดตรวจสอบรหัสข้อผิดพลาด",
+  "La tentative de connexion réseau a échoué. Cela ne permet pas de déterminer si le service est indisponible.": "ความพยายามเชื่อมต่อเครือข่ายล้มเหลว ข้อมูลนี้ยังระบุไม่ได้ว่าบริการไม่พร้อมใช้งานหรือไม่",
+  "La vérification n’a pas abouti. La cause n’est pas encore identifiée.": "การตรวจสอบไม่เสร็จสมบูรณ์ ยังไม่ทราบสาเหตุ",
+  "Le diagnostic local n’a pas pu être copié. Réessayez.": "ไม่สามารถคัดลอกการวินิจฉัยในเครื่องได้ โปรดลองอีกครั้ง",
+  "Le service a renvoyé une réponse HTTP en erreur. Consultez le code d’erreur.": "บริการส่งคำตอบ HTTP ที่มีข้อผิดพลาดกลับมา โปรดตรวจสอบรหัสข้อผิดพลาด",
+  "Résolution réseau": "การแปลงชื่อเครือข่าย"
 }

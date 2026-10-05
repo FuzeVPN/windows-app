@@ -554,5 +554,19 @@
   "FuzeVPN ne peut pas utiliser la configuration réseau de cet ordinateur pour joindre le service.": "FuzeVPN 无法使用此计算机的网络配置访问服务。",
   "La connexion sécurisée au service n’a pas pu être vérifiée.": "无法验证与服务的安全连接。",
   "Cette mise à jour nécessite une installation manuelle depuis le site FuzeVPN.": "此更新需要从 FuzeVPN 网站手动安装。",
-  "Ouvrir le site FuzeVPN": "打开 FuzeVPN 网站"
+  "Ouvrir le site FuzeVPN": "打开 FuzeVPN 网站",
+  "Aucune étape enregistrée pour cette session.": "本次会话没有已记录的步骤。",
+  "Ces étapes restent sur cet appareil. Copier le diagnostic permet de les partager manuellement.": "这些步骤保留在此设备上。复制诊断后，您可以手动分享这些记录。",
+  "Chronologie locale": "本地时间线",
+  "Connexion de l’application": "应用连接",
+  "Copier le diagnostic local": "复制本地诊断",
+  "Diagnostic local copié.": "已复制本地诊断。",
+  "La négociation de la connexion sécurisée a échoué. La cause n’est pas encore identifiée.": "安全连接协商失败，尚未确定原因。",
+  "La recherche de mise à jour a échoué.": "检查更新失败。",
+  "La réponse reçue n’a pas pu être interprétée. Consultez le code d’erreur.": "无法解析收到的响应，请查看错误代码。",
+  "La tentative de connexion réseau a échoué. Cela ne permet pas de déterminer si le service est indisponible.": "网络连接尝试失败，但这不能确定服务是否不可用。",
+  "La vérification n’a pas abouti. La cause n’est pas encore identifiée.": "检查未完成，尚未确定原因。",
+  "Le diagnostic local n’a pas pu être copié. Réessayez.": "无法复制本地诊断，请重试。",
+  "Le service a renvoyé une réponse HTTP en erreur. Consultez le code d’erreur.": "服务返回了 HTTP 错误响应，请查看错误代码。",
+  "Résolution réseau": "网络名称解析"
 }

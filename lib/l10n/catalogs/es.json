@@ -554,5 +554,19 @@
   "FuzeVPN ne peut pas utiliser la configuration réseau de cet ordinateur pour joindre le service.": "FuzeVPN no puede usar la configuración de red de este equipo para acceder al servicio.",
   "La connexion sécurisée au service n’a pas pu être vérifiée.": "No se pudo verificar la conexión segura con el servicio.",
   "Cette mise à jour nécessite une installation manuelle depuis le site FuzeVPN.": "Esta actualización requiere una instalación manual desde el sitio web de FuzeVPN.",
-  "Ouvrir le site FuzeVPN": "Abrir el sitio web de FuzeVPN"
+  "Ouvrir le site FuzeVPN": "Abrir el sitio web de FuzeVPN",
+  "Aucune étape enregistrée pour cette session.": "No se han registrado pasos en esta sesión.",
+  "Ces étapes restent sur cet appareil. Copier le diagnostic permet de les partager manuellement.": "Estos pasos permanecen en este dispositivo. Copiar el diagnóstico permite compartirlos manualmente.",
+  "Chronologie locale": "Cronología local",
+  "Connexion de l’application": "Conexión de la aplicación",
+  "Copier le diagnostic local": "Copiar diagnóstico local",
+  "Diagnostic local copié.": "Diagnóstico local copiado.",
+  "La négociation de la connexion sécurisée a échoué. La cause n’est pas encore identifiée.": "Falló la negociación de la conexión segura. Aún no se ha identificado la causa.",
+  "La recherche de mise à jour a échoué.": "Falló la búsqueda de actualizaciones.",
+  "La réponse reçue n’a pas pu être interprétée. Consultez le code d’erreur.": "No se pudo interpretar la respuesta recibida. Consulta el código de error.",
+  "La tentative de connexion réseau a échoué. Cela ne permet pas de déterminer si le service est indisponible.": "Falló el intento de conexión de red. Esto no permite determinar si el servicio no está disponible.",
+  "La vérification n’a pas abouti. La cause n’est pas encore identifiée.": "La comprobación no se completó. Aún no se ha identificado la causa.",
+  "Le diagnostic local n’a pas pu être copié. Réessayez.": "No se pudo copiar el diagnóstico local. Vuelve a intentarlo.",
+  "Le service a renvoyé une réponse HTTP en erreur. Consultez le code d’erreur.": "El servicio devolvió una respuesta HTTP de error. Consulta el código de error.",
+  "Résolution réseau": "Resolución de nombres"
 }

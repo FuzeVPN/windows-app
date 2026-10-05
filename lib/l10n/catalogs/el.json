@@ -554,5 +554,19 @@
   "FuzeVPN ne peut pas utiliser la configuration réseau de cet ordinateur pour joindre le service.": "Το FuzeVPN δεν μπορεί να χρησιμοποιήσει τις ρυθμίσεις δικτύου αυτού του υπολογιστή για πρόσβαση στην υπηρεσία.",
   "La connexion sécurisée au service n’a pas pu être vérifiée.": "Δεν ήταν δυνατή η επαλήθευση της ασφαλούς σύνδεσης με την υπηρεσία.",
   "Cette mise à jour nécessite une installation manuelle depuis le site FuzeVPN.": "Αυτή η ενημέρωση απαιτεί χειροκίνητη εγκατάσταση από τον ιστότοπο του FuzeVPN.",
-  "Ouvrir le site FuzeVPN": "Άνοιγμα του ιστότοπου του FuzeVPN"
+  "Ouvrir le site FuzeVPN": "Άνοιγμα του ιστότοπου του FuzeVPN",
+  "Aucune étape enregistrée pour cette session.": "Δεν έχουν καταγραφεί βήματα για αυτή τη συνεδρία.",
+  "Ces étapes restent sur cet appareil. Copier le diagnostic permet de les partager manuellement.": "Αυτά τα βήματα παραμένουν σε αυτή τη συσκευή. Αντιγράφοντας το διαγνωστικό μπορείτε να τα κοινοποιήσετε χειροκίνητα.",
+  "Chronologie locale": "Τοπικό χρονολόγιο",
+  "Connexion de l’application": "Σύνδεση εφαρμογής",
+  "Copier le diagnostic local": "Αντιγραφή τοπικού διαγνωστικού",
+  "Diagnostic local copié.": "Το τοπικό διαγνωστικό αντιγράφηκε.",
+  "La négociation de la connexion sécurisée a échoué. La cause n’est pas encore identifiée.": "Η διαπραγμάτευση της ασφαλούς σύνδεσης απέτυχε. Η αιτία δεν έχει εντοπιστεί ακόμη.",
+  "La recherche de mise à jour a échoué.": "Ο έλεγχος για ενημέρωση απέτυχε.",
+  "La réponse reçue n’a pas pu être interprétée. Consultez le code d’erreur.": "Δεν ήταν δυνατή η ερμηνεία της απάντησης που ελήφθη. Ελέγξτε τον κωδικό σφάλματος.",
+  "La tentative de connexion réseau a échoué. Cela ne permet pas de déterminer si le service est indisponible.": "Η προσπάθεια σύνδεσης στο δίκτυο απέτυχε. Αυτό δεν καθορίζει αν η υπηρεσία είναι μη διαθέσιμη.",
+  "La vérification n’a pas abouti. La cause n’est pas encore identifiée.": "Ο έλεγχος δεν ολοκληρώθηκε. Η αιτία δεν έχει εντοπιστεί ακόμη.",
+  "Le diagnostic local n’a pas pu être copié. Réessayez.": "Δεν ήταν δυνατή η αντιγραφή του τοπικού διαγνωστικού. Δοκιμάστε ξανά.",
+  "Le service a renvoyé une réponse HTTP en erreur. Consultez le code d’erreur.": "Η υπηρεσία επέστρεψε απάντηση HTTP με σφάλμα. Ελέγξτε τον κωδικό σφάλματος.",
+  "Résolution réseau": "Επίλυση ονομάτων δικτύου"
 }
