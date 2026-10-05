@@ -466,12 +466,11 @@ void main() {
 
   test('diagnostic consent and cleanup messages cover all 30 languages', () {
     const messages = [
-      'Diagnostic local',
-      'Envoyer le rapport de ce diagnostic',
-      'Diagnostic local uniquement. Connectez-vous à votre compte pour autoriser un envoi.',
-      'Résultats, versions et chronologie technique liés à votre compte. Conservation sur le serveur : 30 jours. Aucun journal brut, secret ou historique de navigation.',
+      'Diagnostic',
+      'Diagnostic complet',
+      'Diagnostic complet collecté. Connectez-vous à votre compte pour l’envoyer.',
+      'Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques, puis les transmet à l’assistance FuzeVPN. Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.',
       'En cas d’échec d’envoi, le rapport reste chiffré en attente pendant 24 heures au maximum. Vous pouvez annuler les tentatives restantes.',
-      'Le diagnostic vérifie l’état actuel sans modifier la connexion. Les mesures indisponibles restent indéterminées.',
       'Cette action réessaie l’arrêt du VPN et son nettoyage. Si elle réussit, le tunnel et ses protections sont retirés. Votre connexion Internet habituelle peut reprendre.',
     ];
     expect(translationCatalogs, hasLength(30));
@@ -500,12 +499,8 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('Diagnostic local'));
     await tester.pumpAndSettle();
-    final checkbox = tester.widget<CheckboxListTile>(
-      find.byType(CheckboxListTile),
-    );
-    expect(checkbox.value, isFalse);
-    expect(checkbox.onChanged, isNull);
-    expect(find.text('Diagnostiquer'), findsOneWidget);
+    expect(find.byType(CheckboxListTile), findsNothing);
+    expect(find.widgetWithText(FilledButton, 'Diagnostic'), findsOneWidget);
     await tester.tap(find.text('Fermer').last);
     await tester.pumpAndSettle();
     expect(find.byType(TextField), findsNWidgets(2));
@@ -532,11 +527,13 @@ void main() {
             ..themeMode = theme;
           await tester.pumpWidget(FuzeVpnApp(controller: app));
           await tester.pump();
-          final checkbox = tester.widget<CheckboxListTile>(
-            find.byType(CheckboxListTile),
+          final action = find.widgetWithText(
+            FilledButton,
+            AppStrings.forLanguage(language).text('Diagnostic'),
           );
-          expect(checkbox.value, isFalse);
-          expect(checkbox.onChanged, isNotNull);
+          expect(action, findsOneWidget);
+          expect(tester.widget<FilledButton>(action).onPressed, isNotNull);
+          expect(find.byType(CheckboxListTile), findsNothing);
           expect(
             tester.takeException(),
             isNull,

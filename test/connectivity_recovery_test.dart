@@ -693,6 +693,14 @@ class _RecoveryStore extends SecureStore {
 class _RecoveryApi extends ApiClient {
   _RecoveryApi({this.trace}) : super(baseUri: Uri.parse('http://localhost/'));
 
+  @override
+  Future<Subscription> subscription(String token) async => const Subscription(
+    status: SubscriptionStatus.active,
+    hasAccess: true,
+    renewsAutomatically: false,
+    cancelAtPeriodEnd: false,
+  );
+
   final List<String>? trace;
   int registerCalls = 0;
   bool failRenew = false;

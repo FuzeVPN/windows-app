@@ -40,25 +40,104 @@ class DiagnosticCheckView {
     this.label,
     this.result,
     this.ageMs, {
+    this.id = 'unknown',
     this.code,
     this.windowsError,
-  });
+    this.httpStatus,
+    String? tlsReason,
+    // Keep a public named argument while validating its private backing field.
+    // ignore: prefer_initializing_formals
+  }) : _tlsReason = tlsReason;
+  final String id;
   final String label;
   final String result;
   final int? ageMs;
   final String? code;
   final int? windowsError;
+  final int? httpStatus;
+  final String? _tlsReason;
+  String? get tlsReason =>
+      DiagnosticLog.tlsFailureReasons.contains(_tlsReason) ? _tlsReason : null;
+}
+
+// A local error reference is deliberately narrower than arbitrary exception
+// text. These additional native references are not part of the API v1 schema.
+const _localDiagnosticCodes = {
+  'api_resolver_invalid_response',
+  'maintenance_in_progress',
+  'network_unreachable',
+  'runtime_detection_failed',
+  'runtime_owned_by_another_user',
+};
+
+String? _localDiagnosticCode(String? code) => code == null
+    ? null
+    : diagnosticCodes.contains(code) || _localDiagnosticCodes.contains(code)
+    ? code
+    : 'unknown_error';
+
+String _diagnosticApiCheckLabel(String? code, int? httpStatus) {
+  if (httpStatus != null) return 'Accès aux services FuzeVPN';
+  return switch (code) {
+    'api_bootstrap_unavailable' ||
+    'api_resolution_unavailable' ||
+    'api_resolver_invalid_response' ||
+    'endpoint_resolution_failed' => 'Résolution réseau',
+    'storage_access_denied' ||
+    'storage_corrupt' ||
+    'storage_decryption_failed' ||
+    'storage_error' ||
+    'storage_failure' ||
+    'storage_io_error' ||
+    'storage_unavailable' ||
+    'secure_storage_corrupt' ||
+    'secure_storage_read_failed' ||
+    'secure_storage_write_failed' => 'Stockage protégé',
+    'broker_unavailable' ||
+    'broker_busy' ||
+    'broker_write_failed' ||
+    'broker_response_timeout' ||
+    'broker_protocol_error' ||
+    'runtime_detection_failed' ||
+    'runtime_status_unavailable' ||
+    'runtime_unavailable' ||
+    'runtime_owned_by_another_user' ||
+    'service_configuration_mismatch' ||
+    'service_unavailable' ||
+    'native_bridge_unavailable' ||
+    'native_operation_failed' ||
+    'maintenance_in_progress' => 'Moteur VPN',
+    'permission_denied' => 'Autorisations',
+    'network_unreachable' ||
+    'network_error' ||
+    'network_unavailable' ||
+    'network_timeout' ||
+    'request_timeout' ||
+    'tls_handshake_failed' ||
+    'api_transport_unsupported' ||
+    'invalid_api_response' ||
+    'invalid_response' => 'Connexion de l’application',
+    _ => 'Vérification technique',
+  };
 }
 
 // Native detail is for the local view only. The versioned report retains its
 // existing code schema and never includes raw exception text or details.
 class _LocalDiagnosticApiFailure {
-  const _LocalDiagnosticApiFailure(this.code, this.windowsError);
+  const _LocalDiagnosticApiFailure(
+    this.code,
+    this.windowsError,
+    this.httpStatus,
+    this.tlsReason,
+  );
   final String code;
   final int? windowsError;
+  final int? httpStatus;
+  final String? tlsReason;
 }
 
 final _diagnosticApiFailures = Expando<_LocalDiagnosticApiFailure>();
+final _diagnosticNativeFailures = Expando<_LocalDiagnosticApiFailure>();
 
 class DiagnosticDeliveryView {
   const DiagnosticDeliveryView(
@@ -129,11 +208,239 @@ extension AppDiagnostics on AppController {
     return 'Le rapport n’a pas pu être envoyé ou enregistré. Le VPN continue de fonctionner indépendamment.';
   }
 
+  String? get diagnosticDeliveryCode {
+    final value = diagnostics.lastFailure?.code;
+    return value == null
+        ? null
+        : diagnosticCodes.contains(value) ||
+              const {
+                'invalid_diagnostic',
+                'diagnostic_conflict',
+                'diagnostic_too_large',
+                'diagnostic_quota_exceeded',
+                'diagnostics_unavailable',
+                'diagnostic_content_unavailable',
+                'diagnostic_session_required',
+                'diagnostics_storage_failed',
+                'diagnostic_delivery_unknown',
+                'diagnostic_rate_limited',
+                'diagnostic_queue_full',
+                'diagnostic_environment_invalid',
+                'diagnostic_preparation_failed',
+                'diagnostic_collection_failed',
+                'diagnostic_cancelled',
+                'broker_unavailable',
+                'runtime_detection_failed',
+              }.contains(value)
+        ? value
+        : 'unknown_error';
+  }
+
+  int? get diagnosticDeliveryHttpStatus {
+    final value = diagnostics.lastFailure?.httpStatus;
+    return value != null && value >= 100 && value <= 599 ? value : null;
+  }
+
   String? get diagnosticPreview => preparedDiagnosticReport == null
       ? null
       : const JsonEncoder.withIndent(
           '  ',
         ).convert(preparedDiagnosticReport!.json);
+
+  /// The complete support report merges the persisted and current app trace
+  /// with native evidence; this getter remains for internal compatibility.
+  List<String> get diagnosticLocalTrace => DiagnosticLog.recentLines;
+
+  String get diagnosticLocalExport =>
+      diagnosticPreview ??
+      const JsonEncoder.withIndent('  ').convert({
+        'status': 'not_collected',
+        if (_diagnosticSupport != null) 'support': _diagnosticSupport,
+      });
+
+  bool get canRunCompleteDiagnostic =>
+      !_disposed &&
+      !diagnosticRunning &&
+      !diagnosticRepairRunning &&
+      !diagnosticExportRunning &&
+      !_completeDiagnosticRunning &&
+      !_isSigningOut;
+
+  Future<String> collectLocalDiagnosticExport() {
+    final existing = _diagnosticExport;
+    if (existing != null) return existing;
+    final future = _collectCompleteDiagnosticExport();
+    _diagnosticExport = future;
+    return future;
+  }
+
+  Future<String> _collectCompleteDiagnosticExport() async {
+    diagnosticExportRunning = true;
+    _notifyDiagnosticView();
+    try {
+      if (canRunDiagnostic) {
+        await runUserDiagnostic();
+      } else {
+        final generation = _diagnosticGeneration;
+        final support = await _collectCompleteSupport(report: 'busy');
+        if (!_disposed && generation == _diagnosticGeneration) {
+          _diagnosticSupport = support;
+          preparedDiagnosticReport = diagnostics.prepareManualReport(
+            snapshot: {
+              'protocol': _diagnosticProtocol,
+              'state': _diagnosticState,
+              'snapshot': {'kill_switch_requested': killSwitchEnabled},
+              'windows': {'support': support},
+            },
+          );
+        }
+      }
+      return diagnosticLocalExport;
+    } finally {
+      _diagnosticExport = null;
+      diagnosticExportRunning = false;
+      _notifyDiagnosticView();
+    }
+  }
+
+  Future<void> runCompleteDiagnostic() async {
+    if (!canRunCompleteDiagnostic) return;
+    _completeDiagnosticRunning = true;
+    try {
+      await _runCompleteDiagnostic();
+    } finally {
+      _completeDiagnosticRunning = false;
+      _notifyDiagnosticView();
+    }
+  }
+
+  Future<void> _runCompleteDiagnostic() async {
+    final account = profile?.userId;
+    final sessionEpoch = _sessionEpoch;
+    await collectLocalDiagnosticExport();
+    if (_disposed ||
+        _isSigningOut ||
+        sessionEpoch != _sessionEpoch ||
+        account != profile?.userId) {
+      return;
+    }
+    final report = preparedDiagnosticReport;
+    if (report == null) {
+      diagnosticMessage = 'Le diagnostic est incomplet. Réessayez.';
+    } else if (account == null) {
+      diagnosticMessage =
+          'Diagnostic complet collecté. Connectez-vous à votre compte pour l’envoyer.';
+    } else {
+      diagnosticExportRunning = true;
+      _notifyDiagnosticView();
+      try {
+        final received = await diagnostics.sendPreparedReport(report);
+        if (_disposed ||
+            sessionEpoch != _sessionEpoch ||
+            account != profile?.userId) {
+          return;
+        }
+        diagnosticMessage = received
+            ? 'Diagnostic complet transmis à l’assistance.'
+            : diagnostics.pendingReports.any(
+                (r) => r.reportId == report.reportId && r.terminalCode == null,
+              )
+            ? 'Diagnostic complet conservé, en attente d’envoi.'
+            : 'Le diagnostic complet n’a pas pu être transmis. Consultez le code d’erreur.';
+      } finally {
+        diagnosticExportRunning = false;
+      }
+    }
+    _notifyDiagnosticView();
+  }
+
+  Future<Map<String, Object?>> _collectCompleteSupport({
+    required String report,
+  }) async {
+    Map<String, Object?> unavailable(String status, {int? windowsError}) => {
+      'status': status,
+      'truncated': false,
+      'discarded_lines': 0,
+      if (windowsError != null &&
+          windowsError >= 0 &&
+          windowsError <= 0xffffffff)
+        'win32_error': windowsError,
+    };
+    final applicationFuture = () async {
+      try {
+        return await LocalDiagnosticTrace.collect(
+          currentLines: DiagnosticLog.recentLines,
+        ).timeout(const Duration(seconds: 3));
+      } on TimeoutException {
+        return {...unavailable('timeout'), 'events': <Object?>[]};
+      } catch (_) {
+        return {...unavailable('read_failed'), 'events': <Object?>[]};
+      }
+    }();
+    final nativeFuture = () async {
+      try {
+        final value = await _diagnosticsBridge
+            .collectLocalDiagnostics()
+            .timeout(const Duration(seconds: 5));
+        return <String, Object?>{
+          'observation': value,
+          'collection': unavailable('ok'),
+        };
+      } on TimeoutException {
+        return <String, Object?>{'collection': unavailable('timeout')};
+      } on PlatformException catch (error) {
+        final details = error.details;
+        final code = details is Map ? details['win32_error'] : null;
+        return <String, Object?>{
+          'collection': unavailable(
+            'unavailable',
+            windowsError: code is int ? code : null,
+          ),
+        };
+      } catch (_) {
+        return <String, Object?>{'collection': unavailable('unavailable')};
+      }
+    }();
+    final application = await applicationFuture;
+    final native = await nativeFuture;
+    final observation =
+        native['observation'] as Map<String, Object?>? ?? const {};
+    final nativeLog =
+        observation['native_log'] as Map<String, Object?>? ??
+        unavailable('unavailable');
+    final timeline =
+        <Map<String, Object?>>[
+          for (final event in application['events'] as List)
+            {
+              'source': 'application',
+              ...Map<String, Object?>.from(event as Map),
+            },
+          for (final event in nativeLog['events'] as List? ?? const [])
+            {'source': 'native', ...Map<String, Object?>.from(event as Map)},
+        ]..sort((a, b) {
+          final order = DateTime.parse(
+            a['timestamp'] as String,
+          ).compareTo(DateTime.parse(b['timestamp'] as String));
+          return order != 0 ? order : jsonEncode(a).compareTo(jsonEncode(b));
+        });
+    Map<String, Object?> metadata(Map<String, Object?> value) =>
+        Map.of(value)..remove('events');
+    return DiagnosticSupport.validate({
+      'schema_version': 1,
+      'collected_at': _now().toUtc().toIso8601String(),
+      'collection': {
+        'report': report,
+        'application_log': metadata(application),
+        'native': native['collection'],
+        'native_log': metadata(nativeLog),
+      },
+      if (observation['environment'] != null)
+        'environment': observation['environment'],
+      if (observation['service'] != null) 'service': observation['service'],
+      if (observation['runtime'] != null) 'runtime': observation['runtime'],
+      'timeline': timeline,
+    });
+  }
 
   List<DiagnosticCheckView> get diagnosticChecks {
     final values = diagnosticResults?['checks'];
@@ -143,10 +450,19 @@ extension AppDiagnostics on AppController {
         .map(
           (check) => DiagnosticCheck.fromMap(Map<String, Object?>.from(check)),
         )
-        .map(
-          (check) => DiagnosticCheckView(
+        .map((check) {
+          final failure = check.id == 'api_reachability'
+              ? _diagnosticApiFailures[this]
+              : check.id == 'service_availability'
+              ? _diagnosticNativeFailures[this]
+              : null;
+          final code = _localDiagnosticCode(failure?.code ?? check.code);
+          return DiagnosticCheckView(
             switch (check.id) {
-              'api_reachability' => 'Accès aux services FuzeVPN',
+              'api_reachability' =>
+                check.result == 'passed'
+                    ? 'Accès aux services FuzeVPN'
+                    : _diagnosticApiCheckLabel(code, failure?.httpStatus),
               'service_availability' => 'Moteur VPN',
               'driver_availability' => 'Pilote VPN',
               'secure_storage' => 'Stockage protégé',
@@ -167,14 +483,13 @@ extension AppDiagnostics on AppController {
             },
             check.result,
             check.ageMs,
-            code: check.id == 'api_reachability'
-                ? _diagnosticApiFailures[this]?.code ?? check.code
-                : check.code,
-            windowsError: check.id == 'api_reachability'
-                ? _diagnosticApiFailures[this]?.windowsError
-                : null,
-          ),
-        )
+            id: check.id,
+            code: code,
+            windowsError: failure?.windowsError,
+            httpStatus: failure?.httpStatus,
+            tlsReason: failure?.tlsReason,
+          );
+        })
         .toList(growable: false);
   }
 
@@ -191,7 +506,18 @@ extension AppDiagnostics on AppController {
   }
 
   void _onDiagnosticsChanged() {
-    if (!_disposed) _notifyDiagnosticView();
+    if (!_disposed) {
+      final report = preparedDiagnosticReport;
+      if (report != null &&
+          diagnosticMessage ==
+              'Diagnostic complet conservé, en attente d’envoi.' &&
+          diagnostics.receipts.any(
+            (receipt) => receipt.clientReportId == report.reportId,
+          )) {
+        diagnosticMessage = 'Diagnostic complet transmis à l’assistance.';
+      }
+      _notifyDiagnosticView();
+    }
   }
 
   void _bindDiagnosticSession() {
@@ -201,6 +527,7 @@ extension AppDiagnostics on AppController {
       _diagnosticGeneration++;
       preparedDiagnosticReport = null;
       diagnosticResults = null;
+      _diagnosticSupport = null;
       diagnosticMessage = null;
     }
     final epoch = _sessionEpoch;
@@ -250,6 +577,7 @@ extension AppDiagnostics on AppController {
     _diagnosticGeneration++;
     preparedDiagnosticReport = null;
     diagnosticResults = null;
+    _diagnosticSupport = null;
     unawaited(diagnostics.suspendSession(purge: purge));
   }
 
@@ -300,12 +628,19 @@ extension AppDiagnostics on AppController {
         environment: fields,
       );
       result['environment'] = fields;
-    } catch (_) {
+    } catch (error) {
+      await DiagnosticLog.recordFailure(
+        area: 'runtime_state',
+        event: 'failed',
+        stage: 'diagnostic_environment',
+        error: error,
+      );
       /* Environment remains unknown, never guessed from UI. */
     }
     if (_disposed || generation != _diagnosticGeneration || isConnectionBusy) {
       throw const DiagnosticsFailure('diagnostic_cancelled');
     }
+    _diagnosticNativeFailures[this] = null;
     try {
       final native = await _diagnosticsBridge.collectSnapshot().timeout(
         const Duration(seconds: 8),
@@ -316,10 +651,39 @@ extension AppDiagnostics on AppController {
           const {'openvpn', 'wireguard'}.contains(runtime['protocol'])) {
         protocol = runtime['protocol'] as String;
       }
-    } catch (_) {
+    } catch (error) {
+      await DiagnosticLog.recordFailure(
+        area: 'runtime_state',
+        event: 'failed',
+        stage: 'native_snapshot',
+        error: error,
+      );
+      final details = error is PlatformException ? error.details : null;
+      final nativeCode = details is Map ? details['win32_error'] : null;
+      final windowsError =
+          nativeCode is int && nativeCode >= 0 && nativeCode <= 0xffffffff
+          ? nativeCode
+          : null;
+      final code = _localDiagnosticCode(
+        error is PlatformException
+            ? error.code
+            : error is TimeoutException
+            ? 'request_timeout'
+            : 'native_bridge_unavailable',
+      )!;
+      _diagnosticNativeFailures[this] = _LocalDiagnosticApiFailure(
+        code,
+        windowsError,
+        null,
+        null,
+      );
       result['runtime'] = <String, Object?>{'presence': 'unknown'};
       result['checks'] = <Object?>[
-        {'id': 'service_availability', 'result': 'unknown'},
+        {
+          'id': 'service_availability',
+          'result': 'unknown',
+          'code': diagnosticCode(code),
+        },
         {'id': 'tunnel_connection', 'result': 'unknown'},
         {'id': 'kill_switch', 'result': 'unknown'},
       ];
@@ -341,23 +705,60 @@ extension AppDiagnostics on AppController {
         ).toJson(),
       );
     } catch (error) {
-      final code = switch (error) {
+      final code = _localDiagnosticCode(switch (error) {
         ApiException error => error.diagnosticErrorCode,
-        HandshakeException _ => 'tls_handshake_failed',
+        PlatformException error => error.code,
+        TlsException _ => 'tls_handshake_failed',
         SocketException _ => 'network_unreachable',
         TimeoutException _ => 'request_timeout',
         FormatException _ => 'invalid_api_response',
-        _ => 'api_error',
+        _ => 'unexpected_error',
+      })!;
+      final nativeCode = switch (error) {
+        ApiException error => error.windowsError,
+        SocketException error => error.osError?.errorCode,
+        _ => null,
       };
-      final windowsError = error is ApiException ? error.windowsError : null;
+      final windowsError =
+          nativeCode != null &&
+              nativeCode >= -0x80000000 &&
+              nativeCode <= 0xffffffff
+          ? nativeCode
+          : null;
+      final observedStatus = error is ApiException
+          ? error.observedHttpStatus
+          : null;
+      final httpStatus =
+          observedStatus != null &&
+              observedStatus >= 100 &&
+              observedStatus <= 599
+          ? observedStatus
+          : null;
+      // Dart's TLS osError code belongs to the TLS implementation, not Win32.
+      // Only a canonical reason from its bounded allowlist reaches the UI.
+      final tlsReason = error is TlsException
+          ? DiagnosticLog.tlsFailureReason(error)
+          : null;
       _diagnosticApiFailures[this] = _LocalDiagnosticApiFailure(
         code,
         windowsError,
+        httpStatus,
+        tlsReason,
       );
       final localUnavailable =
-          error is ApiException &&
-          error.localErrorCode != null &&
-          error.observedHttpStatus == null;
+          httpStatus == null &&
+          (error is PlatformException ||
+              error is ApiException && error.localErrorCode != null ||
+              const {
+                'Moteur VPN',
+                'Stockage protégé',
+                'Résolution réseau',
+                'Autorisations',
+                'Vérification technique',
+              }.contains(_diagnosticApiCheckLabel(code, null)) ||
+              code == 'api_transport_unsupported' ||
+              code == 'unknown_error' ||
+              code == 'unexpected_error');
       checks.add(
         DiagnosticCheck(
           id: 'api_reachability',
@@ -396,17 +797,27 @@ extension AppDiagnostics on AppController {
     diagnosticMessage = null;
     diagnosticResults = null;
     preparedDiagnosticReport = null;
+    _diagnosticSupport = null;
     _notifyDiagnosticView();
     try {
       final snapshot = await diagnostics.runChecks();
       if (_disposed || generation != _diagnosticGeneration) return;
-      if (snapshot == null) {
-        diagnosticMessage = 'Le diagnostic est incomplet. Réessayez.';
-        return;
-      }
+      final support = await _collectCompleteSupport(
+        report: snapshot == null ? 'failed' : 'ok',
+      );
+      if (_disposed || generation != _diagnosticGeneration) return;
+      _diagnosticSupport = support;
       diagnosticResults = snapshot;
       preparedDiagnosticReport = diagnostics.prepareManualReport(
-        snapshot: snapshot,
+        snapshot: {
+          ...?snapshot,
+          if (snapshot == null) 'protocol': _diagnosticProtocol,
+          if (snapshot == null) 'state': _diagnosticState,
+          'windows': {
+            ...?snapshot?['windows'] as Map<String, Object?>?,
+            'support': support,
+          },
+        },
       );
       diagnosticMessage =
           'Diagnostic terminé. Consultez les résultats ci-dessous.';

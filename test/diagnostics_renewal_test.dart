@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fuzevpn_windows/app_controller.dart';
 import 'package:fuzevpn_windows/core/api_client.dart';
+import 'package:fuzevpn_windows/core/diagnostic_log.dart';
 import 'package:fuzevpn_windows/core/diagnostics_controller.dart';
 import 'package:fuzevpn_windows/core/diagnostics_models.dart';
 import 'package:fuzevpn_windows/core/models.dart';
@@ -195,6 +196,43 @@ void main() {
       expect(diagnostics.errors, isEmpty);
     });
   }
+
+  test(
+    'native interruption trace preserves fixed references without exception text',
+    () async {
+      for (final code in [
+        'operation_cancelled',
+        'permission_denied',
+        'runtime_owned_by_another_user',
+        'maintenance_in_progress',
+      ]) {
+        final before = DiagnosticLog.recentLines.length;
+        await DiagnosticLog.recordFailure(
+          area: 'openvpn',
+          event: 'certificate_renewal_failed',
+          stage: 'certificate_renewal',
+          error: PlatformException(
+            code: code,
+            message: 'private-message',
+            details: {'private-field': 'private-detail'},
+          ),
+        );
+        final line = DiagnosticLog.recentLines.skip(before).single;
+        expect(line, contains('code=$code '));
+        expect(line, isNot(contains('native_operation_failed')));
+        expect(line, isNot(contains('private')));
+      }
+      final before = DiagnosticLog.recentLines.length;
+      await DiagnosticLog.recordFailure(
+        area: 'openvpn',
+        event: 'certificate_renewal_failed',
+        error: PlatformException(code: 'operation_cancelled_private_secret'),
+      );
+      final line = DiagnosticLog.recentLines.skip(before).single;
+      expect(line, contains('code=native_operation_failed '));
+      expect(line, isNot(contains('private_secret')));
+    },
+  );
 
   test('unexpected renewal failure preserves renew context', () async {
     final diagnostics = _RecordingDiagnostics();

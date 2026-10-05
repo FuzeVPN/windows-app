@@ -52,8 +52,10 @@ void main() {
       addTearDown(app.dispose);
       await app.initialize();
       final trace = events.where((e) => e.area == 'runtime_state').toList();
-      expect(trace.first.event, 'startup_wireguard_connected_failed');
-      expect(trace.first.code, 'broker_unavailable');
+      final startupFailure = trace.singleWhere(
+        (entry) => entry.event == 'startup_wireguard_connected_failed',
+      );
+      expect(startupFailure.code, 'broker_unavailable');
       expect(
         trace,
         contains((

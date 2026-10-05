@@ -11,6 +11,7 @@
 #include "win32_window.h"
 #include "update_channel.h"
 #include "diagnostics_store.h"
+#include "tls_trust_channel.h"
 
 // A window that does nothing but host a Flutter view.
 class FlutterWindow : public Win32Window {
@@ -41,6 +42,7 @@ class FlutterWindow : public Win32Window {
   bool tray_available_ = false;
   std::unique_ptr<UpdateChannel> update_channel_;
   std::unique_ptr<DiagnosticsStoreChannel> diagnostics_store_channel_;
+  std::unique_ptr<TlsTrustChannel> tls_trust_channel_;
 };
 
 #endif  // RUNNER_FLUTTER_WINDOW_H_

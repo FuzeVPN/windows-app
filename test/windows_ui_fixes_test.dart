@@ -473,7 +473,20 @@ void main() {
       expect(find.text('Verified'), findsOneWidget);
       expect(find.text('Vérifié'), findsNothing);
       expect(find.text('Measurement age : 13 s'), findsOneWidget);
-      expect(find.byType(CheckboxListTile), findsOneWidget);
+      expect(find.byType(CheckboxListTile), findsNothing);
+      final diagnostic = find.widgetWithText(FilledButton, 'Diagnostics');
+      expect(diagnostic, findsOneWidget);
+      expect(tester.widget<FilledButton>(diagnostic).onPressed, isNotNull);
+      await tester.ensureVisible(diagnostic);
+      await tester.pumpAndSettle();
+      final bounds = tester.getRect(diagnostic);
+      expect(bounds.width, lessThanOrEqualTo(640));
+      expect(bounds.height, lessThanOrEqualTo(360));
+      expect(
+        const Rect.fromLTWH(0, 0, 640, 360).contains(bounds.center),
+        isTrue,
+      );
+      expect(tester.takeException(), isNull);
       await tester.pumpWidget(const SizedBox.shrink());
       controller.dispose();
     },

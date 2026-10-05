@@ -403,6 +403,10 @@ String _updateError(String code) => switch (code) {
     'Le téléchargement a été interrompu par une erreur réseau.',
   'update_network_failed' =>
     'Le service de mises à jour est inaccessible. Vérifiez votre connexion Internet.',
+  'tls_handshake_failed' =>
+    'La connexion sécurisée au service n’a pas pu être vérifiée.',
+  'api_bootstrap_unavailable' || 'api_resolution_unavailable' =>
+    'FuzeVPN ne peut pas utiliser la configuration réseau de cet ordinateur pour joindre le service.',
   'update_download_timeout' =>
     'Le délai de téléchargement a été dépassé. Réessayez.',
   'update_network_timeout' =>
@@ -431,7 +435,23 @@ String _updateError(String code) => switch (code) {
   'update_environment_invalid' => _distributionUnavailableMessage,
   'update_portable_target_invalid' =>
     'Le dossier portable ne peut pas être mis à jour. Déplacez FuzeVPN dans un dossier accessible en écriture et réessayez.',
-  'update_request_failed' => 'Le service de mises à jour a refusé la demande.',
+  'update_request_failed' ||
+  'api_resolver_invalid_response' ||
+  'api_transport_unsupported' ||
+  'broker_busy' ||
+  'broker_protocol_error' ||
+  'broker_response_timeout' ||
+  'broker_unavailable' ||
+  'broker_write_failed' ||
+  'native_bridge_unavailable' ||
+  'native_operation_failed' ||
+  'permission_denied' ||
+  'runtime_owned_by_another_user' ||
+  'runtime_detection_failed' ||
+  'runtime_status_unavailable' ||
+  'runtime_unavailable' ||
+  'service_configuration_mismatch' ||
+  'service_unavailable' => 'La recherche de mise à jour a échoué.',
   'update_download_failed' => 'Le téléchargement de la mise à jour a échoué.',
   'update_prepare_failed' => 'Windows n’a pas pu préparer la mise à jour.',
   'update_not_prepared' => 'Téléchargez la mise à jour avant de l’installer.',
@@ -458,6 +478,7 @@ String _updateDiagnostics(BuildContext context, WindowsUpdateFailure failure) {
     );
   }
   if (failure.statusCode case final status?) lines.add('HTTP : $status');
+  if (failure.tlsReason case final reason?) lines.add('TLS : $reason');
   if (failure.windowsError case final code?) {
     lines.add(
       context.tr('Code Windows : {code}').replaceAll('{code}', '$code'),

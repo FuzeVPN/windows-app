@@ -436,6 +436,14 @@ class AutomaticApi extends ApiClient {
   ApiException? registerError;
 
   @override
+  Future<Subscription> subscription(String token) async => const Subscription(
+    status: SubscriptionStatus.active,
+    hasAccess: true,
+    renewsAutomatically: false,
+    cancelAtPeriodEnd: false,
+  );
+
+  @override
   Future<DeviceConfiguration> registerDevice({
     required String token,
     required String name,

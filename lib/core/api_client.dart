@@ -7,17 +7,21 @@ import 'dart:typed_data';
 import 'package:flutter/services.dart';
 
 import '../brand_config.dart';
+import 'diagnostic_log.dart';
 import 'diagnostics_models.dart';
 import 'models.dart';
 import 'wireguard_bridge.dart';
 import 'windows_update_models.dart';
+import 'windows_tls_trust.dart';
 
 /// A deliberately small representation of an API error.
 ///
 /// It keeps only the stable fields the UI is allowed to act upon. Response
 /// bodies, headers other than Retry-After, credentials and VPN configuration
 /// are intentionally discarded.
-class ApiException implements Exception {
+const _apiTraceZoneKey = #fuzeApiTraceRequest;
+
+class ApiException implements Exception, DiagnosticFailureDetails {
   const ApiException({
     required this.statusCode,
     required this.errorCode,
@@ -40,8 +44,19 @@ class ApiException implements Exception {
 
   String get diagnosticErrorCode => localErrorCode ?? errorCode;
 
+  @override
+  String get diagnosticFailureCode =>
+      localErrorCode ?? diagnosticCode(errorCode);
+  @override
+  int? get diagnosticWindowsError => windowsError;
+  @override
+  int? get diagnosticHttpStatus => observedHttpStatus;
+
   static const _resolverLocalCodes = <String>{
     'api_bootstrap_unavailable',
+    'api_resolver_invalid_response',
+    'native_bridge_unavailable',
+    'native_operation_failed',
     'broker_busy',
     'broker_protocol_error',
     'broker_response_timeout',
@@ -68,8 +83,14 @@ class ApiException implements Exception {
       if (value is int && value >= 0 && value <= 0xffffffff) {
         windowsError = value;
       }
+    } else if (error is MissingPluginException) {
+      code = 'native_bridge_unavailable';
+    } else if (error is FormatException || error is TypeError) {
+      code = 'api_resolver_invalid_response';
     } else if (error is TimeoutException) {
       code = 'network_timeout';
+    } else {
+      code = 'native_operation_failed';
     }
     return ApiException(
       statusCode: 503,
@@ -226,6 +247,7 @@ class ApiClient {
     int maxResponseBytes = 1024 * 1024,
     Future<List<String>> Function()? resolveApiAddresses,
     SecurityContext? securityContext,
+    Future<Uint8List?> Function(Uint8List, String)? verifyApiCertificate,
     DateTime Function()? retryAfterClock,
     this.windowsUpdateClock,
   }) : assert(connectionTimeout > Duration.zero),
@@ -237,6 +259,13 @@ class ApiClient {
        _maxResponseBytes = maxResponseBytes,
        _retryAfterClock = retryAfterClock ?? DateTime.now,
        _securityContext = securityContext {
+    _verifyApiCertificate =
+        verifyApiCertificate ??
+        (Platform.isWindows &&
+                _baseUri.origin == Uri.parse(baseUrl).origin &&
+                securityContext == null
+            ? WindowsTlsTrust().verifyApiCertificate
+            : null);
     _client.connectionTimeout = connectionTimeout;
     _resolveApiAddresses =
         resolveApiAddresses ??
@@ -264,6 +293,9 @@ class ApiClient {
           context: _securityContext,
           timeout: connectionTimeout,
           onFailure: invalidateBootstrapCache,
+          recoverTlsTrust: _verifyApiCertificate == null
+              ? null
+              : (certificate) => _recoverApiTlsTrust(certificate, uri.host),
         );
         final socket = attempt.connect();
         // A resolver may fail in the microtask that precedes HttpClient's
@@ -283,7 +315,11 @@ class ApiClient {
   final int _maxResponseBytes;
   final DateTime Function() _retryAfterClock;
   final _responseClocks = Expando<Stopwatch>();
-  final SecurityContext? _securityContext;
+  final _responseRequestIds = Expando<int>();
+  SecurityContext? _securityContext;
+  Future<Uint8List?> Function(Uint8List, String)? _verifyApiCertificate;
+  Future<SecurityContext?>? _tlsTrustRecovery;
+  bool _closed = false;
   Future<List<String>> Function()? _resolveApiAddresses;
   Future<List<InternetAddress>>? _addressResolution;
   Stopwatch? _addressAge;
@@ -464,16 +500,112 @@ class ApiClient {
     _addressAge = null;
   }
 
-  void close() => _client.close(force: true);
+  void close() {
+    _closed = true;
+    _client.close(force: true);
+  }
+
+  Future<SecurityContext?> _recoverApiTlsTrust(
+    Uint8List certificate,
+    String hostname,
+  ) {
+    if (_closed) return Future.value();
+    final pending = _tlsTrustRecovery;
+    if (pending != null) return pending;
+    final recovery = () async {
+      final traceId = Zone.current[_apiTraceZoneKey] as int?;
+      final timer = Stopwatch()..start();
+      DiagnosticLog.record(
+        area: 'api_transport',
+        event: 'windows_trust_started',
+        stage: 'windows_certificate_verification',
+        requestId: traceId,
+      );
+      try {
+        final anchor = await _verifyApiCertificate!(
+          certificate,
+          hostname,
+        ).timeout(_requestTimeout);
+        if (_closed || anchor == null) {
+          DiagnosticLog.record(
+            area: 'api_transport',
+            event: 'windows_trust_rejected',
+            stage: 'windows_certificate_verification',
+            requestId: traceId,
+            durationMs: timer.elapsedMilliseconds,
+          );
+          return null;
+        }
+        if (anchor.isEmpty || anchor.length > 65536) {
+          throw const FormatException('Invalid Windows trust anchor.');
+        }
+        final encoded = base64Encode(anchor);
+        final pem = StringBuffer('-----BEGIN CERTIFICATE-----\n');
+        for (var offset = 0; offset < encoded.length; offset += 64) {
+          final end = offset + 64 < encoded.length
+              ? offset + 64
+              : encoded.length;
+          pem.writeln(encoded.substring(offset, end));
+        }
+        pem.writeln('-----END CERTIFICATE-----');
+        // Only an anchor returned after strict Windows chain/SSL policy
+        // verification is added. The rejected server certificate is never
+        // trusted directly, and the next TLS handshake still checks its chain
+        // and original hostname with Dart's ordinary certificate verifier.
+        final refreshed = SecurityContext(withTrustedRoots: true)
+          ..setTrustedCertificatesBytes(utf8.encode(pem.toString()));
+        _securityContext = refreshed;
+        DiagnosticLog.record(
+          area: 'api_transport',
+          event: 'windows_trust_completed',
+          stage: 'windows_certificate_verification',
+          requestId: traceId,
+          durationMs: timer.elapsedMilliseconds,
+        );
+        return refreshed;
+      } catch (error) {
+        DiagnosticLog.recordFailure(
+          area: 'api_transport',
+          event: 'windows_trust_failed',
+          stage: 'windows_certificate_verification',
+          error: error,
+          requestId: traceId,
+          durationMs: timer.elapsedMilliseconds,
+        );
+        return null;
+      }
+    }();
+    _tlsTrustRecovery = recovery;
+    unawaited(
+      recovery.then<void>((_) {
+        if (identical(_tlsTrustRecovery, recovery)) _tlsTrustRecovery = null;
+      }),
+    );
+    return recovery;
+  }
 
   Future<List<InternetAddress>> _resolvedAddresses() {
+    final traceId = Zone.current[_apiTraceZoneKey] as int?;
     if (_addressResolution != null &&
         _addressAge != null &&
         _addressAge!.elapsed < const Duration(seconds: 30)) {
+      DiagnosticLog.record(
+        area: 'api_transport',
+        event: 'resolver_cache_hit',
+        stage: 'native_resolution',
+        requestId: traceId,
+      );
       return _addressResolution!;
     }
     final generation = _addressGeneration;
     final resolving = () async {
+      final timer = Stopwatch()..start();
+      DiagnosticLog.record(
+        area: 'api_transport',
+        event: 'native_resolution_started',
+        stage: 'native_resolution',
+        requestId: traceId,
+      );
       try {
         final values = await _resolveApiAddresses!().timeout(_requestTimeout);
         if (values.length > 16) {
@@ -494,8 +626,24 @@ class ApiClient {
           }
           if (seen.add(address.address)) addresses.add(address);
         }
+        DiagnosticLog.record(
+          area: 'api_transport',
+          event: 'native_resolution_completed',
+          stage: 'native_resolution',
+          requestId: traceId,
+          durationMs: timer.elapsedMilliseconds,
+          count: addresses.length,
+        );
         return addresses;
       } catch (error) {
+        DiagnosticLog.recordFailure(
+          area: 'api_transport',
+          event: 'native_resolution_failed',
+          error: error,
+          stage: 'native_resolution',
+          requestId: traceId,
+          durationMs: timer.elapsedMilliseconds,
+        );
         if (generation == _addressGeneration) invalidateBootstrapCache();
         throw ApiException._resolverFailure(error);
       }
@@ -841,6 +989,87 @@ class ApiClient {
     String cacheControl = 'no-store',
     String? ifNoneMatch,
     bool allowNotModified = false,
+  }) {
+    final traceId = DiagnosticLog.nextRequestId();
+    final timer = Stopwatch()..start();
+    // A fixed route category identifies the operation without exposing paths,
+    // query parameters, device/account identifiers or authentication data.
+    final category = switch (path.split('?').first) {
+      '/v1/locations' => 'locations',
+      '/v1/updates/windows/latest' => 'update_manifest',
+      '/v1/billing/subscription' => 'subscription',
+      '/v1/auth/login' => 'login',
+      '/v1/me' => 'account',
+      '/v1/devices' => 'devices',
+      '/v1/diagnostics' => 'diagnostic_report',
+      final route when route.startsWith('/v1/devices/') => 'device_operation',
+      _ => 'other',
+    };
+    return runZoned(() async {
+      DiagnosticLog.record(
+        area: 'api_request',
+        event: 'started',
+        code: category,
+        stage: 'request',
+        requestId: traceId,
+      );
+      try {
+        final response = await _requestImpl(
+          method,
+          path,
+          token: token,
+          body: body,
+          bodyBytes: bodyBytes,
+          cancellation: cancellation,
+          cacheControl: cacheControl,
+          ifNoneMatch: ifNoneMatch,
+          allowNotModified: allowNotModified,
+        );
+        DiagnosticLog.record(
+          area: 'api_request',
+          event: 'headers_completed',
+          stage: 'response_headers',
+          requestId: traceId,
+          durationMs: timer.elapsedMilliseconds,
+          httpStatus: response.statusCode,
+        );
+        return response;
+      } catch (error) {
+        if (error is DiagnosticsFailure &&
+            error.code == 'diagnostic_cancelled') {
+          DiagnosticLog.record(
+            area: 'api_request',
+            event: 'cancelled',
+            code: 'diagnostic_cancelled',
+            stage: 'request',
+            requestId: traceId,
+            durationMs: timer.elapsedMilliseconds,
+          );
+        } else {
+          DiagnosticLog.recordFailure(
+            area: 'api_request',
+            event: 'failed',
+            error: error,
+            stage: 'request',
+            requestId: traceId,
+            durationMs: timer.elapsedMilliseconds,
+          );
+        }
+        rethrow;
+      }
+    }, zoneValues: {_apiTraceZoneKey: traceId});
+  }
+
+  Future<HttpClientResponse> _requestImpl(
+    String method,
+    String path, {
+    String? token,
+    Map<String, dynamic>? body,
+    Uint8List? bodyBytes,
+    DiagnosticRequestCancellation? cancellation,
+    String cacheControl = 'no-store',
+    String? ifNoneMatch,
+    bool allowNotModified = false,
   }) async {
     assert(body == null || bodyBytes == null);
     cancellation?.check();
@@ -854,6 +1083,13 @@ class ApiClient {
     }
 
     var openingExpired = false;
+    final traceId = Zone.current[_apiTraceZoneKey] as int?;
+    DiagnosticLog.record(
+      area: 'api_request',
+      event: 'open_started',
+      stage: 'open_connection',
+      requestId: traceId,
+    );
     try {
       final opening = _client.openUrl(method, _baseUri.resolve(path));
       // Future.timeout does not cancel openUrl. Abort a request that arrives
@@ -867,6 +1103,13 @@ class ApiClient {
       final activeRequest = await (cancellation?.wait(pending) ?? pending);
       request = activeRequest;
       cancellation?.check();
+      DiagnosticLog.record(
+        area: 'api_request',
+        event: 'open_completed',
+        stage: 'open_connection',
+        requestId: traceId,
+        durationMs: clock.elapsedMilliseconds,
+      );
       // API responses must never redirect a request carrying a bearer token.
       // Handle redirects as errors instead of allowing dart:io to follow them
       // automatically, including to a subdomain of the API host.
@@ -905,6 +1148,12 @@ class ApiClient {
 
     late final HttpClientResponse response;
     final activeRequest = request;
+    DiagnosticLog.record(
+      area: 'api_request',
+      event: 'send_started',
+      stage: 'send_request',
+      requestId: traceId,
+    );
     try {
       final closing = activeRequest.close().timeout(remaining());
       response = await (cancellation?.wait(closing) ?? closing);
@@ -919,6 +1168,15 @@ class ApiClient {
       rethrow;
     }
     _responseClocks[response] = clock;
+    _responseRequestIds[response] = traceId;
+    DiagnosticLog.record(
+      area: 'api_request',
+      event: 'response_received',
+      stage: 'response_headers',
+      requestId: traceId,
+      durationMs: clock.elapsedMilliseconds,
+      httpStatus: response.statusCode,
+    );
     if ((response.statusCode < 200 || response.statusCode >= 300) &&
         !(allowNotModified && response.statusCode == HttpStatus.notModified)) {
       final reading = _readResponseBody(response, cancellation: cancellation);
@@ -936,9 +1194,38 @@ class ApiClient {
   Future<Map<String, dynamic>> _readJsonObject(
     HttpClientResponse response, {
     DiagnosticRequestCancellation? cancellation,
-  }) async =>
-      jsonDecode(await _readResponseBody(response, cancellation: cancellation))
-          as Map<String, dynamic>;
+  }) async {
+    final text = await _readResponseBody(response, cancellation: cancellation);
+    final timer = Stopwatch()..start();
+    final traceId = _responseRequestIds[response];
+    DiagnosticLog.record(
+      area: 'api_request',
+      event: 'json_started',
+      stage: 'decode_response',
+      requestId: traceId,
+    );
+    try {
+      final result = jsonDecode(text) as Map<String, dynamic>;
+      DiagnosticLog.record(
+        area: 'api_request',
+        event: 'json_completed',
+        stage: 'decode_response',
+        requestId: traceId,
+        durationMs: timer.elapsedMilliseconds,
+      );
+      return result;
+    } catch (error) {
+      DiagnosticLog.recordFailure(
+        area: 'api_request',
+        event: 'json_failed',
+        error: error,
+        stage: 'decode_response',
+        requestId: traceId,
+        durationMs: timer.elapsedMilliseconds,
+      );
+      rethrow;
+    }
+  }
 
   Future<String> _readResponseBody(
     HttpClientResponse response, {
@@ -947,6 +1234,14 @@ class ApiClient {
     final iterator = StreamIterator<List<int>>(response);
     final bytes = BytesBuilder(copy: false);
     final clock = _responseClocks[response]!;
+    final traceId = _responseRequestIds[response];
+    final timer = Stopwatch()..start();
+    DiagnosticLog.record(
+      area: 'api_request',
+      event: 'body_started',
+      stage: 'read_response',
+      requestId: traceId,
+    );
     try {
       if (response.contentLength > _maxResponseBytes) {
         throw _responseTooLargeException();
@@ -970,7 +1265,27 @@ class ApiClient {
         }
         bytes.add(chunk);
       }
-      return utf8.decode(bytes.takeBytes());
+      final length = bytes.length;
+      final text = utf8.decode(bytes.takeBytes());
+      DiagnosticLog.record(
+        area: 'api_request',
+        event: 'body_completed',
+        stage: 'read_response',
+        requestId: traceId,
+        durationMs: timer.elapsedMilliseconds,
+        bytes: length,
+      );
+      return text;
+    } catch (error) {
+      DiagnosticLog.recordFailure(
+        area: 'api_request',
+        event: 'body_failed',
+        error: error,
+        stage: 'read_response',
+        requestId: traceId,
+        durationMs: timer.elapsedMilliseconds,
+      );
+      rethrow;
     } finally {
       await iterator.cancel();
     }
@@ -996,6 +1311,7 @@ class _ResolvedApiConnection {
     required this.context,
     required this.timeout,
     required this.onFailure,
+    this.recoverTlsTrust,
   });
 
   final Uri uri;
@@ -1003,13 +1319,16 @@ class _ResolvedApiConnection {
   final SecurityContext? context;
   final Duration timeout;
   final void Function() onFailure;
+  final Future<SecurityContext?> Function(Uint8List)? recoverTlsTrust;
   bool _cancelled = false;
+  final _cancellation = Completer<void>();
   ConnectionTask<RawSocket>? _task;
   RawSocket? _transport;
   Socket? _socket;
 
   void cancel() {
     _cancelled = true;
+    if (!_cancellation.isCompleted) _cancellation.complete();
     _task?.cancel();
     _socket?.destroy();
     _closeTransport();
@@ -1032,52 +1351,182 @@ class _ResolvedApiConnection {
   }
 
   Future<Socket> connect() async {
+    final traceId = Zone.current[_apiTraceZoneKey] as int?;
+    final timer = Stopwatch()..start();
+    var stage = 'resolution';
+    var attempt = 0;
+    var recoveryAttempted = false;
+    var activeContext = context;
+    String? family;
+    DiagnosticLog.record(
+      area: 'api_transport',
+      event: 'connection_started',
+      stage: stage,
+      requestId: traceId,
+      connectionId: traceId,
+    );
     try {
       final addresses = await resolve();
+      DiagnosticLog.record(
+        area: 'api_transport',
+        event: 'resolution_completed',
+        stage: stage,
+        requestId: traceId,
+        count: addresses.length,
+        durationMs: timer.elapsedMilliseconds,
+      );
       _checkCancelled();
       Object? lastError;
       for (final address
           in addresses.isEmpty ? <Object>[uri.host] : addresses) {
-        _checkCancelled();
-        try {
-          _task = await RawSocket.startConnect(address, uri.port);
+        var retryAddress = false;
+        do {
+          retryAddress = false;
+          attempt++;
+          Uint8List? rejectedCertificate;
+          family = address is InternetAddress
+              ? (address.type == InternetAddressType.IPv6 ? 'ipv6' : 'ipv4')
+              : 'system';
+          stage = address is InternetAddress
+              ? 'tcp_connect'
+              : 'system_dns_and_tcp';
+          timer.reset();
           _checkCancelled();
-          _transport = await _task!.socket.timeout(timeout);
-          _checkCancelled();
-          final transport = _transport!;
-          final handshake = RawSecureSocket.secure(
-            transport,
-            host: uri.host,
-            context: context,
-          );
-          // Keep the raw transport while TLS negotiates: Socket.secure would
-          // detach its public TCP wrapper, making destroy() a no-op until the
-          // handshake finishes. A late success must also be closed explicitly.
-          unawaited(
-            handshake.then<void>((secure) {
-              if (_cancelled || !identical(_transport, transport)) {
-                unawaited(() async {
-                  try {
-                    await secure.close();
-                  } catch (_) {}
-                }());
+          try {
+            DiagnosticLog.record(
+              area: 'api_transport',
+              event: 'tcp_started',
+              stage: stage,
+              requestId: traceId,
+              attempt: attempt,
+              family: family,
+            );
+            _task = await RawSocket.startConnect(address, uri.port);
+            _checkCancelled();
+            _transport = await _task!.socket.timeout(timeout);
+            DiagnosticLog.record(
+              area: 'api_transport',
+              event: 'tcp_completed',
+              stage: stage,
+              requestId: traceId,
+              attempt: attempt,
+              family: family,
+              durationMs: timer.elapsedMilliseconds,
+            );
+            _checkCancelled();
+            final transport = _transport!;
+            stage = 'tls_handshake';
+            timer.reset();
+            DiagnosticLog.record(
+              area: 'api_transport',
+              event: 'tls_started',
+              stage: stage,
+              requestId: traceId,
+              attempt: attempt,
+              family: family,
+            );
+            final handshake = RawSecureSocket.secure(
+              transport,
+              host: uri.host,
+              context: activeContext,
+              onBadCertificate: recoverTlsTrust == null
+                  ? null
+                  : (certificate) {
+                      final der = certificate.der;
+                      if (der.isNotEmpty && der.length <= 65536) {
+                        rejectedCertificate ??= Uint8List.fromList(der);
+                      }
+                      // Inspection never accepts the rejected certificate.
+                      return false;
+                    },
+            );
+            // Keep the raw transport while TLS negotiates: Socket.secure would
+            // detach its public TCP wrapper, making destroy() a no-op until the
+            // handshake finishes. A late success must also be closed explicitly.
+            unawaited(
+              handshake.then<void>((secure) {
+                if (_cancelled || !identical(_transport, transport)) {
+                  unawaited(() async {
+                    try {
+                      await secure.close();
+                    } catch (_) {}
+                  }());
+                }
+              }, onError: (Object _, StackTrace _) {}),
+            );
+            final secure = await handshake.timeout(timeout);
+            DiagnosticLog.record(
+              area: 'api_transport',
+              event: 'tls_completed',
+              stage: stage,
+              requestId: traceId,
+              attempt: attempt,
+              family: family,
+              durationMs: timer.elapsedMilliseconds,
+            );
+            _socket = _ApiSecureSocket(secure);
+            _checkCancelled();
+            return _socket!;
+          } catch (error) {
+            DiagnosticLog.recordFailure(
+              area: 'api_transport',
+              event: 'attempt_failed',
+              error: error,
+              stage: stage,
+              requestId: traceId,
+              attempt: attempt,
+              family: family,
+              durationMs: timer.elapsedMilliseconds,
+            );
+            lastError = error;
+            _task?.cancel();
+            _socket?.destroy();
+            _socket = null;
+            _closeTransport();
+            if (!recoveryAttempted &&
+                error is TlsException &&
+                DiagnosticLog.tlsFailureReason(error) ==
+                    'certificate_issuer_missing' &&
+                rejectedCertificate != null &&
+                recoverTlsTrust != null) {
+              recoveryAttempted = true;
+              _checkCancelled();
+              final refreshed = await Future.any<SecurityContext?>([
+                recoverTlsTrust!(rejectedCertificate!).timeout(timeout),
+                _cancellation.future.then<SecurityContext?>(
+                  (_) =>
+                      throw const SocketException('API connection cancelled.'),
+                ),
+              ]);
+              _checkCancelled();
+              if (refreshed != null) {
+                activeContext = refreshed;
+                retryAddress = true;
+                DiagnosticLog.record(
+                  area: 'api_transport',
+                  event: 'tls_retry_started',
+                  stage: 'tls_handshake',
+                  requestId: traceId,
+                  attempt: attempt,
+                  family: family,
+                );
               }
-            }, onError: (Object _, StackTrace _) {}),
-          );
-          final secure = await handshake.timeout(timeout);
-          _socket = _ApiSecureSocket(secure);
-          _checkCancelled();
-          return _socket!;
-        } catch (error) {
-          lastError = error;
-          _task?.cancel();
-          _socket?.destroy();
-          _socket = null;
-          _closeTransport();
-        }
+            }
+          }
+        } while (retryAddress);
       }
       throw lastError ?? const SocketException('API connection unavailable.');
-    } catch (_) {
+    } catch (error) {
+      DiagnosticLog.recordFailure(
+        area: 'api_transport',
+        event: 'connection_failed',
+        error: error,
+        stage: stage,
+        requestId: traceId,
+        attempt: attempt == 0 ? null : attempt,
+        family: family,
+        durationMs: timer.elapsedMilliseconds,
+      );
       onFailure();
       rethrow;
     }
@@ -1116,6 +1565,9 @@ class _ApiSecureSocket extends Stream<Uint8List> implements SecureSocket {
   }
 
   final RawSecureSocket _raw;
+  // A persistent socket can serve later requests. Its creation identifier is
+  // a connection reference, never evidence of the currently active request.
+  final int? _connectionTraceId = Zone.current[_apiTraceZoneKey] as int?;
   late final StreamController<Uint8List> _incoming;
   late final IOSink _sink;
   final Completer<void> _done = Completer<void>();
@@ -1148,6 +1600,13 @@ class _ApiSecureSocket extends Stream<Uint8List> implements SecureSocket {
   }
 
   void _error(Object error, StackTrace stack) {
+    DiagnosticLog.recordFailure(
+      area: 'api_transport',
+      event: 'socket_failed',
+      error: error,
+      stage: 'socket_read',
+      connectionId: _connectionTraceId,
+    );
     if (!_incoming.isClosed) _incoming.addError(error, stack);
     destroy();
   }
@@ -1172,6 +1631,15 @@ class _ApiSecureSocket extends Stream<Uint8List> implements SecureSocket {
         }
       }
       if (_destroyed) throw const SocketException('API socket closed.');
+    } catch (error) {
+      DiagnosticLog.recordFailure(
+        area: 'api_transport',
+        event: 'socket_failed',
+        error: error,
+        stage: 'socket_write',
+        connectionId: _connectionTraceId,
+      );
+      rethrow;
     } finally {
       if (identical(_outgoing, iterator)) _outgoing = null;
       await iterator.cancel();

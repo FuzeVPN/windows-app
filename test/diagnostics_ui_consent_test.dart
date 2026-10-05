@@ -22,6 +22,8 @@ class _Diagnostics extends DiagnosticsController {
   bool saved = false;
   bool consent = false;
   Completer<bool>? saveGate;
+  Completer<Map<String, Object?>?>? runGate;
+  int runCount = 0;
   final queued = <QueuedDiagnosticReport>[];
   final cancelled = <String>[];
 
@@ -40,11 +42,15 @@ class _Diagnostics extends DiagnosticsController {
   }
 
   @override
-  Future<Map<String, Object?>?> runChecks() async => {
-    'checks': [
-      {'id': 'dns', 'result': 'unknown'},
-    ],
-  };
+  Future<Map<String, Object?>?> runChecks() async {
+    runCount++;
+    if (runGate case final gate?) return gate.future;
+    return {
+      'checks': [
+        {'id': 'dns', 'result': 'unknown'},
+      ],
+    };
+  }
 
   @override
   Future<bool> sendPreparedReport(FrozenDiagnosticReport report) async {
@@ -108,32 +114,42 @@ Future<void> _mount(WidgetTester tester, _UiController app) async {
   await tester.pumpAndSettle();
 }
 
+Future<void> _waitForDiagnostic(_UiController app) async {
+  final deadline = Stopwatch()..start();
+  while (app.diagnosticRunning || app.diagnosticExportRunning) {
+    if (deadline.elapsed > const Duration(seconds: 10)) {
+      throw StateError('Diagnostic did not complete.');
+    }
+    await Future<void>.delayed(const Duration(milliseconds: 5));
+  }
+}
+
 void main() {
-  testWidgets('manual send selection belongs to the current account', (
-    tester,
-  ) async {
-    final app = _UiController(_Diagnostics());
-    await _mount(tester, app);
-    await tester.tap(find.byType(CheckboxListTile));
-    await tester.pump();
-    expect(
-      tester.widget<CheckboxListTile>(find.byType(CheckboxListTile)).value,
-      isTrue,
-    );
-    app.rebuild();
-    await tester.pump();
-    expect(
-      tester.widget<CheckboxListTile>(find.byType(CheckboxListTile)).value,
-      isTrue,
-    );
-    app.changeAccount();
-    await tester.pump();
-    expect(
-      tester.widget<CheckboxListTile>(find.byType(CheckboxListTile)).value,
-      isFalse,
-    );
-    await tester.pumpWidget(const SizedBox.shrink());
-  });
+  testWidgets(
+    'one diagnostic action discloses sending and has no extra steps',
+    (tester) async {
+      final app = _UiController(_Diagnostics());
+      await _mount(tester, app);
+      expect(find.widgetWithText(FilledButton, 'Diagnostic'), findsOneWidget);
+      expect(find.byType(CheckboxListTile), findsNothing);
+      for (final oldAction in [
+        'Diagnostiquer',
+        'Consulter le rapport',
+        'Consulter le diagnostic',
+        'Chronologie locale',
+        'Copier le diagnostic local',
+        'Copier le diagnostic complet',
+        'Envoyer ce rapport',
+      ]) {
+        expect(find.text(oldAction), findsNothing);
+      }
+      expect(
+        find.textContaining('puis les transmet à l’assistance FuzeVPN'),
+        findsOneWidget,
+      );
+      await tester.pumpWidget(const SizedBox.shrink());
+    },
+  );
 
   testWidgets(
     'settings reports a failed consent save and clears it after retry',
@@ -182,26 +198,91 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
-  testWidgets('withdrawing the checkbox cancels only its own pending report', (
+  testWidgets(
+    'one click queues its diagnostic and permits cancelling delivery',
+    (tester) async {
+      final diagnostics = _Diagnostics();
+      final app = _UiController(diagnostics);
+      await _mount(tester, app);
+      await tester.runAsync(() async {
+        await tester.tap(find.widgetWithText(FilledButton, 'Diagnostic'));
+        await _waitForDiagnostic(app);
+      });
+      await tester.pumpAndSettle();
+      final created = app.preparedDiagnosticReport!.reportId;
+      expect(diagnostics.queued, hasLength(1));
+      expect(diagnostics.queued.single.reportId, created);
+      expect(find.text('Rapport en attente d’envoi.'), findsOneWidget);
+      expect(find.text('Diagnostic complet'), findsOneWidget);
+      final cancel = find.widgetWithText(TextButton, 'Annuler l’envoi');
+      await tester.ensureVisible(cancel);
+      await tester.tap(cancel);
+      await tester.pumpAndSettle();
+      expect(diagnostics.cancelled, [created]);
+      expect(diagnostics.queued, isEmpty);
+      await tester.pumpWidget(const SizedBox.shrink());
+    },
+  );
+
+  testWidgets('diagnostic action prevents overlapping collections', (
     tester,
   ) async {
-    final diagnostics = _Diagnostics();
-    final old = diagnostics.prepareManualReport()!;
-    await diagnostics.sendPreparedReport(old);
+    final diagnostics = _Diagnostics()
+      ..runGate = Completer<Map<String, Object?>?>();
     final app = _UiController(diagnostics);
     await _mount(tester, app);
-    await tester.tap(find.byType(CheckboxListTile));
+    await tester.runAsync(
+      () => tester.tap(find.widgetWithText(FilledButton, 'Diagnostic')),
+    );
     await tester.pump();
-    await tester.tap(find.text('Diagnostiquer'));
+    final running = find.widgetWithText(FilledButton, 'Diagnostic en cours…');
+    expect(running, findsOneWidget);
+    expect(tester.widget<FilledButton>(running).onPressed, isNull);
+    expect(diagnostics.queued, isEmpty);
+    await tester.runAsync(() async {
+      diagnostics.runGate!.complete({
+        'checks': [
+          {'id': 'dns', 'result': 'unknown'},
+        ],
+      });
+      await _waitForDiagnostic(app);
+    });
     await tester.pumpAndSettle();
-    final created = app.preparedDiagnosticReport!.reportId;
-    expect(diagnostics.queued.length, 2);
-    await tester.tap(find.byType(CheckboxListTile));
-    await tester.pumpAndSettle();
-    expect(diagnostics.cancelled, [created]);
-    expect(diagnostics.queued.single.reportId, old.reportId);
+    expect(diagnostics.runCount, 1);
+    expect(diagnostics.queued, hasLength(1));
+    expect(find.widgetWithText(FilledButton, 'Diagnostic'), findsOneWidget);
     await tester.pumpWidget(const SizedBox.shrink());
   });
+
+  for (final failure in [
+    const DiagnosticsFailure('invalid_diagnostic', httpStatus: 422),
+    const DiagnosticsFailure(
+      'private-secret-should-not-appear',
+      httpStatus: 999,
+    ),
+  ]) {
+    testWidgets('delivery failure exposes a safe code and real HTTP status', (
+      tester,
+    ) async {
+      final diagnostics = _Diagnostics()..lastFailure = failure;
+      final app = _UiController(diagnostics);
+      await _mount(tester, app);
+      final known = failure.code == 'invalid_diagnostic';
+      expect(
+        find.text(
+          'Code d’erreur : ${known ? 'invalid_diagnostic' : 'unknown_error'}',
+        ),
+        findsOneWidget,
+      );
+      expect(find.text('HTTP : 422'), known ? findsOneWidget : findsNothing);
+      expect(find.text('HTTP : 999'), findsNothing);
+      expect(
+        find.textContaining('private-secret-should-not-appear'),
+        findsNothing,
+      );
+      await tester.pumpWidget(const SizedBox.shrink());
+    });
+  }
 
   testWidgets('failed and unknown checks explain suitable next actions', (
     tester,
@@ -223,7 +304,7 @@ void main() {
     await _mount(tester, app);
     expect(
       find.text(
-        'Impossible de joindre le service de connexion. Vérifiez votre connexion Internet puis réessayez.',
+        'La tentative de connexion réseau a échoué. Cela ne permet pas de déterminer si le service est indisponible.',
       ),
       findsOneWidget,
     );

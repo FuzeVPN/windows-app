@@ -22,7 +22,9 @@ for signed packages. Each release provides x64 and ARM64 installers (`.exe` and
 installation. Keep the portable folder intact, including its notices, licences
 and driver files. Verify downloads against the checksums provided with the release.
 
-Version 1.0.6 is the initial public source snapshot. Its signed packages are
+Version 1.0.7 adds complete diagnostics, Windows trust-chain recovery and clearer
+subscription and local error handling. Version 1.0.6 is the initial public
+source snapshot. Its original signed packages are
 published unchanged. Their corresponding third-party sources and licences
 remain included or are provided as companion release assets. ARM64 packages
 have been compiled and checked for architecture and signatures; this snapshot

@@ -2,6 +2,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fuzevpn_windows/core/windows_update_bridge.dart';
+import 'package:fuzevpn_windows/core/diagnostic_log.dart';
 import 'package:fuzevpn_windows/core/windows_update_models.dart';
 
 Map<String, dynamic> manifest({String version = '1.2.3'}) => {
@@ -13,6 +14,23 @@ Map<String, dynamic> manifest({String version = '1.2.3'}) => {
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  test('TLS reasons are allowlisted and survive update-stage propagation', () {
+    for (final reason in DiagnosticLog.tlsFailureReasons) {
+      final failure = WindowsUpdateFailure('tls_handshake_failed', tlsReason: reason);
+      final staged = failure.withStage('update_check');
+      expect(staged.tlsReason, reason);
+      expect(staged.stage, 'update_check');
+      expect(staged.windowsError, isNull);
+      expect(staged.toString(), contains('TLS: $reason'));
+    }
+    const unsafe = WindowsUpdateFailure(
+      'tls_handshake_failed',
+      tlsReason: 'private/path certificate=secret',
+    );
+    expect(unsafe.tlsReason, isNull);
+    expect(unsafe.withStage('update_check').tlsReason, isNull);
+    expect(unsafe.toString(), isNot(contains('secret')));
+  });
   test('native updater diagnostics retain only bounded documented fields', () {
     final failure =
         WindowsUpdateFailure.fromNative('update_unsigned_application', {

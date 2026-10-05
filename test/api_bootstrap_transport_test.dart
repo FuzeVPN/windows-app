@@ -115,7 +115,7 @@ void main() {
                   (e) => e.localErrorCode,
                   'approved code',
                   failure.code == 'private_native_value'
-                      ? isNull
+                      ? 'native_operation_failed'
                       : 'api_bootstrap_unavailable',
                 )
                 .having(

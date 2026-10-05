@@ -68,8 +68,64 @@ class WindowsUpdateController extends ChangeNotifier {
   _UpdateOperation? _operationKind;
   bool _disposed = false;
   int _generation = 0;
+  int? _traceRequestId;
 
   bool _current(int generation) => !_disposed && generation == _generation;
+
+  void _trace(
+    String event, {
+    String? code,
+    String? stage,
+    int? durationMs,
+    int? requestId,
+    WindowsUpdateFailure? failure,
+  }) {
+    unawaited(
+      DiagnosticLog.record(
+        area: 'update',
+        event: event,
+        code: failure?.code ?? code,
+        stage: failure?.stage ?? stage,
+        durationMs: durationMs,
+        windowsError: failure?.windowsError,
+        httpStatus: failure?.statusCode,
+        reason: failure?.tlsReason,
+        errorKind: failure?.code == 'tls_handshake_failed' ? 'tls' : null,
+        requestId: requestId ?? _traceRequestId,
+      ),
+    );
+  }
+
+  Future<T> _tracePhase<T>(
+    String phase,
+    String stage,
+    Future<T> Function() action, {
+    String fallback = 'update_request_failed',
+    String? completedCode,
+  }) async {
+    final requestId = _traceRequestId;
+    final timer = Stopwatch()..start();
+    _trace('${phase}_started', stage: stage, requestId: requestId);
+    try {
+      final result = await action();
+      _trace(
+        '${phase}_completed',
+        code: completedCode,
+        stage: stage,
+        durationMs: timer.elapsedMilliseconds,
+        requestId: requestId,
+      );
+      return result;
+    } catch (error) {
+      _trace(
+        '${phase}_failed',
+        failure: _failure(error, fallback: fallback, stage: stage),
+        durationMs: timer.elapsedMilliseconds,
+        requestId: requestId,
+      );
+      rethrow;
+    }
+  }
 
   Future<T> _run<T>(
     _UpdateOperation kind,
@@ -77,46 +133,78 @@ class WindowsUpdateController extends ChangeNotifier {
     Future<T> Function(int generation) action,
     T failureResult,
   ) {
+    final stage = switch (kind) {
+      _UpdateOperation.check => 'update_check',
+      _UpdateOperation.prepare => 'prepare_update',
+      _UpdateOperation.install => 'install_update',
+      _UpdateOperation.discard => 'discard_update',
+    };
     if (_disposed || _status == WindowsUpdateStatus.launched) {
+      _trace(
+        'operation_skipped',
+        code: _disposed ? 'disposed' : 'already_launched',
+        stage: stage,
+      );
       return Future.value(failureResult);
     }
     final running = _operation;
     if (running != null) {
+      _trace(
+        _operationKind == kind ? 'operation_coalesced' : 'operation_skipped',
+        code: 'operation_in_progress',
+        stage: stage,
+      );
       return _operationKind == kind
           ? running as Future<T>
           : Future.value(failureResult);
     }
     final generation = ++_generation;
+    final requestId = DiagnosticLog.nextRequestId();
+    _traceRequestId = requestId;
     final completion = Completer<T>();
     _operation = completion.future;
     _operationKind = kind;
     _status = status;
     _error = null;
+    final timer = Stopwatch()..start();
+    _trace(
+      'operation_started',
+      code: kind.name,
+      stage: stage,
+      requestId: requestId,
+    );
     notifyListeners();
     unawaited(() async {
       var result = failureResult;
+      var failed = false;
       try {
         result = await action(generation);
       } catch (error) {
+        failed = true;
+        final failure = _failure(
+          error,
+          fallback: switch (kind) {
+            _UpdateOperation.check => 'update_request_failed',
+            _UpdateOperation.prepare => 'update_prepare_failed',
+            _UpdateOperation.install => 'update_install_failed',
+            _UpdateOperation.discard => 'update_storage_failed',
+          },
+          stage: stage,
+        );
+        _trace(
+          'operation_failed',
+          failure: failure,
+          durationMs: timer.elapsedMilliseconds,
+          requestId: requestId,
+        );
         if (_current(generation)) {
-          _error = _failure(
-            error,
-            fallback: switch (kind) {
-              _UpdateOperation.check => 'update_request_failed',
-              _UpdateOperation.prepare => 'update_prepare_failed',
-              _UpdateOperation.install => 'update_install_failed',
-              _UpdateOperation.discard => 'update_storage_failed',
-            },
-            stage: switch (kind) {
-              _UpdateOperation.check => 'update_check',
-              _UpdateOperation.prepare => 'prepare_update',
-              _UpdateOperation.install => 'install_update',
-              _UpdateOperation.discard => 'discard_update',
-            },
-          );
+          _error = failure;
           _status = WindowsUpdateStatus.error;
         }
       } finally {
+        final completionCode = _disposed
+            ? 'disposed'
+            : _status.name.toLowerCase();
         _operation = null;
         _operationKind = null;
         if (_disposed) {
@@ -124,6 +212,16 @@ class WindowsUpdateController extends ChangeNotifier {
         } else {
           notifyListeners();
         }
+        if (!failed) {
+          _trace(
+            'operation_completed',
+            code: completionCode,
+            stage: stage,
+            durationMs: timer.elapsedMilliseconds,
+            requestId: requestId,
+          );
+        }
+        if (_traceRequestId == requestId) _traceRequestId = null;
         completion.complete(result);
       }
     }());
@@ -131,36 +229,67 @@ class WindowsUpdateController extends ChangeNotifier {
   }
 
   Future<void> _loadEnvironment(int generation, {bool refresh = false}) async {
-    if (!refresh && _environment != null) return;
-    try {
-      final value = await _bridge.getEnvironment();
-      if (_current(generation)) _environment = value;
-    } on FormatException {
-      throw const WindowsUpdateFailure(
-        'update_environment_invalid',
-        stage: 'environment',
-      );
-    } on TypeError {
-      throw const WindowsUpdateFailure(
-        'update_environment_invalid',
-        stage: 'environment',
-      );
-    } catch (error) {
-      throw _failure(
-        error,
-        fallback: 'update_environment_unavailable',
-        stage: 'environment',
-      );
+    if (!refresh && _environment != null) {
+      _trace('environment_cached', stage: 'environment', durationMs: 0);
+      return;
     }
+    await _tracePhase<void>('environment', 'environment', () async {
+      try {
+        final value = await _bridge.getEnvironment();
+        _trace(
+          'environment_distribution',
+          code: value.installationMode.name,
+          stage: 'environment',
+        );
+        _trace(
+          'environment_architecture',
+          code: const {'x64', 'arm64'}.contains(value.arch)
+              ? value.arch
+              : 'unsupported',
+          stage: 'environment',
+        );
+        if (_current(generation)) _environment = value;
+      } on FormatException {
+        throw const WindowsUpdateFailure(
+          'update_environment_invalid',
+          stage: 'environment',
+        );
+      } on TypeError {
+        throw const WindowsUpdateFailure(
+          'update_environment_invalid',
+          stage: 'environment',
+        );
+      } catch (error) {
+        throw _failure(
+          error,
+          fallback: 'update_environment_unavailable',
+          stage: 'environment',
+        );
+      }
+    }, fallback: 'update_environment_unavailable');
   }
 
   void _requireUpdateDistribution() {
+    final timer = Stopwatch()..start();
+    _trace('distribution_started', stage: 'environment');
     switch (_environment?.installationMode) {
       case WindowsInstallationMode.installed:
       case WindowsInstallationMode.portable:
+        _trace(
+          'distribution_completed',
+          code: _environment!.installationMode.name,
+          stage: 'environment',
+          durationMs: timer.elapsedMilliseconds,
+        );
         return;
       case WindowsInstallationMode.unavailable:
       case null:
+        _trace(
+          'distribution_failed',
+          code: 'update_environment_unavailable',
+          stage: 'environment',
+          durationMs: timer.elapsedMilliseconds,
+        );
         throw const WindowsUpdateFailure('update_environment_unavailable');
     }
   }
@@ -169,41 +298,128 @@ class WindowsUpdateController extends ChangeNotifier {
     bool revalidate = false,
   }) async {
     final environment = _environment!;
-    final candidate = await _api.latestWindowsUpdate(
-      arch: environment.arch,
-      package: environment.package,
-      revalidate: revalidate,
+    final candidate = await _tracePhase<WindowsUpdateRelease?>(
+      'manifest',
+      'update_check',
+      () => _api.latestWindowsUpdate(
+        arch: environment.arch,
+        package: environment.package,
+        revalidate: revalidate,
+      ),
+      completedCode: revalidate ? 'revalidated' : 'checked',
     );
+    final timer = Stopwatch()..start();
+    _trace('package_comparison_started', stage: 'update_check');
     if (candidate != null && candidate.package != environment.package) {
+      _trace(
+        'package_comparison_failed',
+        code: 'update_manifest_invalid',
+        stage: 'update_check',
+        durationMs: timer.elapsedMilliseconds,
+      );
       throw const WindowsUpdateFailure('update_manifest_invalid');
     }
+    _trace(
+      'package_comparison_completed',
+      code: candidate == null ? 'no_release' : 'matched',
+      stage: 'update_check',
+      durationMs: timer.elapsedMilliseconds,
+    );
     return candidate;
   }
 
-  bool _preparedEnvironmentMatches(WindowsUpdateEnvironment environment) =>
-      _prepared?.environment.arch == environment.arch &&
-      _prepared?.environment.installationMode == environment.installationMode;
+  bool _preparedEnvironmentMatches(WindowsUpdateEnvironment environment) {
+    final timer = Stopwatch()..start();
+    _trace('prepared_environment_started', stage: 'environment');
+    final matches =
+        _prepared?.environment.arch == environment.arch &&
+        _prepared?.environment.installationMode == environment.installationMode;
+    _trace(
+      'prepared_environment_completed',
+      code: matches ? 'matched' : 'changed',
+      stage: 'environment',
+      durationMs: timer.elapsedMilliseconds,
+    );
+    return matches;
+  }
+
+  bool _sameArtifact(
+    WindowsUpdateRelease candidate,
+    WindowsUpdateRelease previous,
+  ) {
+    final timer = Stopwatch()..start();
+    _trace('artifact_comparison_started', stage: 'update_check');
+    final matches = candidate.sameArtifact(previous);
+    _trace(
+      'artifact_comparison_completed',
+      code: matches ? 'matched' : 'changed',
+      stage: 'update_check',
+      durationMs: timer.elapsedMilliseconds,
+    );
+    return matches;
+  }
 
   bool _supported(WindowsUpdateRelease? candidate) {
+    final timer = Stopwatch()..start();
+    _trace('compatibility_started', stage: 'update_check');
     final environment = _environment!;
     if (!const {'x64', 'arm64'}.contains(environment.arch) ||
         (candidate?.minWindowsBuild != null &&
             environment.windowsBuild < candidate!.minWindowsBuild!)) {
       _status = WindowsUpdateStatus.unsupported;
       _error = const WindowsUpdateFailure('update_unsupported');
+      _trace(
+        'compatibility_completed',
+        code: 'update_unsupported',
+        stage: 'update_check',
+        durationMs: timer.elapsedMilliseconds,
+      );
       return false;
     }
+    _trace(
+      'compatibility_completed',
+      code: 'supported',
+      stage: 'update_check',
+      durationMs: timer.elapsedMilliseconds,
+    );
     return true;
   }
 
-  bool _isNewer(WindowsUpdateRelease? candidate) =>
-      candidate != null &&
-      candidate.version.compareTo(_environment!.version) > 0;
+  bool _isNewer(WindowsUpdateRelease? candidate) {
+    final timer = Stopwatch()..start();
+    _trace('version_comparison_started', stage: 'update_check');
+    final newer =
+        candidate != null &&
+        candidate.version.compareTo(_environment!.version) > 0;
+    _trace(
+      'version_comparison_completed',
+      code: newer ? 'newer' : 'not_newer',
+      stage: 'update_check',
+      durationMs: timer.elapsedMilliseconds,
+    );
+    return newer;
+  }
 
   bool _automaticPackageSupported(WindowsUpdateRelease candidate) {
-    if (candidate.supportsAutomaticUpdate) return true;
+    final timer = Stopwatch()..start();
+    _trace('package_support_started', stage: 'update_check');
+    if (candidate.supportsAutomaticUpdate) {
+      _trace(
+        'package_support_completed',
+        code: 'automatic',
+        stage: 'update_check',
+        durationMs: timer.elapsedMilliseconds,
+      );
+      return true;
+    }
     _status = WindowsUpdateStatus.unsupported;
     _error = const WindowsUpdateFailure('update_installer_manual');
+    _trace(
+      'package_support_completed',
+      code: 'update_installer_manual',
+      stage: 'update_check',
+      durationMs: timer.elapsedMilliseconds,
+    );
     return false;
   }
 
@@ -219,8 +435,16 @@ class WindowsUpdateController extends ChangeNotifier {
 
   Future<void> _discardPrepared() async {
     final prepared = _prepared;
-    if (prepared == null) return;
-    await _bridge.discardUpdate(prepared.token);
+    if (prepared == null) {
+      _trace('discard_skipped', code: 'not_prepared', stage: 'discard_update');
+      return;
+    }
+    await _tracePhase<void>(
+      'discard',
+      'discard_update',
+      () => _bridge.discardUpdate(prepared.token),
+      fallback: 'update_storage_failed',
+    );
     if (_prepared == prepared) _prepared = null;
   }
 
@@ -236,7 +460,7 @@ class WindowsUpdateController extends ChangeNotifier {
       _release = candidate;
       if (_prepared != null &&
           (candidate == null ||
-              !candidate.sameArtifact(_prepared!.release) ||
+              !_sameArtifact(candidate, _prepared!.release) ||
               !_preparedEnvironmentMatches(_environment!))) {
         await _discardPrepared();
         if (!_current(generation)) return;
@@ -283,7 +507,7 @@ class WindowsUpdateController extends ChangeNotifier {
         await _discardPrepared();
         return;
       }
-      if (displayed != null && !candidate.sameArtifact(displayed)) {
+      if (displayed != null && !_sameArtifact(candidate, displayed)) {
         await _discardPrepared();
         if (!_current(generation)) return;
         _status = WindowsUpdateStatus.available;
@@ -291,14 +515,19 @@ class WindowsUpdateController extends ChangeNotifier {
         return;
       }
       if (_prepared != null &&
-          candidate.sameArtifact(_prepared!.release) &&
+          _sameArtifact(candidate, _prepared!.release) &&
           _preparedEnvironmentMatches(_environment!)) {
         _status = WindowsUpdateStatus.ready;
         return;
       }
       await _discardPrepared();
       if (!_current(generation)) return;
-      final token = await _bridge.prepareUpdate(candidate);
+      final token = await _tracePhase<String>(
+        'download_prepare',
+        'prepare_update',
+        () => _bridge.prepareUpdate(candidate),
+        fallback: 'update_prepare_failed',
+      );
       _prepared = (
         token: token,
         release: candidate,
@@ -345,7 +574,7 @@ class WindowsUpdateController extends ChangeNotifier {
     }
     if (!_supported(candidate) ||
         !_automaticPackageSupported(candidate) ||
-        !candidate.sameArtifact(prepared.release)) {
+        !_sameArtifact(candidate, prepared.release)) {
       final supported = _status != WindowsUpdateStatus.unsupported;
       await _discardPrepared();
       if (_current(generation) && supported) {
@@ -364,12 +593,30 @@ class WindowsUpdateController extends ChangeNotifier {
       throw const WindowsUpdateFailure('update_changed');
     }
     try {
-      await beforeInstall?.call();
+      if (beforeInstall == null) {
+        _trace(
+          'preinstall_skipped',
+          code: 'no_callback',
+          stage: 'install_update',
+        );
+      } else {
+        await _tracePhase<void>(
+          'preinstall',
+          'install_update',
+          beforeInstall,
+          fallback: 'update_preinstall_failed',
+        );
+      }
     } catch (error) {
       throw _failure(error, fallback: 'update_preinstall_failed');
     }
     if (!_current(generation)) return false;
-    await _bridge.installUpdate(prepared.token);
+    await _tracePhase<void>(
+      'install_launch',
+      'install_update',
+      () => _bridge.installUpdate(prepared.token),
+      fallback: 'update_install_failed',
+    );
     _prepared = null;
     if (_current(generation)) _status = WindowsUpdateStatus.launched;
     return true;
@@ -397,23 +644,55 @@ class WindowsUpdateController extends ChangeNotifier {
   }) {
     if (error is WindowsUpdateFailure) return error.withStage(stage);
     if (error is ApiException) {
-      if (error.observedHttpStatus == null &&
-          error.errorCode == 'request_timeout') {
-        return const WindowsUpdateFailure(
-          'update_network_timeout',
+      final httpStatus = error.observedHttpStatus;
+      if (httpStatus == null) {
+        // API statusCode also represents locally synthesized failures. Only a
+        // received HTTP response may be shown as HTTP in the update panel.
+        const localCodes = {
+          'api_bootstrap_unavailable',
+          'api_resolution_unavailable',
+          'api_resolver_invalid_response',
+          'api_transport_unsupported',
+          'broker_busy',
+          'broker_protocol_error',
+          'broker_response_timeout',
+          'broker_unavailable',
+          'broker_write_failed',
+          'maintenance_in_progress',
+          'native_bridge_unavailable',
+          'native_operation_failed',
+          'permission_denied',
+          'runtime_owned_by_another_user',
+          'runtime_detection_failed',
+          'runtime_status_unavailable',
+          'runtime_unavailable',
+          'service_configuration_mismatch',
+          'service_unavailable',
+        };
+        final localCode = error.diagnosticErrorCode;
+        final code = switch (localCode) {
+          'request_timeout' || 'network_timeout' => 'update_network_timeout',
+          'response_too_large' => 'update_manifest_invalid',
+          _ =>
+            localCodes.contains(localCode)
+                ? localCode
+                : 'update_request_failed',
+        };
+        final windowsError = error.windowsError;
+        return WindowsUpdateFailure(
+          code,
           stage: 'update_check',
-        );
-      }
-      if (error.observedHttpStatus == null &&
-          error.errorCode == 'response_too_large') {
-        return const WindowsUpdateFailure(
-          'update_manifest_invalid',
-          stage: 'update_check',
+          windowsError:
+              windowsError != null &&
+                  windowsError > 0 &&
+                  windowsError <= 0xffffffff
+              ? windowsError
+              : null,
         );
       }
       return WindowsUpdateFailure(
         'update_request_failed',
-        statusCode: error.statusCode,
+        statusCode: httpStatus,
         stage: 'update_check',
       );
     }
@@ -427,6 +706,13 @@ class WindowsUpdateController extends ChangeNotifier {
       return const WindowsUpdateFailure(
         'update_network_timeout',
         stage: 'update_check',
+      );
+    }
+    if (error is TlsException) {
+      return WindowsUpdateFailure(
+        'tls_handshake_failed',
+        stage: 'update_check',
+        tlsReason: DiagnosticLog.tlsFailureReason(error),
       );
     }
     if (error is SocketException || error is HttpException) {

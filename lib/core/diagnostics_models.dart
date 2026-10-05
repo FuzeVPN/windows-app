@@ -2,6 +2,7 @@
 import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
+import 'diagnostics_support.dart';
 
 /// Version 1 of client-diagnostics-20260916. Never expand this from error text.
 const diagnosticCodes = <String>{
@@ -213,8 +214,16 @@ const diagnosticCodes = <String>{
   'wireguard_stop_timeout',
 };
 
-String diagnosticCode(String value) =>
-    diagnosticCodes.contains(value) ? value : 'unknown_error';
+String diagnosticCode(String value) {
+  // Preserve meaningful version-1 report categories for local-only codes.
+  // The server schema is intentionally not expanded by a new client trace.
+  final canonical = switch (value) {
+    'network_unreachable' => 'network_error',
+    'api_resolver_invalid_response' => 'native_operation_failed',
+    _ => value,
+  };
+  return diagnosticCodes.contains(canonical) ? canonical : 'unknown_error';
+}
 
 const diagnosticStages = <String>{
   'unknown',
@@ -262,8 +271,10 @@ const _results = {'passed', 'failed', 'skipped', 'unknown'};
 const _maxDuration = 604800000;
 
 class DiagnosticsFailure implements Exception {
-  const DiagnosticsFailure(this.code);
+  const DiagnosticsFailure(this.code, {this.httpStatus, this.windowsError});
   final String code;
+  final int? httpStatus;
+  final int? windowsError;
   @override
   String toString() => 'DiagnosticsFailure($code)';
 }
@@ -835,6 +846,7 @@ void _validateFragments(Map<String, Object?> value) {
       'configured_ipv6_count',
       'first_error',
       'last_error',
+      'support',
     });
     for (final key in [
       'engine_connect_ms',
@@ -850,6 +862,7 @@ void _validateFragments(Map<String, Object?> value) {
     _int(w, 'configured_ipv6_count', 0, 1000);
     _enum(w, 'first_error', diagnosticCodes);
     _enum(w, 'last_error', diagnosticCodes);
+    if (w['support'] != null) DiagnosticSupport.validate(w['support']);
   }
 }
 

@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fuzevpn_windows/app_controller.dart';
 import 'package:fuzevpn_windows/core/api_client.dart';
 import 'package:fuzevpn_windows/core/models.dart';
+import 'package:fuzevpn_windows/core/secure_store.dart';
 import 'package:fuzevpn_windows/core/windows_update_controller.dart';
 
 import 'subscription_models_test.dart' show subscriptionJson;
@@ -33,6 +34,15 @@ class _Store extends fixtures.ProbeStore {
   String? savedToken = 'synthetic-token';
   Completer<void>? tokenGate;
   int clearCalls = 0;
+  bool automaticReconnectEnabled = true;
+
+  @override
+  Future<SecuritySettings> securitySettings() async => SecuritySettings(
+    killSwitch: true,
+    dnsProtection: true,
+    webRtcProtection: true,
+    automaticReconnect: automaticReconnectEnabled,
+  );
   @override
   Future<String?> token() async {
     await tokenGate?.future;
@@ -343,7 +353,7 @@ void main() {
   );
 
   test(
-    'native guard is checked again after an asynchronous token read',
+    'a known blocked state after the token read still permits billing',
     () async {
       final api = _Api();
       final store = _Store()..tokenGate = Completer<void>();
@@ -353,8 +363,39 @@ void main() {
       app.vpnStatus = VpnStatus.blocked;
       store.tokenGate!.complete();
       await pending;
-      expect(api.requests, isEmpty);
+      expect(api.requests, hasLength(1));
+      expect(app.subscription, isNotNull);
+      expect(app.vpnStatus, VpnStatus.blocked);
       expect(app.isLoadingSubscription, isFalse);
+    },
+  );
+
+  test(
+    'billing while native protection is retained never changes WFP',
+    () async {
+      final api = _Api();
+      final wireguard = _WireGuard()..protectionActive = true;
+      final store = _Store()..automaticReconnectEnabled = false;
+      final app = _controller(api, store, wireguard: wireguard);
+      addTearDown(app.dispose);
+      await app.initialize();
+      app.profile = fixtures.account;
+      expect(app.vpnStatus, VpnStatus.blocked);
+      expect(app.runtimeVerificationPending, isFalse);
+      expect(app.requiresExplicitDisconnect, isTrue);
+
+      await app.refreshSubscription();
+
+      expect(api.requests, hasLength(1));
+      expect(app.subscription, isNotNull);
+      expect(app.subscriptionErrorMessage, isNull);
+      expect(app.vpnStatus, VpnStatus.blocked);
+      expect(app.requiresExplicitDisconnect, isTrue);
+      expect(wireguard.protectionActive, isTrue);
+      expect(wireguard.prepareCalls, 0);
+      expect(wireguard.connectCalls, 0);
+      expect(wireguard.reconnectCalls, 0);
+      expect(wireguard.disconnectCalls, 0);
     },
   );
 

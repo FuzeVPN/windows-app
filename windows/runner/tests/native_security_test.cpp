@@ -28,6 +28,13 @@ unsigned transport_trust_queries = 0;
 ULONGLONG transport_ticks = 0;
 ULONGLONG transport_cancel_at = 0;
 bool transport_cancelled = false;
+bool test_diagnostic_changes_error = false;
+bool inspect_presence_wait_failure = false;
+HANDLE presence_process_handle = reinterpret_cast<HANDLE>(static_cast<ULONG_PTR>(109));
+HANDLE WINAPI ObserveOpenProcess(DWORD access, BOOL inherit, DWORD process) {
+  if (!inspect_presence_wait_failure) return OpenProcess(access, inherit, process);
+  return access == SYNCHRONIZE ? presence_process_handle : nullptr;
+}
 HANDLE transport_cancel_handle = reinterpret_cast<HANDLE>(static_cast<ULONG_PTR>(107));
 HANDLE WINAPI ObserveCreateFile(LPCWSTR name, DWORD access, DWORD sharing,
     LPSECURITY_ATTRIBUTES attributes, DWORD disposition, DWORD flags, HANDLE template_file) {
@@ -41,6 +48,9 @@ ULONGLONG WINAPI ObserveTicks() {
   return inspect_pipe_connections ? transport_ticks : GetTickCount64();
 }
 DWORD WINAPI ObserveTransportWait(HANDLE handle, DWORD milliseconds) {
+  if (inspect_presence_wait_failure && handle == presence_process_handle) {
+    SetLastError(ERROR_NOT_SUPPORTED); return WAIT_FAILED;
+  }
   if (!inspect_pipe_connections || handle != transport_cancel_handle)
     return WaitForSingleObject(handle, milliseconds);
   transport_ticks += milliseconds;
@@ -118,6 +128,9 @@ BOOL WINAPI ObserveAdjustTokenPrivileges(HANDLE token, BOOL disable_all,
   return TRUE;
 }
 BOOL WINAPI ObserveCloseHandle(HANDLE handle) {
+  if (inspect_presence_wait_failure && handle == presence_process_handle) {
+    SetLastError(ERROR_INVALID_HANDLE); return TRUE;
+  }
   if (!inspect_privilege_adjustments) return CloseHandle(handle);
   inspected_privilege_handle_closed = handle ==
       reinterpret_cast<HANDLE>(static_cast<ULONG_PTR>(104));
@@ -209,6 +222,7 @@ BOOL WINAPI ObserveCloseService(SC_HANDLE handle) {
 #define OpenProcessToken ObserveOpenProcessToken
 #define AdjustTokenPrivileges ObserveAdjustTokenPrivileges
 #define CloseHandle ObserveCloseHandle
+#define OpenProcess ObserveOpenProcess
 #define ProtectedStoreUserId TestProtectedStoreUserId
 #define WriteUserDiagnostic TestWriteUserDiagnostic
 #define CurrentMode TestCurrentMode
@@ -228,6 +242,7 @@ BOOL WINAPI ObserveCloseService(SC_HANDLE handle) {
 #undef OpenProcessToken
 #undef AdjustTokenPrivileges
 #undef CloseHandle
+#undef OpenProcess
 #undef ProtectedStoreUserId
 #undef WriteUserDiagnostic
 #undef CurrentMode
@@ -256,6 +271,7 @@ std::string TestProtectedStoreUserId() { return test_runtime_user; }
 std::string test_written_diagnostic;
 bool TestWriteUserDiagnostic(const std::string&, const std::string& text, bool) {
   test_written_diagnostic = text;
+  if (test_diagnostic_changes_error) SetLastError(ERROR_INVALID_DATA);
   return true;
 }
 std::optional<bool> IsWireGuardTunnelStopped() { return test_wireguard_stopped; }
@@ -618,6 +634,14 @@ void TestRuntimePresence() {
   Check(PrivilegedRuntimePresence() == std::optional<bool>(false) &&
         !IsPersistentVpnServiceRunning() && scm_manager_queries == prior_queries,
         "portable runtime does not adopt or query an installed service");
+  inspect_presence_wait_failure = true;
+  launched_broker_pid.store(109);
+  const auto failed_presence = PrivilegedRuntimePresence();
+  const auto failed_presence_code = GetLastError();
+  launched_broker_pid.store(0);
+  inspect_presence_wait_failure = false;
+  Check(!failed_presence.has_value() && failed_presence_code == ERROR_NOT_SUPPORTED,
+        "runtime process wait retains Windows 50 before closing its handle");
   fuzevpn_distribution::test_distribution_mode = fuzevpn_distribution::Mode::unavailable;
   Check(!PrivilegedRuntimePresence().has_value() && scm_manager_queries == prior_queries,
         "unavailable distribution state remains unknown without querying SCM");
@@ -742,6 +766,105 @@ class RecordingResult final : public flutter::MethodResult<flutter::EncodableVal
   }
   ReplyState* state_;
 };
+
+void CheckBrokerFailureDetails(const ReplyState& reply, const char* expected_code,
+                              const char* expected_stage, DWORD expected_error) {
+  Check(reply.replied && reply.code == expected_code,
+        "IPC failure keeps its existing public error code");
+  const auto* details = reply.value
+      ? std::get_if<flutter::EncodableMap>(&*reply.value) : nullptr;
+  Check(details != nullptr &&
+        details->size() == (expected_error == ERROR_SUCCESS ? 1u : 2u),
+        "IPC failure details contain only stage and a nonzero Windows code");
+  if (details == nullptr) return;
+  const auto stage = details->find(flutter::EncodableValue("stage"));
+  Check(stage != details->end() &&
+        std::holds_alternative<std::string>(stage->second) &&
+        std::get<std::string>(stage->second) == expected_stage,
+        "IPC failure stage is the exact bounded transport phase");
+  const auto error = details->find(flutter::EncodableValue("win32_error"));
+  if (expected_error == ERROR_SUCCESS) {
+    Check(error == details->end(), "zero Windows code is omitted");
+  } else {
+    Check(error != details->end() &&
+          std::holds_alternative<int64_t>(error->second) &&
+          std::get<int64_t>(error->second) == static_cast<int64_t>(expected_error),
+          "DWORD keeps its full unsigned range in the codec's int64 field");
+  }
+}
+
+void TestBrokerFailureDetails() {
+  struct Case {
+    ExchangeFailure failure;
+    const char* code;
+    const char* stage;
+  };
+  const Case cases[] = {
+      {ExchangeFailure::kNone, "broker_unavailable", "broker_connection"},
+      {ExchangeFailure::kBrokerUnavailable, "broker_unavailable", "broker_connection"},
+      {ExchangeFailure::kInstallationRequired, "installation_required", "broker_connection"},
+      {ExchangeFailure::kRequestWriteFailed, "broker_write_failed", "broker_write"},
+      {ExchangeFailure::kResponseUnavailable, "broker_response_timeout", "broker_response"}};
+  for (const auto& item : cases) {
+    for (const DWORD original_error : {DWORD{ERROR_SUCCESS}, DWORD{ERROR_NOT_SUPPORTED},
+                                       DWORD{0xf1234567u}}) {
+      ReplyState reply;
+      std::vector<uint8_t> response{0x61, 0x62, 0x63};
+      // Completion must use the snapshot, never this platform-thread errno.
+      SetLastError(ERROR_ACCESS_DENIED);
+      CompletePrivilegedCall(std::make_unique<RecordingResult>(&reply), false,
+                            item.failure, &response, original_error);
+      CheckBrokerFailureDetails(reply, item.code, item.stage, original_error);
+      Check(response.empty(), "failed IPC response is wiped before delivery");
+      if (!reply.value) continue;
+      const auto& codec = flutter::StandardMethodCodec::GetInstance();
+      const auto envelope = codec.EncodeErrorEnvelope(reply.code, "", &*reply.value);
+      ReplyState decoded;
+      RecordingResult receiver(&decoded);
+      Check(envelope != nullptr && codec.DecodeAndProcessResponseEnvelope(
+                envelope->data(), envelope->size(), &receiver),
+            "actual StandardMethodCodec error envelope preserves structured details");
+      CheckBrokerFailureDetails(decoded, item.code, item.stage, original_error);
+    }
+  }
+}
+
+void TestBrokerFailureCapture() {
+  const auto old_mode = fuzevpn_distribution::test_distribution_mode;
+  const auto old_scm = scm_scenario;
+  HANDLE old_cancel = client_cancel_event;
+  inspect_pipe_connections = true;
+  test_diagnostic_changes_error = true;
+  client_cancel_event = nullptr;
+  fuzevpn_distribution::test_distribution_mode = fuzevpn_distribution::Mode::installed;
+  scm_scenario = ScmScenario::absent;
+  scm_manager_queries = transport_open_attempts = transport_trust_queries = 0;
+  transport_cancelled = false;
+  transport_open_error = ERROR_NOT_SUPPORTED;
+  std::vector<uint8_t> response;
+  ExchangeFailure failure = ExchangeFailure::kNone;
+  DWORD windows_error = 0xffffffffu;
+  flutter::MethodCall<flutter::EncodableValue> call("wireguard.isConnected", nullptr);
+  Check(!Exchange(call, false, &response, true, &failure, &windows_error) &&
+        failure == ExchangeFailure::kBrokerUnavailable &&
+        windows_error == ERROR_NOT_SUPPORTED && GetLastError() == ERROR_INVALID_DATA,
+        "actual Exchange snapshots the connection error before diagnostic changes errno");
+  Check(scm_manager_queries == 0 && transport_open_attempts == 1,
+        "failure capture neither queries a real service nor retries a terminal error");
+  flutter::MethodCall<flutter::EncodableValue> oversized("wireguard.isConnected",
+      std::make_unique<flutter::EncodableValue>(std::string(2 * 1024 * 1024, 'x')));
+  SetLastError(ERROR_NOT_SUPPORTED);
+  windows_error = 0xffffffffu;
+  Check(!Exchange(oversized, false, &response, true, &failure, &windows_error) &&
+        failure == ExchangeFailure::kRequestWriteFailed &&
+        windows_error == ERROR_SUCCESS && transport_open_attempts == 1,
+        "local request rejection clears stale Windows state and never opens a pipe");
+  test_diagnostic_changes_error = false;
+  inspect_pipe_connections = false;
+  client_cancel_event = old_cancel;
+  scm_scenario = old_scm;
+  fuzevpn_distribution::test_distribution_mode = old_mode;
+}
 
 void TestPassiveBrokerTransport() {
   const auto old_scm = scm_scenario;
@@ -1064,6 +1187,41 @@ void TestPlatformDelivery() {
         "worker reports locally rejected request");
   Check(reply.callback_thread == platform_thread,
         "Flutter reply delivered only on the platform thread");
+  CheckBrokerFailureDetails(reply, "broker_write_failed", "broker_write", ERROR_SUCCESS);
+
+  // Exercise the real dispatcher with a terminal, simulated connection failure.
+  // No real pipe/service/UAC is accessed; the worker's errno differs from GUI.
+  const auto old_mode = fuzevpn_distribution::test_distribution_mode;
+  const auto old_scm = scm_scenario;
+  inspect_pipe_connections = true;
+  test_diagnostic_changes_error = true;
+  fuzevpn_distribution::test_distribution_mode = fuzevpn_distribution::Mode::installed;
+  scm_scenario = ScmScenario::absent;
+  transport_cancelled = false;
+  transport_open_error = ERROR_NOT_SUPPORTED;
+  transport_open_attempts = scm_manager_queries = 0;
+  ReplyState failed_connection;
+  flutter::MethodCall<flutter::EncodableValue> status_call("isConnected", nullptr);
+  ForwardPrivilegedCall("wireguard", status_call,
+      std::make_unique<RecordingResult>(&failed_connection), false);
+  const auto failure_deadline = GetTickCount64() + 3000;
+  while (!failed_connection.replied && GetTickCount64() < failure_deadline) {
+    MSG message{};
+    while (PeekMessageW(&message, window, 0, 0, PM_REMOVE)) {
+      SetLastError(ERROR_ACCESS_DENIED);
+      DispatchMessageW(&message);
+    }
+    Sleep(1);
+  }
+  CheckBrokerFailureDetails(failed_connection, "broker_unavailable",
+                           "broker_connection", ERROR_NOT_SUPPORTED);
+  Check(failed_connection.callback_thread == platform_thread &&
+        transport_open_attempts == 1 && scm_manager_queries == 0,
+        "worker Windows code crosses threads without reading GUI errno or real SCM");
+  test_diagnostic_changes_error = false;
+  inspect_pipe_connections = false;
+  scm_scenario = old_scm;
+  fuzevpn_distribution::test_distribution_mode = old_mode;
   ReplyState closing;
   ForwardPrivilegedCall("wireguard", call,
                         std::make_unique<RecordingResult>(&closing), false);
@@ -1096,6 +1254,8 @@ int main() {
       FILE_CREATE_PIPE_INSTANCE | WRITE_DAC | WRITE_OWNER);
   TestRuntimePresence();
   TestRuntimeStatusFailures();
+  TestBrokerFailureDetails();
+  TestBrokerFailureCapture();
   TestPassiveBrokerTransport();
   Check(TestPassiveServicePipeRetry(), "passive authenticated service retry handles bounded recovery and terminal failures");
   TestServiceIdleHandoff();

@@ -1700,7 +1700,9 @@ HANDLE ConnectToBroker(bool start_if_missing, bool allow_service,
 bool Exchange(const flutter::MethodCall<flutter::EncodableValue>& call,
               bool start_if_missing, std::vector<uint8_t>* response,
               bool allow_service = true,
-              ExchangeFailure* exchange_failure = nullptr) {
+              ExchangeFailure* exchange_failure = nullptr,
+              DWORD* windows_error = nullptr) {
+  if (windows_error != nullptr) *windows_error = ERROR_SUCCESS;
   if (exchange_failure != nullptr) {
     *exchange_failure = ExchangeFailure::kNone;
   }
@@ -1719,13 +1721,18 @@ bool Exchange(const flutter::MethodCall<flutter::EncodableValue>& call,
   const bool diagnostic = call.method_name() == "diagnostics.collectSnapshot";
   HANDLE pipe = ConnectToBroker(start_if_missing, allow_service, &installation_required, diagnostic);
   if (pipe == INVALID_HANDLE_VALUE) {
+    // Keep the failing worker thread's value before logging, wiping buffers or
+    // closing handles can overwrite it. Platform delivery never re-reads
+    // GetLastError() on the GUI thread.
+    const DWORD connection_error = GetLastError();
+    if (windows_error != nullptr) *windows_error = connection_error;
     if (exchange_failure != nullptr) {
       *exchange_failure = installation_required
           ? ExchangeFailure::kInstallationRequired
           : ExchangeFailure::kBrokerUnavailable;
     }
     AppendNativeDiagnostic("broker", "connection_failed",
-                           std::to_string(GetLastError()));
+                           std::to_string(connection_error));
     Wipe(request.get());
     return false;
   }
@@ -1733,21 +1740,25 @@ bool Exchange(const flutter::MethodCall<flutter::EncodableValue>& call,
   const bool wrote = WriteFrameOverlapped(pipe, client_cancel_event, *request,
                                          deadline);
   if (!wrote) {
+    const DWORD write_error = GetLastError();
+    if (windows_error != nullptr) *windows_error = write_error;
     if (exchange_failure != nullptr) {
       *exchange_failure = ExchangeFailure::kRequestWriteFailed;
     }
     AppendNativeDiagnostic("broker", "request_write_failed",
-                           std::to_string(GetLastError()));
+                           std::to_string(write_error));
   }
   const bool response_read =
       wrote &&
       ReadFrameOverlapped(pipe, client_cancel_event, response, deadline);
   if (wrote && !response_read) {
+    const DWORD response_error = GetLastError();
+    if (windows_error != nullptr) *windows_error = response_error;
     if (exchange_failure != nullptr) {
       *exchange_failure = ExchangeFailure::kResponseUnavailable;
     }
     AppendNativeDiagnostic("broker", "response_unavailable",
-                           std::to_string(GetLastError()));
+                           std::to_string(response_error));
   }
   // The broker disconnects only after this acknowledgement. It therefore
   // cannot discard a response between WriteFile and DisconnectNamedPipe.
@@ -1814,20 +1825,34 @@ namespace {
 void CompletePrivilegedCall(
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result,
     bool exchanged, ExchangeFailure exchange_failure,
-    std::vector<uint8_t>* response) {
+    std::vector<uint8_t>* response, DWORD windows_error) {
   if (!exchanged) {
     const char* code = "broker_unavailable";
+    const char* stage = "broker_connection";
     switch (exchange_failure) {
-      case ExchangeFailure::kRequestWriteFailed: code = "broker_write_failed"; break;
-      case ExchangeFailure::kResponseUnavailable: code = "broker_response_timeout"; break;
+      case ExchangeFailure::kRequestWriteFailed:
+        code = "broker_write_failed";
+        stage = "broker_write";
+        break;
+      case ExchangeFailure::kResponseUnavailable:
+        code = "broker_response_timeout";
+        stage = "broker_response";
+        break;
       case ExchangeFailure::kInstallationRequired: code = "installation_required"; break;
       case ExchangeFailure::kNone:
       case ExchangeFailure::kBrokerUnavailable: break;
     }
+    flutter::EncodableMap error_details{
+        {flutter::EncodableValue("stage"), flutter::EncodableValue(stage)}};
+    if (windows_error != ERROR_SUCCESS) {
+      error_details.emplace(flutter::EncodableValue("win32_error"),
+          flutter::EncodableValue(static_cast<int64_t>(windows_error)));
+    }
     Wipe(response);
     result->Error(code, exchange_failure == ExchangeFailure::kInstallationRequired
         ? "Install FuzeVPN in an administrator-protected directory before enabling the VPN."
-        : "Windows could not authorize the VPN operation.");
+        : "Windows could not authorize the VPN operation.",
+        flutter::EncodableValue(std::move(error_details)));
     return;
   }
   if (!fuzevpn_ipc::ValidateResponseEnvelope(response->data(), response->size())) {
@@ -1852,6 +1877,7 @@ struct PrivilegedCompletion {
   uint64_t id;
   bool exchanged;
   ExchangeFailure failure;
+  DWORD windows_error;
   std::vector<uint8_t> response;
 };
 std::mutex dispatcher_mutex;
@@ -1878,9 +1904,10 @@ void RunPrivilegedCallWorker() {
       call = std::move(dispatcher_requests.front());
       dispatcher_requests.pop_front();
     }
-    PrivilegedCompletion completed{call.id, false, ExchangeFailure::kNone, {}};
+    PrivilegedCompletion completed{
+        call.id, false, ExchangeFailure::kNone, ERROR_SUCCESS, {}};
     completed.exchanged = Exchange(*call.request, call.start_if_missing,
-        &completed.response, true, &completed.failure);
+        &completed.response, true, &completed.failure, &completed.windows_error);
     {
       std::lock_guard<std::mutex> lock(dispatcher_mutex);
       if (dispatcher_stopping) {
@@ -1924,7 +1951,8 @@ void ProcessPrivilegedCallCompletions() {
     auto result = std::move(found->second);
     platform_results.erase(found);
     CompletePrivilegedCall(std::move(result), completion.exchanged,
-                            completion.failure, &completion.response);
+                            completion.failure, &completion.response,
+                            completion.windows_error);
   }
 }
 
@@ -1986,9 +2014,11 @@ void ForwardPrivilegedCall(
   // uses native-only result objects. Normal GUI calls always use the worker.
   std::vector<uint8_t> response;
   ExchangeFailure failure = ExchangeFailure::kNone;
+  DWORD windows_error = ERROR_SUCCESS;
   const bool exchanged = Exchange(*request, start_if_missing, &response, true,
-                                   &failure);
-  CompletePrivilegedCall(std::move(result), exchanged, failure, &response);
+                                   &failure, &windows_error);
+  CompletePrivilegedCall(std::move(result), exchanged, failure, &response,
+                          windows_error);
 }
 
 std::optional<bool> PrivilegedRuntimePresence(bool* detection_failed) {
@@ -2008,9 +2038,11 @@ std::optional<bool> PrivilegedRuntimePresence(bool* detection_failed) {
   HANDLE process = OpenProcess(SYNCHRONIZE, FALSE, pid);
   if (process == nullptr) return std::nullopt;
   const DWORD state = WaitForSingleObject(process, 0);
+  const DWORD wait_error = state == WAIT_FAILED ? GetLastError() : ERROR_INVALID_DATA;
   CloseHandle(process);
   if (state == WAIT_OBJECT_0) return false;
   if (state == WAIT_TIMEOUT) return true;
+  SetLastError(wait_error);
   return std::nullopt;
 }
 

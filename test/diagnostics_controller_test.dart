@@ -70,6 +70,7 @@ void main() {
       await fixture.bind('a');
       fixture.api.failure = const ApiException(
         statusCode: 503,
+        observedHttpStatus: 503,
         errorCode: 'diagnostics_unavailable',
         retryAfterSeconds: 60,
       );
@@ -104,6 +105,7 @@ void main() {
       await fixture.bind('a');
       fixture.api.failure = const ApiException(
         statusCode: 401,
+        observedHttpStatus: 401,
         errorCode: 'unauthorized',
       );
       final report = fixture.controller.prepareManualReport()!;
@@ -130,6 +132,7 @@ void main() {
         await fixture.bind('a');
         fixture.api.failure = ApiException(
           statusCode: status,
+          observedHttpStatus: status,
           errorCode: 'invalid_diagnostic',
         );
         final report = fixture.controller.prepareManualReport()!;
@@ -266,6 +269,7 @@ void main() {
     await fixture.bind('a');
     fixture.api.failure = const ApiException(
       statusCode: 401,
+      observedHttpStatus: 401,
       errorCode: 'unauthorized',
     );
     await fixture.controller.sendPreparedReport(
@@ -424,6 +428,7 @@ void main() {
       await fixture.bind('a');
       fixture.api.failure = const ApiException(
         statusCode: 429,
+        observedHttpStatus: 429,
         errorCode: 'rate_limited',
         retryAfterSeconds: 3600,
       );

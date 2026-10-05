@@ -1169,6 +1169,10 @@ class _DeviceEnrollmentIssueCard extends StatelessWidget {
         'Confirmer mon e-mail',
         () => _openWebsite(context, BrandConfig.portalVerifyEmail),
       ),
+      DeviceEnrollmentIssueKind.subscriptionRequired => (
+        'Mon compte',
+        () => _openAccountDestination(context, controller),
+      ),
       DeviceEnrollmentIssueKind.deviceLimit => (
         'Gérer mes appareils',
         () => controller.selectSection(AppSection.devices),

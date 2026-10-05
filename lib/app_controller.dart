@@ -12,6 +12,8 @@ import 'core/diagnostic_log.dart';
 import 'core/diagnostics_bridge.dart';
 import 'core/diagnostics_controller.dart';
 import 'core/diagnostics_models.dart';
+import 'core/diagnostics_support.dart';
+import 'core/local_diagnostic_trace.dart';
 import 'core/models.dart';
 import 'core/openvpn_bridge.dart';
 import 'core/secure_store.dart';
@@ -37,6 +39,7 @@ enum LocationChangePreparation {
 
 enum DeviceEnrollmentIssueKind {
   sessionExpired,
+  subscriptionRequired,
   emailVerificationRequired,
   deviceLimit,
   deviceExists,
@@ -111,6 +114,10 @@ class AppController extends ChangeNotifier {
   FrozenDiagnosticReport? preparedDiagnosticReport;
   bool diagnosticRunning = false;
   bool diagnosticRepairRunning = false;
+  bool diagnosticExportRunning = false;
+  Map<String, Object?>? _diagnosticSupport;
+  Future<String>? _diagnosticExport;
+  bool _completeDiagnosticRunning = false;
   String? diagnosticMessage;
   int _diagnosticGeneration = 0;
   DiagnosticError? _diagnosticCandidate;
@@ -138,6 +145,9 @@ class AppController extends ChangeNotifier {
               ? 'manual_installation_required'
               : 'failed',
           code: failure.code,
+          stage: failure.stage,
+          windowsError: failure.windowsError,
+          httpStatus: failure.statusCode,
         ),
       );
       _emitDiagnosticFailure(
@@ -551,13 +561,42 @@ class AppController extends ChangeNotifier {
   }
 
   Future<void> initialize() async {
-    final savedTheme = await _safe(_store.themeMode());
+    final clock = Stopwatch()..start();
+    _traceControllerPhase('startup', 'initialize', 'begin');
+    try {
+      await _initialize();
+      _traceControllerPhase(
+        'startup',
+        'initialize',
+        'completed',
+        code: _disposed ? 'cancelled' : 'initialized',
+        durationMs: clock.elapsedMilliseconds,
+      );
+    } catch (error) {
+      _traceControllerFailure(
+        'startup',
+        'initialize',
+        error,
+        durationMs: clock.elapsedMilliseconds,
+      );
+      rethrow;
+    }
+  }
+
+  Future<void> _initialize() async {
+    final savedTheme = await _traceOptionalLoad(
+      _store.themeMode(),
+      stage: 'preferences_theme',
+    );
     themeMode = switch (savedTheme) {
       'dark' => ThemeMode.dark,
       'system' => ThemeMode.system,
       _ => ThemeMode.light,
     };
-    final savedProtocol = await _safe(_store.vpnProtocol());
+    final savedProtocol = await _traceOptionalLoad(
+      _store.vpnProtocol(),
+      stage: 'preferences_protocol',
+    );
     protocolPreference = switch (savedProtocol) {
       'auto' => VpnProtocolPreference.automatic,
       'openvpn' => VpnProtocolPreference.openVpn,
@@ -568,38 +607,98 @@ class AppController extends ChangeNotifier {
       VpnProtocolPreference.automatic ||
       VpnProtocolPreference.wireGuard => VpnProtocol.wireGuard,
     };
+    final securityClock = Stopwatch()..start();
+    _traceControllerPhase('startup', 'preferences_security', 'begin');
     try {
       _applySecuritySettings(await _store.securitySettings());
-    } catch (_) {
+      _traceControllerPhase(
+        'startup',
+        'preferences_security',
+        'completed',
+        durationMs: securityClock.elapsedMilliseconds,
+      );
+    } catch (error) {
+      _traceControllerFailure(
+        'startup',
+        'preferences_security',
+        error,
+        durationMs: securityClock.elapsedMilliseconds,
+      );
       _applySecuritySettings(SecuritySettings.secureDefaults);
+      _traceControllerPhase(
+        'startup',
+        'preferences_security',
+        'fallback',
+        code: 'secure_defaults',
+      );
       securitySettingsError =
           'Les réglages de sécurité enregistrés sont illisibles. Les protections par défaut restent activées.';
     }
     launchWithWindows =
-        await _safe<bool>(_window.isLaunchAtStartupEnabled()) ?? false;
+        await _traceOptionalLoad<bool>(
+          _window.isLaunchAtStartupEnabled(),
+          stage: 'windows_startup_preference',
+        ) ??
+        false;
     autoConnectOnLaunch =
-        await _safe<String?>(_store.autoConnectOnLaunch()) == 'true';
+        await _traceOptionalLoad<String?>(
+          _store.autoConnectOnLaunch(),
+          stage: 'preferences_auto_connect',
+        ) ==
+        'true';
     windowsNotificationsEnabled =
-        await _safe<String?>(_store.windowsNotifications()) != 'false';
+        await _traceOptionalLoad<String?>(
+          _store.windowsNotifications(),
+          stage: 'preferences_notifications',
+        ) !=
+        'false';
     favoriteLocationIds = {
-      ...?await _safe<List<String>>(_store.favoriteLocationIds()),
+      ...?await _traceOptionalLoad<List<String>>(
+        _store.favoriteLocationIds(),
+        stage: 'preferences_favorites',
+      ),
     };
     recentLocationIds = [
-      ...?await _safe<List<String>>(_store.recentLocationIds()),
+      ...?await _traceOptionalLoad<List<String>>(
+        _store.recentLocationIds(),
+        stage: 'preferences_recent_locations',
+      ),
     ];
+    _traceControllerPhase('startup', 'native_preferences', 'begin');
     _configureNativeNetworkProtection();
+    _traceControllerPhase('startup', 'native_preferences', 'completed');
+    _traceControllerPhase('startup', 'connectivity_listener', 'begin');
     _window.startConnectivityListener(_handleWindowsConnectivityEvent);
     _windowListenerStarted = true;
+    _traceControllerPhase('startup', 'connectivity_listener', 'completed');
     language = AppLanguageLocale.fromStorage(
-      await _safe<String?>(_store.appLanguage()),
+      await _traceOptionalLoad<String?>(
+        _store.appLanguage(),
+        stage: 'preferences_language',
+      ),
     );
-    final savedLocation = await _safe(_store.selectedLocation());
-    currentDeviceId = await _safe<String?>(_store.currentDeviceId());
+    final savedLocation = await _traceOptionalLoad(
+      _store.selectedLocation(),
+      stage: 'preferences_selected_location',
+    );
+    currentDeviceId = await _traceOptionalLoad<String?>(
+      _store.currentDeviceId(),
+      stage: 'stored_device_binding',
+    );
     final token = await _readSavedSessionToken();
     _sessionValidationPending = token != null || _sessionStorageUnavailable;
     // Resolve native protection before making GUI API requests. A retained
     // lock may outlive this window, and only the native cache can resume it.
+    final runtimeClock = Stopwatch()..start();
+    _traceControllerPhase('startup', 'runtime_observation', 'begin');
     await Future.wait([_loadTunnelState(), _loadOpenVpnRuntime()]);
+    _traceControllerPhase(
+      'startup',
+      'runtime_observation',
+      'completed',
+      code: _runtimeVerificationPending ? 'verification_pending' : 'observed',
+      durationMs: runtimeClock.elapsedMilliseconds,
+    );
     if (_disposed) return;
     final retainedProtocol = _retainedProtectionProtocol;
     if (token != null &&
@@ -627,6 +726,14 @@ class AppController extends ChangeNotifier {
       isLoadingLocations = false;
       apiReachable = false;
       devicesReachable = false;
+      _traceControllerPhase(
+        'startup',
+        'initial_remote_data',
+        'deferred',
+        code: _runtimeVerificationPending
+            ? 'runtime_verification_pending'
+            : 'retained_protection',
+      );
     }
     isInitialized = true;
     _scheduleRuntimeVerificationRetry();
@@ -645,9 +752,24 @@ class AppController extends ChangeNotifier {
   }
 
   Future<void> _loadOpenVpnRuntime() async {
+    final clock = Stopwatch()..start();
+    _traceControllerPhase('runtime_state', 'openvpn_availability', 'begin');
     try {
       openVpnRuntimeAvailable = await _openVpn.isAvailable();
-    } catch (_) {
+      _traceControllerPhase(
+        'runtime_state',
+        'openvpn_availability',
+        'completed',
+        code: openVpnRuntimeAvailable ? 'available' : 'unavailable',
+        durationMs: clock.elapsedMilliseconds,
+      );
+    } catch (error) {
+      _traceControllerFailure(
+        'runtime_state',
+        'openvpn_availability',
+        error,
+        durationMs: clock.elapsedMilliseconds,
+      );
       openVpnRuntimeAvailable = false;
     }
     notifyListeners();
@@ -659,6 +781,71 @@ class AppController extends ChangeNotifier {
     } catch (_) {
       return null;
     }
+  }
+
+  // Tracing is best-effort and records fixed phase names and bounded metadata.
+  // It must not change the optional-load fallback or persist returned values.
+  Future<T?> _traceOptionalLoad<T>(
+    Future<T> action, {
+    required String stage,
+    String area = 'startup',
+  }) async {
+    final clock = Stopwatch()..start();
+    _traceControllerPhase(area, stage, 'begin');
+    try {
+      final value = await action;
+      _traceControllerPhase(
+        area,
+        stage,
+        'completed',
+        durationMs: clock.elapsedMilliseconds,
+      );
+      return value;
+    } catch (error) {
+      _traceControllerFailure(
+        area,
+        stage,
+        error,
+        durationMs: clock.elapsedMilliseconds,
+      );
+      return null;
+    }
+  }
+
+  void _traceControllerPhase(
+    String area,
+    String stage,
+    String event, {
+    String? code,
+    int? durationMs,
+  }) {
+    unawaited(
+      DiagnosticLog.record(
+        area: area,
+        event: event,
+        stage: stage,
+        code: code,
+        durationMs: durationMs,
+      ),
+    );
+  }
+
+  void _traceControllerFailure(
+    String area,
+    String stage,
+    Object error, {
+    String event = 'failed',
+    int? durationMs,
+  }) {
+    unawaited(
+      DiagnosticLog.recordFailure(
+        area: area,
+        event: event,
+        error: error,
+        stage: stage,
+        durationMs: durationMs,
+      ),
+    );
   }
 
   Future<void> _forgetCurrentDeviceBinding() async {
@@ -745,11 +932,13 @@ class AppController extends ChangeNotifier {
   // These local traces deliberately use a separate area from automatic report
   // hooks. Only fixed stages, tri-state values and platform error codes enter
   // the log; exception messages/details and native payloads never do.
-  void _traceNativeState(String stage, bool? value) {
+  void _traceNativeState(String stage, bool? value, {int? durationMs}) {
     unawaited(
       DiagnosticLog.record(
         area: 'runtime_state',
         event: stage,
+        stage: stage,
+        durationMs: durationMs,
         code: value == null
             ? 'unknown'
             : value
@@ -759,7 +948,7 @@ class AppController extends ChangeNotifier {
     );
   }
 
-  void _traceNativeStateFailure(String stage, Object error) {
+  void _traceNativeStateFailure(String stage, Object error, {int? durationMs}) {
     if (_collectingStartupState) {
       _runtimeVerificationFailureCode ??= switch (error) {
         PlatformException() => error.code,
@@ -775,20 +964,21 @@ class AppController extends ChangeNotifier {
       }
     }
     unawaited(
-      DiagnosticLog.record(
+      DiagnosticLog.recordFailure(
         area: 'runtime_state',
         event: '${stage}_failed',
-        code: switch (error) {
-          PlatformException() => error.code,
-          MissingPluginException() => 'missing_plugin',
-          FormatException() => 'invalid_response',
-          _ => 'unknown_error',
-        },
+        stage: stage,
+        error: error,
+        durationMs: durationMs,
       ),
     );
   }
 
   Future<T?> _readNativeState<T>(Future<T> action, {String? traceStage}) async {
+    final clock = Stopwatch()..start();
+    if (traceStage != null) {
+      _traceControllerPhase('runtime_state', traceStage, 'begin');
+    }
     try {
       final value = await action;
       if (traceStage != null) {
@@ -796,12 +986,16 @@ class AppController extends ChangeNotifier {
           bool() => value,
           NetworkProtectionStatus() => value.active,
           _ => null,
-        });
+        }, durationMs: clock.elapsedMilliseconds);
       }
       return value;
     } catch (error) {
       if (traceStage != null) {
-        _traceNativeStateFailure(traceStage, error);
+        _traceNativeStateFailure(
+          traceStage,
+          error,
+          durationMs: clock.elapsedMilliseconds,
+        );
         _traceNativeState(traceStage, null);
       }
       return null;
@@ -869,6 +1063,8 @@ class AppController extends ChangeNotifier {
 
   Future<void> refreshLocations([String? savedLocation]) async {
     if (_disposed) return;
+    final clock = Stopwatch()..start();
+    _traceControllerPhase('locations', 'catalogue_refresh', 'begin');
     final epoch = ++_locationsRefreshEpoch;
     final sessionEpoch = _sessionEpoch;
     bool current() =>
@@ -879,7 +1075,16 @@ class AppController extends ChangeNotifier {
     notifyListeners();
     try {
       final refreshed = await _api.locations();
-      if (!current()) return;
+      if (!current()) {
+        _traceControllerPhase(
+          'locations',
+          'catalogue_refresh',
+          'discarded',
+          code: 'superseded',
+          durationMs: clock.elapsedMilliseconds,
+        );
+        return;
+      }
       final preferredId =
           selectedLocation?.id ?? savedLocation ?? _unavailableLocationId;
       locations = refreshed;
@@ -892,7 +1097,19 @@ class AppController extends ChangeNotifier {
           ? preferredId
           : null;
       apiReachable = true;
-    } catch (_) {
+      _traceControllerPhase(
+        'locations',
+        'catalogue_refresh',
+        'completed',
+        durationMs: clock.elapsedMilliseconds,
+      );
+    } catch (error) {
+      _traceControllerFailure(
+        'locations',
+        'catalogue_refresh',
+        error,
+        durationMs: clock.elapsedMilliseconds,
+      );
       if (current()) apiReachable = false;
     } finally {
       if (!_disposed && epoch == _locationsRefreshEpoch) {
@@ -950,6 +1167,8 @@ class AppController extends ChangeNotifier {
 
   Future<void> refreshDevices() async {
     if (_disposed || _isSigningOut) return;
+    final clock = Stopwatch()..start();
+    _traceControllerPhase('devices', 'device_catalogue_refresh', 'begin');
     final refreshEpoch = ++_devicesRefreshEpoch;
     var mutationEpoch = _devicesMutationEpoch;
     final sessionEpoch = _sessionEpoch;
@@ -966,12 +1185,30 @@ class AppController extends ChangeNotifier {
       }
     }
 
-    final token = await _safe(_store.token());
+    final token = await _traceOptionalLoad(
+      _store.token(),
+      stage: 'device_catalogue_session_storage',
+      area: 'storage',
+    );
     if (!current()) {
+      _traceControllerPhase(
+        'devices',
+        'device_catalogue_refresh',
+        'discarded',
+        code: 'superseded',
+        durationMs: clock.elapsedMilliseconds,
+      );
       finishLoading();
       return;
     }
     if (token == null || profile == null) {
+      _traceControllerPhase(
+        'devices',
+        'device_catalogue_refresh',
+        'skipped',
+        code: 'session_unavailable',
+        durationMs: clock.elapsedMilliseconds,
+      );
       devices = const [];
       deviceErrorMessage = null;
       isLoadingDevices = false;
@@ -1010,7 +1247,19 @@ class AppController extends ChangeNotifier {
         realDeviceLocation = currentLocation;
       }
       devicesReachable = true;
-    } catch (_) {
+      _traceControllerPhase(
+        'devices',
+        'device_catalogue_refresh',
+        'completed',
+        durationMs: clock.elapsedMilliseconds,
+      );
+    } catch (error) {
+      _traceControllerFailure(
+        'devices',
+        'device_catalogue_refresh',
+        error,
+        durationMs: clock.elapsedMilliseconds,
+      );
       if (!current()) return;
       devicesReachable = false;
       deviceErrorMessage =
@@ -1037,9 +1286,13 @@ class AppController extends ChangeNotifier {
   bool get _subscriptionApiBlocked =>
       runtimeOwnedByAnotherUser ||
       _runtimeVerificationPending ||
-      isConnectionBusy ||
-      _disconnectUnconfirmed ||
-      (requiresExplicitDisconnect && vpnStatus != VpnStatus.connected);
+      _disconnectUnconfirmed;
+
+  String get _subscriptionApiBlockedMessage => _runtimeVerificationPending
+      ? _runtimeVerificationFailureMessage
+      : runtimeOwnedByAnotherUser
+      ? _otherSessionMessage
+      : 'L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.';
 
   /// Called by the account panel on opening or retry, never by startup.
   /// Concurrent refreshes share a request; only the owning account/session can
@@ -1054,9 +1307,7 @@ class AppController extends ChangeNotifier {
     final running = _subscriptionRequest;
     if (running != null) return running;
     if (_subscriptionApiBlocked) {
-      subscriptionErrorMessage = _runtimeVerificationPending
-          ? _runtimeVerificationFailureMessage
-          : 'Déconnectez le VPN pour consulter votre abonnement.';
+      subscriptionErrorMessage = _subscriptionApiBlockedMessage;
       notifyListeners();
       return Future.value();
     }
@@ -1085,6 +1336,8 @@ class AppController extends ChangeNotifier {
     String userId,
     int generation,
   ) async {
+    final clock = Stopwatch()..start();
+    _traceControllerPhase('account', 'subscription_refresh', 'begin');
     bool current() =>
         _isCurrentSession(epoch, userId) &&
         generation == _subscriptionGeneration;
@@ -1092,36 +1345,75 @@ class AppController extends ChangeNotifier {
       final token = await _store.token();
       if (!current()) return;
       if (token == null || token.isEmpty) {
+        _traceControllerPhase(
+          'account',
+          'subscription_refresh',
+          'skipped',
+          code: 'session_unavailable',
+          durationMs: clock.elapsedMilliseconds,
+        );
         _clearSubscriptionState();
         notifyListeners();
         return;
       }
       // The native state can change while protected storage is being read.
       if (_subscriptionApiBlocked) {
-        subscriptionErrorMessage = _runtimeVerificationPending
-            ? _runtimeVerificationFailureMessage
-            : 'Déconnectez le VPN pour consulter votre abonnement.';
+        _traceControllerPhase(
+          'account',
+          'subscription_refresh',
+          'deferred',
+          code: 'runtime_not_ready',
+          durationMs: clock.elapsedMilliseconds,
+        );
+        subscriptionErrorMessage = _subscriptionApiBlockedMessage;
         return;
       }
       final loaded = await _api.subscription(token);
       if (!current()) return;
       subscription = loaded;
+      _clearResolvedSubscriptionIssue(loaded);
+      _traceControllerPhase(
+        'account',
+        'subscription_refresh',
+        'completed',
+        durationMs: clock.elapsedMilliseconds,
+      );
     } on ApiException catch (error) {
+      _traceControllerFailure(
+        'account',
+        'subscription_refresh',
+        error,
+        durationMs: clock.elapsedMilliseconds,
+      );
       if (!current()) return;
-      if (error.isUnauthorized) {
+      if (error.isUnauthorized && !_hasLocalApiCause(error)) {
         // The in-memory cache is invalidated before any protected-store work.
         // Storage failures must not escape into the account dialog's callback.
         await _safe<void>(_expireLocalSession());
         if (!_disposed) notifyListeners();
       } else {
         subscriptionErrorMessage =
+            _localApiFailureMessage(error) ??
             'Les informations de votre abonnement ne peuvent pas être chargées pour le moment. Réessayez.';
       }
-    } catch (_) {
+    } catch (error) {
+      _traceControllerFailure(
+        'account',
+        'subscription_refresh',
+        error,
+        durationMs: clock.elapsedMilliseconds,
+      );
       if (!current()) return;
       subscriptionErrorMessage =
           'Les informations de votre abonnement ne peuvent pas être chargées pour le moment. Réessayez.';
     } finally {
+      _traceControllerPhase(
+        'account',
+        'subscription_refresh',
+        'finished',
+        code: current() ? 'current_session' : 'superseded',
+        durationMs: clock.elapsedMilliseconds,
+      );
       if (current()) {
         isLoadingSubscription = false;
         _subscriptionRequest = null;
@@ -1130,41 +1422,289 @@ class AppController extends ChangeNotifier {
     }
   }
 
+  /// Re-read access before preparing WFP. Cached billing cannot decide a new
+  /// connection: the user may have subscribed since the previous refusal.
+  /// Failed or unrecognized billing responses leave enrollment authoritative.
+  Future<bool> _checkSubscriptionBeforeConnection(
+    String token, {
+    int? operationId,
+  }) async {
+    final userId = profile?.userId;
+    if (userId == null || !_acceptConnectionOperation(operationId)) {
+      return false;
+    }
+    final epoch = _sessionEpoch;
+    final generation = ++_subscriptionGeneration;
+    final completion = Completer<void>();
+    // Supersede older panel responses and let an account panel opened during
+    // this check join it without issuing a competing request.
+    _subscriptionRequest = completion.future;
+    isLoadingSubscription = true;
+    subscriptionErrorMessage = null;
+    final clock = Stopwatch()..start();
+    _traceControllerPhase('account', 'subscription_preflight', 'begin');
+    bool current() =>
+        _isCurrentSession(epoch, userId) &&
+        generation == _subscriptionGeneration &&
+        _acceptConnectionOperation(operationId);
+    notifyListeners();
+    try {
+      final loaded = await _api.subscription(token);
+      if (!current()) return false;
+      subscription = loaded;
+      _clearResolvedSubscriptionIssue(loaded);
+      final denied =
+          loaded.status != SubscriptionStatus.unknown && !loaded.hasAccess;
+      _traceControllerPhase(
+        'account',
+        'subscription_preflight',
+        'completed',
+        code: denied
+            ? 'access_denied'
+            : loaded.status == SubscriptionStatus.unknown
+            ? 'access_unknown'
+            : 'access_allowed',
+        durationMs: clock.elapsedMilliseconds,
+      );
+      if (!denied) return true;
+      if (!_transitionConnection(operationId, VpnStatus.error)) return false;
+      errorMessage = null;
+      _setSubscriptionRequiredIssue();
+      _diagnosticCandidate = DiagnosticError(
+        code: 'subscription_required',
+        domain: 'api',
+        operation: _diagnosticOperation,
+        stage: 'enrollment',
+      );
+      return false;
+    } on ApiException catch (error) {
+      _traceControllerFailure(
+        'account',
+        'subscription_preflight',
+        error,
+        durationMs: clock.elapsedMilliseconds,
+      );
+      if (!current()) return false;
+      if (!_hasLocalApiCause(error) &&
+          (error.isUnauthorized ||
+              (error.statusCode == HttpStatus.forbidden &&
+                  error.observedHttpStatus == HttpStatus.forbidden &&
+                  error.errorCode == 'subscription_required'))) {
+        await _handleDeviceEnrollmentError(
+          error,
+          identityWasReset: false,
+          operationId: operationId,
+        );
+        return false;
+      }
+      subscriptionErrorMessage =
+          _localApiFailureMessage(error) ??
+          'Les informations de votre abonnement ne peuvent pas être chargées pour le moment. Réessayez.';
+      return true;
+    } catch (error) {
+      _traceControllerFailure(
+        'account',
+        'subscription_preflight',
+        error,
+        durationMs: clock.elapsedMilliseconds,
+      );
+      if (!current()) return false;
+      subscriptionErrorMessage =
+          'Les informations de votre abonnement ne peuvent pas être chargées pour le moment. Réessayez.';
+      return true;
+    } finally {
+      _traceControllerPhase(
+        'account',
+        'subscription_preflight',
+        'finished',
+        code: current() ? 'current_session' : 'superseded',
+        durationMs: clock.elapsedMilliseconds,
+      );
+      if (_isCurrentSession(epoch, userId) &&
+          generation == _subscriptionGeneration) {
+        isLoadingSubscription = false;
+        _subscriptionRequest = null;
+        notifyListeners();
+      }
+      completion.complete();
+    }
+  }
+
+  void _finishAbandonedSubscriptionPreflight(int? operationId) {
+    if (!_acceptConnectionOperation(operationId) ||
+        vpnStatus != VpnStatus.preparing) {
+      return;
+    }
+    if (requiresExplicitDisconnect) {
+      _transitionConnection(
+        operationId,
+        _retainedProtectionBlocksTraffic ? VpnStatus.blocked : VpnStatus.error,
+      );
+      return;
+    }
+    _transitionConnection(
+      operationId,
+      activeProtocol == null &&
+              !_runtimeVerificationPending &&
+              !runtimeOwnedByAnotherUser
+          ? VpnStatus.disconnected
+          : VpnStatus.error,
+    );
+  }
+
+  // ApiException also carries local resolver/bridge failures. A synthesized
+  // status (e.g. 503) is not proof that the server replied or caused the error.
+  bool _hasLocalApiCause(ApiException error) =>
+      error.observedHttpStatus == null && error.localErrorCode != null;
+
+  String? _localApiFailureMessage(ApiException error) {
+    if (!_hasLocalApiCause(error)) return null;
+    final code = _localDiagnosticCode(error.diagnosticErrorCode)!;
+    if (code.startsWith('storage_') || code.startsWith('secure_storage_')) {
+      return 'Le stockage protégé de FuzeVPN ne peut pas être utilisé. Réessayez.';
+    }
+    return switch (code) {
+      'api_bootstrap_unavailable' ||
+      'api_resolution_unavailable' ||
+      'api_resolver_invalid_response' ||
+      'endpoint_resolution_failed' =>
+        'FuzeVPN ne peut pas résoudre l’adresse du service de connexion.',
+      'broker_unavailable' || 'service_unavailable' =>
+        'Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.',
+      'broker_write_failed' ||
+      'broker_response_timeout' ||
+      'broker_protocol_error' => _wireGuardPlatformErrorMessage(code),
+      'runtime_owned_by_another_user' => _otherSessionMessage,
+      'runtime_detection_failed' =>
+        'Windows n’a pas permis de vérifier l’installation de FuzeVPN.',
+      'permission_denied' =>
+        'Windows n’a pas autorisé l’opération WireGuard demandée.',
+      'native_bridge_unavailable' ||
+      'native_operation_failed' ||
+      'broker_busy' ||
+      'runtime_status_unavailable' ||
+      'runtime_unavailable' ||
+      'service_configuration_mismatch' ||
+      'maintenance_in_progress' =>
+        'Le composant Windows de FuzeVPN n’est pas disponible. Réessayez.',
+      'network_timeout' || 'request_timeout' =>
+        'La tentative de connexion réseau a échoué. Cela ne permet pas de déterminer si le service est indisponible.',
+      _ =>
+        'La vérification n’a pas abouti. La cause n’est pas encore identifiée.',
+    };
+  }
+
+  DiagnosticError _apiFailureDiagnostic(
+    ApiException error, {
+    required String operation,
+    required String stage,
+  }) {
+    final code = error.diagnosticErrorCode;
+    final local = _hasLocalApiCause(error);
+    final domain = error.observedHttpStatus != null
+        ? 'api'
+        : local &&
+              (code.startsWith('storage_') ||
+                  code.startsWith('secure_storage_'))
+        ? 'storage'
+        : local &&
+              const {
+                'broker_unavailable',
+                'broker_write_failed',
+                'broker_response_timeout',
+                'broker_protocol_error',
+                'broker_busy',
+                'runtime_owned_by_another_user',
+                'runtime_detection_failed',
+                'runtime_status_unavailable',
+                'runtime_unavailable',
+                'native_bridge_unavailable',
+                'native_operation_failed',
+                'service_configuration_mismatch',
+                'service_unavailable',
+                'maintenance_in_progress',
+                'permission_denied',
+              }.contains(code)
+        ? 'system'
+        : 'client';
+    final native = error.windowsError;
+    final windowsError =
+        native != null && native >= -0x80000000 && native <= 0xffffffff
+        ? native
+        : null;
+    return DiagnosticError(
+      code: code,
+      domain: domain,
+      operation: operation,
+      stage: stage,
+      httpStatus: error.observedHttpStatus,
+      nativeDomain: windowsError == null ? null : 'win32',
+      nativeCode: windowsError,
+    );
+  }
+
   Future<void> _loadProfile(String? token) async {
-    if (token == null) return;
+    final clock = Stopwatch()..start();
+    if (token == null) {
+      _traceControllerPhase(
+        'account',
+        'session_validation',
+        'skipped',
+        code: 'no_saved_session',
+      );
+      return;
+    }
+    _traceControllerPhase('account', 'session_validation', 'begin');
     final sessionEpoch = _sessionEpoch;
     try {
       final loaded = await _api.me(token);
-      if (_disposed || _isSigningOut || sessionEpoch != _sessionEpoch) return;
+      if (_disposed || _isSigningOut || sessionEpoch != _sessionEpoch) {
+        _traceControllerPhase(
+          'account',
+          'session_validation',
+          'discarded',
+          code: 'superseded',
+          durationMs: clock.elapsedMilliseconds,
+        );
+        return;
+      }
       profile = loaded;
       _sessionValidationPending = false;
       _sessionStorageUnavailable = false;
       _savedSessionVerificationErrorMessage = null;
       _cancelSavedSessionVerificationRetry();
-      _traceSavedSessionVerification('saved_session_verification_succeeded');
+      _traceSavedSessionVerification(
+        'saved_session_verification_succeeded',
+        durationMs: clock.elapsedMilliseconds,
+      );
       _bindDiagnosticSession();
       notifyListeners();
     } on ApiException catch (error) {
       if (_disposed || _isSigningOut || sessionEpoch != _sessionEpoch) return;
-      if (error.isUnauthorized) {
+      if (error.isUnauthorized && !_hasLocalApiCause(error)) {
         _sessionValidationPending = false;
         _sessionStorageUnavailable = false;
         _savedSessionVerificationErrorMessage = null;
         _cancelSavedSessionVerificationRetry();
-        _traceSavedSessionVerification('saved_session_verification_rejected');
+        _traceSavedSessionVerification(
+          'saved_session_verification_rejected',
+          error: error,
+          durationMs: clock.elapsedMilliseconds,
+        );
         await _safe<void>(_store.clearToken());
       } else {
         _sessionValidationPending = true;
         _savedSessionVerificationErrorMessage =
-            error.localErrorCode == 'api_bootstrap_unavailable'
-            ? 'FuzeVPN ne peut pas résoudre l’adresse du service de connexion.'
-            : error.errorCode == 'api_resolution_unavailable' ||
-                  error.errorCode == 'request_timeout'
-            ? 'Impossible de joindre le service de connexion. Vérifiez votre connexion Internet puis réessayez.'
-            : 'Le service de connexion est momentanément indisponible. Réessayez plus tard.';
+            _localApiFailureMessage(error) ??
+            (error.errorCode == 'api_resolution_unavailable' ||
+                    error.errorCode == 'request_timeout'
+                ? 'Impossible de joindre le service de connexion. Vérifiez votre connexion Internet puis réessayez.'
+                : 'Le service de connexion est momentanément indisponible. Réessayez plus tard.');
         _traceSavedSessionVerification(
           'saved_session_verification_pending',
           code: error.diagnosticErrorCode,
+          error: error,
+          durationMs: clock.elapsedMilliseconds,
         );
       }
     } catch (error) {
@@ -1181,25 +1721,29 @@ class AppController extends ChangeNotifier {
             : 'Le service de connexion est momentanément indisponible. Réessayez plus tard.';
         _traceSavedSessionVerification(
           'saved_session_verification_pending',
-          code:
-              error is SocketException ||
-                  error is HttpException ||
-                  error is HandshakeException ||
-                  error is TimeoutException
-              ? 'api_transport_unavailable'
-              : 'profile_unavailable',
+          error: error,
+          durationMs: clock.elapsedMilliseconds,
         );
       }
     }
   }
 
   Future<String?> _readSavedSessionToken() async {
+    final clock = Stopwatch()..start();
+    _traceControllerPhase('storage', 'saved_session_storage', 'begin');
     final epoch = _sessionEpoch;
     try {
       final token = await _store.token();
       if (_disposed || _isSigningOut || epoch != _sessionEpoch) return null;
       _sessionStorageUnavailable = false;
       _savedSessionVerificationErrorMessage = null;
+      _traceControllerPhase(
+        'storage',
+        'saved_session_storage',
+        'completed',
+        code: token == null ? 'absent' : 'present',
+        durationMs: clock.elapsedMilliseconds,
+      );
       return token;
     } catch (error) {
       if (!_disposed && !_isSigningOut && epoch == _sessionEpoch) {
@@ -1211,24 +1755,39 @@ class AppController extends ChangeNotifier {
             'Votre session enregistrée ne peut pas être lue. Réessayez la vérification.';
         _traceSavedSessionVerification(
           'saved_session_storage_unavailable',
-          code:
-              error is PlatformException &&
-                  const {
-                    'storage_access_denied',
-                    'storage_corrupt',
-                    'storage_decryption_failed',
-                    'storage_io_error',
-                  }.contains(error.code)
-              ? error.code
-              : 'storage_unavailable',
+          error: error,
+          stage: 'saved_session_storage',
+          durationMs: clock.elapsedMilliseconds,
         );
       }
       return null;
     }
   }
 
-  void _traceSavedSessionVerification(String event, {String? code}) {
-    unawaited(DiagnosticLog.record(area: 'account', event: event, code: code));
+  void _traceSavedSessionVerification(
+    String event, {
+    String? code,
+    Object? error,
+    String stage = 'session_validation',
+    int? durationMs,
+  }) {
+    if (error != null) {
+      _traceControllerFailure(
+        'account',
+        stage,
+        error,
+        event: event,
+        durationMs: durationMs,
+      );
+      return;
+    }
+    _traceControllerPhase(
+      'account',
+      stage,
+      event,
+      code: code,
+      durationMs: durationMs,
+    );
   }
 
   void _cancelSavedSessionVerificationRetry() {
@@ -1268,18 +1827,30 @@ class AppController extends ChangeNotifier {
     final sessionEpoch = _sessionEpoch;
     _collectingStartupState = true;
     var stage = 'startup_wireguard_connected';
+    final queryClock = Stopwatch()..start();
     var disconnectAttempted = false;
     try {
+      _traceControllerPhase('runtime_state', stage, 'begin');
       final wireGuardConnected = await _wireguard.isConnected();
-      _traceNativeState(stage, wireGuardConnected);
+      _traceNativeState(
+        stage,
+        wireGuardConnected,
+        durationMs: queryClock.elapsedMilliseconds,
+      );
       if (_disposed || sessionEpoch != _sessionEpoch) return;
       if (wireGuardConnected) {
         _runtimeInteractionStarted = true;
         activeProtocol = VpnProtocol.wireGuard;
       }
       stage = 'startup_openvpn_connected';
+      queryClock.reset();
+      _traceControllerPhase('runtime_state', stage, 'begin');
       final openVpnConnected = await _openVpn.isConnected();
-      _traceNativeState(stage, openVpnConnected);
+      _traceNativeState(
+        stage,
+        openVpnConnected,
+        durationMs: queryClock.elapsedMilliseconds,
+      );
       if (_disposed || sessionEpoch != _sessionEpoch) return;
       if (openVpnConnected) {
         _runtimeInteractionStarted = true;
@@ -1351,7 +1922,11 @@ class AppController extends ChangeNotifier {
       notifyListeners();
     } catch (error) {
       if (_disposed || sessionEpoch != _sessionEpoch) return;
-      _traceNativeStateFailure(stage, error);
+      _traceNativeStateFailure(
+        stage,
+        error,
+        durationMs: queryClock.elapsedMilliseconds,
+      );
       // A failed observation cannot confirm absence. Initial uncertainty is
       // distinct from a previous tunnel/protection that needs to be stopped.
       await _restoreNetworkStateAfterFailedDisconnect(
@@ -2220,23 +2795,28 @@ class AppController extends ChangeNotifier {
     ApiException error, {
     bool keepResumeMarker = false,
   }) async {
+    final localMessage = _localApiFailureMessage(error);
+    _traceControllerFailure('account', 'location_migration', error);
     if (keepResumeMarker &&
         (error.statusCode == 408 ||
             error.statusCode == 429 ||
             error.statusCode >= 500)) {
       locationMigrationError =
+          localMessage ??
           'La progression du changement de serveur est momentanément indisponible.';
       _scheduleLocationMigrationPoll(error.retryAfterSeconds ?? 2);
       notifyListeners();
       return;
     }
     _cancelLocationMigrationPolling();
-    _emitDiagnosticFailure(
-      error.errorCode,
-      operation: 'refresh',
-      stage: 'enrollment',
-      httpStatus: error.observedHttpStatus,
+    _emitDiagnosticError(
+      _apiFailureDiagnostic(error, operation: 'refresh', stage: 'enrollment'),
     );
+    if (localMessage != null) {
+      locationMigrationError = localMessage;
+      notifyListeners();
+      return;
+    }
     final capacityIssue = _locationCapacityIssue(error);
     if (capacityIssue != null) {
       locationMigrationError = capacityIssue.message;
@@ -2396,10 +2976,11 @@ class AppController extends ChangeNotifier {
       return true;
     } on PlatformException catch (error) {
       if (!_acceptConnectionOperation(operationId)) return false;
-      await DiagnosticLog.record(
+      await DiagnosticLog.recordFailure(
         area: area,
         event: 'network_protection_prepare_failed',
-        code: error.code,
+        stage: 'network_protection_prepare',
+        error: error,
       );
       final retained = await _restoreRetainedNetworkProtection(
         operationId: operationId,
@@ -2411,12 +2992,13 @@ class AppController extends ChangeNotifier {
       }
       notifyListeners();
       return false;
-    } catch (_) {
+    } catch (error) {
       if (!_acceptConnectionOperation(operationId)) return false;
-      await DiagnosticLog.record(
+      await DiagnosticLog.recordFailure(
         area: area,
         event: 'network_protection_prepare_failed',
-        code: 'unexpected_error',
+        stage: 'network_protection_prepare',
+        error: error,
       );
       final retained = await _restoreRetainedNetworkProtection(
         operationId: operationId,
@@ -2570,6 +3152,8 @@ class AppController extends ChangeNotifier {
         runtimeOwnedByAnotherUser) {
       return;
     }
+    final clock = Stopwatch()..start();
+    _traceControllerPhase('account', 'saved_session_recovery', 'begin');
     final epoch = _sessionEpoch;
     _sessionRecoveryInProgress = true;
     notifyListeners();
@@ -2602,9 +3186,26 @@ class AppController extends ChangeNotifier {
           !isConnectionBusy) {
         await quickConnect();
       }
+    } catch (error) {
+      _traceControllerFailure(
+        'account',
+        'saved_session_recovery',
+        error,
+        durationMs: clock.elapsedMilliseconds,
+      );
+      rethrow;
     } finally {
       _sessionRecoveryInProgress = false;
       _scheduleSavedSessionVerificationRetry();
+      _traceControllerPhase(
+        'account',
+        'saved_session_recovery',
+        'finished',
+        code: savedSessionVerificationPending
+            ? 'verification_pending'
+            : 'settled',
+        durationMs: clock.elapsedMilliseconds,
+      );
       if (!_disposed) notifyListeners();
     }
   }
@@ -2840,17 +3441,20 @@ class AppController extends ChangeNotifier {
     final sessionEpoch = _sessionEpoch;
     var credentialsAccepted = false;
     var profileLoaded = false;
+    var signInStage = 'account_authentication';
     try {
       final session = await _api.login(email: email, password: password);
       if (_isSigningOut || _disposed || sessionEpoch != _sessionEpoch) {
         return false;
       }
       credentialsAccepted = true;
+      signInStage = 'session_validation';
       final nextProfile = await _api.me(session.accessToken);
       if (_isSigningOut || _disposed || sessionEpoch != _sessionEpoch) {
         return false;
       }
       profileLoaded = true;
+      signInStage = 'local_identity';
 
       // A local WireGuard identity belongs to one VPN account only. The
       // native runner compares its protected account binding, removes any
@@ -2861,6 +3465,7 @@ class AppController extends ChangeNotifier {
         return false;
       }
       _clearSubscriptionState();
+      signInStage = 'saved_session_storage';
       await _store.saveToken(session.accessToken);
       if (_isSigningOut || _disposed || sessionEpoch != _sessionEpoch) {
         return false;
@@ -2871,6 +3476,7 @@ class AppController extends ChangeNotifier {
       _savedSessionVerificationErrorMessage = null;
       _cancelSavedSessionVerificationRetry();
       _bindDiagnosticSession();
+      signInStage = 'device_catalogue';
       await refreshDevices();
       if (currentDeviceId != null && _currentDevice == null) {
         await _forgetCurrentDeviceBinding();
@@ -2884,7 +3490,11 @@ class AppController extends ChangeNotifier {
       if (_isSigningOut || _disposed || sessionEpoch != _sessionEpoch) {
         return false;
       }
-      if (!credentialsAccepted &&
+      _traceControllerFailure('account', signInStage, error);
+      final localMessage = _localApiFailureMessage(error);
+      if (localMessage != null) {
+        errorMessage = localMessage;
+      } else if (!credentialsAccepted &&
           error.statusCode == HttpStatus.unauthorized &&
           error.errorCode == 'invalid_credentials') {
         errorMessage =
@@ -2912,7 +3522,12 @@ class AppController extends ChangeNotifier {
       if (_isSigningOut || _disposed || sessionEpoch != _sessionEpoch) {
         return false;
       }
-      errorMessage = error.code == 'runtime_owned_by_another_user'
+      _traceControllerFailure('account', signInStage, error);
+      errorMessage =
+          error.code.startsWith('storage_') ||
+              error.code.startsWith('secure_storage_')
+          ? 'Le stockage protégé de FuzeVPN ne peut pas être utilisé. Réessayez.'
+          : error.code == 'runtime_owned_by_another_user'
           ? _otherSessionMessage
           : 'Impossible de préparer l’identité VPN sécurisée de cet appareil.';
       notifyListeners();
@@ -2921,6 +3536,7 @@ class AppController extends ChangeNotifier {
       if (_isSigningOut || _disposed || sessionEpoch != _sessionEpoch) {
         return false;
       }
+      _traceControllerFailure('account', signInStage, error);
       errorMessage = _signInFailureMessage(
         credentialsAccepted: credentialsAccepted,
         profileLoaded: profileLoaded,
@@ -3449,6 +4065,20 @@ class AppController extends ChangeNotifier {
       notifyListeners();
       return;
     }
+    final subscriptionEpoch = _sessionEpoch;
+    final subscriptionUserId = profile?.userId;
+    if (!await _checkSubscriptionBeforeConnection(
+      token,
+      operationId: operationId,
+    )) {
+      _finishAbandonedSubscriptionPreflight(operationId);
+      return;
+    }
+    if (!_isCurrentSession(subscriptionEpoch, subscriptionUserId) ||
+        !_acceptConnectionOperation(operationId)) {
+      _finishAbandonedSubscriptionPreflight(operationId);
+      return;
+    }
     if (!await _prepareConnectionNetworkProtection(
       vpnProtocol,
       operationId: operationId,
@@ -3540,10 +4170,10 @@ class AppController extends ChangeNotifier {
       // `connecting` state: the next user attempt must start from a clean,
       // explicit error state.
       if (!_transitionConnection(operationId, VpnStatus.error)) return;
-      await DiagnosticLog.record(
+      await DiagnosticLog.recordFailure(
         area: diagnosticArea,
         event: 'connection_failed',
-        code: error.code,
+        error: error,
       );
       errorMessage = vpnProtocol == VpnProtocol.openVpn
           ? _openVpnPlatformErrorMessage(error.code)
@@ -3626,10 +4256,11 @@ class AppController extends ChangeNotifier {
       );
     } on ApiException catch (error) {
       if (!_acceptConnectionOperation(operationId)) return;
-      await DiagnosticLog.record(
+      await DiagnosticLog.recordFailure(
         area: 'wireguard',
         event: 'api_enrollment_failed',
-        code: error.errorCode,
+        error: error,
+        stage: 'enrollment',
       );
       if (error.statusCode == HttpStatus.conflict &&
           error.errorCode == 'device_identity_revoked' &&
@@ -3677,10 +4308,10 @@ class AppController extends ChangeNotifier {
       }
       if (!_acceptConnectionOperation(operationId)) return;
       _recordNativeConnectionFailure(operationId, error.code);
-      await DiagnosticLog.record(
+      await DiagnosticLog.recordFailure(
         area: 'wireguard',
         event: 'native_connect_failed',
-        code: error.code,
+        error: error,
       );
       _automaticWireGuardFallbackAllowed =
           error.code != 'runtime_owned_by_another_user';
@@ -3730,10 +4361,10 @@ class AppController extends ChangeNotifier {
       );
       return true;
     } on PlatformException catch (error) {
-      await DiagnosticLog.record(
+      await DiagnosticLog.recordFailure(
         area: 'wireguard',
         event: 'identity_reset_failed',
-        code: error.code,
+        error: error,
       );
       return false;
     } catch (_) {
@@ -3906,10 +4537,11 @@ class AppController extends ChangeNotifier {
       );
     } on ApiException catch (error) {
       if (!_acceptConnectionOperation(operationId)) return;
-      await DiagnosticLog.record(
+      await DiagnosticLog.recordFailure(
         area: 'openvpn',
         event: 'api_enrollment_failed',
-        code: error.errorCode,
+        error: error,
+        stage: 'enrollment',
       );
       if (error.statusCode == HttpStatus.conflict &&
           error.errorCode == 'device_identity_revoked' &&
@@ -3949,10 +4581,10 @@ class AppController extends ChangeNotifier {
       }
       if (!_acceptConnectionOperation(operationId)) return;
       _recordNativeConnectionFailure(operationId, error.code);
-      await DiagnosticLog.record(
+      await DiagnosticLog.recordFailure(
         area: 'openvpn',
         event: 'native_connect_failed',
-        code: error.code,
+        error: error,
       );
       _transitionConnection(operationId, VpnStatus.error);
       errorMessage = _openVpnPlatformErrorMessage(error.code);
@@ -4116,17 +4748,16 @@ class AppController extends ChangeNotifier {
       _markNativeConnected(VpnProtocol.openVpn, operationId: operationId);
     } on ApiException catch (error) {
       if (!_acceptConnectionOperation(operationId)) return;
-      await DiagnosticLog.record(
+      await DiagnosticLog.recordFailure(
         area: 'openvpn',
         event: 'certificate_renewal_failed',
-        code: error.errorCode,
+        error: error,
+        stage: 'certificate_renewal',
       );
-      _diagnosticCandidate = DiagnosticError(
-        code: error.errorCode,
-        domain: 'api',
+      _diagnosticCandidate = _apiFailureDiagnostic(
+        error,
         operation: 'renew',
         stage: 'certificate_renewal',
-        httpStatus: error.observedHttpStatus,
       );
       await _handleOpenVpnError(error, operationId: operationId);
     } on PlatformException catch (error) {
@@ -4139,10 +4770,10 @@ class AppController extends ChangeNotifier {
         return;
       }
       if (!_transitionConnection(operationId, VpnStatus.error)) return;
-      await DiagnosticLog.record(
+      await DiagnosticLog.recordFailure(
         area: 'openvpn',
         event: 'certificate_renewal_failed',
-        code: error.code,
+        error: error,
       );
       errorMessage = error.code == 'runtime_owned_by_another_user'
           ? _otherSessionMessage
@@ -4422,22 +5053,54 @@ class AppController extends ChangeNotifier {
     );
   }
 
+  void _setSubscriptionRequiredIssue() {
+    deviceEnrollmentIssue = const DeviceEnrollmentIssue(
+      kind: DeviceEnrollmentIssueKind.subscriptionRequired,
+      title: 'Abonnement requis',
+      message:
+          'Le service demande un abonnement pour autoriser cette connexion VPN. Consultez « Mon compte » pour vérifier l’état de votre abonnement.',
+    );
+  }
+
+  void _clearResolvedSubscriptionIssue(Subscription loaded) {
+    if (loaded.status == SubscriptionStatus.unknown ||
+        !loaded.hasAccess ||
+        deviceEnrollmentIssue?.kind !=
+            DeviceEnrollmentIssueKind.subscriptionRequired) {
+      return;
+    }
+    deviceEnrollmentIssue = null;
+    if (_diagnosticCandidate?.code == 'subscription_required') {
+      _diagnosticCandidate = null;
+    }
+    if (vpnStatus == VpnStatus.error &&
+        errorMessage == null &&
+        !requiresExplicitDisconnect &&
+        !isConnectionBusy) {
+      _transitionConnection(null, VpnStatus.disconnected);
+    }
+  }
+
   Future<void> _handleDeviceEnrollmentError(
     ApiException error, {
     required bool identityWasReset,
     int? operationId,
   }) async {
     if (!_transitionConnection(operationId, VpnStatus.error)) return;
-    _diagnosticCandidate = DiagnosticError(
-      code: error.errorCode,
-      domain: 'api',
+    _diagnosticCandidate = _apiFailureDiagnostic(
+      error,
       operation: _diagnosticOperation,
       stage: _diagnosticOperation == 'renew'
           ? 'certificate_renewal'
           : 'enrollment',
-      httpStatus: error.observedHttpStatus,
     );
     errorMessage = null;
+    final localMessage = _localApiFailureMessage(error);
+    if (localMessage != null) {
+      deviceEnrollmentIssue = null;
+      errorMessage = localMessage;
+      return;
+    }
     final capacityIssue = _locationCapacityIssue(error);
     if (capacityIssue != null) {
       deviceEnrollmentIssue = capacityIssue;
@@ -4458,6 +5121,11 @@ class AppController extends ChangeNotifier {
       return;
     }
     switch (error.errorCode) {
+      case 'subscription_required'
+          when error.statusCode == HttpStatus.forbidden &&
+              error.observedHttpStatus == HttpStatus.forbidden:
+        _setSubscriptionRequiredIssue();
+        return;
       case 'email_verification_required':
         deviceEnrollmentIssue = const DeviceEnrollmentIssue(
           kind: DeviceEnrollmentIssueKind.emailVerificationRequired,
