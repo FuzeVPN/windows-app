@@ -571,5 +571,13 @@
   "Résolution réseau": "Rozpoznawanie nazw sieciowych",
   "Abonnement requis": "Wymagana subskrypcja",
   "Le service demande un abonnement pour autoriser cette connexion VPN. Consultez « Mon compte » pour vérifier l’état de votre abonnement.": "Usługa wymaga subskrypcji, aby zezwolić na to połączenie VPN. Otwórz «Moje konto», aby sprawdzić stan subskrypcji.",
-  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "Nie można teraz potwierdzić stanu VPN. Spróbuj ponownie za kilka chwil."
+  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "Nie można teraz potwierdzić stanu VPN. Spróbuj ponownie za kilka chwil.",
+  "Diagnostic complet": "Pełna diagnostyka",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques, puis les transmet à l’assistance FuzeVPN. Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Przycisk Diagnostyka zbiera kontrole, stan usługi i dzienniki techniczne, a następnie wysyła je do pomocy FuzeVPN. Dane poufne i historia przeglądania są wykluczone. Przechowywanie na serwerze: 30 dni.",
+  "Diagnostic complet transmis à l’assistance.": "Pełna diagnostyka została wysłana do pomocy technicznej.",
+  "Diagnostic complet collecté. Connectez-vous à votre compte pour l’envoyer.": "Pełna diagnostyka została zebrana. Zaloguj się na swoje konto, aby ją wysłać.",
+  "Diagnostic complet conservé, en attente d’envoi.": "Pełna diagnostyka została zapisana i oczekuje na wysłanie.",
+  "Le diagnostic complet n’a pas pu être transmis. Consultez le code d’erreur.": "Nie udało się wysłać pełnej diagnostyki. Sprawdź kod błędu.",
+  "Le stockage protégé de FuzeVPN ne peut pas être utilisé. Réessayez.": "Nie można użyć chronionej pamięci FuzeVPN. Spróbuj ponownie.",
+  "Le composant Windows de FuzeVPN n’est pas disponible. Réessayez.": "Składnik Windows aplikacji FuzeVPN jest niedostępny. Spróbuj ponownie."
 }

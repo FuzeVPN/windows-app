@@ -571,5 +571,13 @@
   "Résolution réseau": "Επίλυση ονομάτων δικτύου",
   "Abonnement requis": "Απαιτείται συνδρομή",
   "Le service demande un abonnement pour autoriser cette connexion VPN. Consultez « Mon compte » pour vérifier l’état de votre abonnement.": "Η υπηρεσία απαιτεί συνδρομή για να επιτρέψει αυτήν τη σύνδεση VPN. Ανοίξτε το «Ο λογαριασμός μου» για να ελέγξετε την κατάσταση της συνδρομής σας.",
-  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "Δεν είναι δυνατή η επιβεβαίωση της κατάστασης VPN αυτή τη στιγμή. Δοκιμάστε ξανά σε λίγα λεπτά."
+  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "Δεν είναι δυνατή η επιβεβαίωση της κατάστασης VPN αυτή τη στιγμή. Δοκιμάστε ξανά σε λίγα λεπτά.",
+  "Diagnostic complet": "Πλήρες διαγνωστικό",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques, puis les transmet à l’assistance FuzeVPN. Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Το κουμπί Διαγνωστικό συλλέγει ελέγχους, την κατάσταση της υπηρεσίας και τεχνικά αρχεία καταγραφής και τα στέλνει στην υποστήριξη FuzeVPN. Εξαιρούνται τα μυστικά και το ιστορικό περιήγησης. Διατήρηση στον διακομιστή: 30 ημέρες.",
+  "Diagnostic complet transmis à l’assistance.": "Το πλήρες διαγνωστικό στάλθηκε στην υποστήριξη.",
+  "Diagnostic complet collecté. Connectez-vous à votre compte pour l’envoyer.": "Το πλήρες διαγνωστικό συλλέχθηκε. Συνδεθείτε στον λογαριασμό σας για να το στείλετε.",
+  "Diagnostic complet conservé, en attente d’envoi.": "Το πλήρες διαγνωστικό αποθηκεύτηκε και περιμένει αποστολή.",
+  "Le diagnostic complet n’a pas pu être transmis. Consultez le code d’erreur.": "Δεν ήταν δυνατή η αποστολή του πλήρους διαγνωστικού. Ελέγξτε τον κωδικό σφάλματος.",
+  "Le stockage protégé de FuzeVPN ne peut pas être utilisé. Réessayez.": "Ο προστατευμένος χώρος αποθήκευσης του FuzeVPN δεν μπορεί να χρησιμοποιηθεί. Δοκιμάστε ξανά.",
+  "Le composant Windows de FuzeVPN n’est pas disponible. Réessayez.": "Το στοιχείο Windows του FuzeVPN δεν είναι διαθέσιμο. Δοκιμάστε ξανά."
 }

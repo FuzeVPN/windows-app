@@ -8,6 +8,7 @@
 #include "openvpn_dco_driver.h"
 #endif
 #ifndef FUZEVPN_SERVICE_PROCESS
+#include "diagnostics_local.h"
 #include <flutter/method_channel.h>
 #include <flutter/standard_method_codec.h>
 #endif
@@ -109,6 +110,13 @@ void RegisterDiagnosticsChannel(flutter::FlutterEngine* engine) {
   auto channel = std::make_unique<flutter::MethodChannel<flutter::EncodableValue>>(
       engine->messenger(), "com.fuzevpn/windows_diagnostics", &flutter::StandardMethodCodec::GetInstance());
   channel->SetMethodCallHandler([](const auto& call, auto result) {
+    if (call.method_name() == "collectLocalDiagnostics") {
+      if (call.arguments() != nullptr && !std::holds_alternative<std::monostate>(*call.arguments())) {
+        result->Error("invalid_argument", "Local diagnostic collection takes no arguments."); return;
+      }
+      result->Success(flutter::EncodableValue(fuzevpn_diagnostics::RequestLocalDiagnostics()));
+      return;
+    }
     if (call.method_name() != "collectSnapshot") { result->NotImplemented(); return; }
     const auto presence = PrivilegedRuntimePresence();
     if (!presence || !*presence) {

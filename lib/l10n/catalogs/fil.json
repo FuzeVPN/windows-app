@@ -571,5 +571,13 @@
   "Résolution réseau": "Pagresolba ng pangalan sa network",
   "Abonnement requis": "Kailangan ng subscription",
   "Le service demande un abonnement pour autoriser cette connexion VPN. Consultez « Mon compte » pour vérifier l’état de votre abonnement.": "Kailangan ng serbisyo ng subscription para pahintulutan ang koneksyong VPN na ito. Buksan ang «Aking account» upang tingnan ang katayuan ng iyong subscription.",
-  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "Hindi makumpirma ang katayuan ng VPN sa ngayon. Subukan muli pagkalipas ng ilang sandali."
+  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "Hindi makumpirma ang katayuan ng VPN sa ngayon. Subukan muli pagkalipas ng ilang sandali.",
+  "Diagnostic complet": "Buong diagnostic",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques, puis les transmet à l’assistance FuzeVPN. Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Kinokolekta ng button na Diagnostic ang mga pagsusuri, katayuan ng serbisyo, at teknikal na log at ipinapadala ang mga ito sa suporta ng FuzeVPN. Hindi kasama ang mga lihim at kasaysayan ng pagba-browse. Pag-iimbak sa server: 30 araw.",
+  "Diagnostic complet transmis à l’assistance.": "Naipadala sa suporta ang buong diagnostic.",
+  "Diagnostic complet collecté. Connectez-vous à votre compte pour l’envoyer.": "Nakolekta ang buong diagnostic. Mag-sign in sa iyong account para ipadala ito.",
+  "Diagnostic complet conservé, en attente d’envoi.": "Na-save ang buong diagnostic at naghihintay na maipadala.",
+  "Le diagnostic complet n’a pas pu être transmis. Consultez le code d’erreur.": "Hindi maipadala ang buong diagnostic. Tingnan ang error code.",
+  "Le stockage protégé de FuzeVPN ne peut pas être utilisé. Réessayez.": "Hindi magamit ang protektadong storage ng FuzeVPN. Subukang muli.",
+  "Le composant Windows de FuzeVPN n’est pas disponible. Réessayez.": "Hindi available ang Windows component ng FuzeVPN. Subukang muli."
 }

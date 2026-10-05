@@ -571,5 +571,13 @@
   "Résolution réseau": "Netwerknaamomzetting",
   "Abonnement requis": "Abonnement vereist",
   "Le service demande un abonnement pour autoriser cette connexion VPN. Consultez « Mon compte » pour vérifier l’état de votre abonnement.": "De dienst vereist een abonnement om deze VPN-verbinding toe te staan. Open «Mijn account» om de status van je abonnement te controleren.",
-  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "De VPN-status kan momenteel niet worden bevestigd. Probeer het over enkele ogenblikken opnieuw."
+  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "De VPN-status kan momenteel niet worden bevestigd. Probeer het over enkele ogenblikken opnieuw.",
+  "Diagnostic complet": "Volledige diagnose",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques, puis les transmet à l’assistance FuzeVPN. Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "De knop Diagnose verzamelt controles, de servicestatus en technische logboeken en stuurt deze naar FuzeVPN-ondersteuning. Geheimen en browsegeschiedenis worden uitgesloten. Bewaring op de server: 30 dagen.",
+  "Diagnostic complet transmis à l’assistance.": "Volledige diagnose naar de ondersteuning verzonden.",
+  "Diagnostic complet collecté. Connectez-vous à votre compte pour l’envoyer.": "Volledige diagnose verzameld. Meld u aan bij uw account om deze te verzenden.",
+  "Diagnostic complet conservé, en attente d’envoi.": "Volledige diagnose opgeslagen, wacht op verzending.",
+  "Le diagnostic complet n’a pas pu être transmis. Consultez le code d’erreur.": "De volledige diagnose kon niet worden verzonden. Controleer de foutcode.",
+  "Le stockage protégé de FuzeVPN ne peut pas être utilisé. Réessayez.": "De beveiligde opslag van FuzeVPN kan niet worden gebruikt. Probeer opnieuw.",
+  "Le composant Windows de FuzeVPN n’est pas disponible. Réessayez.": "Het Windows-onderdeel van FuzeVPN is niet beschikbaar. Probeer opnieuw."
 }

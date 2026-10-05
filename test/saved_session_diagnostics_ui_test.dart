@@ -299,7 +299,7 @@ void main() {
         final ov = fixtures.ProbeOpenVpn();
         final controller = _UiController(api, _SessionStore(), wg, ov)
           ..section = AppSection.help;
-        await controller.runUserDiagnostic();
+        await tester.runAsync(controller.runUserDiagnostic);
         final check = controller.diagnosticChecks.firstWhere(
           (c) => c.id == 'api_reachability',
         );
@@ -346,7 +346,7 @@ void main() {
         fixtures.ProbeWireGuard(),
         fixtures.ProbeOpenVpn(),
       )..section = AppSection.help;
-      await controller.runUserDiagnostic();
+      await tester.runAsync(controller.runUserDiagnostic);
       final check = controller.diagnosticChecks.firstWhere(
         (c) => c.id == 'api_reachability',
       );

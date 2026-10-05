@@ -571,5 +571,13 @@
   "Résolution réseau": "Resolución de nombres",
   "Abonnement requis": "Suscripción requerida",
   "Le service demande un abonnement pour autoriser cette connexion VPN. Consultez « Mon compte » pour vérifier l’état de votre abonnement.": "El servicio requiere una suscripción para permitir esta conexión VPN. Consulta «Mi cuenta» para comprobar el estado de tu suscripción.",
-  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "No se puede confirmar el estado de la VPN en este momento. Vuelve a intentarlo dentro de unos instantes."
+  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "No se puede confirmar el estado de la VPN en este momento. Vuelve a intentarlo dentro de unos instantes.",
+  "Diagnostic complet": "Diagnóstico completo",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques, puis les transmet à l’assistance FuzeVPN. Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "El botón Diagnóstico recopila las comprobaciones, el estado del servicio y los registros técnicos y los envía al soporte de FuzeVPN. Se excluyen los secretos y el historial de navegación. Conservación en el servidor: 30 días.",
+  "Diagnostic complet transmis à l’assistance.": "Diagnóstico completo enviado a soporte.",
+  "Diagnostic complet collecté. Connectez-vous à votre compte pour l’envoyer.": "Diagnóstico completo recopilado. Inicia sesión en tu cuenta para enviarlo.",
+  "Diagnostic complet conservé, en attente d’envoi.": "Diagnóstico completo guardado, pendiente de envío.",
+  "Le diagnostic complet n’a pas pu être transmis. Consultez le code d’erreur.": "No se pudo enviar el diagnóstico completo. Consulta el código de error.",
+  "Le stockage protégé de FuzeVPN ne peut pas être utilisé. Réessayez.": "No se puede utilizar el almacenamiento protegido de FuzeVPN. Inténtalo de nuevo.",
+  "Le composant Windows de FuzeVPN n’est pas disponible. Réessayez.": "El componente de Windows de FuzeVPN no está disponible. Inténtalo de nuevo."
 }

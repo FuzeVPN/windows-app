@@ -1,10 +1,29 @@
 // SPDX-License-Identifier: MPL-2.0
 import 'package:flutter/services.dart';
+import 'diagnostics_support.dart';
 
 /// Bounded, read-only native observations. This method never starts a runtime,
 /// elevates, sends probes, reconnects or repairs the VPN.
 class DiagnosticsBridge {
   static const _channel = MethodChannel('com.fuzevpn/windows_diagnostics');
+
+  /// Collects service status and the sanitized native trace directly in the
+  /// GUI process, including when its privileged broker cannot be contacted.
+  Future<Map<String, Object?>> collectLocalDiagnostics() async {
+    for (var attempt = 0; attempt < 40; attempt++) {
+      final value = await _channel.invokeMapMethod<Object?, Object?>(
+        'collectLocalDiagnostics',
+      );
+      if (value == null) {
+        throw const FormatException('Complete native diagnostics unavailable.');
+      }
+      if (value['collection_pending'] != true) {
+        return DiagnosticSupport.nativeObservation(value);
+      }
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+    }
+    throw const FormatException('Complete native diagnostics still pending.');
+  }
 
   /// Only snapshot/checks/windows/environment may become report fragments.
   /// `runtime` is local UI capability information and must never be uploaded.

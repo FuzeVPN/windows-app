@@ -571,5 +571,13 @@
   "Résolution réseau": "การแปลงชื่อเครือข่าย",
   "Abonnement requis": "ต้องมีการสมัครสมาชิก",
   "Le service demande un abonnement pour autoriser cette connexion VPN. Consultez « Mon compte » pour vérifier l’état de votre abonnement.": "บริการต้องการการสมัครสมาชิกเพื่ออนุญาตการเชื่อมต่อ VPN นี้ เปิด «บัญชีของฉัน» เพื่อตรวจสอบสถานะการสมัครสมาชิกของคุณ",
-  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "ยังไม่สามารถยืนยันสถานะ VPN ได้ในขณะนี้ โปรดลองอีกครั้งในอีกสักครู่"
+  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "ยังไม่สามารถยืนยันสถานะ VPN ได้ในขณะนี้ โปรดลองอีกครั้งในอีกสักครู่",
+  "Diagnostic complet": "การวินิจฉัยทั้งหมด",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques, puis les transmet à l’assistance FuzeVPN. Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "ปุ่มการวินิจฉัยรวบรวมผลการตรวจสอบ สถานะบริการ และบันทึกทางเทคนิค แล้วส่งให้ฝ่ายสนับสนุน FuzeVPN โดยไม่รวมข้อมูลลับและประวัติการท่องเว็บ จัดเก็บบนเซิร์ฟเวอร์เป็นเวลา 30 วัน",
+  "Diagnostic complet transmis à l’assistance.": "ส่งการวินิจฉัยทั้งหมดให้ฝ่ายสนับสนุนแล้ว",
+  "Diagnostic complet collecté. Connectez-vous à votre compte pour l’envoyer.": "รวบรวมการวินิจฉัยทั้งหมดแล้ว เข้าสู่ระบบบัญชีของคุณเพื่อส่ง",
+  "Diagnostic complet conservé, en attente d’envoi.": "บันทึกการวินิจฉัยทั้งหมดแล้ว กำลังรอส่ง",
+  "Le diagnostic complet n’a pas pu être transmis. Consultez le code d’erreur.": "ไม่สามารถส่งการวินิจฉัยทั้งหมดได้ โปรดตรวจสอบรหัสข้อผิดพลาด",
+  "Le stockage protégé de FuzeVPN ne peut pas être utilisé. Réessayez.": "ไม่สามารถใช้พื้นที่จัดเก็บที่ได้รับการป้องกันของ FuzeVPN ได้ โปรดลองอีกครั้ง",
+  "Le composant Windows de FuzeVPN n’est pas disponible. Réessayez.": "คอมโพเนนต์ Windows ของ FuzeVPN ไม่พร้อมใช้งาน โปรดลองอีกครั้ง"
 }

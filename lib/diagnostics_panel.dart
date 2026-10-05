@@ -8,7 +8,7 @@ class _DiagnosticsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) => _PageLayout(
     title: 'Diagnostic',
-    subtitle: 'Vérifiez le VPN et choisissez les informations à transmettre.',
+    subtitle: null,
     maxWidth: 920,
     action: _diagnosticSupportButton(context),
     child: _DiagnosticsPanel(controller: controller),
@@ -35,7 +35,7 @@ Future<void> _showDiagnosticsDialog(
       scrollable: true,
       icon: const Icon(Icons.fact_check_outlined),
       titleTextStyle: Theme.of(context).textTheme.headlineSmall,
-      title: Text(context.tr('Diagnostic local')),
+      title: Text(context.tr('Diagnostic')),
       content: SizedBox(
         width: 720,
         child: _DiagnosticsPanel(controller: controller),
@@ -60,34 +60,9 @@ class _DiagnosticsPanel extends StatefulWidget {
 }
 
 class _DiagnosticsPanelState extends State<_DiagnosticsPanel> {
-  bool _send = false;
-  String? _sendAccount;
-  String? _authorizedReportId;
   AppController get controller => widget.controller;
 
-  Future<void> _run() async {
-    final account = controller.profile?.userId;
-    final send = account != null && _send;
-    await controller.runUserDiagnostic(send: send);
-    if (!mounted || account != controller.profile?.userId) return;
-    if (send) {
-      _authorizedReportId = controller.preparedDiagnosticReport?.reportId;
-    }
-  }
-
-  void _changeSend(bool? value) {
-    final send = value ?? false;
-    final reportId = _authorizedReportId;
-    setState(() => _send = send);
-    if (!send && reportId != null) {
-      _authorizedReportId = null;
-      if (!controller.diagnostics.receipts.any(
-        (r) => r.clientReportId == reportId,
-      )) {
-        unawaited(controller.cancelDiagnostic(reportId));
-      }
-    }
-  }
+  Future<void> _run() => controller.runCompleteDiagnostic();
 
   Future<void> _repair() async {
     final accepted = await showDialog<bool>(
@@ -119,99 +94,12 @@ class _DiagnosticsPanelState extends State<_DiagnosticsPanel> {
     }
   }
 
-  Future<void> _preview() => showDialog<void>(
-    context: context,
-    builder: (context) => AlertDialog(
-      scrollable: true,
-      icon: const Icon(Icons.description_outlined),
-      titleTextStyle: Theme.of(context).textTheme.headlineSmall,
-      title: Text(context.tr('Contenu du rapport')),
-      content: SizedBox(
-        width: 720,
-        child: SingleChildScrollView(
-          child: SelectableText(controller.diagnosticPreview ?? '{}'),
-        ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: Text(context.tr('Fermer')),
-        ),
-      ],
-    ),
-  );
-
-  Future<void> _copyLocalDiagnostic() async {
-    var message = 'Diagnostic local copié.';
-    try {
-      await Clipboard.setData(
-        ClipboardData(text: controller.diagnosticLocalExport),
-      );
-    } catch (_) {
-      message = 'Le diagnostic local n’a pas pu être copié. Réessayez.';
-    }
-    if (!mounted) return;
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(context.tr(message))));
-  }
-
-  Future<void> _showLocalTrace() {
-    final trace = controller.diagnosticLocalTrace.join('\n');
-    return showDialog<void>(
-      context: context,
-      builder: (context) => AlertDialog(
-        scrollable: true,
-        icon: const Icon(Icons.timeline_outlined),
-        titleTextStyle: Theme.of(context).textTheme.headlineSmall,
-        title: Text(context.tr('Chronologie locale')),
-        content: SizedBox(
-          width: 720,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                context.tr(
-                  'Ces étapes restent sur cet appareil. Copier le diagnostic permet de les partager manuellement.',
-                ),
-              ),
-              const SizedBox(height: 16),
-              if (trace.isEmpty)
-                Text(context.tr('Aucune étape enregistrée pour cette session.'))
-              else
-                SelectableText(
-                  trace,
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton.icon(
-            onPressed: _copyLocalDiagnostic,
-            icon: const Icon(Icons.copy_outlined),
-            label: Text(context.tr('Copier le diagnostic local')),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(context.tr('Fermer')),
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    final account = controller.profile?.userId;
-    if (account != _sendAccount) {
-      _send = false;
-      _sendAccount = account;
-      _authorizedReportId = null;
-    }
     final busy =
-        controller.diagnosticRunning || controller.diagnosticRepairRunning;
-    final loggedIn = controller.profile != null;
+        controller.diagnosticRunning ||
+        controller.diagnosticRepairRunning ||
+        controller.diagnosticExportRunning;
     final checks = controller.diagnosticChecks;
     final passedChecks = checks
         .where((check) => check.result == 'passed')
@@ -224,13 +112,13 @@ class _DiagnosticsPanelState extends State<_DiagnosticsPanel> {
       children: [
         _DiagnosticSurface(
           icon: Icons.fact_check_outlined,
-          title: 'Diagnostic local',
+          title: 'Diagnostic',
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
                 context.tr(
-                  'Le diagnostic vérifie l’état actuel sans modifier la connexion. Les mesures indisponibles restent indéterminées.',
+                  'Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques, puis les transmet à l’assistance FuzeVPN. Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.',
                 ),
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -242,47 +130,19 @@ class _DiagnosticsPanelState extends State<_DiagnosticsPanel> {
                 runSpacing: 12,
                 children: [
                   FilledButton.icon(
-                    onPressed: controller.canRunDiagnostic ? _run : null,
+                    onPressed: !busy && controller.canRunCompleteDiagnostic
+                        ? _run
+                        : null,
                     icon: const Icon(Icons.fact_check_outlined),
                     label: Text(
-                      context.tr(
-                        busy ? 'Diagnostic en cours…' : 'Diagnostiquer',
-                      ),
+                      context.tr(busy ? 'Diagnostic en cours…' : 'Diagnostic'),
                     ),
-                  ),
-                  if (controller.diagnosticPreview != null)
-                    OutlinedButton.icon(
-                      onPressed: _preview,
-                      icon: const Icon(Icons.description_outlined),
-                      label: Text(context.tr('Consulter le rapport')),
-                    ),
-                  if (controller.canSendPreparedDiagnostic)
-                    OutlinedButton.icon(
-                      onPressed: controller.sendUserDiagnostic,
-                      icon: const Icon(Icons.send_outlined),
-                      label: Text(context.tr('Envoyer ce rapport')),
-                    ),
-                  OutlinedButton.icon(
-                    onPressed: _showLocalTrace,
-                    icon: const Icon(Icons.timeline_outlined),
-                    label: Text(context.tr('Chronologie locale')),
-                  ),
-                  OutlinedButton.icon(
-                    onPressed: _copyLocalDiagnostic,
-                    icon: const Icon(Icons.copy_outlined),
-                    label: Text(context.tr('Copier le diagnostic local')),
                   ),
                 ],
               ),
               if (busy) ...[
                 const SizedBox(height: 20),
                 const LinearProgressIndicator(),
-              ],
-              if (controller.isConnectionBusy && !busy) ...[
-                const SizedBox(height: 16),
-                _DiagnosticNotice(
-                  text: 'Attendez la fin de l’opération VPN en cours.',
-                ),
               ],
               if (controller.diagnosticMessage case final message?) ...[
                 const SizedBox(height: 16),
@@ -294,47 +154,25 @@ class _DiagnosticsPanelState extends State<_DiagnosticsPanel> {
             ],
           ),
         ),
-        const SizedBox(height: 20),
-        _DiagnosticSurface(
-          icon: Icons.privacy_tip_outlined,
-          title: 'Confidentialité',
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              CheckboxListTile(
-                contentPadding: EdgeInsets.zero,
-                controlAffinity: ListTileControlAffinity.leading,
-                title: Text(
-                  context.tr('Envoyer le rapport de ce diagnostic'),
-                  style: Theme.of(context).textTheme.titleSmall,
-                ),
-                value: loggedIn && _send,
-                onChanged: loggedIn && !busy ? _changeSend : null,
-              ),
-              Text(
-                context.tr(
-                  loggedIn
-                      ? 'Résultats, versions et chronologie technique liés à votre compte. Conservation sur le serveur : 30 jours. Aucun journal brut, secret ou historique de navigation.'
-                      : 'Diagnostic local uniquement. Connectez-vous à votre compte pour autoriser un envoi.',
-                ),
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
-              ),
-              if (loggedIn) ...[
-                const SizedBox(height: 8),
-                Text(
-                  context.tr(
-                    'En cas d’échec d’envoi, le rapport reste chiffré en attente pendant 24 heures au maximum. Vous pouvez annuler les tentatives restantes.',
-                  ),
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
+        if (controller.diagnosticMessage != null && !busy) ...[
+          const SizedBox(height: 20),
+          Card(
+            clipBehavior: Clip.antiAlias,
+            child: ExpansionTile(
+              key: const PageStorageKey('diagnostic-complete-document'),
+              title: Text(context.tr('Diagnostic complet')),
+              leading: const Icon(Icons.description_outlined),
+              childrenPadding: const EdgeInsets.all(20),
+              children: [
+                SelectableText(
+                  key: const PageStorageKey('diagnostic-complete-content'),
+                  controller.diagnosticLocalExport,
+                  style: Theme.of(context).textTheme.bodySmall,
                 ),
               ],
-            ],
+            ),
           ),
-        ),
+        ],
         if (checks.isNotEmpty) ...[
           const SizedBox(height: 20),
           Text(
@@ -380,6 +218,20 @@ class _DiagnosticsPanelState extends State<_DiagnosticsPanel> {
             liveRegion: true,
             child: _DiagnosticNotice(text: message, isError: true),
           ),
+          if (controller.diagnosticDeliveryCode case final code?) ...[
+            const SizedBox(height: 8),
+            SelectableText(
+              '${context.tr('Code d’erreur')} : $code',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ],
+          if (controller.diagnosticDeliveryHttpStatus case final status?) ...[
+            const SizedBox(height: 8),
+            Text(
+              'HTTP : $status',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ],
         ],
         if (controller.diagnosticDeliveries.isNotEmpty) ...[
           const SizedBox(height: 20),
@@ -421,12 +273,6 @@ class _DiagnosticsPanelState extends State<_DiagnosticsPanel> {
                         child: Wrap(
                           spacing: 12,
                           children: [
-                            TextButton(
-                              onPressed: item.retryable
-                                  ? () => controller.retryDiagnostic(item.id)
-                                  : null,
-                              child: Text(context.tr('Réessayer')),
-                            ),
                             TextButton(
                               onPressed: () =>
                                   controller.cancelDiagnostic(item.id),

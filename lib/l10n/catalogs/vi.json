@@ -571,5 +571,13 @@
   "Résolution réseau": "Phân giải tên mạng",
   "Abonnement requis": "Cần gói đăng ký",
   "Le service demande un abonnement pour autoriser cette connexion VPN. Consultez « Mon compte » pour vérifier l’état de votre abonnement.": "Dịch vụ yêu cầu gói đăng ký để cho phép kết nối VPN này. Mở «Tài khoản của tôi» để kiểm tra trạng thái gói đăng ký của bạn.",
-  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "Hiện không thể xác nhận trạng thái VPN. Hãy thử lại sau giây lát."
+  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "Hiện không thể xác nhận trạng thái VPN. Hãy thử lại sau giây lát.",
+  "Diagnostic complet": "Chẩn đoán đầy đủ",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques, puis les transmet à l’assistance FuzeVPN. Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Nút Chẩn đoán thu thập các kiểm tra, trạng thái dịch vụ và nhật ký kỹ thuật, rồi gửi đến bộ phận hỗ trợ FuzeVPN. Thông tin bí mật và lịch sử duyệt web bị loại trừ. Lưu giữ trên máy chủ: 30 ngày.",
+  "Diagnostic complet transmis à l’assistance.": "Đã gửi chẩn đoán đầy đủ đến bộ phận hỗ trợ.",
+  "Diagnostic complet collecté. Connectez-vous à votre compte pour l’envoyer.": "Đã thu thập chẩn đoán đầy đủ. Đăng nhập vào tài khoản để gửi.",
+  "Diagnostic complet conservé, en attente d’envoi.": "Đã lưu chẩn đoán đầy đủ, đang chờ gửi.",
+  "Le diagnostic complet n’a pas pu être transmis. Consultez le code d’erreur.": "Không thể gửi chẩn đoán đầy đủ. Hãy kiểm tra mã lỗi.",
+  "Le stockage protégé de FuzeVPN ne peut pas être utilisé. Réessayez.": "Không thể sử dụng kho lưu trữ được bảo vệ của FuzeVPN. Hãy thử lại.",
+  "Le composant Windows de FuzeVPN n’est pas disponible. Réessayez.": "Thành phần Windows của FuzeVPN không khả dụng. Hãy thử lại."
 }

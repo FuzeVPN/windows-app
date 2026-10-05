@@ -571,5 +571,13 @@
   "Résolution réseau": "Разрешение сетевых имён",
   "Abonnement requis": "Требуется подписка",
   "Le service demande un abonnement pour autoriser cette connexion VPN. Consultez « Mon compte » pour vérifier l’état de votre abonnement.": "Для разрешения этого VPN-подключения сервису требуется подписка. Откройте «Моя учётная запись», чтобы проверить состояние подписки.",
-  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "Сейчас невозможно подтвердить состояние VPN. Повторите попытку через несколько мгновений."
+  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "Сейчас невозможно подтвердить состояние VPN. Повторите попытку через несколько мгновений.",
+  "Diagnostic complet": "Полная диагностика",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques, puis les transmet à l’assistance FuzeVPN. Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Кнопка «Диагностика» собирает проверки, состояние службы и технические журналы, затем отправляет их в поддержку FuzeVPN. Секретные данные и история посещений исключаются. Хранение на сервере: 30 дней.",
+  "Diagnostic complet transmis à l’assistance.": "Полная диагностика отправлена в поддержку.",
+  "Diagnostic complet collecté. Connectez-vous à votre compte pour l’envoyer.": "Полная диагностика собрана. Войдите в свою учётную запись, чтобы отправить её.",
+  "Diagnostic complet conservé, en attente d’envoi.": "Полная диагностика сохранена и ожидает отправки.",
+  "Le diagnostic complet n’a pas pu être transmis. Consultez le code d’erreur.": "Не удалось отправить полную диагностику. Проверьте код ошибки.",
+  "Le stockage protégé de FuzeVPN ne peut pas être utilisé. Réessayez.": "Не удаётся использовать защищённое хранилище FuzeVPN. Повторите попытку.",
+  "Le composant Windows de FuzeVPN n’est pas disponible. Réessayez.": "Компонент Windows для FuzeVPN недоступен. Повторите попытку."
 }

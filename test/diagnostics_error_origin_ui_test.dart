@@ -26,6 +26,31 @@ class _FailingApi extends fixtures.ProbeApi {
 
 class _IdleSnapshot extends DiagnosticsBridge {
   @override
+  Future<Map<String, Object?>> collectLocalDiagnostics() async => {
+    'schema_version': 1,
+    'service': {
+      'name': 'FuzeVPNService',
+      'state': 'stopped',
+      'query_stage': 'completed',
+      'win32_error': 0,
+    },
+    'runtime': {'presence': 'absent'},
+    'native_log': {
+      'status': 'ok',
+      'truncated': false,
+      'discarded_lines': 0,
+      'events': [
+        {
+          'timestamp': '2026-10-05T20:12:11.932Z',
+          'area': 'broker',
+          'event': 'connection_failed',
+          'code': 50,
+        },
+      ],
+    },
+  };
+
+  @override
   Future<Map<String, Object?>> collectSnapshot() async => {
     'runtime': {'presence': 'absent'},
     'checks': [
@@ -119,7 +144,7 @@ void main() {
           localErrorCode: item.code,
         ),
       );
-      await app.runUserDiagnostic();
+      await tester.runAsync(app.runUserDiagnostic);
       final check = app.diagnosticChecks.singleWhere(
         (value) => value.id == 'api_reachability',
       );
@@ -147,7 +172,7 @@ void main() {
       tester,
     ) async {
       final app = _UiController(failure);
-      await app.runUserDiagnostic();
+      await tester.runAsync(app.runUserDiagnostic);
       final check = app.diagnosticChecks.singleWhere(
         (value) => value.id == 'api_reachability',
       );
@@ -212,7 +237,7 @@ void main() {
       tester,
     ) async {
       final app = _UiController(item.failure);
-      await app.runUserDiagnostic();
+      await tester.runAsync(app.runUserDiagnostic);
       final check = app.diagnosticChecks.singleWhere(
         (value) => value.id == 'api_reachability',
       );
@@ -270,48 +295,50 @@ void main() {
   });
 
   testWidgets(
-    'signed-out users can inspect and copy local trace without sending',
+    'signed-out users get one diagnostic document without a fake delivery',
     (tester) async {
       final app = _UiController(null)
         ..profile = null
         ..isInitialized = true;
-      String? copied;
-      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockMethodCallHandler(SystemChannels.platform, (call) async {
-            if (call.method == 'Clipboard.setData') {
-              copied = (call.arguments as Map)['text'] as String;
-            }
-            return null;
-          });
       await DiagnosticLog.record(
         area: 'api_transport',
-        event: 'ui_export_fixture',
+        event: 'connection_started',
         code: 'network_error',
+        requestId: 7654321,
       );
       await _mount(tester, app);
       await tester.tap(find.widgetWithText(TextButton, 'Diagnostic local'));
       await tester.pumpAndSettle();
-      await tester.tap(
-        find.descendant(
-          of: find.byType(AlertDialog).last,
-          matching: find.widgetWithText(OutlinedButton, 'Chronologie locale'),
-        ),
-      );
-      await tester.pumpAndSettle();
-      expect(find.textContaining('event=ui_export_fixture'), findsOneWidget);
-      await tester.tap(
-        find.descendant(
-          of: find.byType(AlertDialog).last,
-          matching: find.widgetWithText(
-            TextButton,
-            'Copier le diagnostic local',
+      await tester.runAsync(() async {
+        await tester.tap(
+          find.descendant(
+            of: find.byType(AlertDialog).last,
+            matching: find.widgetWithText(FilledButton, 'Diagnostic'),
           ),
-        ),
-      );
+        );
+        final deadline = Stopwatch()..start();
+        while (app.diagnosticRunning || app.diagnosticExportRunning) {
+          if (deadline.elapsed > const Duration(seconds: 10)) {
+            throw StateError('Diagnostic did not complete.');
+          }
+          await Future<void>.delayed(const Duration(milliseconds: 5));
+        }
+      });
       await tester.pumpAndSettle();
-      expect(copied, contains('--- report ---\n{}'));
-      expect(copied, contains('--- local_trace ---'));
-      expect(copied, contains('event=ui_export_fixture code=network_error'));
+      final document = find.descendant(
+        of: find.byType(AlertDialog).last,
+        matching: find.widgetWithText(ExpansionTile, 'Diagnostic complet'),
+      );
+      expect(document, findsOneWidget);
+      await tester.ensureVisible(document);
+      await tester.tap(document);
+      await tester.pumpAndSettle();
+      expect(find.textContaining('"request_id": 7654321'), findsOneWidget);
+      expect(find.textContaining('FuzeVPNService'), findsOneWidget);
+      expect(find.textContaining('connection_failed'), findsOneWidget);
+      expect(find.textContaining('"code": 50'), findsOneWidget);
+      expect(find.text('Chronologie locale'), findsNothing);
+      expect(find.text('Copier le diagnostic local'), findsNothing);
       expect(app.diagnostics.pendingReports, isEmpty);
       expect(app.diagnostics.receipts, isEmpty);
       expect(app.profile, isNull);

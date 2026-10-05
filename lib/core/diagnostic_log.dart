@@ -219,7 +219,12 @@ class DiagnosticLog {
       code = 'native_bridge_unavailable';
       kind = 'native_bridge';
     } else if (error is PlatformException) {
-      code = _knownFailureCode(error.code)
+      // Expected native interruptions are control flow, not failed engine
+      // operations. Preserve only the fixed references consumed by the
+      // diagnostic observer so cancellation cannot create a false incident.
+      code =
+          _nativeInterruptionCodes.contains(error.code) ||
+              _knownFailureCode(error.code)
           ? error.code
           : 'native_operation_failed';
       kind = 'native_bridge';
@@ -280,6 +285,13 @@ class DiagnosticLog {
         'maintenance_in_progress',
         'invalid_argument',
       }.contains(value);
+
+  static const _nativeInterruptionCodes = {
+    'operation_cancelled',
+    'permission_denied',
+    'runtime_owned_by_another_user',
+    'maintenance_in_progress',
+  };
 
   /// Waits for diagnostics when explicitly needed, e.g. a local export/test.
   static Future<void> flush() => _writer ?? Future<void>.value();

@@ -29,6 +29,12 @@ ULONGLONG transport_ticks = 0;
 ULONGLONG transport_cancel_at = 0;
 bool transport_cancelled = false;
 bool test_diagnostic_changes_error = false;
+bool inspect_presence_wait_failure = false;
+HANDLE presence_process_handle = reinterpret_cast<HANDLE>(static_cast<ULONG_PTR>(109));
+HANDLE WINAPI ObserveOpenProcess(DWORD access, BOOL inherit, DWORD process) {
+  if (!inspect_presence_wait_failure) return OpenProcess(access, inherit, process);
+  return access == SYNCHRONIZE ? presence_process_handle : nullptr;
+}
 HANDLE transport_cancel_handle = reinterpret_cast<HANDLE>(static_cast<ULONG_PTR>(107));
 HANDLE WINAPI ObserveCreateFile(LPCWSTR name, DWORD access, DWORD sharing,
     LPSECURITY_ATTRIBUTES attributes, DWORD disposition, DWORD flags, HANDLE template_file) {
@@ -42,6 +48,9 @@ ULONGLONG WINAPI ObserveTicks() {
   return inspect_pipe_connections ? transport_ticks : GetTickCount64();
 }
 DWORD WINAPI ObserveTransportWait(HANDLE handle, DWORD milliseconds) {
+  if (inspect_presence_wait_failure && handle == presence_process_handle) {
+    SetLastError(ERROR_NOT_SUPPORTED); return WAIT_FAILED;
+  }
   if (!inspect_pipe_connections || handle != transport_cancel_handle)
     return WaitForSingleObject(handle, milliseconds);
   transport_ticks += milliseconds;
@@ -119,6 +128,9 @@ BOOL WINAPI ObserveAdjustTokenPrivileges(HANDLE token, BOOL disable_all,
   return TRUE;
 }
 BOOL WINAPI ObserveCloseHandle(HANDLE handle) {
+  if (inspect_presence_wait_failure && handle == presence_process_handle) {
+    SetLastError(ERROR_INVALID_HANDLE); return TRUE;
+  }
   if (!inspect_privilege_adjustments) return CloseHandle(handle);
   inspected_privilege_handle_closed = handle ==
       reinterpret_cast<HANDLE>(static_cast<ULONG_PTR>(104));
@@ -210,6 +222,7 @@ BOOL WINAPI ObserveCloseService(SC_HANDLE handle) {
 #define OpenProcessToken ObserveOpenProcessToken
 #define AdjustTokenPrivileges ObserveAdjustTokenPrivileges
 #define CloseHandle ObserveCloseHandle
+#define OpenProcess ObserveOpenProcess
 #define ProtectedStoreUserId TestProtectedStoreUserId
 #define WriteUserDiagnostic TestWriteUserDiagnostic
 #define CurrentMode TestCurrentMode
@@ -229,6 +242,7 @@ BOOL WINAPI ObserveCloseService(SC_HANDLE handle) {
 #undef OpenProcessToken
 #undef AdjustTokenPrivileges
 #undef CloseHandle
+#undef OpenProcess
 #undef ProtectedStoreUserId
 #undef WriteUserDiagnostic
 #undef CurrentMode
@@ -620,6 +634,14 @@ void TestRuntimePresence() {
   Check(PrivilegedRuntimePresence() == std::optional<bool>(false) &&
         !IsPersistentVpnServiceRunning() && scm_manager_queries == prior_queries,
         "portable runtime does not adopt or query an installed service");
+  inspect_presence_wait_failure = true;
+  launched_broker_pid.store(109);
+  const auto failed_presence = PrivilegedRuntimePresence();
+  const auto failed_presence_code = GetLastError();
+  launched_broker_pid.store(0);
+  inspect_presence_wait_failure = false;
+  Check(!failed_presence.has_value() && failed_presence_code == ERROR_NOT_SUPPORTED,
+        "runtime process wait retains Windows 50 before closing its handle");
   fuzevpn_distribution::test_distribution_mode = fuzevpn_distribution::Mode::unavailable;
   Check(!PrivilegedRuntimePresence().has_value() && scm_manager_queries == prior_queries,
         "unavailable distribution state remains unknown without querying SCM");

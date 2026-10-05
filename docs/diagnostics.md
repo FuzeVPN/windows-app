@@ -33,11 +33,39 @@ Its API rejects arbitrary messages and does not accept
 tokens, keys, tunnel configurations or raw API bodies. On Windows it lives in
 `%LOCALAPPDATA%\FuzeVPN\diagnostic.log` and rotates at a bounded size.
 
-In **Diagnostics**, use **Local timeline** to inspect the current session's
-stages, and **Copy local diagnostic** to copy the report and timeline together.
-These controls work without signing in. The local timeline is not automatically
-included in the version-1 server report or sent to the service. Error cards show
-the local error reference and any available Windows or observed HTTP status.
+From version **1.0.7**, **Diagnostics** has one **Diagnostic** action. It runs
+available checks, reads the bounded current and rotated application trace,
+collects the sanitized native trace, and queries the Windows Service Control
+Manager directly. It prepares and sends one complete report using the active
+account. The service observation remains available when the broker is broken;
+it does not start a service, elevate, disconnect or repair the VPN. During a VPN
+operation, checks that cannot safely run are explicitly marked as unavailable,
+while the passive evidence is still collected. No PowerShell command or manual
+log-file retrieval is required.
+
+The same complete document appears inline and can be selected or copied with
+the normal text context menu. Without an account it can still be collected;
+the application explicitly reports that authenticated delivery is unavailable.
+Offline delivery retains the exact frozen report in the existing bounded queue.
+It is marked received only after a valid server receipt. A missing, unreadable,
+rejected or timed-out source is identified in the report and does not erase the
+other sources. Current and persisted application events are deduplicated and
+merged with native events in a timestamped timeline with an explicit source.
+
+Complete manual Windows reports add the closed **`windows.support`** extension
+to **`POST /v1/diagnostics`**, with source availability, service state and exit
+codes, component versions and the merged timeline. Existing version-1 fields,
+automatic simple reports, account authentication, idempotence and retention stay
+as defined by the diagnostic contract. **Deploy server support for this optional
+extension before releasing 1.0.7**: an unextended server rejects it with HTTP 400
+`invalid_diagnostic`. No reduced report is silently substituted.
+
+Collection is capped at 256 KiB/1,024 application events and 64 KiB/128 native
+events, with an explicit truncation/discard count. Only closed technical
+identifiers, numeric measurements and validated timestamps are accepted.
+Arbitrary text, credentials, addresses, paths and account data are rejected.
+Error cards show the local error reference and any available Windows or
+observed HTTP status.
 Failures of local runtime, storage or resolution are labelled by that component;
 an unsuccessful connection attempt does not by itself establish a server outage.
 

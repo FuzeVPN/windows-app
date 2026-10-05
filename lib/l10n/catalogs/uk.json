@@ -571,5 +571,13 @@
   "Résolution réseau": "Визначення мережевих імен",
   "Abonnement requis": "Потрібна підписка",
   "Le service demande un abonnement pour autoriser cette connexion VPN. Consultez « Mon compte » pour vérifier l’état de votre abonnement.": "Для дозволу на це VPN-підключення сервісу потрібна підписка. Відкрийте «Мій обліковий запис», щоб перевірити стан підписки.",
-  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "Зараз неможливо підтвердити стан VPN. Повторіть спробу за кілька миттєвостей."
+  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "Зараз неможливо підтвердити стан VPN. Повторіть спробу за кілька миттєвостей.",
+  "Diagnostic complet": "Повна діагностика",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques, puis les transmet à l’assistance FuzeVPN. Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Кнопка «Діагностика» збирає перевірки, стан служби та технічні журнали, а потім надсилає їх до підтримки FuzeVPN. Секретні дані й історія перегляду виключаються. Зберігання на сервері: 30 днів.",
+  "Diagnostic complet transmis à l’assistance.": "Повну діагностику надіслано до підтримки.",
+  "Diagnostic complet collecté. Connectez-vous à votre compte pour l’envoyer.": "Повну діагностику зібрано. Увійдіть у свій обліковий запис, щоб надіслати її.",
+  "Diagnostic complet conservé, en attente d’envoi.": "Повну діагностику збережено, вона очікує на надсилання.",
+  "Le diagnostic complet n’a pas pu être transmis. Consultez le code d’erreur.": "Не вдалося надіслати повну діагностику. Перевірте код помилки.",
+  "Le stockage protégé de FuzeVPN ne peut pas être utilisé. Réessayez.": "Не вдається використати захищене сховище FuzeVPN. Спробуйте ще раз.",
+  "Le composant Windows de FuzeVPN n’est pas disponible. Réessayez.": "Компонент Windows для FuzeVPN недоступний. Спробуйте ще раз."
 }

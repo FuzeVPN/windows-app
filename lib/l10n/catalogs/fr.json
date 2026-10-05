@@ -571,5 +571,13 @@
   "Résolution réseau": "Résolution réseau",
   "Abonnement requis": "Abonnement requis",
   "Le service demande un abonnement pour autoriser cette connexion VPN. Consultez « Mon compte » pour vérifier l’état de votre abonnement.": "Le service demande un abonnement pour autoriser cette connexion VPN. Consultez « Mon compte » pour vérifier l’état de votre abonnement.",
-  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants."
+  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.",
+  "Diagnostic complet": "Diagnostic complet",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques, puis les transmet à l’assistance FuzeVPN. Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques, puis les transmet à l’assistance FuzeVPN. Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.",
+  "Diagnostic complet transmis à l’assistance.": "Diagnostic complet transmis à l’assistance.",
+  "Diagnostic complet collecté. Connectez-vous à votre compte pour l’envoyer.": "Diagnostic complet collecté. Connectez-vous à votre compte pour l’envoyer.",
+  "Diagnostic complet conservé, en attente d’envoi.": "Diagnostic complet conservé, en attente d’envoi.",
+  "Le diagnostic complet n’a pas pu être transmis. Consultez le code d’erreur.": "Le diagnostic complet n’a pas pu être transmis. Consultez le code d’erreur.",
+  "Le stockage protégé de FuzeVPN ne peut pas être utilisé. Réessayez.": "Le stockage protégé de FuzeVPN ne peut pas être utilisé. Réessayez.",
+  "Le composant Windows de FuzeVPN n’est pas disponible. Réessayez.": "Le composant Windows de FuzeVPN n’est pas disponible. Réessayez."
 }

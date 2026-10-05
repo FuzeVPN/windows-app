@@ -18,6 +18,7 @@
 #include "privileged_broker.h"
 #include "secure_store_channel.h"
 #include "diagnostics_snapshot.h"
+#include "diagnostics_local.h"
 #include "single_instance.h"
 #include "utils.h"
 #include "wireguard_tunnel.h"
@@ -353,6 +354,7 @@ void FlutterWindow::NotifyDart(const char* method) {
 }
 
 void FlutterWindow::OnDestroy() {
+  fuzevpn_diagnostics::ShutdownLocalDiagnostics();
   tls_trust_channel_.reset();
   diagnostics_store_channel_.reset();
   update_channel_.reset();

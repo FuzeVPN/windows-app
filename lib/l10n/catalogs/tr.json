@@ -571,5 +571,13 @@
   "Résolution réseau": "Ağ adı çözümleme",
   "Abonnement requis": "Abonelik gerekli",
   "Le service demande un abonnement pour autoriser cette connexion VPN. Consultez « Mon compte » pour vérifier l’état de votre abonnement.": "Hizmet, bu VPN bağlantısına izin vermek için abonelik gerektiriyor. Abonelik durumunuzu kontrol etmek için «Hesabım» bölümünü açın.",
-  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "VPN durumu şu anda doğrulanamıyor. Birkaç dakika içinde yeniden deneyin."
+  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "VPN durumu şu anda doğrulanamıyor. Birkaç dakika içinde yeniden deneyin.",
+  "Diagnostic complet": "Tam tanılama",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques, puis les transmet à l’assistance FuzeVPN. Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Tanılama düğmesi kontrolleri, hizmet durumunu ve teknik günlükleri toplar ve FuzeVPN desteğine gönderir. Gizli bilgiler ve tarama geçmişi dahil edilmez. Sunucuda saklama: 30 gün.",
+  "Diagnostic complet transmis à l’assistance.": "Tam tanılama desteğe gönderildi.",
+  "Diagnostic complet collecté. Connectez-vous à votre compte pour l’envoyer.": "Tam tanılama toplandı. Göndermek için hesabınızda oturum açın.",
+  "Diagnostic complet conservé, en attente d’envoi.": "Tam tanılama kaydedildi, gönderilmeyi bekliyor.",
+  "Le diagnostic complet n’a pas pu être transmis. Consultez le code d’erreur.": "Tam tanılama gönderilemedi. Hata kodunu kontrol edin.",
+  "Le stockage protégé de FuzeVPN ne peut pas être utilisé. Réessayez.": "FuzeVPN korumalı depolaması kullanılamıyor. Yeniden deneyin.",
+  "Le composant Windows de FuzeVPN n’est pas disponible. Réessayez.": "FuzeVPN Windows bileşeni kullanılamıyor. Yeniden deneyin."
 }

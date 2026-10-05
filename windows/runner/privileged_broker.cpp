@@ -2038,9 +2038,11 @@ std::optional<bool> PrivilegedRuntimePresence(bool* detection_failed) {
   HANDLE process = OpenProcess(SYNCHRONIZE, FALSE, pid);
   if (process == nullptr) return std::nullopt;
   const DWORD state = WaitForSingleObject(process, 0);
+  const DWORD wait_error = state == WAIT_FAILED ? GetLastError() : ERROR_INVALID_DATA;
   CloseHandle(process);
   if (state == WAIT_OBJECT_0) return false;
   if (state == WAIT_TIMEOUT) return true;
+  SetLastError(wait_error);
   return std::nullopt;
 }
 

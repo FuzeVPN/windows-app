@@ -571,5 +571,13 @@
   "Résolution réseau": "Navneoppslag i nettverket",
   "Abonnement requis": "Abonnement kreves",
   "Le service demande un abonnement pour autoriser cette connexion VPN. Consultez « Mon compte » pour vérifier l’état de votre abonnement.": "Tjenesten krever et abonnement for å tillate denne VPN-tilkoblingen. Åpne «Kontoen min» for å kontrollere abonnementsstatusen din.",
-  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "VPN-statusen kan ikke bekreftes akkurat nå. Prøv igjen om noen øyeblikk."
+  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "VPN-statusen kan ikke bekreftes akkurat nå. Prøv igjen om noen øyeblikk.",
+  "Diagnostic complet": "Fullstendig diagnostikk",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques, puis les transmet à l’assistance FuzeVPN. Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Knappen Diagnostikk samler kontroller, tjenestens status og tekniske logger og sender dem til FuzeVPN-kundestøtte. Hemmeligheter og nettleserhistorikk tas ikke med. Lagring på serveren: 30 dager.",
+  "Diagnostic complet transmis à l’assistance.": "Fullstendig diagnostikk sendt til kundestøtte.",
+  "Diagnostic complet collecté. Connectez-vous à votre compte pour l’envoyer.": "Fullstendig diagnostikk samlet inn. Logg inn på kontoen din for å sende den.",
+  "Diagnostic complet conservé, en attente d’envoi.": "Fullstendig diagnostikk lagret, venter på å bli sendt.",
+  "Le diagnostic complet n’a pas pu être transmis. Consultez le code d’erreur.": "Den fullstendige diagnostikken kunne ikke sendes. Se feilkoden.",
+  "Le stockage protégé de FuzeVPN ne peut pas être utilisé. Réessayez.": "Det beskyttede lagringsområdet i FuzeVPN kan ikke brukes. Prøv igjen.",
+  "Le composant Windows de FuzeVPN n’est pas disponible. Réessayez.": "Windows-komponenten i FuzeVPN er ikke tilgjengelig. Prøv igjen."
 }

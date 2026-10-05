@@ -571,5 +571,13 @@
   "Résolution réseau": "حل أسماء الشبكة",
   "Abonnement requis": "اشتراك مطلوب",
   "Le service demande un abonnement pour autoriser cette connexion VPN. Consultez « Mon compte » pour vérifier l’état de votre abonnement.": "تتطلب الخدمة اشتراكًا للسماح باتصال VPN هذا. افتح «حسابي» للتحقق من حالة اشتراكك.",
-  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "لا يمكن تأكيد حالة VPN حاليًا. حاول مرة أخرى بعد لحظات."
+  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "لا يمكن تأكيد حالة VPN حاليًا. حاول مرة أخرى بعد لحظات.",
+  "Diagnostic complet": "التشخيص الكامل",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques, puis les transmet à l’assistance FuzeVPN. Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "يجمع زر التشخيص الفحوصات وحالة الخدمة والسجلات التقنية، ثم يرسلها إلى دعم FuzeVPN. تُستبعد الأسرار وسجل التصفح. مدة الاحتفاظ على الخادم: 30 يومًا.",
+  "Diagnostic complet transmis à l’assistance.": "أُرسل التشخيص الكامل إلى الدعم.",
+  "Diagnostic complet collecté. Connectez-vous à votre compte pour l’envoyer.": "جُمع التشخيص الكامل. سجّل الدخول إلى حسابك لإرساله.",
+  "Diagnostic complet conservé, en attente d’envoi.": "حُفظ التشخيص الكامل وهو في انتظار الإرسال.",
+  "Le diagnostic complet n’a pas pu être transmis. Consultez le code d’erreur.": "تعذر إرسال التشخيص الكامل. راجع رمز الخطأ.",
+  "Le stockage protégé de FuzeVPN ne peut pas être utilisé. Réessayez.": "لا يمكن استخدام التخزين المحمي في FuzeVPN. حاول مجددًا.",
+  "Le composant Windows de FuzeVPN n’est pas disponible. Réessayez.": "مكوّن Windows في FuzeVPN غير متاح. حاول مجددًا."
 }

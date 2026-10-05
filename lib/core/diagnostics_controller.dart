@@ -19,7 +19,7 @@ class DiagnosticsController extends ChangeNotifier {
     this.collectSnapshot,
     String appVersion = const String.fromEnvironment(
       'FLUTTER_BUILD_NAME',
-      defaultValue: '1.0.1',
+      defaultValue: '1.0.7',
     ),
     int? appBuild,
     DateTime Function()? now,
@@ -727,10 +727,14 @@ class DiagnosticsController extends ChangeNotifier {
         return;
       }
       final code = error is ApiException
-          ? error.errorCode
+          ? error.diagnosticErrorCode
           : _failure(error, 'diagnostic_delivery_unknown').code;
-      lastFailure = DiagnosticsFailure(code);
-      if (error is ApiException && error.statusCode == 401) {
+      lastFailure = DiagnosticsFailure(
+        code,
+        httpStatus: error is ApiException ? error.observedHttpStatus : null,
+        windowsError: error is ApiException ? error.windowsError : null,
+      );
+      if (error is ApiException && error.observedHttpStatus == 401) {
         _authPaused = true;
         await _store.updateReport(
           generation: generation,
@@ -740,6 +744,7 @@ class DiagnosticsController extends ChangeNotifier {
       } else {
         final terminal =
             error is ApiException &&
+            error.observedHttpStatus != null &&
             ((error.statusCode >= 400 &&
                     error.statusCode < 500 &&
                     error.statusCode != 408 &&
@@ -761,6 +766,7 @@ class DiagnosticsController extends ChangeNotifier {
           terminalCode: terminal ? code : null,
           accountRetryAfter:
               error is ApiException &&
+                  error.observedHttpStatus != null &&
                   (error.statusCode == 429 || error.statusCode == 503) &&
                   error.retryAfterSeconds != null
               ? _now().add(delay)

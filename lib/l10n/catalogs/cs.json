@@ -571,5 +571,13 @@
   "Résolution réseau": "Překlad síťových názvů",
   "Abonnement requis": "Vyžadováno předplatné",
   "Le service demande un abonnement pour autoriser cette connexion VPN. Consultez « Mon compte » pour vérifier l’état de votre abonnement.": "Služba vyžaduje předplatné, aby povolila toto připojení VPN. Otevřete «Můj účet» a zkontrolujte stav svého předplatného.",
-  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "Stav VPN nyní nelze potvrdit. Zkuste to znovu za několik okamžiků."
+  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "Stav VPN nyní nelze potvrdit. Zkuste to znovu za několik okamžiků.",
+  "Diagnostic complet": "Úplná diagnostika",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques, puis les transmet à l’assistance FuzeVPN. Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Tlačítko Diagnostika shromáždí kontroly, stav služby a technické protokoly a odešle je podpoře FuzeVPN. Tajné údaje a historie prohlížení jsou vyloučeny. Uchovávání na serveru: 30 dní.",
+  "Diagnostic complet transmis à l’assistance.": "Úplná diagnostika byla odeslána podpoře.",
+  "Diagnostic complet collecté. Connectez-vous à votre compte pour l’envoyer.": "Úplná diagnostika byla shromážděna. Pro její odeslání se přihlaste ke svému účtu.",
+  "Diagnostic complet conservé, en attente d’envoi.": "Úplná diagnostika byla uložena a čeká na odeslání.",
+  "Le diagnostic complet n’a pas pu être transmis. Consultez le code d’erreur.": "Úplnou diagnostiku se nepodařilo odeslat. Zkontrolujte kód chyby.",
+  "Le stockage protégé de FuzeVPN ne peut pas être utilisé. Réessayez.": "Chráněné úložiště FuzeVPN nelze použít. Zkuste to znovu.",
+  "Le composant Windows de FuzeVPN n’est pas disponible. Réessayez.": "Komponenta Windows aplikace FuzeVPN není dostupná. Zkuste to znovu."
 }

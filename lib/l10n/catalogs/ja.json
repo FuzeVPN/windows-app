@@ -571,5 +571,13 @@
   "Résolution réseau": "ネットワーク名前解決",
   "Abonnement requis": "サブスクリプションが必要です",
   "Le service demande un abonnement pour autoriser cette connexion VPN. Consultez « Mon compte » pour vérifier l’état de votre abonnement.": "このVPN接続を許可するには、サブスクリプションが必要です。「マイアカウント」を開いてサブスクリプションの状態を確認してください。",
-  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "現在、VPNの状態を確認できません。しばらくしてから再試行してください。"
+  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "現在、VPNの状態を確認できません。しばらくしてから再試行してください。",
+  "Diagnostic complet": "診断全体",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques, puis les transmet à l’assistance FuzeVPN. Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "診断ボタンは確認結果、サービスの状態、技術ログを収集し、FuzeVPN サポートに送信します。秘密情報と閲覧履歴は含まれません。 サーバーでの保存期間：30日間。",
+  "Diagnostic complet transmis à l’assistance.": "診断全体をサポートに送信しました。",
+  "Diagnostic complet collecté. Connectez-vous à votre compte pour l’envoyer.": "診断全体を収集しました。送信するにはアカウントにログインしてください。",
+  "Diagnostic complet conservé, en attente d’envoi.": "診断全体を保存しました。送信を待っています。",
+  "Le diagnostic complet n’a pas pu être transmis. Consultez le code d’erreur.": "診断全体を送信できませんでした。エラーコードを確認してください。",
+  "Le stockage protégé de FuzeVPN ne peut pas être utilisé. Réessayez.": "FuzeVPN の保護されたストレージを使用できません。もう一度お試しください。",
+  "Le composant Windows de FuzeVPN n’est pas disponible. Réessayez.": "FuzeVPN の Windows コンポーネントを利用できません。もう一度お試しください。"
 }

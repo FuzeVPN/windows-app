@@ -571,5 +571,13 @@
   "Résolution réseau": "Network resolution",
   "Abonnement requis": "Subscription required",
   "Le service demande un abonnement pour autoriser cette connexion VPN. Consultez « Mon compte » pour vérifier l’état de votre abonnement.": "The service requires a subscription to allow this VPN connection. Open “My account” to check your subscription status.",
-  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "The VPN state cannot be confirmed right now. Try again in a few moments."
+  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "The VPN state cannot be confirmed right now. Try again in a few moments.",
+  "Diagnostic complet": "Complete diagnostic",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques, puis les transmet à l’assistance FuzeVPN. Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "The Diagnostic button collects checks, service status and technical logs, then sends them to FuzeVPN support. Secrets and browsing history are excluded. Server retention: 30 days.",
+  "Diagnostic complet transmis à l’assistance.": "Complete diagnostic sent to support.",
+  "Diagnostic complet collecté. Connectez-vous à votre compte pour l’envoyer.": "Complete diagnostic collected. Sign in to your account to send it.",
+  "Diagnostic complet conservé, en attente d’envoi.": "Complete diagnostic saved, waiting to be sent.",
+  "Le diagnostic complet n’a pas pu être transmis. Consultez le code d’erreur.": "The complete diagnostic could not be sent. Check the error code.",
+  "Le stockage protégé de FuzeVPN ne peut pas être utilisé. Réessayez.": "FuzeVPN protected storage cannot be used. Try again.",
+  "Le composant Windows de FuzeVPN n’est pas disponible. Réessayez.": "The FuzeVPN Windows component is unavailable. Try again."
 }

@@ -571,5 +571,13 @@
   "Résolution réseau": "网络名称解析",
   "Abonnement requis": "需要订阅",
   "Le service demande un abonnement pour autoriser cette connexion VPN. Consultez « Mon compte » pour vérifier l’état de votre abonnement.": "服务要求有订阅才能允许此 VPN 连接。请打开“我的帐户”查看您的订阅状态。",
-  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "目前无法确认 VPN 状态。请稍后重试。"
+  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "目前无法确认 VPN 状态。请稍后重试。",
+  "Diagnostic complet": "完整诊断",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques, puis les transmet à l’assistance FuzeVPN. Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "诊断按钮会收集检查结果、服务状态和技术日志，然后发送给 FuzeVPN 支持团队。其中不包含秘密信息和浏览历史记录。 服务器保留时间：30 天。",
+  "Diagnostic complet transmis à l’assistance.": "完整诊断已发送给支持团队。",
+  "Diagnostic complet collecté. Connectez-vous à votre compte pour l’envoyer.": "完整诊断已收集。请登录您的账户以发送。",
+  "Diagnostic complet conservé, en attente d’envoi.": "完整诊断已保存，等待发送。",
+  "Le diagnostic complet n’a pas pu être transmis. Consultez le code d’erreur.": "无法发送完整诊断。请查看错误代码。",
+  "Le stockage protégé de FuzeVPN ne peut pas être utilisé. Réessayez.": "无法使用 FuzeVPN 的受保护存储。请重试。",
+  "Le composant Windows de FuzeVPN n’est pas disponible. Réessayez.": "FuzeVPN 的 Windows 组件不可用。请重试。"
 }

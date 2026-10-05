@@ -571,5 +571,13 @@
   "Résolution réseau": "تفکیک نام‌های شبکه",
   "Abonnement requis": "اشتراک لازم است",
   "Le service demande un abonnement pour autoriser cette connexion VPN. Consultez « Mon compte » pour vérifier l’état de votre abonnement.": "این سرویس برای اجازه دادن به این اتصال VPN به اشتراک نیاز دارد. برای بررسی وضعیت اشتراک، «حساب من» را باز کنید.",
-  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "در حال حاضر نمی‌توان وضعیت VPN را تأیید کرد. چند لحظه دیگر دوباره تلاش کنید."
+  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "در حال حاضر نمی‌توان وضعیت VPN را تأیید کرد. چند لحظه دیگر دوباره تلاش کنید.",
+  "Diagnostic complet": "تشخیص کامل",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques, puis les transmet à l’assistance FuzeVPN. Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "دکمه تشخیص، بررسی‌ها، وضعیت سرویس و گزارش‌های فنی را جمع‌آوری و به پشتیبانی FuzeVPN ارسال می‌کند. اطلاعات محرمانه و تاریخچه مرور در آن نیستند. نگهداری در سرور: ۳۰ روز.",
+  "Diagnostic complet transmis à l’assistance.": "تشخیص کامل به پشتیبانی ارسال شد.",
+  "Diagnostic complet collecté. Connectez-vous à votre compte pour l’envoyer.": "تشخیص کامل جمع‌آوری شد. برای ارسال آن وارد حساب خود شوید.",
+  "Diagnostic complet conservé, en attente d’envoi.": "تشخیص کامل ذخیره شد و در انتظار ارسال است.",
+  "Le diagnostic complet n’a pas pu être transmis. Consultez le code d’erreur.": "تشخیص کامل ارسال نشد. کد خطا را بررسی کنید.",
+  "Le stockage protégé de FuzeVPN ne peut pas être utilisé. Réessayez.": "فضای ذخیره‌سازی محافظت‌شده FuzeVPN قابل استفاده نیست. دوباره تلاش کنید.",
+  "Le composant Windows de FuzeVPN n’est pas disponible. Réessayez.": "مؤلفه Windows مربوط به FuzeVPN در دسترس نیست. دوباره تلاش کنید."
 }

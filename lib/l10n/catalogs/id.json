@@ -571,5 +571,13 @@
   "Résolution réseau": "Resolusi nama jaringan",
   "Abonnement requis": "Langganan diperlukan",
   "Le service demande un abonnement pour autoriser cette connexion VPN. Consultez « Mon compte » pour vérifier l’état de votre abonnement.": "Layanan memerlukan langganan untuk mengizinkan koneksi VPN ini. Buka «Akun saya» untuk memeriksa status langganan Anda.",
-  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "Status VPN belum dapat dipastikan saat ini. Coba lagi dalam beberapa saat."
+  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "Status VPN belum dapat dipastikan saat ini. Coba lagi dalam beberapa saat.",
+  "Diagnostic complet": "Diagnostik lengkap",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques, puis les transmet à l’assistance FuzeVPN. Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Tombol Diagnostik mengumpulkan pemeriksaan, status layanan, dan log teknis, lalu mengirimkannya ke dukungan FuzeVPN. Rahasia dan riwayat penelusuran tidak disertakan. Penyimpanan di server: 30 hari.",
+  "Diagnostic complet transmis à l’assistance.": "Diagnostik lengkap dikirim ke dukungan.",
+  "Diagnostic complet collecté. Connectez-vous à votre compte pour l’envoyer.": "Diagnostik lengkap dikumpulkan. Masuk ke akun Anda untuk mengirimkannya.",
+  "Diagnostic complet conservé, en attente d’envoi.": "Diagnostik lengkap disimpan, menunggu pengiriman.",
+  "Le diagnostic complet n’a pas pu être transmis. Consultez le code d’erreur.": "Diagnostik lengkap tidak dapat dikirim. Periksa kode kesalahan.",
+  "Le stockage protégé de FuzeVPN ne peut pas être utilisé. Réessayez.": "Penyimpanan terlindungi FuzeVPN tidak dapat digunakan. Coba lagi.",
+  "Le composant Windows de FuzeVPN n’est pas disponible. Réessayez.": "Komponen Windows FuzeVPN tidak tersedia. Coba lagi."
 }

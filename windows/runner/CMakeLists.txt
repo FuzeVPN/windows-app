@@ -13,6 +13,7 @@ endif()
 #
 # Any new source files that you add to the application should be added here.
 add_executable(${BINARY_NAME} WIN32
+  "diagnostics_local.cpp"
   "diagnostics_store.cpp"
   "diagnostics_snapshot.cpp"
   "diagnostics_snapshot_encoding.cpp"
@@ -500,6 +501,20 @@ set_target_properties(fuzevpn_diagnostics_snapshot_test PROPERTIES
   RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/native-tests")
 add_test(NAME diagnostics_snapshot COMMAND fuzevpn_diagnostics_snapshot_test)
 set_tests_properties(diagnostics_snapshot PROPERTIES TIMEOUT 30)
+
+add_executable(fuzevpn_diagnostics_local_test EXCLUDE_FROM_ALL
+  "../tests/diagnostics_local_test.cpp")
+apply_standard_settings(fuzevpn_diagnostics_local_test)
+target_compile_features(fuzevpn_diagnostics_local_test PRIVATE cxx_std_20)
+target_compile_definitions(fuzevpn_diagnostics_local_test PRIVATE NOMINMAX WIN32_LEAN_AND_MEAN)
+target_include_directories(fuzevpn_diagnostics_local_test PRIVATE
+  "${CMAKE_CURRENT_SOURCE_DIR}" "${FUZEVPN_FLUTTER_WRAPPER_DIR}/include")
+target_link_libraries(fuzevpn_diagnostics_local_test PRIVATE advapi32 shell32 ole32 version)
+set_target_properties(fuzevpn_diagnostics_local_test PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/native-tests")
+add_test(NAME diagnostics_local COMMAND fuzevpn_diagnostics_local_test
+  "${CMAKE_BINARY_DIR}/native-tests/local-diagnostics-fixtures")
+set_tests_properties(diagnostics_local PROPERTIES TIMEOUT 30)
 
 add_executable(fuzevpn_diagnostics_store_test EXCLUDE_FROM_ALL
   "../tests/diagnostics_store_test.cpp" "diagnostics_store.cpp")

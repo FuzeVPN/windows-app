@@ -571,5 +571,13 @@
   "Résolution réseau": "Rezolvarea numelor de rețea",
   "Abonnement requis": "Abonament necesar",
   "Le service demande un abonnement pour autoriser cette connexion VPN. Consultez « Mon compte » pour vérifier l’état de votre abonnement.": "Serviciul necesită un abonament pentru a permite această conexiune VPN. Deschideți «Contul meu» pentru a verifica starea abonamentului.",
-  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "Starea VPN nu poate fi confirmată momentan. Încercați din nou peste câteva clipe."
+  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "Starea VPN nu poate fi confirmată momentan. Încercați din nou peste câteva clipe.",
+  "Diagnostic complet": "Diagnostic complet",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques, puis les transmet à l’assistance FuzeVPN. Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Butonul Diagnostic colectează verificările, starea serviciului și jurnalele tehnice, apoi le trimite către asistența FuzeVPN. Secretele și istoricul de navigare sunt excluse. Păstrare pe server: 30 de zile.",
+  "Diagnostic complet transmis à l’assistance.": "Diagnosticul complet a fost trimis către asistență.",
+  "Diagnostic complet collecté. Connectez-vous à votre compte pour l’envoyer.": "Diagnosticul complet a fost colectat. Conectează-te la contul tău pentru a-l trimite.",
+  "Diagnostic complet conservé, en attente d’envoi.": "Diagnosticul complet a fost salvat și așteaptă trimiterea.",
+  "Le diagnostic complet n’a pas pu être transmis. Consultez le code d’erreur.": "Diagnosticul complet nu a putut fi trimis. Consultă codul de eroare.",
+  "Le stockage protégé de FuzeVPN ne peut pas être utilisé. Réessayez.": "Stocarea protejată FuzeVPN nu poate fi utilizată. Încearcă din nou.",
+  "Le composant Windows de FuzeVPN n’est pas disponible. Réessayez.": "Componenta Windows a FuzeVPN nu este disponibilă. Încearcă din nou."
 }
