@@ -226,6 +226,20 @@ class DiagnosticLog {
       final details = error.details;
       final value = details is Map ? details['win32_error'] : null;
       if (value is int) windowsError = value;
+      final nativeStage = details is Map ? details['stage'] : null;
+      if (const {
+            'broker_unavailable',
+            'broker_write_failed',
+            'broker_response_timeout',
+            'installation_required',
+          }.contains(error.code) &&
+          const {
+            'broker_connection',
+            'broker_write',
+            'broker_response',
+          }.contains(nativeStage)) {
+        stage = nativeStage as String;
+      }
     } else if (error is FormatException || error is TypeError) {
       code = 'invalid_response';
       kind = 'format';

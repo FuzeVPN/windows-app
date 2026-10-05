@@ -198,6 +198,43 @@ void main() {
   );
 
   test(
+    'broker failures retain only fixed stages and numeric Windows errors',
+    () async {
+      final position = DiagnosticLog.recentLines.length;
+      for (final nativeStage in [
+        'broker_connection',
+        'broker_write',
+        'broker_response',
+        'private-stage-content',
+      ]) {
+        await DiagnosticLog.recordFailure(
+          area: 'wireguard',
+          event: 'network_protection_prepare_failed',
+          stage: 'network_protection_prepare',
+          error: PlatformException(
+            code: 'broker_unavailable',
+            message: 'private native text',
+            details: {
+              'win32_error': 50,
+              'stage': nativeStage,
+              'secret': 'private',
+            },
+          ),
+        );
+      }
+      final lines = _since(position);
+      expect(
+        lines.take(3).map((line) => line.contains('stage=broker_')),
+        everyElement(isTrue),
+      );
+      expect(lines, everyElement(contains('windows_error=50')));
+      expect(lines.last, contains('stage=network_protection_prepare'));
+      expect(lines.join('\n'), isNot(contains('private')));
+      expect(lines.join('\n'), isNot(contains('http_status=')));
+    },
+  );
+
+  test(
     'a successful HTTPS request records every transport and response phase',
     () async {
       final server = await _server();

@@ -2742,10 +2742,11 @@ class AppController extends ChangeNotifier {
       return true;
     } on PlatformException catch (error) {
       if (!_acceptConnectionOperation(operationId)) return false;
-      await DiagnosticLog.record(
+      await DiagnosticLog.recordFailure(
         area: area,
         event: 'network_protection_prepare_failed',
-        code: error.code,
+        stage: 'network_protection_prepare',
+        error: error,
       );
       final retained = await _restoreRetainedNetworkProtection(
         operationId: operationId,
@@ -2757,12 +2758,13 @@ class AppController extends ChangeNotifier {
       }
       notifyListeners();
       return false;
-    } catch (_) {
+    } catch (error) {
       if (!_acceptConnectionOperation(operationId)) return false;
-      await DiagnosticLog.record(
+      await DiagnosticLog.recordFailure(
         area: area,
         event: 'network_protection_prepare_failed',
-        code: 'unexpected_error',
+        stage: 'network_protection_prepare',
+        error: error,
       );
       final retained = await _restoreRetainedNetworkProtection(
         operationId: operationId,
