@@ -12,6 +12,7 @@ import 'diagnostics_models.dart';
 import 'models.dart';
 import 'wireguard_bridge.dart';
 import 'windows_update_models.dart';
+import 'windows_tls_trust.dart';
 
 /// A deliberately small representation of an API error.
 ///
@@ -246,6 +247,7 @@ class ApiClient {
     int maxResponseBytes = 1024 * 1024,
     Future<List<String>> Function()? resolveApiAddresses,
     SecurityContext? securityContext,
+    Future<Uint8List?> Function(Uint8List, String)? verifyApiCertificate,
     DateTime Function()? retryAfterClock,
     this.windowsUpdateClock,
   }) : assert(connectionTimeout > Duration.zero),
@@ -257,6 +259,13 @@ class ApiClient {
        _maxResponseBytes = maxResponseBytes,
        _retryAfterClock = retryAfterClock ?? DateTime.now,
        _securityContext = securityContext {
+    _verifyApiCertificate =
+        verifyApiCertificate ??
+        (Platform.isWindows &&
+                _baseUri.origin == Uri.parse(baseUrl).origin &&
+                securityContext == null
+            ? WindowsTlsTrust().verifyApiCertificate
+            : null);
     _client.connectionTimeout = connectionTimeout;
     _resolveApiAddresses =
         resolveApiAddresses ??
@@ -284,6 +293,9 @@ class ApiClient {
           context: _securityContext,
           timeout: connectionTimeout,
           onFailure: invalidateBootstrapCache,
+          recoverTlsTrust: _verifyApiCertificate == null
+              ? null
+              : (certificate) => _recoverApiTlsTrust(certificate, uri.host),
         );
         final socket = attempt.connect();
         // A resolver may fail in the microtask that precedes HttpClient's
@@ -304,7 +316,10 @@ class ApiClient {
   final DateTime Function() _retryAfterClock;
   final _responseClocks = Expando<Stopwatch>();
   final _responseRequestIds = Expando<int>();
-  final SecurityContext? _securityContext;
+  SecurityContext? _securityContext;
+  Future<Uint8List?> Function(Uint8List, String)? _verifyApiCertificate;
+  Future<SecurityContext?>? _tlsTrustRecovery;
+  bool _closed = false;
   Future<List<String>> Function()? _resolveApiAddresses;
   Future<List<InternetAddress>>? _addressResolution;
   Stopwatch? _addressAge;
@@ -485,7 +500,89 @@ class ApiClient {
     _addressAge = null;
   }
 
-  void close() => _client.close(force: true);
+  void close() {
+    _closed = true;
+    _client.close(force: true);
+  }
+
+  Future<SecurityContext?> _recoverApiTlsTrust(
+    Uint8List certificate,
+    String hostname,
+  ) {
+    if (_closed) return Future.value();
+    final pending = _tlsTrustRecovery;
+    if (pending != null) return pending;
+    final recovery = () async {
+      final traceId = Zone.current[_apiTraceZoneKey] as int?;
+      final timer = Stopwatch()..start();
+      DiagnosticLog.record(
+        area: 'api_transport',
+        event: 'windows_trust_started',
+        stage: 'windows_certificate_verification',
+        requestId: traceId,
+      );
+      try {
+        final anchor = await _verifyApiCertificate!(
+          certificate,
+          hostname,
+        ).timeout(_requestTimeout);
+        if (_closed || anchor == null) {
+          DiagnosticLog.record(
+            area: 'api_transport',
+            event: 'windows_trust_rejected',
+            stage: 'windows_certificate_verification',
+            requestId: traceId,
+            durationMs: timer.elapsedMilliseconds,
+          );
+          return null;
+        }
+        if (anchor.isEmpty || anchor.length > 65536) {
+          throw const FormatException('Invalid Windows trust anchor.');
+        }
+        final encoded = base64Encode(anchor);
+        final pem = StringBuffer('-----BEGIN CERTIFICATE-----\n');
+        for (var offset = 0; offset < encoded.length; offset += 64) {
+          final end = offset + 64 < encoded.length
+              ? offset + 64
+              : encoded.length;
+          pem.writeln(encoded.substring(offset, end));
+        }
+        pem.writeln('-----END CERTIFICATE-----');
+        // Only an anchor returned after strict Windows chain/SSL policy
+        // verification is added. The rejected server certificate is never
+        // trusted directly, and the next TLS handshake still checks its chain
+        // and original hostname with Dart's ordinary certificate verifier.
+        final refreshed = SecurityContext(withTrustedRoots: true)
+          ..setTrustedCertificatesBytes(utf8.encode(pem.toString()));
+        _securityContext = refreshed;
+        DiagnosticLog.record(
+          area: 'api_transport',
+          event: 'windows_trust_completed',
+          stage: 'windows_certificate_verification',
+          requestId: traceId,
+          durationMs: timer.elapsedMilliseconds,
+        );
+        return refreshed;
+      } catch (error) {
+        DiagnosticLog.recordFailure(
+          area: 'api_transport',
+          event: 'windows_trust_failed',
+          stage: 'windows_certificate_verification',
+          error: error,
+          requestId: traceId,
+          durationMs: timer.elapsedMilliseconds,
+        );
+        return null;
+      }
+    }();
+    _tlsTrustRecovery = recovery;
+    unawaited(
+      recovery.then<void>((_) {
+        if (identical(_tlsTrustRecovery, recovery)) _tlsTrustRecovery = null;
+      }),
+    );
+    return recovery;
+  }
 
   Future<List<InternetAddress>> _resolvedAddresses() {
     final traceId = Zone.current[_apiTraceZoneKey] as int?;
@@ -1214,6 +1311,7 @@ class _ResolvedApiConnection {
     required this.context,
     required this.timeout,
     required this.onFailure,
+    this.recoverTlsTrust,
   });
 
   final Uri uri;
@@ -1221,13 +1319,16 @@ class _ResolvedApiConnection {
   final SecurityContext? context;
   final Duration timeout;
   final void Function() onFailure;
+  final Future<SecurityContext?> Function(Uint8List)? recoverTlsTrust;
   bool _cancelled = false;
+  final _cancellation = Completer<void>();
   ConnectionTask<RawSocket>? _task;
   RawSocket? _transport;
   Socket? _socket;
 
   void cancel() {
     _cancelled = true;
+    if (!_cancellation.isCompleted) _cancellation.complete();
     _task?.cancel();
     _socket?.destroy();
     _closeTransport();
@@ -1254,6 +1355,8 @@ class _ResolvedApiConnection {
     final timer = Stopwatch()..start();
     var stage = 'resolution';
     var attempt = 0;
+    var recoveryAttempted = false;
+    var activeContext = context;
     String? family;
     DiagnosticLog.record(
       area: 'api_transport',
@@ -1276,97 +1379,141 @@ class _ResolvedApiConnection {
       Object? lastError;
       for (final address
           in addresses.isEmpty ? <Object>[uri.host] : addresses) {
-        attempt++;
-        family = address is InternetAddress
-            ? (address.type == InternetAddressType.IPv6 ? 'ipv6' : 'ipv4')
-            : 'system';
-        stage = address is InternetAddress
-            ? 'tcp_connect'
-            : 'system_dns_and_tcp';
-        timer.reset();
-        _checkCancelled();
-        try {
-          DiagnosticLog.record(
-            area: 'api_transport',
-            event: 'tcp_started',
-            stage: stage,
-            requestId: traceId,
-            attempt: attempt,
-            family: family,
-          );
-          _task = await RawSocket.startConnect(address, uri.port);
-          _checkCancelled();
-          _transport = await _task!.socket.timeout(timeout);
-          DiagnosticLog.record(
-            area: 'api_transport',
-            event: 'tcp_completed',
-            stage: stage,
-            requestId: traceId,
-            attempt: attempt,
-            family: family,
-            durationMs: timer.elapsedMilliseconds,
-          );
-          _checkCancelled();
-          final transport = _transport!;
-          stage = 'tls_handshake';
+        var retryAddress = false;
+        do {
+          retryAddress = false;
+          attempt++;
+          Uint8List? rejectedCertificate;
+          family = address is InternetAddress
+              ? (address.type == InternetAddressType.IPv6 ? 'ipv6' : 'ipv4')
+              : 'system';
+          stage = address is InternetAddress
+              ? 'tcp_connect'
+              : 'system_dns_and_tcp';
           timer.reset();
-          DiagnosticLog.record(
-            area: 'api_transport',
-            event: 'tls_started',
-            stage: stage,
-            requestId: traceId,
-            attempt: attempt,
-            family: family,
-          );
-          final handshake = RawSecureSocket.secure(
-            transport,
-            host: uri.host,
-            context: context,
-          );
-          // Keep the raw transport while TLS negotiates: Socket.secure would
-          // detach its public TCP wrapper, making destroy() a no-op until the
-          // handshake finishes. A late success must also be closed explicitly.
-          unawaited(
-            handshake.then<void>((secure) {
-              if (_cancelled || !identical(_transport, transport)) {
-                unawaited(() async {
-                  try {
-                    await secure.close();
-                  } catch (_) {}
-                }());
-              }
-            }, onError: (Object _, StackTrace _) {}),
-          );
-          final secure = await handshake.timeout(timeout);
-          DiagnosticLog.record(
-            area: 'api_transport',
-            event: 'tls_completed',
-            stage: stage,
-            requestId: traceId,
-            attempt: attempt,
-            family: family,
-            durationMs: timer.elapsedMilliseconds,
-          );
-          _socket = _ApiSecureSocket(secure);
           _checkCancelled();
-          return _socket!;
-        } catch (error) {
-          DiagnosticLog.recordFailure(
-            area: 'api_transport',
-            event: 'attempt_failed',
-            error: error,
-            stage: stage,
-            requestId: traceId,
-            attempt: attempt,
-            family: family,
-            durationMs: timer.elapsedMilliseconds,
-          );
-          lastError = error;
-          _task?.cancel();
-          _socket?.destroy();
-          _socket = null;
-          _closeTransport();
-        }
+          try {
+            DiagnosticLog.record(
+              area: 'api_transport',
+              event: 'tcp_started',
+              stage: stage,
+              requestId: traceId,
+              attempt: attempt,
+              family: family,
+            );
+            _task = await RawSocket.startConnect(address, uri.port);
+            _checkCancelled();
+            _transport = await _task!.socket.timeout(timeout);
+            DiagnosticLog.record(
+              area: 'api_transport',
+              event: 'tcp_completed',
+              stage: stage,
+              requestId: traceId,
+              attempt: attempt,
+              family: family,
+              durationMs: timer.elapsedMilliseconds,
+            );
+            _checkCancelled();
+            final transport = _transport!;
+            stage = 'tls_handshake';
+            timer.reset();
+            DiagnosticLog.record(
+              area: 'api_transport',
+              event: 'tls_started',
+              stage: stage,
+              requestId: traceId,
+              attempt: attempt,
+              family: family,
+            );
+            final handshake = RawSecureSocket.secure(
+              transport,
+              host: uri.host,
+              context: activeContext,
+              onBadCertificate: recoverTlsTrust == null
+                  ? null
+                  : (certificate) {
+                      final der = certificate.der;
+                      if (der.isNotEmpty && der.length <= 65536) {
+                        rejectedCertificate ??= Uint8List.fromList(der);
+                      }
+                      // Inspection never accepts the rejected certificate.
+                      return false;
+                    },
+            );
+            // Keep the raw transport while TLS negotiates: Socket.secure would
+            // detach its public TCP wrapper, making destroy() a no-op until the
+            // handshake finishes. A late success must also be closed explicitly.
+            unawaited(
+              handshake.then<void>((secure) {
+                if (_cancelled || !identical(_transport, transport)) {
+                  unawaited(() async {
+                    try {
+                      await secure.close();
+                    } catch (_) {}
+                  }());
+                }
+              }, onError: (Object _, StackTrace _) {}),
+            );
+            final secure = await handshake.timeout(timeout);
+            DiagnosticLog.record(
+              area: 'api_transport',
+              event: 'tls_completed',
+              stage: stage,
+              requestId: traceId,
+              attempt: attempt,
+              family: family,
+              durationMs: timer.elapsedMilliseconds,
+            );
+            _socket = _ApiSecureSocket(secure);
+            _checkCancelled();
+            return _socket!;
+          } catch (error) {
+            DiagnosticLog.recordFailure(
+              area: 'api_transport',
+              event: 'attempt_failed',
+              error: error,
+              stage: stage,
+              requestId: traceId,
+              attempt: attempt,
+              family: family,
+              durationMs: timer.elapsedMilliseconds,
+            );
+            lastError = error;
+            _task?.cancel();
+            _socket?.destroy();
+            _socket = null;
+            _closeTransport();
+            if (!recoveryAttempted &&
+                error is TlsException &&
+                DiagnosticLog.tlsFailureReason(error) ==
+                    'certificate_issuer_missing' &&
+                rejectedCertificate != null &&
+                recoverTlsTrust != null) {
+              recoveryAttempted = true;
+              _checkCancelled();
+              final refreshed = await Future.any<SecurityContext?>([
+                recoverTlsTrust!(rejectedCertificate!).timeout(timeout),
+                _cancellation.future.then<SecurityContext?>(
+                  (_) =>
+                      throw const SocketException('API connection cancelled.'),
+                ),
+              ]);
+              _checkCancelled();
+              if (refreshed != null) {
+                activeContext = refreshed;
+                retryAddress = true;
+                DiagnosticLog.record(
+                  area: 'api_transport',
+                  event: 'tls_retry_started',
+                  stage: 'tls_handshake',
+                  requestId: traceId,
+                  attempt: attempt,
+                  family: family,
+                );
+              }
+            }
+          }
+        } while (retryAddress);
       }
       throw lastError ?? const SocketException('API connection unavailable.');
     } catch (error) {

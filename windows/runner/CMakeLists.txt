@@ -27,6 +27,8 @@ add_executable(${BINARY_NAME} WIN32
   "maintenance_network_state.cpp"
   "network_protection.cpp"
   "secure_store_channel.cpp"
+  "tls_trust.cpp"
+  "tls_trust_channel.cpp"
   "openvpn_tunnel.cpp"
   "privileged_broker.cpp"
   "privileged_runtime.cpp"
@@ -511,6 +513,20 @@ set_target_properties(fuzevpn_diagnostics_store_test PROPERTIES
 add_test(NAME diagnostics_store COMMAND fuzevpn_diagnostics_store_test
   "${CMAKE_BINARY_DIR}/native-tests/diagnostics-fixtures")
 set_tests_properties(diagnostics_store PROPERTIES TIMEOUT 60)
+
+add_executable(fuzevpn_tls_trust_test EXCLUDE_FROM_ALL
+  "../tests/tls_trust_test.cpp" "tls_trust.cpp")
+apply_standard_settings(fuzevpn_tls_trust_test)
+target_compile_definitions(fuzevpn_tls_trust_test PRIVATE
+  NOMINMAX WIN32_LEAN_AND_MEAN CERT_CHAIN_PARA_HAS_EXTRA_FIELDS)
+target_include_directories(fuzevpn_tls_trust_test PRIVATE
+  "${CMAKE_CURRENT_SOURCE_DIR}")
+target_link_libraries(fuzevpn_tls_trust_test PRIVATE crypt32)
+set_target_properties(fuzevpn_tls_trust_test PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/native-tests")
+add_test(NAME tls_trust COMMAND fuzevpn_tls_trust_test
+  "${CMAKE_CURRENT_SOURCE_DIR}/../tests/fixtures/tls-trust")
+set_tests_properties(tls_trust PROPERTIES TIMEOUT 30)
 
 add_executable(fuzevpn_network_filter_test EXCLUDE_FROM_ALL
   "../tests/network_filter_test.cpp")

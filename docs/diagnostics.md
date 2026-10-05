@@ -15,6 +15,13 @@ synthesized error is never presented as an HTTP response from the server.
 TLS failures classify the detail from both Dart exception fields into fixed
 references (issuer missing, expired certificate, hostname mismatch and others).
 Their BoringSSL status is labelled `tls_error`, not a Windows error code.
+For a missing issuer on the fixed API host, Windows builds and verifies the
+SSL server chain in a background worker. Only a successful policy check can
+return its trusted root. The client then creates a fresh trust context and
+performs at most one new, fully verified TLS handshake. A failed Windows check,
+unavailable bridge, cancellation or rejected retry never permits HTTP traffic.
+The local trace includes each verification/retry stage and numeric trust status;
+certificates themselves are never included in the trace or diagnostic report.
 Each address attempt is retained even if a later attempt fails differently.
 Its API rejects arbitrary messages and does not accept
 tokens, keys, tunnel configurations or raw API bodies. On Windows it lives in

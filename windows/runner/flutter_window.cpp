@@ -246,6 +246,8 @@ bool FlutterWindow::OnCreate() {
   update_channel_ = std::make_unique<UpdateChannel>(flutter_controller_->engine(), GetHandle());
   diagnostics_store_channel_ = std::make_unique<DiagnosticsStoreChannel>(
       flutter_controller_->engine(), GetHandle());
+  tls_trust_channel_ = std::make_unique<TlsTrustChannel>(
+      flutter_controller_->engine(), GetHandle());
   connectivity_notification_ = RegisterConnectivityNotification(this);
   SetChildContent(flutter_controller_->view()->GetNativeWindow());
 
@@ -351,6 +353,7 @@ void FlutterWindow::NotifyDart(const char* method) {
 }
 
 void FlutterWindow::OnDestroy() {
+  tls_trust_channel_.reset();
   diagnostics_store_channel_.reset();
   update_channel_.reset();
   ShutdownPrivilegedCallDispatcher();
@@ -397,6 +400,9 @@ FlutterWindow::MessageHandler(HWND hwnd, UINT const message,
       return 0;
     case kDiagnosticsStoreCompletedMessage:
       if (diagnostics_store_channel_) diagnostics_store_channel_->ProcessCompletions();
+      return 0;
+    case kTlsTrustCompletedMessage:
+      if (tls_trust_channel_) tls_trust_channel_->ProcessCompletions();
       return 0;
     case WM_CLOSE:
       if (tray_available_) {

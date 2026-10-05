@@ -119,6 +119,7 @@ class DiagnosticLog {
     int? durationMs,
     int? windowsError,
     int? tlsError,
+    int? trustStatus,
     int? httpStatus,
     int? requestId,
     int? connectionId,
@@ -149,6 +150,7 @@ class DiagnosticLog {
       if (_inRange(windowsError, -0x80000000, 0xffffffff))
         'windows_error=$windowsError',
       if (_inRange(tlsError, -0x80000000, 0x7fffffff)) 'tls_error=$tlsError',
+      if (_inRange(trustStatus, 0, 0xffffffff)) 'trust_status=$trustStatus',
       if (_inRange(httpStatus, 100, 599)) 'http_status=$httpStatus',
       if (_inRange(requestId, 1, 0x7fffffff)) 'request_id=$requestId',
       if (_inRange(connectionId, 1, 0x7fffffff)) 'connection_id=$connectionId',
