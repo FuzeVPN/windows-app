@@ -568,5 +568,8 @@
   "La vérification n’a pas abouti. La cause n’est pas encore identifiée.": "Kontrollen ble ikke fullført. Årsaken er ennå ikke identifisert.",
   "Le diagnostic local n’a pas pu être copié. Réessayez.": "Den lokale diagnostikken kunne ikke kopieres. Prøv igjen.",
   "Le service a renvoyé une réponse HTTP en erreur. Consultez le code d’erreur.": "Tjenesten returnerte et HTTP-feilsvar. Se feilkoden.",
-  "Résolution réseau": "Navneoppslag i nettverket"
+  "Résolution réseau": "Navneoppslag i nettverket",
+  "Abonnement requis": "Abonnement kreves",
+  "Le service demande un abonnement pour autoriser cette connexion VPN. Consultez « Mon compte » pour vérifier l’état de votre abonnement.": "Tjenesten krever et abonnement for å tillate denne VPN-tilkoblingen. Åpne «Kontoen min» for å kontrollere abonnementsstatusen din.",
+  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "VPN-statusen kan ikke bekreftes akkurat nå. Prøv igjen om noen øyeblikk."
 }

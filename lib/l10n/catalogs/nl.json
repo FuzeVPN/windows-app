@@ -568,5 +568,8 @@
   "La vérification n’a pas abouti. La cause n’est pas encore identifiée.": "De controle is niet voltooid. De oorzaak is nog niet vastgesteld.",
   "Le diagnostic local n’a pas pu être copié. Réessayez.": "De lokale diagnose kon niet worden gekopieerd. Probeer het opnieuw.",
   "Le service a renvoyé une réponse HTTP en erreur. Consultez le code d’erreur.": "De dienst gaf een HTTP-foutantwoord terug. Bekijk de foutcode.",
-  "Résolution réseau": "Netwerknaamomzetting"
+  "Résolution réseau": "Netwerknaamomzetting",
+  "Abonnement requis": "Abonnement vereist",
+  "Le service demande un abonnement pour autoriser cette connexion VPN. Consultez « Mon compte » pour vérifier l’état de votre abonnement.": "De dienst vereist een abonnement om deze VPN-verbinding toe te staan. Open «Mijn account» om de status van je abonnement te controleren.",
+  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "De VPN-status kan momenteel niet worden bevestigd. Probeer het over enkele ogenblikken opnieuw."
 }

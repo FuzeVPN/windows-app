@@ -568,5 +568,8 @@
   "La vérification n’a pas abouti. La cause n’est pas encore identifiée.": "The check did not complete. The cause has not yet been identified.",
   "Le diagnostic local n’a pas pu être copié. Réessayez.": "The local diagnostic could not be copied. Try again.",
   "Le service a renvoyé une réponse HTTP en erreur. Consultez le code d’erreur.": "The service returned an HTTP error response. Check the error code.",
-  "Résolution réseau": "Network resolution"
+  "Résolution réseau": "Network resolution",
+  "Abonnement requis": "Subscription required",
+  "Le service demande un abonnement pour autoriser cette connexion VPN. Consultez « Mon compte » pour vérifier l’état de votre abonnement.": "The service requires a subscription to allow this VPN connection. Open “My account” to check your subscription status.",
+  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "The VPN state cannot be confirmed right now. Try again in a few moments."
 }

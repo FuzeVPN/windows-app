@@ -568,5 +568,8 @@
   "La vérification n’a pas abouti. La cause n’est pas encore identifiée.": "检查未完成，尚未确定原因。",
   "Le diagnostic local n’a pas pu être copié. Réessayez.": "无法复制本地诊断，请重试。",
   "Le service a renvoyé une réponse HTTP en erreur. Consultez le code d’erreur.": "服务返回了 HTTP 错误响应，请查看错误代码。",
-  "Résolution réseau": "网络名称解析"
+  "Résolution réseau": "网络名称解析",
+  "Abonnement requis": "需要订阅",
+  "Le service demande un abonnement pour autoriser cette connexion VPN. Consultez « Mon compte » pour vérifier l’état de votre abonnement.": "服务要求有订阅才能允许此 VPN 连接。请打开“我的帐户”查看您的订阅状态。",
+  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "目前无法确认 VPN 状态。请稍后重试。"
 }

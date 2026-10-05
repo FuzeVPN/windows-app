@@ -568,5 +568,8 @@
   "La vérification n’a pas abouti. La cause n’est pas encore identifiée.": "Ο έλεγχος δεν ολοκληρώθηκε. Η αιτία δεν έχει εντοπιστεί ακόμη.",
   "Le diagnostic local n’a pas pu être copié. Réessayez.": "Δεν ήταν δυνατή η αντιγραφή του τοπικού διαγνωστικού. Δοκιμάστε ξανά.",
   "Le service a renvoyé une réponse HTTP en erreur. Consultez le code d’erreur.": "Η υπηρεσία επέστρεψε απάντηση HTTP με σφάλμα. Ελέγξτε τον κωδικό σφάλματος.",
-  "Résolution réseau": "Επίλυση ονομάτων δικτύου"
+  "Résolution réseau": "Επίλυση ονομάτων δικτύου",
+  "Abonnement requis": "Απαιτείται συνδρομή",
+  "Le service demande un abonnement pour autoriser cette connexion VPN. Consultez « Mon compte » pour vérifier l’état de votre abonnement.": "Η υπηρεσία απαιτεί συνδρομή για να επιτρέψει αυτήν τη σύνδεση VPN. Ανοίξτε το «Ο λογαριασμός μου» για να ελέγξετε την κατάσταση της συνδρομής σας.",
+  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "Δεν είναι δυνατή η επιβεβαίωση της κατάστασης VPN αυτή τη στιγμή. Δοκιμάστε ξανά σε λίγα λεπτά."
 }

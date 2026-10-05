@@ -595,6 +595,14 @@ final fakeDualOpenVpnActivation = OpenVpnActivation(
 );
 
 class FakeApiClient extends ApiClient {
+  @override
+  Future<Subscription> subscription(String token) async => const Subscription(
+    status: SubscriptionStatus.active,
+    hasAccess: true,
+    renewsAutomatically: false,
+    cancelAtPeriodEnd: false,
+  );
+
   List<Object> registerResults = const [];
   int registerCalls = 0;
   int revokeOpenVpnProfileCalls = 0;

@@ -568,5 +568,8 @@
   "La vérification n’a pas abouti. La cause n’est pas encore identifiée.": "Hindi natapos ang pagsusuri. Hindi pa natutukoy ang dahilan.",
   "Le diagnostic local n’a pas pu être copié. Réessayez.": "Hindi makopya ang lokal na diagnostic. Subukan ulit.",
   "Le service a renvoyé une réponse HTTP en erreur. Consultez le code d’erreur.": "Nagbalik ang serbisyo ng HTTP na tugon na may error. Tingnan ang error code.",
-  "Résolution réseau": "Pagresolba ng pangalan sa network"
+  "Résolution réseau": "Pagresolba ng pangalan sa network",
+  "Abonnement requis": "Kailangan ng subscription",
+  "Le service demande un abonnement pour autoriser cette connexion VPN. Consultez « Mon compte » pour vérifier l’état de votre abonnement.": "Kailangan ng serbisyo ng subscription para pahintulutan ang koneksyong VPN na ito. Buksan ang «Aking account» upang tingnan ang katayuan ng iyong subscription.",
+  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "Hindi makumpirma ang katayuan ng VPN sa ngayon. Subukan muli pagkalipas ng ilang sandali."
 }

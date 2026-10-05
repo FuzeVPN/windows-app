@@ -750,6 +750,14 @@ AppController _controller({
 class MigrationApi extends ApiClient {
   MigrationApi({this.device}) : super(baseUri: Uri.parse('http://localhost/'));
 
+  @override
+  Future<Subscription> subscription(String token) async => const Subscription(
+    status: SubscriptionStatus.active,
+    hasAccess: true,
+    renewsAutomatically: false,
+    cancelAtPeriodEnd: false,
+  );
+
   VpnDevice? device;
   VpnDevice? deviceAfterStart;
   LocationMigration? startResult;

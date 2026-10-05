@@ -568,5 +568,8 @@
   "La vérification n’a pas abouti. La cause n’est pas encore identifiée.": "Kontrol tamamlanamadı. Nedeni henüz belirlenemedi.",
   "Le diagnostic local n’a pas pu être copié. Réessayez.": "Yerel tanılama kopyalanamadı. Yeniden deneyin.",
   "Le service a renvoyé une réponse HTTP en erreur. Consultez le code d’erreur.": "Hizmet bir HTTP hata yanıtı döndürdü. Hata kodunu kontrol edin.",
-  "Résolution réseau": "Ağ adı çözümleme"
+  "Résolution réseau": "Ağ adı çözümleme",
+  "Abonnement requis": "Abonelik gerekli",
+  "Le service demande un abonnement pour autoriser cette connexion VPN. Consultez « Mon compte » pour vérifier l’état de votre abonnement.": "Hizmet, bu VPN bağlantısına izin vermek için abonelik gerektiriyor. Abonelik durumunuzu kontrol etmek için «Hesabım» bölümünü açın.",
+  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "VPN durumu şu anda doğrulanamıyor. Birkaç dakika içinde yeniden deneyin."
 }

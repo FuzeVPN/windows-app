@@ -568,5 +568,8 @@
   "La vérification n’a pas abouti. La cause n’est pas encore identifiée.": "A verificação não foi concluída. A causa ainda não foi identificada.",
   "Le diagnostic local n’a pas pu être copié. Réessayez.": "Não foi possível copiar o diagnóstico local. Tente novamente.",
   "Le service a renvoyé une réponse HTTP en erreur. Consultez le code d’erreur.": "O serviço retornou uma resposta HTTP de erro. Consulte o código de erro.",
-  "Résolution réseau": "Resolução de nomes"
+  "Résolution réseau": "Resolução de nomes",
+  "Abonnement requis": "Assinatura necessária",
+  "Le service demande un abonnement pour autoriser cette connexion VPN. Consultez « Mon compte » pour vérifier l’état de votre abonnement.": "O serviço exige uma assinatura para permitir esta conexão VPN. Consulte «Minha conta» para verificar o status da sua assinatura.",
+  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "Não é possível confirmar o estado da VPN no momento. Tente novamente em alguns instantes."
 }

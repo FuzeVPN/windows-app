@@ -568,5 +568,8 @@
   "La vérification n’a pas abouti. La cause n’est pas encore identifiée.": "Kontrola nebyla dokončena. Příčina dosud nebyla zjištěna.",
   "Le diagnostic local n’a pas pu être copié. Réessayez.": "Místní diagnostiku se nepodařilo zkopírovat. Zkuste to znovu.",
   "Le service a renvoyé une réponse HTTP en erreur. Consultez le code d’erreur.": "Služba vrátila chybovou odpověď HTTP. Zkontrolujte kód chyby.",
-  "Résolution réseau": "Překlad síťových názvů"
+  "Résolution réseau": "Překlad síťových názvů",
+  "Abonnement requis": "Vyžadováno předplatné",
+  "Le service demande un abonnement pour autoriser cette connexion VPN. Consultez « Mon compte » pour vérifier l’état de votre abonnement.": "Služba vyžaduje předplatné, aby povolila toto připojení VPN. Otevřete «Můj účet» a zkontrolujte stav svého předplatného.",
+  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "Stav VPN nyní nelze potvrdit. Zkuste to znovu za několik okamžiků."
 }

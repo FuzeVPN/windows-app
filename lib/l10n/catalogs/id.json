@@ -568,5 +568,8 @@
   "La vérification n’a pas abouti. La cause n’est pas encore identifiée.": "Pemeriksaan tidak selesai. Penyebabnya belum diketahui.",
   "Le diagnostic local n’a pas pu être copié. Réessayez.": "Diagnostik lokal tidak dapat disalin. Coba lagi.",
   "Le service a renvoyé une réponse HTTP en erreur. Consultez le code d’erreur.": "Layanan mengembalikan respons kesalahan HTTP. Periksa kode kesalahan.",
-  "Résolution réseau": "Resolusi nama jaringan"
+  "Résolution réseau": "Resolusi nama jaringan",
+  "Abonnement requis": "Langganan diperlukan",
+  "Le service demande un abonnement pour autoriser cette connexion VPN. Consultez « Mon compte » pour vérifier l’état de votre abonnement.": "Layanan memerlukan langganan untuk mengizinkan koneksi VPN ini. Buka «Akun saya» untuk memeriksa status langganan Anda.",
+  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "Status VPN belum dapat dipastikan saat ini. Coba lagi dalam beberapa saat."
 }

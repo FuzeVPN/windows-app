@@ -189,6 +189,14 @@ class _ExperienceWindow extends WindowBridge {
 
 class _ExperienceApi extends ApiClient {
   @override
+  Future<Subscription> subscription(String token) async => const Subscription(
+    status: SubscriptionStatus.active,
+    hasAccess: true,
+    renewsAutomatically: false,
+    cancelAtPeriodEnd: false,
+  );
+
+  @override
   Future<List<Location>> locations() async => const [_location1, _location2];
   @override
   Future<UserProfile> me(String token) async => _profile;

@@ -568,5 +568,8 @@
   "La vérification n’a pas abouti. La cause n’est pas encore identifiée.": "Verificarea nu s-a încheiat. Cauza nu a fost încă identificată.",
   "Le diagnostic local n’a pas pu être copié. Réessayez.": "Diagnosticul local nu a putut fi copiat. Încearcă din nou.",
   "Le service a renvoyé une réponse HTTP en erreur. Consultez le code d’erreur.": "Serviciul a returnat un răspuns HTTP cu eroare. Consultă codul erorii.",
-  "Résolution réseau": "Rezolvarea numelor de rețea"
+  "Résolution réseau": "Rezolvarea numelor de rețea",
+  "Abonnement requis": "Abonament necesar",
+  "Le service demande un abonnement pour autoriser cette connexion VPN. Consultez « Mon compte » pour vérifier l’état de votre abonnement.": "Serviciul necesită un abonament pentru a permite această conexiune VPN. Deschideți «Contul meu» pentru a verifica starea abonamentului.",
+  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "Starea VPN nu poate fi confirmată momentan. Încercați din nou peste câteva clipe."
 }

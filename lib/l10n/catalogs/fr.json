@@ -568,5 +568,8 @@
   "La vérification n’a pas abouti. La cause n’est pas encore identifiée.": "La vérification n’a pas abouti. La cause n’est pas encore identifiée.",
   "Le diagnostic local n’a pas pu être copié. Réessayez.": "Le diagnostic local n’a pas pu être copié. Réessayez.",
   "Le service a renvoyé une réponse HTTP en erreur. Consultez le code d’erreur.": "Le service a renvoyé une réponse HTTP en erreur. Consultez le code d’erreur.",
-  "Résolution réseau": "Résolution réseau"
+  "Résolution réseau": "Résolution réseau",
+  "Abonnement requis": "Abonnement requis",
+  "Le service demande un abonnement pour autoriser cette connexion VPN. Consultez « Mon compte » pour vérifier l’état de votre abonnement.": "Le service demande un abonnement pour autoriser cette connexion VPN. Consultez « Mon compte » pour vérifier l’état de votre abonnement.",
+  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants."
 }

@@ -568,5 +568,8 @@
   "La vérification n’a pas abouti. La cause n’est pas encore identifiée.": "Перевірку не завершено. Причину ще не визначено.",
   "Le diagnostic local n’a pas pu être copié. Réessayez.": "Не вдалося скопіювати локальну діагностику. Спробуйте ще раз.",
   "Le service a renvoyé une réponse HTTP en erreur. Consultez le code d’erreur.": "Служба повернула відповідь HTTP із помилкою. Перегляньте код помилки.",
-  "Résolution réseau": "Визначення мережевих імен"
+  "Résolution réseau": "Визначення мережевих імен",
+  "Abonnement requis": "Потрібна підписка",
+  "Le service demande un abonnement pour autoriser cette connexion VPN. Consultez « Mon compte » pour vérifier l’état de votre abonnement.": "Для дозволу на це VPN-підключення сервісу потрібна підписка. Відкрийте «Мій обліковий запис», щоб перевірити стан підписки.",
+  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "Зараз неможливо підтвердити стан VPN. Повторіть спробу за кілька миттєвостей."
 }

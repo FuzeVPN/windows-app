@@ -568,5 +568,8 @@
   "La vérification n’a pas abouti. La cause n’est pas encore identifiée.": "جانچ مکمل نہیں ہوئی۔ وجہ ابھی معلوم نہیں ہو سکی۔",
   "Le diagnostic local n’a pas pu être copié. Réessayez.": "مقامی تشخیص کاپی نہیں ہو سکی۔ دوبارہ کوشش کریں۔",
   "Le service a renvoyé une réponse HTTP en erreur. Consultez le code d’erreur.": "سروس نے خرابی والا HTTP جواب بھیجا۔ خرابی کا کوڈ دیکھیں۔",
-  "Résolution réseau": "نیٹ ورک ناموں کی تعیین"
+  "Résolution réseau": "نیٹ ورک ناموں کی تعیین",
+  "Abonnement requis": "سبسکرپشن درکار ہے",
+  "Le service demande un abonnement pour autoriser cette connexion VPN. Consultez « Mon compte » pour vérifier l’état de votre abonnement.": "اس VPN کنکشن کی اجازت دینے کے لیے سروس کو سبسکرپشن درکار ہے۔ اپنی سبسکرپشن کی حالت دیکھنے کے لیے «میرا اکاؤنٹ» کھولیں۔",
+  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "فی الحال VPN کی حالت کی تصدیق نہیں ہو سکتی۔ چند لمحوں بعد دوبارہ کوشش کریں۔"
 }

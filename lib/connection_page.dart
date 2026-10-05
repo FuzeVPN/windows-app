@@ -8,6 +8,7 @@ class _ConnectionPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final subscriptionRequired = _showsSubscriptionRequiredHero(controller);
     final state = controller.runtimeVerificationPending
         ? _ConnectionState(
             label: context.tr('État VPN inconnu'),
@@ -16,6 +17,13 @@ class _ConnectionPage extends StatelessWidget {
             ),
             icon: Icons.help_outline,
             color: Theme.of(context).colorScheme.onSurfaceVariant,
+          )
+        : subscriptionRequired
+        ? _ConnectionState(
+            label: context.tr(controller.deviceEnrollmentIssue!.title),
+            description: context.tr(controller.deviceEnrollmentIssue!.message),
+            icon: Icons.workspace_premium_outlined,
+            color: AppTheme.warningFor(context),
           )
         : controller.isInitialized
         ? _connectionState(controller.vpnStatus, context)
@@ -31,6 +39,7 @@ class _ConnectionPage extends StatelessWidget {
       title: 'Connexion VPN',
       subtitle:
           controller.isInitialized &&
+              !subscriptionRequired &&
               controller.vpnStatus == VpnStatus.disconnected
           ? 'Choisissez un emplacement et activez le VPN.'
           : null,
@@ -72,13 +81,15 @@ class _ConnectionPage extends StatelessWidget {
                   : null,
             ),
           ],
-          if (controller.deviceEnrollmentIssue != null) ...[
+          if (controller.deviceEnrollmentIssue != null &&
+              !subscriptionRequired) ...[
             const SizedBox(height: 12),
             _DeviceEnrollmentIssueCard(
               controller: controller,
               issue: controller.deviceEnrollmentIssue!,
             ),
-          ] else if (controller.errorMessage != null &&
+          ] else if (!subscriptionRequired &&
+              controller.errorMessage != null &&
               controller.errorMessage != controller.locationMigrationMessage &&
               controller.errorMessage != controller.locationMigrationError) ...[
             const SizedBox(height: 12),
@@ -111,6 +122,15 @@ class _ConnectionPage extends StatelessWidget {
   }
 }
 
+bool _showsSubscriptionRequiredHero(AppController controller) =>
+    controller.isInitialized &&
+    !controller.runtimeVerificationPending &&
+    !controller.runtimeOwnedByAnotherUser &&
+    !controller.requiresExplicitDisconnect &&
+    !controller.isConnectionBusy &&
+    controller.deviceEnrollmentIssue?.kind ==
+        DeviceEnrollmentIssueKind.subscriptionRequired;
+
 // These legacy controller messages describe pending work, not a failed action.
 // Do not infer this from `blocked`: an actual failure can also retain protection.
 bool _isConnectionProgressMessage(AppController controller) => const {
@@ -136,16 +156,19 @@ class _ConnectionHero extends StatelessWidget {
       final theme = Theme.of(context);
       final textScale = MediaQuery.textScalerOf(context).scale(14) / 14;
       final wide = constraints.maxWidth >= 700 * math.max(1, textScale);
+      final subscriptionRequired = _showsSubscriptionRequiredHero(controller);
       final hasNotice =
           controller.isLocationMigrationActive ||
           controller.locationMigrationError != null ||
-          controller.deviceEnrollmentIssue != null ||
-          controller.errorMessage != null;
+          (controller.deviceEnrollmentIssue != null && !subscriptionRequired) ||
+          (controller.errorMessage != null && !subscriptionRequired);
       final panelPadding = wide && !hasNotice ? 28.0 : 20.0;
       // This panel has a fixed dark surface in both themes. Its status colors
       // therefore follow the dark palette independently of the app theme.
       final statusColor = !controller.isInitialized
           ? const Color(0xFFB8C4CC)
+          : subscriptionRequired
+          ? const Color(0xFFFFBE70)
           : switch (controller.vpnStatus) {
               VpnStatus.connected => const Color(0xFF66D9AA),
               VpnStatus.blocked => const Color(0xFFFFBE70),
@@ -213,10 +236,14 @@ class _ConnectionHero extends StatelessWidget {
         ),
         onPressed: !enabled || controller.isConnectionBusy
             ? null
+            : subscriptionRequired
+            ? () => _openAccountDestination(context, controller)
             : () => _requestConnection(context, controller),
         icon: Icon(
           controller.runtimeVerificationPending
               ? Icons.refresh
+              : subscriptionRequired
+              ? Icons.account_circle_outlined
               : controller.requiresExplicitDisconnect
               ? Icons.lock_open_outlined
               : controller.savedSessionVerificationPending
@@ -227,6 +254,8 @@ class _ConnectionHero extends StatelessWidget {
           context.tr(
             controller.runtimeVerificationPending
                 ? 'Réessayer'
+                : subscriptionRequired
+                ? 'Mon compte'
                 : controller.requiresExplicitDisconnect
                 ? 'Déconnecter'
                 : controller.savedSessionVerificationPending

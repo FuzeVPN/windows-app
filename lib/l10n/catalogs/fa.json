@@ -568,5 +568,8 @@
   "La vérification n’a pas abouti. La cause n’est pas encore identifiée.": "بررسی کامل نشد. علت هنوز مشخص نشده است.",
   "Le diagnostic local n’a pas pu être copié. Réessayez.": "عیب‌یابی محلی کپی نشد. دوباره تلاش کنید.",
   "Le service a renvoyé une réponse HTTP en erreur. Consultez le code d’erreur.": "سرویس یک پاسخ HTTP همراه با خطا برگرداند. کد خطا را بررسی کنید.",
-  "Résolution réseau": "تفکیک نام‌های شبکه"
+  "Résolution réseau": "تفکیک نام‌های شبکه",
+  "Abonnement requis": "اشتراک لازم است",
+  "Le service demande un abonnement pour autoriser cette connexion VPN. Consultez « Mon compte » pour vérifier l’état de votre abonnement.": "این سرویس برای اجازه دادن به این اتصال VPN به اشتراک نیاز دارد. برای بررسی وضعیت اشتراک، «حساب من» را باز کنید.",
+  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "در حال حاضر نمی‌توان وضعیت VPN را تأیید کرد. چند لحظه دیگر دوباره تلاش کنید."
 }

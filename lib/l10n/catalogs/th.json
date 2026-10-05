@@ -568,5 +568,8 @@
   "La vérification n’a pas abouti. La cause n’est pas encore identifiée.": "การตรวจสอบไม่เสร็จสมบูรณ์ ยังไม่ทราบสาเหตุ",
   "Le diagnostic local n’a pas pu être copié. Réessayez.": "ไม่สามารถคัดลอกการวินิจฉัยในเครื่องได้ โปรดลองอีกครั้ง",
   "Le service a renvoyé une réponse HTTP en erreur. Consultez le code d’erreur.": "บริการส่งคำตอบ HTTP ที่มีข้อผิดพลาดกลับมา โปรดตรวจสอบรหัสข้อผิดพลาด",
-  "Résolution réseau": "การแปลงชื่อเครือข่าย"
+  "Résolution réseau": "การแปลงชื่อเครือข่าย",
+  "Abonnement requis": "ต้องมีการสมัครสมาชิก",
+  "Le service demande un abonnement pour autoriser cette connexion VPN. Consultez « Mon compte » pour vérifier l’état de votre abonnement.": "บริการต้องการการสมัครสมาชิกเพื่ออนุญาตการเชื่อมต่อ VPN นี้ เปิด «บัญชีของฉัน» เพื่อตรวจสอบสถานะการสมัครสมาชิกของคุณ",
+  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "ยังไม่สามารถยืนยันสถานะ VPN ได้ในขณะนี้ โปรดลองอีกครั้งในอีกสักครู่"
 }

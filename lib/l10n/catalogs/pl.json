@@ -568,5 +568,8 @@
   "La vérification n’a pas abouti. La cause n’est pas encore identifiée.": "Sprawdzanie nie zostało ukończone. Przyczyna nie została jeszcze ustalona.",
   "Le diagnostic local n’a pas pu être copié. Réessayez.": "Nie udało się skopiować lokalnej diagnostyki. Spróbuj ponownie.",
   "Le service a renvoyé une réponse HTTP en erreur. Consultez le code d’erreur.": "Usługa zwróciła odpowiedź HTTP z błędem. Sprawdź kod błędu.",
-  "Résolution réseau": "Rozpoznawanie nazw sieciowych"
+  "Résolution réseau": "Rozpoznawanie nazw sieciowych",
+  "Abonnement requis": "Wymagana subskrypcja",
+  "Le service demande un abonnement pour autoriser cette connexion VPN. Consultez « Mon compte » pour vérifier l’état de votre abonnement.": "Usługa wymaga subskrypcji, aby zezwolić na to połączenie VPN. Otwórz «Moje konto», aby sprawdzić stan subskrypcji.",
+  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "Nie można teraz potwierdzić stanu VPN. Spróbuj ponownie za kilka chwil."
 }

@@ -568,5 +568,8 @@
   "La vérification n’a pas abouti. La cause n’est pas encore identifiée.": "檢查未完成，尚未確定原因。",
   "Le diagnostic local n’a pas pu être copié. Réessayez.": "無法複製本機診斷，請重試。",
   "Le service a renvoyé une réponse HTTP en erreur. Consultez le code d’erreur.": "服務傳回了 HTTP 錯誤回應，請查看錯誤代碼。",
-  "Résolution réseau": "網路名稱解析"
+  "Résolution réseau": "網路名稱解析",
+  "Abonnement requis": "需要訂閱",
+  "Le service demande un abonnement pour autoriser cette connexion VPN. Consultez « Mon compte » pour vérifier l’état de votre abonnement.": "服務要求有訂閱才能允許此 VPN 連線。請開啟「我的帳戶」查看您的訂閱狀態。",
+  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "目前無法確認 VPN 狀態。請稍後再試。"
 }

@@ -568,5 +568,8 @@
   "La vérification n’a pas abouti. La cause n’est pas encore identifiée.": "Kiểm tra chưa hoàn tất. Chưa xác định được nguyên nhân.",
   "Le diagnostic local n’a pas pu être copié. Réessayez.": "Không thể sao chép chẩn đoán cục bộ. Hãy thử lại.",
   "Le service a renvoyé une réponse HTTP en erreur. Consultez le code d’erreur.": "Dịch vụ trả về phản hồi lỗi HTTP. Hãy xem mã lỗi.",
-  "Résolution réseau": "Phân giải tên mạng"
+  "Résolution réseau": "Phân giải tên mạng",
+  "Abonnement requis": "Cần gói đăng ký",
+  "Le service demande un abonnement pour autoriser cette connexion VPN. Consultez « Mon compte » pour vérifier l’état de votre abonnement.": "Dịch vụ yêu cầu gói đăng ký để cho phép kết nối VPN này. Mở «Tài khoản của tôi» để kiểm tra trạng thái gói đăng ký của bạn.",
+  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "Hiện không thể xác nhận trạng thái VPN. Hãy thử lại sau giây lát."
 }

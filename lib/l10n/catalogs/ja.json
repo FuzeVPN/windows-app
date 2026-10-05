@@ -568,5 +568,8 @@
   "La vérification n’a pas abouti. La cause n’est pas encore identifiée.": "確認が完了しませんでした。原因はまだ特定されていません。",
   "Le diagnostic local n’a pas pu être copié. Réessayez.": "ローカル診断をコピーできませんでした。もう一度お試しください。",
   "Le service a renvoyé une réponse HTTP en erreur. Consultez le code d’erreur.": "サービスからHTTPエラー応答を受信しました。エラーコードを確認してください。",
-  "Résolution réseau": "ネットワーク名前解決"
+  "Résolution réseau": "ネットワーク名前解決",
+  "Abonnement requis": "サブスクリプションが必要です",
+  "Le service demande un abonnement pour autoriser cette connexion VPN. Consultez « Mon compte » pour vérifier l’état de votre abonnement.": "このVPN接続を許可するには、サブスクリプションが必要です。「マイアカウント」を開いてサブスクリプションの状態を確認してください。",
+  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "現在、VPNの状態を確認できません。しばらくしてから再試行してください。"
 }

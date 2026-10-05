@@ -568,5 +568,8 @@
   "La vérification n’a pas abouti. La cause n’est pas encore identifiée.": "Проверка не завершена. Причина пока не установлена.",
   "Le diagnostic local n’a pas pu être copié. Réessayez.": "Не удалось скопировать локальную диагностику. Повторите попытку.",
   "Le service a renvoyé une réponse HTTP en erreur. Consultez le code d’erreur.": "Служба вернула ответ HTTP с ошибкой. Проверьте код ошибки.",
-  "Résolution réseau": "Разрешение сетевых имён"
+  "Résolution réseau": "Разрешение сетевых имён",
+  "Abonnement requis": "Требуется подписка",
+  "Le service demande un abonnement pour autoriser cette connexion VPN. Consultez « Mon compte » pour vérifier l’état de votre abonnement.": "Для разрешения этого VPN-подключения сервису требуется подписка. Откройте «Моя учётная запись», чтобы проверить состояние подписки.",
+  "L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.": "Сейчас невозможно подтвердить состояние VPN. Повторите попытку через несколько мгновений."
 }

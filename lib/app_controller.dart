@@ -37,6 +37,7 @@ enum LocationChangePreparation {
 
 enum DeviceEnrollmentIssueKind {
   sessionExpired,
+  subscriptionRequired,
   emailVerificationRequired,
   deviceLimit,
   deviceExists,
@@ -1279,9 +1280,13 @@ class AppController extends ChangeNotifier {
   bool get _subscriptionApiBlocked =>
       runtimeOwnedByAnotherUser ||
       _runtimeVerificationPending ||
-      isConnectionBusy ||
-      _disconnectUnconfirmed ||
-      (requiresExplicitDisconnect && vpnStatus != VpnStatus.connected);
+      _disconnectUnconfirmed;
+
+  String get _subscriptionApiBlockedMessage => _runtimeVerificationPending
+      ? _runtimeVerificationFailureMessage
+      : runtimeOwnedByAnotherUser
+      ? _otherSessionMessage
+      : 'L’état du VPN ne peut pas être confirmé pour le moment. Réessayez dans quelques instants.';
 
   /// Called by the account panel on opening or retry, never by startup.
   /// Concurrent refreshes share a request; only the owning account/session can
@@ -1296,9 +1301,7 @@ class AppController extends ChangeNotifier {
     final running = _subscriptionRequest;
     if (running != null) return running;
     if (_subscriptionApiBlocked) {
-      subscriptionErrorMessage = _runtimeVerificationPending
-          ? _runtimeVerificationFailureMessage
-          : 'Déconnectez le VPN pour consulter votre abonnement.';
+      subscriptionErrorMessage = _subscriptionApiBlockedMessage;
       notifyListeners();
       return Future.value();
     }
@@ -1356,14 +1359,13 @@ class AppController extends ChangeNotifier {
           code: 'runtime_not_ready',
           durationMs: clock.elapsedMilliseconds,
         );
-        subscriptionErrorMessage = _runtimeVerificationPending
-            ? _runtimeVerificationFailureMessage
-            : 'Déconnectez le VPN pour consulter votre abonnement.';
+        subscriptionErrorMessage = _subscriptionApiBlockedMessage;
         return;
       }
       final loaded = await _api.subscription(token);
       if (!current()) return;
       subscription = loaded;
+      _clearResolvedSubscriptionIssue(loaded);
       _traceControllerPhase(
         'account',
         'subscription_refresh',
@@ -1411,6 +1413,134 @@ class AppController extends ChangeNotifier {
         notifyListeners();
       }
     }
+  }
+
+  /// Re-read access before preparing WFP. Cached billing cannot decide a new
+  /// connection: the user may have subscribed since the previous refusal.
+  /// Failed or unrecognized billing responses leave enrollment authoritative.
+  Future<bool> _checkSubscriptionBeforeConnection(
+    String token, {
+    int? operationId,
+  }) async {
+    final userId = profile?.userId;
+    if (userId == null || !_acceptConnectionOperation(operationId)) {
+      return false;
+    }
+    final epoch = _sessionEpoch;
+    final generation = ++_subscriptionGeneration;
+    final completion = Completer<void>();
+    // Supersede older panel responses and let an account panel opened during
+    // this check join it without issuing a competing request.
+    _subscriptionRequest = completion.future;
+    isLoadingSubscription = true;
+    subscriptionErrorMessage = null;
+    final clock = Stopwatch()..start();
+    _traceControllerPhase('account', 'subscription_preflight', 'begin');
+    bool current() =>
+        _isCurrentSession(epoch, userId) &&
+        generation == _subscriptionGeneration &&
+        _acceptConnectionOperation(operationId);
+    notifyListeners();
+    try {
+      final loaded = await _api.subscription(token);
+      if (!current()) return false;
+      subscription = loaded;
+      _clearResolvedSubscriptionIssue(loaded);
+      final denied =
+          loaded.status != SubscriptionStatus.unknown && !loaded.hasAccess;
+      _traceControllerPhase(
+        'account',
+        'subscription_preflight',
+        'completed',
+        code: denied
+            ? 'access_denied'
+            : loaded.status == SubscriptionStatus.unknown
+            ? 'access_unknown'
+            : 'access_allowed',
+        durationMs: clock.elapsedMilliseconds,
+      );
+      if (!denied) return true;
+      if (!_transitionConnection(operationId, VpnStatus.error)) return false;
+      errorMessage = null;
+      _setSubscriptionRequiredIssue();
+      _diagnosticCandidate = DiagnosticError(
+        code: 'subscription_required',
+        domain: 'api',
+        operation: _diagnosticOperation,
+        stage: 'enrollment',
+      );
+      return false;
+    } on ApiException catch (error) {
+      _traceControllerFailure(
+        'account',
+        'subscription_preflight',
+        error,
+        durationMs: clock.elapsedMilliseconds,
+      );
+      if (!current()) return false;
+      if (error.isUnauthorized ||
+          (error.statusCode == HttpStatus.forbidden &&
+              error.observedHttpStatus == HttpStatus.forbidden &&
+              error.errorCode == 'subscription_required')) {
+        await _handleDeviceEnrollmentError(
+          error,
+          identityWasReset: false,
+          operationId: operationId,
+        );
+        return false;
+      }
+      subscriptionErrorMessage =
+          'Les informations de votre abonnement ne peuvent pas être chargées pour le moment. Réessayez.';
+      return true;
+    } catch (error) {
+      _traceControllerFailure(
+        'account',
+        'subscription_preflight',
+        error,
+        durationMs: clock.elapsedMilliseconds,
+      );
+      if (!current()) return false;
+      subscriptionErrorMessage =
+          'Les informations de votre abonnement ne peuvent pas être chargées pour le moment. Réessayez.';
+      return true;
+    } finally {
+      _traceControllerPhase(
+        'account',
+        'subscription_preflight',
+        'finished',
+        code: current() ? 'current_session' : 'superseded',
+        durationMs: clock.elapsedMilliseconds,
+      );
+      if (_isCurrentSession(epoch, userId) &&
+          generation == _subscriptionGeneration) {
+        isLoadingSubscription = false;
+        _subscriptionRequest = null;
+        notifyListeners();
+      }
+      completion.complete();
+    }
+  }
+
+  void _finishAbandonedSubscriptionPreflight(int? operationId) {
+    if (!_acceptConnectionOperation(operationId) ||
+        vpnStatus != VpnStatus.preparing) {
+      return;
+    }
+    if (requiresExplicitDisconnect) {
+      _transitionConnection(
+        operationId,
+        _retainedProtectionBlocksTraffic ? VpnStatus.blocked : VpnStatus.error,
+      );
+      return;
+    }
+    _transitionConnection(
+      operationId,
+      activeProtocol == null &&
+              !_runtimeVerificationPending &&
+              !runtimeOwnedByAnotherUser
+          ? VpnStatus.disconnected
+          : VpnStatus.error,
+    );
   }
 
   Future<void> _loadProfile(String? token) async {
@@ -3816,6 +3946,20 @@ class AppController extends ChangeNotifier {
       notifyListeners();
       return;
     }
+    final subscriptionEpoch = _sessionEpoch;
+    final subscriptionUserId = profile?.userId;
+    if (!await _checkSubscriptionBeforeConnection(
+      token,
+      operationId: operationId,
+    )) {
+      _finishAbandonedSubscriptionPreflight(operationId);
+      return;
+    }
+    if (!_isCurrentSession(subscriptionEpoch, subscriptionUserId) ||
+        !_acceptConnectionOperation(operationId)) {
+      _finishAbandonedSubscriptionPreflight(operationId);
+      return;
+    }
     if (!await _prepareConnectionNetworkProtection(
       vpnProtocol,
       operationId: operationId,
@@ -4789,6 +4933,34 @@ class AppController extends ChangeNotifier {
     );
   }
 
+  void _setSubscriptionRequiredIssue() {
+    deviceEnrollmentIssue = const DeviceEnrollmentIssue(
+      kind: DeviceEnrollmentIssueKind.subscriptionRequired,
+      title: 'Abonnement requis',
+      message:
+          'Le service demande un abonnement pour autoriser cette connexion VPN. Consultez « Mon compte » pour vérifier l’état de votre abonnement.',
+    );
+  }
+
+  void _clearResolvedSubscriptionIssue(Subscription loaded) {
+    if (loaded.status == SubscriptionStatus.unknown ||
+        !loaded.hasAccess ||
+        deviceEnrollmentIssue?.kind !=
+            DeviceEnrollmentIssueKind.subscriptionRequired) {
+      return;
+    }
+    deviceEnrollmentIssue = null;
+    if (_diagnosticCandidate?.code == 'subscription_required') {
+      _diagnosticCandidate = null;
+    }
+    if (vpnStatus == VpnStatus.error &&
+        errorMessage == null &&
+        !requiresExplicitDisconnect &&
+        !isConnectionBusy) {
+      _transitionConnection(null, VpnStatus.disconnected);
+    }
+  }
+
   Future<void> _handleDeviceEnrollmentError(
     ApiException error, {
     required bool identityWasReset,
@@ -4825,6 +4997,11 @@ class AppController extends ChangeNotifier {
       return;
     }
     switch (error.errorCode) {
+      case 'subscription_required'
+          when error.statusCode == HttpStatus.forbidden &&
+              error.observedHttpStatus == HttpStatus.forbidden:
+        _setSubscriptionRequiredIssue();
+        return;
       case 'email_verification_required':
         deviceEnrollmentIssue = const DeviceEnrollmentIssue(
           kind: DeviceEnrollmentIssueKind.emailVerificationRequired,
