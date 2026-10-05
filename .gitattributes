@@ -1,0 +1,2 @@
+# Generated catalogs must stay byte-identical on Windows checkouts.
+lib/l10n/generated_catalogs.dart text eol=lf
