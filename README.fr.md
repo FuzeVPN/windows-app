@@ -24,6 +24,8 @@ ZIP portables. Choisissez l'architecture de votre installation Windows.
 Conservez le dossier portable complet, notamment ses notices, licences et
 pilotes. Vérifiez les téléchargements avec les empreintes fournies.
 
+La version 1.0.7 ajoute le diagnostic complet, la récupération de la chaîne de
+confiance Windows et une meilleure gestion de l’abonnement et des erreurs locales.
 La version 1.0.6 constitue le premier état public des sources. Ses paquets signés
 sont publiés sans modification. Les sources correspondantes des composants
 tiers et leurs licences restent incluses ou accompagnent les paquets. Les
