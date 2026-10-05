@@ -32,7 +32,8 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          $sdk = Join-Path $env:RUNNER_TEMP 'flutter'
+          $sdk = Join-Path $env:GITHUB_WORKSPACE '.toolchain/flutter'
+          New-Item -ItemType Directory -Force (Split-Path $sdk) | Out-Null
           git -c core.longpaths=true clone --depth 1 --branch 3.44.9 https://github.com/flutter/flutter.git $sdk
           if ($LASTEXITCODE -ne 0) { throw 'Flutter checkout failed.' }
           git -C $sdk config core.longpaths true
