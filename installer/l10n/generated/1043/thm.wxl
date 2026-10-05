@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="nl-NL" Language="1043" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+  <String Id="Caption" Value="[WixBundleName] installeren" />
+  <String Id="CheckingForUpdatesLabel" Value="Controleren op updates" />
+  <String Id="ConfirmCancelMessage" Value="Wil je annuleren?" />
+  <String Id="DesktopShortcut" Value="Snelkoppeling op bureaublad maken" />
+  <String Id="ExecuteUpgradeRelatedBundleMessage" Value="Vorige versie" />
+  <String Id="FailureCacheHeader" Value="Voorbereiding mislukt" />
+  <String Id="FailureCloseButton" Value="Sluiten" />
+  <String Id="FailureHeader" Value="Fout" />
+  <String Id="FailureHyperlinkLogText" Value="Bewerking onderbroken. Bekijk het &lt;a href=&quot;#&quot;&gt;logboek&lt;/a&gt;, los het probleem op en probeer het opnieuw." />
+  <String Id="FailureInstallHeader" Value="Installatie onderbroken" />
+  <String Id="FailureLayoutHeader" Value="Kopiëren mislukt" />
+  <String Id="FailureModifyHeader" Value="Wijziging onderbroken" />
+  <String Id="FailureRepairHeader" Value="Herstel onderbroken" />
+  <String Id="FailureRestartButton" Value="Opnieuw opstarten" />
+  <String Id="FailureRestartText" Value="Start opnieuw op om het herstellen te voltooien." />
+  <String Id="FailureUninstallHeader" Value="Verwijderen onderbroken" />
+  <String Id="FailureUnsafeUninstallHeader" Value="Verwijderen onderbroken" />
+  <String Id="FilesInUseCloseRadioButton" Value="Toepassingen sluiten" />
+  <String Id="FilesInUseDontCloseRadioButton" Value="Toepassingen openhouden" />
+  <String Id="FilesInUseExitButton" Value="Annuleren" />
+  <String Id="FilesInUseIgnoreButton" Value="Negeren" />
+  <String Id="FilesInUseLabel" Value="Sluit de volgende toepassingen en probeer het opnieuw." />
+  <String Id="FilesInUseNetfxCloseRadioButton" Value="Toepassingen sluiten" />
+  <String Id="FilesInUseRetryButton" Value="Opnieuw proberen" />
+  <String Id="FilesInUseTitle" Value="Bestanden in gebruik" />
+  <String Id="HelpCloseButton" Value="Sluiten" />
+  <String Id="HelpHeader" Value="Help" />
+  <String Id="HelpText" Value="/install, /repair, /uninstall: installeren, herstellen, verwijderen. /quiet: stille modus. /norestart: niet opnieuw opstarten. DesktopShortcut=1: snelkoppeling op bureaublad. InstallFolder=&quot;D:\Applications\FuzeVPN&quot;: initiële map. Updates behouden de geïnstalleerde map." />
+  <String Id="InstallAcceptCheckbox" Value="Ik ga akkoord met de licentievoorwaarden" />
+  <String Id="InstallCancelButton" Value="Annuleren" />
+  <String Id="InstallHeader" Value="Welkom" />
+  <String Id="InstallInstallButton" Value="Installeren" />
+  <String Id="InstallLicenseLinkText" Value="[WixBundleName] &lt;a href=&quot;#&quot;&gt;license terms&lt;/a&gt;." />
+  <String Id="InstallMessage" Value="Installeer FuzeVPN op deze computer." />
+  <String Id="InstallMessageOptions" Value="Installeer FuzeVPN op deze computer." />
+  <String Id="InstallOptionsButton" Value="Opties" />
+  <String Id="InstallVersion" Value="Versie [WixBundleVersion]" />
+  <String Id="InstallVersionNotice" Value="Versie [WixBundleVersion] [BuildNotice]" />
+  <String Id="ModifyCancelButton" Value="Annuleren" />
+  <String Id="ModifyHeader" Value="Onderhoud" />
+  <String Id="ModifyRepairButton" Value="Herstellen" />
+  <String Id="ModifyUninstallButton" Value="Verwijderen" />
+  <String Id="OptionsBrowseButton" Value="Bladeren" />
+  <String Id="OptionsCancelButton" Value="Annuleren" />
+  <String Id="OptionsHeader" Value="Opties" />
+  <String Id="OptionsLocationLabel" Value="Installatiemap (beschermd door Windows)" />
+  <String Id="OptionsOkButton" Value="OK" />
+  <String Id="OptionsPerMachineScopeText" Value="Alle gebruikers" />
+  <String Id="OptionsPerUserScopeText" Value="Huidige gebruiker" />
+  <String Id="OverallProgressPackageText" Value="Voorbereiden…" />
+  <String Id="PreserveInstallFolder" Value="De bestaande map blijft behouden tijdens updates. Gebruik het draagbare archief om de interface vrij te verplaatsen." />
+  <String Id="ProgressCancelButton" Value="Annuleren" />
+  <String Id="ProgressHeader" Value="Installatie bezig" />
+  <String Id="ProgressLabel" Value="Voortgang" />
+  <String Id="SuccessCacheHeader" Value="Bestanden gereed" />
+  <String Id="SuccessCloseButton" Value="Sluiten" />
+  <String Id="SuccessHeader" Value="Bewerking voltooid" />
+  <String Id="SuccessInstallHeader" Value="Installatie voltooid" />
+  <String Id="SuccessLaunchButton" Value="Openen" />
+  <String Id="SuccessLayoutHeader" Value="Bestanden gereed" />
+  <String Id="SuccessModifyHeader" Value="Wijziging voltooid" />
+  <String Id="SuccessOpenApp" Value="Open FuzeVPN via het Startmenu. Je persoonlijke voorkeuren zijn behouden." />
+  <String Id="SuccessRepairHeader" Value="Herstel voltooid" />
+  <String Id="SuccessRestartButton" Value="Opnieuw opstarten" />
+  <String Id="SuccessRestartText" Value="Start de computer opnieuw op om te voltooien." />
+  <String Id="SuccessUninstallHeader" Value="Verwijderen voltooid" />
+  <String Id="SuccessUninstallRestartText" Value="Start opnieuw op om het verwijderen te voltooien." />
+  <String Id="SuccessUnsafeUninstallHeader" Value="Verwijderen voltooid" />
+  <String Id="Title" Value="[WixBundleName]" />
+  <String Id="UpdateButton" Value="Bijwerken" />
+</WixLocalization>

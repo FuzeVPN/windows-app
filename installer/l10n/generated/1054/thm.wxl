@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="th-TH" Language="1054" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+  <String Id="Caption" Value="กำลังติดตั้ง [WixBundleName]" />
+  <String Id="CheckingForUpdatesLabel" Value="กำลังค้นหาการอัปเดต" />
+  <String Id="ConfirmCancelMessage" Value="คุณต้องการยกเลิกหรือไม่" />
+  <String Id="DesktopShortcut" Value="สร้างทางลัดบนเดสก์ท็อป" />
+  <String Id="ExecuteUpgradeRelatedBundleMessage" Value="เวอร์ชันก่อนหน้า" />
+  <String Id="FailureCacheHeader" Value="เตรียมการล้มเหลว" />
+  <String Id="FailureCloseButton" Value="ปิด" />
+  <String Id="FailureHeader" Value="ล้มเหลว" />
+  <String Id="FailureHyperlinkLogText" Value="ดำเนินการถูกขัดจังหวะ ดู&lt;a href=&quot;#&quot;&gt;บันทึก&lt;/a&gt; แก้ไขปัญหาแล้วลองอีกครั้ง" />
+  <String Id="FailureInstallHeader" Value="การติดตั้งถูกขัดจังหวะ" />
+  <String Id="FailureLayoutHeader" Value="คัดลอกล้มเหลว" />
+  <String Id="FailureModifyHeader" Value="การแก้ไขถูกขัดจังหวะ" />
+  <String Id="FailureRepairHeader" Value="การซ่อมแซมถูกขัดจังหวะ" />
+  <String Id="FailureRestartButton" Value="เริ่มระบบใหม่" />
+  <String Id="FailureRestartText" Value="เริ่มระบบใหม่เพื่อดำเนินการกู้คืนให้เสร็จสิ้น" />
+  <String Id="FailureUninstallHeader" Value="การถอนการติดตั้งถูกขัดจังหวะ" />
+  <String Id="FailureUnsafeUninstallHeader" Value="การถอนการติดตั้งถูกขัดจังหวะ" />
+  <String Id="FilesInUseCloseRadioButton" Value="ปิดแอปพลิเคชัน" />
+  <String Id="FilesInUseDontCloseRadioButton" Value="เปิดแอปพลิเคชันไว้" />
+  <String Id="FilesInUseExitButton" Value="ยกเลิก" />
+  <String Id="FilesInUseIgnoreButton" Value="ละเว้น" />
+  <String Id="FilesInUseLabel" Value="ปิดแอปพลิเคชันต่อไปนี้แล้วลองอีกครั้ง" />
+  <String Id="FilesInUseNetfxCloseRadioButton" Value="ปิดแอปพลิเคชัน" />
+  <String Id="FilesInUseRetryButton" Value="ลองอีกครั้ง" />
+  <String Id="FilesInUseTitle" Value="ไฟล์ที่กำลังใช้งาน" />
+  <String Id="HelpCloseButton" Value="ปิด" />
+  <String Id="HelpHeader" Value="ความช่วยเหลือ" />
+  <String Id="HelpText" Value="/install, /repair, /uninstall: ติดตั้ง ซ่อมแซม ถอนการติดตั้ง /quiet: โหมดเงียบ /norestart: ไม่ต้องเริ่มระบบใหม่ DesktopShortcut=1: ทางลัดบนเดสก์ท็อป InstallFolder=&quot;D:\Applications\FuzeVPN&quot;: โฟลเดอร์เริ่มต้น การอัปเดตจะคงโฟลเดอร์ที่ติดตั้งไว้" />
+  <String Id="InstallAcceptCheckbox" Value="ฉัน &amp;ยอมรับข้อกำหนดและเงื่อนไขสิทธิ์การใช้งาน" />
+  <String Id="InstallCancelButton" Value="ยกเลิก" />
+  <String Id="InstallHeader" Value="ยินดีต้อนรับ" />
+  <String Id="InstallInstallButton" Value="ติดตั้ง" />
+  <String Id="InstallLicenseLinkText" Value="[WixBundleName] &lt;a href=&quot;#&quot;&gt;ข้อกำหนดสิทธิ์การใช้งาน&lt;/a&gt;" />
+  <String Id="InstallMessage" Value="ติดตั้ง FuzeVPN บนคอมพิวเตอร์เครื่องนี้" />
+  <String Id="InstallMessageOptions" Value="ติดตั้ง FuzeVPN บนคอมพิวเตอร์เครื่องนี้" />
+  <String Id="InstallOptionsButton" Value="ตัวเลือก" />
+  <String Id="InstallVersion" Value="เวอร์ชัน [WixBundleVersion]" />
+  <String Id="InstallVersionNotice" Value="เวอร์ชัน [WixBundleVersion] [BuildNotice]" />
+  <String Id="ModifyCancelButton" Value="ยกเลิก" />
+  <String Id="ModifyHeader" Value="การบำรุงรักษา" />
+  <String Id="ModifyRepairButton" Value="ซ่อมแซม" />
+  <String Id="ModifyUninstallButton" Value="ถอนการติดตั้ง" />
+  <String Id="OptionsBrowseButton" Value="เรียกดู" />
+  <String Id="OptionsCancelButton" Value="ยกเลิก" />
+  <String Id="OptionsHeader" Value="ตัวเลือก" />
+  <String Id="OptionsLocationLabel" Value="โฟลเดอร์ติดตั้ง (Windows ป้องกันไว้)" />
+  <String Id="OptionsOkButton" Value="ตกลง" />
+  <String Id="OptionsPerMachineScopeText" Value="ผู้ใช้ทั้งหมด" />
+  <String Id="OptionsPerUserScopeText" Value="ผู้ใช้ปัจจุบัน" />
+  <String Id="OverallProgressPackageText" Value="กำลังเตรียม…" />
+  <String Id="PreserveInstallFolder" Value="โฟลเดอร์เดิมจะถูกเก็บไว้เมื่ออัปเดต หากต้องการย้ายอินเทอร์เฟซได้อย่างอิสระ ให้ใช้ไฟล์เก็บถาวรแบบพกพา" />
+  <String Id="ProgressCancelButton" Value="ยกเลิก" />
+  <String Id="ProgressHeader" Value="กำลังติดตั้ง" />
+  <String Id="ProgressLabel" Value="ความคืบหน้า" />
+  <String Id="SuccessCacheHeader" Value="ไฟล์พร้อมแล้ว" />
+  <String Id="SuccessCloseButton" Value="ปิด" />
+  <String Id="SuccessHeader" Value="ดำเนินการเสร็จสิ้น" />
+  <String Id="SuccessInstallHeader" Value="ติดตั้งเสร็จสิ้น" />
+  <String Id="SuccessLaunchButton" Value="เปิด" />
+  <String Id="SuccessLayoutHeader" Value="ไฟล์พร้อมแล้ว" />
+  <String Id="SuccessModifyHeader" Value="แก้ไขเสร็จสิ้น" />
+  <String Id="SuccessOpenApp" Value="เปิด FuzeVPN จากเมนูเริ่ม ค่ากำหนดส่วนบุคคลของคุณได้รับการเก็บรักษาไว้" />
+  <String Id="SuccessRepairHeader" Value="ซ่อมแซมเสร็จสิ้น" />
+  <String Id="SuccessRestartButton" Value="เริ่มระบบใหม่" />
+  <String Id="SuccessRestartText" Value="เริ่มคอมพิวเตอร์ใหม่เพื่อดำเนินการให้เสร็จสิ้น" />
+  <String Id="SuccessUninstallHeader" Value="ถอนการติดตั้งเสร็จสิ้น" />
+  <String Id="SuccessUninstallRestartText" Value="เริ่มระบบใหม่เพื่อถอนการติดตั้งให้เสร็จสิ้น" />
+  <String Id="SuccessUnsafeUninstallHeader" Value="ถอนการติดตั้งเสร็จสิ้น" />
+  <String Id="Title" Value="[WixBundleName]" />
+  <String Id="UpdateButton" Value="อัปเดต" />
+</WixLocalization>

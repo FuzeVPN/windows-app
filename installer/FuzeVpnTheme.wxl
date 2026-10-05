@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (c) .NET Foundation and contributors. All rights reserved. Licensed under the Microsoft Reciprocal License. See LICENSE.TXT file in the project root for full license information. -->
+<WixLocalization Culture="fr-fr" Language="1036" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+  <String Id="Caption" Value="Installation de [WixBundleName]" />
+  <String Id="Title" Value="[WixBundleName]" />
+  <String Id="CheckingForUpdatesLabel" Value="Recherche de mises à jour" />
+  <String Id="UpdateButton" Value="Mettre à jour" />
+  <String Id="InstallHeader" Value="Bienvenue" />
+  <String Id="InstallMessage" Value="Installez FuzeVPN sur cet ordinateur." />
+  <String Id="InstallMessageOptions" Value="Installez FuzeVPN sur cet ordinateur." />
+  <String Id="InstallVersion" Value="Version [WixBundleVersion]" />
+  <String Id="ConfirmCancelMessage" Value="Voulez-vous annuler ?" />
+  <String Id="ExecuteUpgradeRelatedBundleMessage" Value="Version précédente" />
+  <String Id="HelpHeader" Value="Aide" />
+  <String Id="HelpText" Value="/install, /repair, /uninstall : installer, réparer, désinstaller. /quiet : mode silencieux. /norestart : ne pas redémarrer. DesktopShortcut=1 : raccourci bureau. InstallFolder=&quot;D:\Applications\FuzeVPN&quot; : dossier initial. Les mises à jour conservent le dossier installé." />
+  <String Id="HelpCloseButton" Value="Fermer" />
+  <String Id="InstallLicenseLinkText" Value="[WixBundleName] &lt;a href=&quot;#&quot;&gt;license terms&lt;/a&gt;." />
+  <String Id="InstallAcceptCheckbox" Value="I &amp;agree to the license terms and conditions" />
+  <String Id="InstallOptionsButton" Value="Options" />
+  <String Id="InstallInstallButton" Value="Installer" />
+  <String Id="InstallCancelButton" Value="Annuler" />
+  <String Id="OptionsHeader" Value="Options" />
+  <String Id="OptionsLocationLabel" Value="Dossier d’installation (protégé par Windows)" />
+  <String Id="OptionsPerUserScopeText" Value="Utilisateur actuel" />
+  <String Id="OptionsPerMachineScopeText" Value="Tous les utilisateurs" />
+  <String Id="OptionsBrowseButton" Value="Parcourir" />
+  <String Id="OptionsOkButton" Value="OK" />
+  <String Id="OptionsCancelButton" Value="Annuler" />
+  <String Id="ProgressHeader" Value="Installation en cours" />
+  <String Id="ProgressLabel" Value="Progression" />
+  <String Id="OverallProgressPackageText" Value="Préparation…" />
+  <String Id="ProgressCancelButton" Value="Annuler" />
+  <String Id="ModifyHeader" Value="Maintenance" />
+  <String Id="ModifyRepairButton" Value="Réparer" />
+  <String Id="ModifyUninstallButton" Value="Désinstaller" />
+  <String Id="ModifyCancelButton" Value="Annuler" />
+  <String Id="SuccessHeader" Value="Opération terminée" />
+  <String Id="SuccessCacheHeader" Value="Fichiers prêts" />
+  <String Id="SuccessInstallHeader" Value="Installation terminée" />
+  <String Id="SuccessLayoutHeader" Value="Fichiers prêts" />
+  <String Id="SuccessModifyHeader" Value="Modification terminée" />
+  <String Id="SuccessRepairHeader" Value="Réparation terminée" />
+  <String Id="SuccessUninstallHeader" Value="Désinstallation terminée" />
+  <String Id="SuccessUnsafeUninstallHeader" Value="Désinstallation terminée" />
+  <String Id="SuccessLaunchButton" Value="Ouvrir" />
+  <String Id="SuccessRestartText" Value="Redémarrez votre ordinateur pour terminer." />
+  <String Id="SuccessUninstallRestartText" Value="Redémarrez pour terminer la désinstallation." />
+  <String Id="SuccessRestartButton" Value="Redémarrer" />
+  <String Id="SuccessCloseButton" Value="Fermer" />
+  <String Id="FailureHeader" Value="Échec" />
+  <String Id="FailureCacheHeader" Value="Échec de préparation" />
+  <String Id="FailureInstallHeader" Value="Installation interrompue" />
+  <String Id="FailureLayoutHeader" Value="Échec de copie" />
+  <String Id="FailureModifyHeader" Value="Modification interrompue" />
+  <String Id="FailureRepairHeader" Value="Réparation interrompue" />
+  <String Id="FailureUninstallHeader" Value="Désinstallation interrompue" />
+  <String Id="FailureUnsafeUninstallHeader" Value="Désinstallation interrompue" />
+  <String Id="FailureHyperlinkLogText" Value="Opération interrompue. Consultez le &lt;a href=&quot;#&quot;&gt;journal&lt;/a&gt;, corrigez le problème puis réessayez." />
+  <String Id="FailureRestartText" Value="Redémarrez pour terminer la restauration." />
+  <String Id="FailureRestartButton" Value="Redémarrer" />
+  <String Id="FailureCloseButton" Value="Fermer" />
+  <String Id="FilesInUseTitle" Value="Fichiers utilisés" />
+  <String Id="FilesInUseLabel" Value="Fermez les applications suivantes, puis réessayez." />
+  <String Id="FilesInUseNetfxCloseRadioButton" Value="Fermer les applications" />
+  <String Id="FilesInUseCloseRadioButton" Value="Fermer les applications" />
+  <String Id="FilesInUseDontCloseRadioButton" Value="Conserver les applications ouvertes" />
+  <String Id="FilesInUseRetryButton" Value="Réessayer" />
+  <String Id="FilesInUseIgnoreButton" Value="Ignorer" />
+  <String Id="FilesInUseExitButton" Value="Annuler" />
+</WixLocalization>

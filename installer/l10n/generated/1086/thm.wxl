@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="ms-MY" Language="1086" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+  <String Id="Caption" Value="Pemasangan [WixBundleName]" />
+  <String Id="CheckingForUpdatesLabel" Value="Menyemak kemas kini" />
+  <String Id="ConfirmCancelMessage" Value="Adakah anda mahu membatalkan?" />
+  <String Id="DesktopShortcut" Value="Cipta pintasan pada desktop" />
+  <String Id="ExecuteUpgradeRelatedBundleMessage" Value="Versi terdahulu" />
+  <String Id="FailureCacheHeader" Value="Persediaan gagal" />
+  <String Id="FailureCloseButton" Value="Tutup" />
+  <String Id="FailureHeader" Value="Gagal" />
+  <String Id="FailureHyperlinkLogText" Value="Operasi dihentikan. Lihat &lt;a href=&quot;#&quot;&gt;log&lt;/a&gt;, betulkan masalah kemudian cuba lagi." />
+  <String Id="FailureInstallHeader" Value="Pemasangan dihentikan" />
+  <String Id="FailureLayoutHeader" Value="Penyalinan gagal" />
+  <String Id="FailureModifyHeader" Value="Pengubahsuaian dihentikan" />
+  <String Id="FailureRepairHeader" Value="Pembaikan dihentikan" />
+  <String Id="FailureRestartButton" Value="Mulakan semula" />
+  <String Id="FailureRestartText" Value="Mulakan semula untuk menyelesaikan pemulihan." />
+  <String Id="FailureUninstallHeader" Value="Penyahpasangan dihentikan" />
+  <String Id="FailureUnsafeUninstallHeader" Value="Penyahpasangan dihentikan" />
+  <String Id="FilesInUseCloseRadioButton" Value="Tutup aplikasi" />
+  <String Id="FilesInUseDontCloseRadioButton" Value="Biarkan aplikasi terbuka" />
+  <String Id="FilesInUseExitButton" Value="Batal" />
+  <String Id="FilesInUseIgnoreButton" Value="Abaikan" />
+  <String Id="FilesInUseLabel" Value="Tutup aplikasi berikut, kemudian cuba lagi." />
+  <String Id="FilesInUseNetfxCloseRadioButton" Value="Tutup aplikasi" />
+  <String Id="FilesInUseRetryButton" Value="Cuba lagi" />
+  <String Id="FilesInUseTitle" Value="Fail sedang digunakan" />
+  <String Id="HelpCloseButton" Value="Tutup" />
+  <String Id="HelpHeader" Value="Bantuan" />
+  <String Id="HelpText" Value="/install, /repair, /uninstall: pasang, baiki, nyahpasang. /quiet: mod senyap. /norestart: jangan mulakan semula. DesktopShortcut=1: pintasan desktop. InstallFolder=&quot;D:\Applications\FuzeVPN&quot;: folder awal. Kemas kini mengekalkan folder yang dipasang." />
+  <String Id="InstallAcceptCheckbox" Value="Saya bersetuju dengan terma dan syarat lesen" />
+  <String Id="InstallCancelButton" Value="Batal" />
+  <String Id="InstallHeader" Value="Selamat datang" />
+  <String Id="InstallInstallButton" Value="Pasang" />
+  <String Id="InstallLicenseLinkText" Value="[WixBundleName] &lt;a href=&quot;#&quot;&gt;syarat lesen&lt;/a&gt;." />
+  <String Id="InstallMessage" Value="Pasang FuzeVPN pada komputer ini." />
+  <String Id="InstallMessageOptions" Value="Pasang FuzeVPN pada komputer ini." />
+  <String Id="InstallOptionsButton" Value="Pilihan" />
+  <String Id="InstallVersion" Value="Versi [WixBundleVersion]" />
+  <String Id="InstallVersionNotice" Value="Versi [WixBundleVersion] [BuildNotice]" />
+  <String Id="ModifyCancelButton" Value="Batal" />
+  <String Id="ModifyHeader" Value="Penyelenggaraan" />
+  <String Id="ModifyRepairButton" Value="Baiki" />
+  <String Id="ModifyUninstallButton" Value="Nyahpasang" />
+  <String Id="OptionsBrowseButton" Value="Semak imbas" />
+  <String Id="OptionsCancelButton" Value="Batal" />
+  <String Id="OptionsHeader" Value="Pilihan" />
+  <String Id="OptionsLocationLabel" Value="Folder pemasangan (dilindungi Windows)" />
+  <String Id="OptionsOkButton" Value="OK" />
+  <String Id="OptionsPerMachineScopeText" Value="Semua pengguna" />
+  <String Id="OptionsPerUserScopeText" Value="Pengguna semasa" />
+  <String Id="OverallProgressPackageText" Value="Persediaan…" />
+  <String Id="PreserveInstallFolder" Value="Folder sedia ada dikekalkan semasa kemas kini. Untuk memindahkan antara muka dengan bebas, gunakan arkib mudah alih." />
+  <String Id="ProgressCancelButton" Value="Batal" />
+  <String Id="ProgressHeader" Value="Pemasangan sedang berjalan" />
+  <String Id="ProgressLabel" Value="Kemajuan" />
+  <String Id="SuccessCacheHeader" Value="Fail sedia" />
+  <String Id="SuccessCloseButton" Value="Tutup" />
+  <String Id="SuccessHeader" Value="Operasi selesai" />
+  <String Id="SuccessInstallHeader" Value="Pemasangan selesai" />
+  <String Id="SuccessLaunchButton" Value="Buka" />
+  <String Id="SuccessLayoutHeader" Value="Fail sedia" />
+  <String Id="SuccessModifyHeader" Value="Pengubahsuaian selesai" />
+  <String Id="SuccessOpenApp" Value="Buka FuzeVPN daripada menu Mula. Keutamaan peribadi anda telah dikekalkan." />
+  <String Id="SuccessRepairHeader" Value="Pembaikan selesai" />
+  <String Id="SuccessRestartButton" Value="Mulakan semula" />
+  <String Id="SuccessRestartText" Value="Mulakan semula komputer anda untuk selesai." />
+  <String Id="SuccessUninstallHeader" Value="Penyahpasangan selesai" />
+  <String Id="SuccessUninstallRestartText" Value="Mulakan semula untuk menyelesaikan penyahpasangan." />
+  <String Id="SuccessUnsafeUninstallHeader" Value="Penyahpasangan selesai" />
+  <String Id="Title" Value="[WixBundleName]" />
+  <String Id="UpdateButton" Value="Kemas kini" />
+</WixLocalization>

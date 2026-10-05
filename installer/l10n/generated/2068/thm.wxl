@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="nb-NO" Language="2068" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+  <String Id="Caption" Value="Installerer [WixBundleName]" />
+  <String Id="CheckingForUpdatesLabel" Value="Søker etter oppdateringer" />
+  <String Id="ConfirmCancelMessage" Value="Vil du avbryte?" />
+  <String Id="DesktopShortcut" Value="Opprett en snarvei på skrivebordet" />
+  <String Id="ExecuteUpgradeRelatedBundleMessage" Value="Forrige versjon" />
+  <String Id="FailureCacheHeader" Value="Klargjøring mislyktes" />
+  <String Id="FailureCloseButton" Value="Lukk" />
+  <String Id="FailureHeader" Value="Mislyktes" />
+  <String Id="FailureHyperlinkLogText" Value="Operasjonen ble avbrutt. Se &lt;a href=&quot;#&quot;&gt;loggen&lt;/a&gt;, løs problemet og prøv igjen." />
+  <String Id="FailureInstallHeader" Value="Installasjon avbrutt" />
+  <String Id="FailureLayoutHeader" Value="Kopiering mislyktes" />
+  <String Id="FailureModifyHeader" Value="Endring avbrutt" />
+  <String Id="FailureRepairHeader" Value="Reparasjon avbrutt" />
+  <String Id="FailureRestartButton" Value="Start på nytt" />
+  <String Id="FailureRestartText" Value="Start på nytt for å fullføre gjenopprettingen." />
+  <String Id="FailureUninstallHeader" Value="Avinstallasjon avbrutt" />
+  <String Id="FailureUnsafeUninstallHeader" Value="Avinstallasjon avbrutt" />
+  <String Id="FilesInUseCloseRadioButton" Value="Lukk programmer" />
+  <String Id="FilesInUseDontCloseRadioButton" Value="La programmene være åpne" />
+  <String Id="FilesInUseExitButton" Value="Avbryt" />
+  <String Id="FilesInUseIgnoreButton" Value="Ignorer" />
+  <String Id="FilesInUseLabel" Value="Lukk følgende programmer, og prøv igjen." />
+  <String Id="FilesInUseNetfxCloseRadioButton" Value="Lukk programmer" />
+  <String Id="FilesInUseRetryButton" Value="Prøv igjen" />
+  <String Id="FilesInUseTitle" Value="Filer i bruk" />
+  <String Id="HelpCloseButton" Value="Lukk" />
+  <String Id="HelpHeader" Value="Hjelp" />
+  <String Id="HelpText" Value="/install, /repair, /uninstall: installer, reparer, avinstaller. /quiet: stillemodus. /norestart: ikke start på nytt. DesktopShortcut=1: snarvei på skrivebordet. InstallFolder=&quot;D:ApplicationsFuzeVPN&quot;: opprinnelig mappe. Oppdateringer beholder den installerte mappen." />
+  <String Id="InstallAcceptCheckbox" Value="Jeg godtar lisensvilkårene" />
+  <String Id="InstallCancelButton" Value="Avbryt" />
+  <String Id="InstallHeader" Value="Velkommen" />
+  <String Id="InstallInstallButton" Value="Installer" />
+  <String Id="InstallLicenseLinkText" Value="[WixBundleName] &lt;a href=&quot;#&quot;&gt;lisensvilkår&lt;/a&gt;." />
+  <String Id="InstallMessage" Value="Installer FuzeVPN på denne datamaskinen." />
+  <String Id="InstallMessageOptions" Value="Installer FuzeVPN på denne datamaskinen." />
+  <String Id="InstallOptionsButton" Value="Alternativer" />
+  <String Id="InstallVersion" Value="Versjon [WixBundleVersion]" />
+  <String Id="InstallVersionNotice" Value="Versjon [WixBundleVersion] [BuildNotice]" />
+  <String Id="ModifyCancelButton" Value="Avbryt" />
+  <String Id="ModifyHeader" Value="Vedlikehold" />
+  <String Id="ModifyRepairButton" Value="Reparer" />
+  <String Id="ModifyUninstallButton" Value="Avinstaller" />
+  <String Id="OptionsBrowseButton" Value="Bla gjennom" />
+  <String Id="OptionsCancelButton" Value="Avbryt" />
+  <String Id="OptionsHeader" Value="Alternativer" />
+  <String Id="OptionsLocationLabel" Value="Installasjonsmappe (beskyttet av Windows)" />
+  <String Id="OptionsOkButton" Value="OK" />
+  <String Id="OptionsPerMachineScopeText" Value="Alle brukere" />
+  <String Id="OptionsPerUserScopeText" Value="Gjeldende bruker" />
+  <String Id="OverallProgressPackageText" Value="Klargjør…" />
+  <String Id="PreserveInstallFolder" Value="Den eksisterende mappen beholdes under oppdateringer. Bruk det bærbare arkivet hvis du vil flytte grensesnittet fritt." />
+  <String Id="ProgressCancelButton" Value="Avbryt" />
+  <String Id="ProgressHeader" Value="Installasjon pågår" />
+  <String Id="ProgressLabel" Value="Fremdrift" />
+  <String Id="SuccessCacheHeader" Value="Filer klare" />
+  <String Id="SuccessCloseButton" Value="Lukk" />
+  <String Id="SuccessHeader" Value="Operasjonen er fullført" />
+  <String Id="SuccessInstallHeader" Value="Installasjonen er fullført" />
+  <String Id="SuccessLaunchButton" Value="Åpne" />
+  <String Id="SuccessLayoutHeader" Value="Filer klare" />
+  <String Id="SuccessModifyHeader" Value="Endringen er fullført" />
+  <String Id="SuccessOpenApp" Value="Åpne FuzeVPN fra Start-menyen. De personlige innstillingene dine er bevart." />
+  <String Id="SuccessRepairHeader" Value="Reparasjonen er fullført" />
+  <String Id="SuccessRestartButton" Value="Start på nytt" />
+  <String Id="SuccessRestartText" Value="Start datamaskinen på nytt for å fullføre." />
+  <String Id="SuccessUninstallHeader" Value="Avinstallasjonen er fullført" />
+  <String Id="SuccessUninstallRestartText" Value="Start på nytt for å fullføre avinstallasjonen." />
+  <String Id="SuccessUnsafeUninstallHeader" Value="Avinstallasjonen er fullført" />
+  <String Id="Title" Value="[WixBundleName]" />
+  <String Id="UpdateButton" Value="Oppdater" />
+</WixLocalization>

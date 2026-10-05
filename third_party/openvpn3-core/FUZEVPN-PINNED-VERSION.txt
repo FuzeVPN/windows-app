@@ -1,0 +1,28 @@
+Source: https://github.com/OpenVPN/openvpn3.git
+Commit: 28469efe3ae770268b2b5c6aa607ed1489e101f0
+Licence: MPL-2.0 option selected for FuzeVPN distribution; see LICENSE.md.
+
+The vcpkg-built x64-windows dependencies were produced from:
+https://github.com/microsoft/vcpkg.git
+Commit: 7e43e0768a5af180a9cf75d87d692dce1b9da34f
+
+The exact native dependency graph is locked by vcpkg.json. Direct versions:
+- asio 1.36.0 (pinned overlay port)
+- fmt 12.2.0#1
+- gtest 1.18.0 (host tool)
+- jsoncpp 1.9.6
+- lz4 1.10.0
+- OpenSSL 3.6.5 (pinned overlay port, official release archive)
+- tap-windows6 9.21.2-0e30f5c#2
+- xxhash 0.8.3
+
+Flutter dependencies are locked separately by the application pubspec.yaml
+and pubspec.lock, using the bundled Flutter 3.44.9 and Dart 3.12.2.
+The supported Flutter SDK range is >=3.44.7 <3.45.0.
+
+ARM64 dependencies were rebuilt for FuzeVPN 1.0.1 from the same pinned vcpkg
+source commit and overlays listed above. Direct runtime port versions match
+the locked graph. Build mode: isolated classic install, arm64-windows, dynamic
+CRT and libraries. Compiler: MSVC 14.50.35717 Hostx64/arm64; OpenSSL assembly
+compiler: official LLVM 21.1.8. No AMD64 dependency files were replaced.
+Build evidence: build/release-1.0.1/native-dependencies/vcpkg-arm64-build.log.

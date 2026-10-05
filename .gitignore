@@ -1,0 +1,67 @@
+# Temporary editor files and local logs
+*.log
+*.pyc
+*.swp
+.DS_Store
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# Local dependencies and reproducible build/package outputs
+/.toolchain/
+.dart_tool/
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+/dist/
+/coverage/
+windows/flutter/ephemeral/
+/windows/runner/third_party/
+**/vcpkg_installed/
+/third_party/openvpn3-core/vcpkg_installed/
+**/.git/
+**/.git
+**/node_modules/
+**/bin/
+**/obj/
+*.user
+*.suo
+*.dll
+*.exe
+*.msi
+*.sys
+*.cat
+*.lib
+*.obj
+*.pdb
+
+# Pinned VPN runtime supplied with this application under its vendor licences
+!/third_party/wireguard/1.1/amd64/wireguard.dll
+!/third_party/wireguard/1.1/amd64/tunnel.dll
+!/third_party/wireguard/1.1/arm64/wireguard.dll
+!/third_party/wireguard/1.1/arm64/tunnel.dll
+!/third_party/openvpn-dco/2.8.7/amd64/win10/ovpn-dco.sys
+!/third_party/openvpn-dco/2.8.7/amd64/win10/ovpn-dco.cat
+!/third_party/openvpn-dco/2.8.7/amd64/win11/ovpn-dco.sys
+!/third_party/openvpn-dco/2.8.7/amd64/win11/ovpn-dco.cat
+!/third_party/openvpn-dco/2.8.7/arm64/win10/ovpn-dco.sys
+!/third_party/openvpn-dco/2.8.7/arm64/win10/ovpn-dco.cat
+!/third_party/openvpn-dco/2.8.7/arm64/win11/ovpn-dco.sys
+!/third_party/openvpn-dco/2.8.7/arm64/win11/ovpn-dco.cat
+
+# Private signing material and local application data
+*.pfx
+*.p12
+*.pvk
+*.key
+*.ovpn
+*.conf
+.env
+.env.*
+diagnostic.log*
+
+# Symbols and obfuscation maps
+app.*.symbols
+app.*.map.json

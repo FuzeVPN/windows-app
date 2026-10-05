@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="ja-JP" Language="1041" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+  <String Id="Caption" Value="[WixBundleName]をインストール" />
+  <String Id="CheckingForUpdatesLabel" Value="更新を確認" />
+  <String Id="ConfirmCancelMessage" Value="キャンセルしますか？" />
+  <String Id="DesktopShortcut" Value="デスクトップショートカットを作成" />
+  <String Id="ExecuteUpgradeRelatedBundleMessage" Value="以前のバージョン" />
+  <String Id="FailureCacheHeader" Value="準備に失敗しました" />
+  <String Id="FailureCloseButton" Value="閉じる" />
+  <String Id="FailureHeader" Value="失敗" />
+  <String Id="FailureHyperlinkLogText" Value="操作が中断されました。&lt;a href=&quot;#&quot;&gt;ログ&lt;/a&gt;を確認し、問題を修正してからもう一度お試しください。" />
+  <String Id="FailureInstallHeader" Value="インストールが中断されました" />
+  <String Id="FailureLayoutHeader" Value="コピーに失敗しました" />
+  <String Id="FailureModifyHeader" Value="変更が中断されました" />
+  <String Id="FailureRepairHeader" Value="修復が中断されました" />
+  <String Id="FailureRestartButton" Value="再起動" />
+  <String Id="FailureRestartText" Value="復元を完了するには再起動してください。" />
+  <String Id="FailureUninstallHeader" Value="アンインストールが中断されました" />
+  <String Id="FailureUnsafeUninstallHeader" Value="アンインストールが中断されました" />
+  <String Id="FilesInUseCloseRadioButton" Value="アプリケーションを閉じる" />
+  <String Id="FilesInUseDontCloseRadioButton" Value="アプリケーションを開いたままにする" />
+  <String Id="FilesInUseExitButton" Value="キャンセル" />
+  <String Id="FilesInUseIgnoreButton" Value="無視" />
+  <String Id="FilesInUseLabel" Value="次のアプリケーションを閉じてから、もう一度お試しください。" />
+  <String Id="FilesInUseNetfxCloseRadioButton" Value="アプリケーションを閉じる" />
+  <String Id="FilesInUseRetryButton" Value="再試行" />
+  <String Id="FilesInUseTitle" Value="使用中のファイル" />
+  <String Id="HelpCloseButton" Value="閉じる" />
+  <String Id="HelpHeader" Value="ヘルプ" />
+  <String Id="HelpText" Value="/install、/repair、/uninstall：インストール、修復、アンインストール。/quiet：サイレントモード。/norestart：再起動しない。DesktopShortcut=1：デスクトップショートカット。InstallFolder=&quot;D:\Applications\FuzeVPN&quot;：初期フォルダー。更新ではインストール先フォルダーが保持されます。" />
+  <String Id="InstallAcceptCheckbox" Value="ライセンス条項および条件に同意します" />
+  <String Id="InstallCancelButton" Value="キャンセル" />
+  <String Id="InstallHeader" Value="ようこそ" />
+  <String Id="InstallInstallButton" Value="インストール" />
+  <String Id="InstallLicenseLinkText" Value="[WixBundleName]の&lt;a href=&quot;#&quot;&gt;ライセンス条項&lt;/a&gt;。" />
+  <String Id="InstallMessage" Value="このコンピューターにFuzeVPNをインストールします。" />
+  <String Id="InstallMessageOptions" Value="このコンピューターにFuzeVPNをインストールします。" />
+  <String Id="InstallOptionsButton" Value="オプション" />
+  <String Id="InstallVersion" Value="バージョン[WixBundleVersion]" />
+  <String Id="InstallVersionNotice" Value="バージョン[WixBundleVersion] [BuildNotice]" />
+  <String Id="ModifyCancelButton" Value="キャンセル" />
+  <String Id="ModifyHeader" Value="メンテナンス" />
+  <String Id="ModifyRepairButton" Value="修復" />
+  <String Id="ModifyUninstallButton" Value="アンインストール" />
+  <String Id="OptionsBrowseButton" Value="参照" />
+  <String Id="OptionsCancelButton" Value="キャンセル" />
+  <String Id="OptionsHeader" Value="オプション" />
+  <String Id="OptionsLocationLabel" Value="インストールフォルダー（Windowsで保護）" />
+  <String Id="OptionsOkButton" Value="OK" />
+  <String Id="OptionsPerMachineScopeText" Value="すべてのユーザー" />
+  <String Id="OptionsPerUserScopeText" Value="現在のユーザー" />
+  <String Id="OverallProgressPackageText" Value="準備中…" />
+  <String Id="PreserveInstallFolder" Value="更新時も既存のフォルダーは保持されます。インターフェースを自由に移動するには、ポータブルアーカイブを使用してください。" />
+  <String Id="ProgressCancelButton" Value="キャンセル" />
+  <String Id="ProgressHeader" Value="インストール中" />
+  <String Id="ProgressLabel" Value="進行状況" />
+  <String Id="SuccessCacheHeader" Value="ファイルの準備完了" />
+  <String Id="SuccessCloseButton" Value="閉じる" />
+  <String Id="SuccessHeader" Value="操作が完了しました" />
+  <String Id="SuccessInstallHeader" Value="インストール完了" />
+  <String Id="SuccessLaunchButton" Value="開く" />
+  <String Id="SuccessLayoutHeader" Value="ファイルの準備完了" />
+  <String Id="SuccessModifyHeader" Value="変更完了" />
+  <String Id="SuccessOpenApp" Value="スタートメニューからFuzeVPNを開いてください。個人設定は保持されています。" />
+  <String Id="SuccessRepairHeader" Value="修復完了" />
+  <String Id="SuccessRestartButton" Value="再起動" />
+  <String Id="SuccessRestartText" Value="完了するにはコンピューターを再起動してください。" />
+  <String Id="SuccessUninstallHeader" Value="アンインストール完了" />
+  <String Id="SuccessUninstallRestartText" Value="アンインストールを完了するには再起動してください。" />
+  <String Id="SuccessUnsafeUninstallHeader" Value="アンインストール完了" />
+  <String Id="Title" Value="[WixBundleName]" />
+  <String Id="UpdateButton" Value="更新" />
+</WixLocalization>

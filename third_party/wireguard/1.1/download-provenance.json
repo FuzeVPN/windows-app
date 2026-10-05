@@ -1,0 +1,24 @@
+[
+  {
+    "Name": "ovpn-dco-win-2.8.7-amd64.zip",
+    "Source": "https://github.com/OpenVPN/ovpn-dco-win/releases/download/2.8.7/ovpn-dco-win-2.8.7-amd64.zip",
+    "Sha256": "6ee142c11b5e98a2411751b6327dde811ffdd468d34727ce513e7321f8e96495",
+    "VendorDigestVerified": true,
+    "Bytes": 146431
+  },
+  {
+    "Name": "ovpn-dco-win-2.8.7-arm64.zip",
+    "Source": "https://github.com/OpenVPN/ovpn-dco-win/releases/download/2.8.7/ovpn-dco-win-2.8.7-arm64.zip",
+    "Sha256": "3f7027e1d5696d4a033b43aa45ac473491ce928f7ca8ca0c5fafd32a81da7bbc",
+    "VendorDigestVerified": true,
+    "Bytes": 131429
+  },
+  {
+    "Name": "wireguard-nt-1.1.zip",
+    "Source": "https://download.wireguard.com/wireguard-nt/wireguard-nt-1.1.zip",
+    "Sha256": "dceb30a9bc4be48cce0f74160fc88a585a2c2627366e8f846fc6658f9038dace",
+    "VendorDigestVerified": true,
+    "Bytes": 1372955,
+    "DigestSource": "Official WireGuard Windows v1.1.1 build.bat at commit f0605c3e3dcc5ff801e19158fd6255378b99e17c"
+  }
+]

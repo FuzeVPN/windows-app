@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="zh-TW" Language="3076" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+  <String Id="Caption" Value="正在安裝 [WixBundleName]" />
+  <String Id="CheckingForUpdatesLabel" Value="正在搜尋更新" />
+  <String Id="ConfirmCancelMessage" Value="要取消嗎？" />
+  <String Id="DesktopShortcut" Value="建立桌面捷徑" />
+  <String Id="ExecuteUpgradeRelatedBundleMessage" Value="先前版本" />
+  <String Id="FailureCacheHeader" Value="準備失敗" />
+  <String Id="FailureCloseButton" Value="關閉" />
+  <String Id="FailureHeader" Value="失敗" />
+  <String Id="FailureHyperlinkLogText" Value="作業中斷。請查看&lt;a href=&quot;#&quot;&gt;日誌&lt;/a&gt;，修正問題後重試。" />
+  <String Id="FailureInstallHeader" Value="安裝中斷" />
+  <String Id="FailureLayoutHeader" Value="複製失敗" />
+  <String Id="FailureModifyHeader" Value="修改中斷" />
+  <String Id="FailureRepairHeader" Value="修復中斷" />
+  <String Id="FailureRestartButton" Value="重新啟動" />
+  <String Id="FailureRestartText" Value="請重新啟動以完成還原。" />
+  <String Id="FailureUninstallHeader" Value="解除安裝中斷" />
+  <String Id="FailureUnsafeUninstallHeader" Value="解除安裝中斷" />
+  <String Id="FilesInUseCloseRadioButton" Value="關閉應用程式" />
+  <String Id="FilesInUseDontCloseRadioButton" Value="保持應用程式開啟" />
+  <String Id="FilesInUseExitButton" Value="取消" />
+  <String Id="FilesInUseIgnoreButton" Value="忽略" />
+  <String Id="FilesInUseLabel" Value="請關閉下列應用程式後重試。" />
+  <String Id="FilesInUseNetfxCloseRadioButton" Value="關閉應用程式" />
+  <String Id="FilesInUseRetryButton" Value="重試" />
+  <String Id="FilesInUseTitle" Value="使用中的檔案" />
+  <String Id="HelpCloseButton" Value="關閉" />
+  <String Id="HelpHeader" Value="說明" />
+  <String Id="HelpText" Value="/install、/repair、/uninstall：安裝、修復、解除安裝。/quiet：靜默模式。/norestart：不要重新啟動。DesktopShortcut=1：桌面捷徑。InstallFolder=&quot;D:\Applications\FuzeVPN&quot;：初始資料夾。更新會保留已安裝的資料夾。" />
+  <String Id="InstallAcceptCheckbox" Value="我同意授權條款與條件" />
+  <String Id="InstallCancelButton" Value="取消" />
+  <String Id="InstallHeader" Value="歡迎" />
+  <String Id="InstallInstallButton" Value="安裝" />
+  <String Id="InstallLicenseLinkText" Value="[WixBundleName] &lt;a href=&quot;#&quot;&gt;授權條款&lt;/a&gt;。" />
+  <String Id="InstallMessage" Value="在此電腦上安裝 FuzeVPN。" />
+  <String Id="InstallMessageOptions" Value="在此電腦上安裝 FuzeVPN。" />
+  <String Id="InstallOptionsButton" Value="選項" />
+  <String Id="InstallVersion" Value="版本 [WixBundleVersion]" />
+  <String Id="InstallVersionNotice" Value="版本 [WixBundleVersion] [BuildNotice]" />
+  <String Id="ModifyCancelButton" Value="取消" />
+  <String Id="ModifyHeader" Value="維護" />
+  <String Id="ModifyRepairButton" Value="修復" />
+  <String Id="ModifyUninstallButton" Value="解除安裝" />
+  <String Id="OptionsBrowseButton" Value="瀏覽" />
+  <String Id="OptionsCancelButton" Value="取消" />
+  <String Id="OptionsHeader" Value="選項" />
+  <String Id="OptionsLocationLabel" Value="安裝資料夾（受 Windows 保護）" />
+  <String Id="OptionsOkButton" Value="確定" />
+  <String Id="OptionsPerMachineScopeText" Value="所有使用者" />
+  <String Id="OptionsPerUserScopeText" Value="目前使用者" />
+  <String Id="OverallProgressPackageText" Value="準備中…" />
+  <String Id="PreserveInstallFolder" Value="更新時會保留現有資料夾。若要自由移動介面，請使用便攜版封存檔。" />
+  <String Id="ProgressCancelButton" Value="取消" />
+  <String Id="ProgressHeader" Value="正在安裝" />
+  <String Id="ProgressLabel" Value="進度" />
+  <String Id="SuccessCacheHeader" Value="檔案已準備就緒" />
+  <String Id="SuccessCloseButton" Value="關閉" />
+  <String Id="SuccessHeader" Value="作業完成" />
+  <String Id="SuccessInstallHeader" Value="安裝完成" />
+  <String Id="SuccessLaunchButton" Value="開啟" />
+  <String Id="SuccessLayoutHeader" Value="檔案已準備就緒" />
+  <String Id="SuccessModifyHeader" Value="修改完成" />
+  <String Id="SuccessOpenApp" Value="請從「開始」功能表開啟 FuzeVPN。您的個人偏好設定已保留。" />
+  <String Id="SuccessRepairHeader" Value="修復完成" />
+  <String Id="SuccessRestartButton" Value="重新啟動" />
+  <String Id="SuccessRestartText" Value="請重新啟動電腦以完成作業。" />
+  <String Id="SuccessUninstallHeader" Value="解除安裝完成" />
+  <String Id="SuccessUninstallRestartText" Value="請重新啟動以完成解除安裝。" />
+  <String Id="SuccessUnsafeUninstallHeader" Value="解除安裝完成" />
+  <String Id="Title" Value="[WixBundleName]" />
+  <String Id="UpdateButton" Value="更新" />
+</WixLocalization>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="zh-CN" Language="2052" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+  <String Id="Caption" Value="正在安装 [WixBundleName]" />
+  <String Id="CheckingForUpdatesLabel" Value="正在检查更新" />
+  <String Id="ConfirmCancelMessage" Value="要取消吗？" />
+  <String Id="DesktopShortcut" Value="创建桌面快捷方式" />
+  <String Id="ExecuteUpgradeRelatedBundleMessage" Value="以前的版本" />
+  <String Id="FailureCacheHeader" Value="准备失败" />
+  <String Id="FailureCloseButton" Value="关闭" />
+  <String Id="FailureHeader" Value="失败" />
+  <String Id="FailureHyperlinkLogText" Value="操作已中断。请查看&lt;a href=&quot;#&quot;&gt;日志&lt;/a&gt;，解决问题后重试。" />
+  <String Id="FailureInstallHeader" Value="安装已中断" />
+  <String Id="FailureLayoutHeader" Value="复制失败" />
+  <String Id="FailureModifyHeader" Value="修改已中断" />
+  <String Id="FailureRepairHeader" Value="修复已中断" />
+  <String Id="FailureRestartButton" Value="重启" />
+  <String Id="FailureRestartText" Value="重启以完成恢复。" />
+  <String Id="FailureUninstallHeader" Value="卸载已中断" />
+  <String Id="FailureUnsafeUninstallHeader" Value="卸载已中断" />
+  <String Id="FilesInUseCloseRadioButton" Value="关闭应用" />
+  <String Id="FilesInUseDontCloseRadioButton" Value="保持应用打开" />
+  <String Id="FilesInUseExitButton" Value="取消" />
+  <String Id="FilesInUseIgnoreButton" Value="忽略" />
+  <String Id="FilesInUseLabel" Value="请关闭以下应用后重试。" />
+  <String Id="FilesInUseNetfxCloseRadioButton" Value="关闭应用" />
+  <String Id="FilesInUseRetryButton" Value="重试" />
+  <String Id="FilesInUseTitle" Value="正在使用的文件" />
+  <String Id="HelpCloseButton" Value="关闭" />
+  <String Id="HelpHeader" Value="帮助" />
+  <String Id="HelpText" Value="/install、/repair、/uninstall：安装、修复、卸载。/quiet：静默模式。/norestart：不重启。DesktopShortcut=1：桌面快捷方式。InstallFolder=&quot;D:\Applications\FuzeVPN&quot;：初始文件夹。更新会保留已安装的文件夹。" />
+  <String Id="InstallAcceptCheckbox" Value="我同意许可条款和条件" />
+  <String Id="InstallCancelButton" Value="取消" />
+  <String Id="InstallHeader" Value="欢迎" />
+  <String Id="InstallInstallButton" Value="安装" />
+  <String Id="InstallLicenseLinkText" Value="[WixBundleName] &lt;a href=&quot;#&quot;&gt;许可条款&lt;/a&gt;。" />
+  <String Id="InstallMessage" Value="在此电脑上安装 FuzeVPN。" />
+  <String Id="InstallMessageOptions" Value="在此电脑上安装 FuzeVPN。" />
+  <String Id="InstallOptionsButton" Value="选项" />
+  <String Id="InstallVersion" Value="版本 [WixBundleVersion]" />
+  <String Id="InstallVersionNotice" Value="版本 [WixBundleVersion] [BuildNotice]" />
+  <String Id="ModifyCancelButton" Value="取消" />
+  <String Id="ModifyHeader" Value="维护" />
+  <String Id="ModifyRepairButton" Value="修复" />
+  <String Id="ModifyUninstallButton" Value="卸载" />
+  <String Id="OptionsBrowseButton" Value="浏览" />
+  <String Id="OptionsCancelButton" Value="取消" />
+  <String Id="OptionsHeader" Value="选项" />
+  <String Id="OptionsLocationLabel" Value="安装文件夹（受 Windows 保护）" />
+  <String Id="OptionsOkButton" Value="确定" />
+  <String Id="OptionsPerMachineScopeText" Value="所有用户" />
+  <String Id="OptionsPerUserScopeText" Value="当前用户" />
+  <String Id="OverallProgressPackageText" Value="准备中…" />
+  <String Id="PreserveInstallFolder" Value="更新时保留现有文件夹。要自由移动界面，请使用便携归档。" />
+  <String Id="ProgressCancelButton" Value="取消" />
+  <String Id="ProgressHeader" Value="正在安装" />
+  <String Id="ProgressLabel" Value="进度" />
+  <String Id="SuccessCacheHeader" Value="文件已就绪" />
+  <String Id="SuccessCloseButton" Value="关闭" />
+  <String Id="SuccessHeader" Value="操作已完成" />
+  <String Id="SuccessInstallHeader" Value="安装完成" />
+  <String Id="SuccessLaunchButton" Value="打开" />
+  <String Id="SuccessLayoutHeader" Value="文件已就绪" />
+  <String Id="SuccessModifyHeader" Value="修改完成" />
+  <String Id="SuccessOpenApp" Value="从开始菜单打开 FuzeVPN。您的个人首选项已保留。" />
+  <String Id="SuccessRepairHeader" Value="修复完成" />
+  <String Id="SuccessRestartButton" Value="重启" />
+  <String Id="SuccessRestartText" Value="重启计算机以完成操作。" />
+  <String Id="SuccessUninstallHeader" Value="卸载完成" />
+  <String Id="SuccessUninstallRestartText" Value="重启以完成卸载。" />
+  <String Id="SuccessUnsafeUninstallHeader" Value="卸载完成" />
+  <String Id="Title" Value="[WixBundleName]" />
+  <String Id="UpdateButton" Value="更新" />
+</WixLocalization>

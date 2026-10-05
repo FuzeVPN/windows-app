@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="fa-IR" Language="1065" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+  <String Id="Caption" Value="نصب [WixBundleName]" />
+  <String Id="CheckingForUpdatesLabel" Value="جست‌وجوی به‌روزرسانی‌ها" />
+  <String Id="ConfirmCancelMessage" Value="لغو شود؟" />
+  <String Id="DesktopShortcut" Value="ایجاد میانبر روی دسکتاپ" />
+  <String Id="ExecuteUpgradeRelatedBundleMessage" Value="نسخه قبلی" />
+  <String Id="FailureCacheHeader" Value="آماده‌سازی ناموفق بود" />
+  <String Id="FailureCloseButton" Value="بستن" />
+  <String Id="FailureHeader" Value="ناموفق" />
+  <String Id="FailureHyperlinkLogText" Value="عملیات متوقف شد. &lt;a href=&quot;#&quot;&gt;گزارش&lt;/a&gt; را ببینید، مشکل را برطرف کنید و دوباره تلاش کنید." />
+  <String Id="FailureInstallHeader" Value="نصب متوقف شد" />
+  <String Id="FailureLayoutHeader" Value="کپی ناموفق بود" />
+  <String Id="FailureModifyHeader" Value="تغییر متوقف شد" />
+  <String Id="FailureRepairHeader" Value="تعمیر متوقف شد" />
+  <String Id="FailureRestartButton" Value="راه‌اندازی مجدد" />
+  <String Id="FailureRestartText" Value="برای تکمیل بازگردانی، راه‌اندازی مجدد کنید." />
+  <String Id="FailureUninstallHeader" Value="حذف نصب متوقف شد" />
+  <String Id="FailureUnsafeUninstallHeader" Value="حذف نصب متوقف شد" />
+  <String Id="FilesInUseCloseRadioButton" Value="بستن برنامه‌ها" />
+  <String Id="FilesInUseDontCloseRadioButton" Value="باز نگه‌داشتن برنامه‌ها" />
+  <String Id="FilesInUseExitButton" Value="لغو" />
+  <String Id="FilesInUseIgnoreButton" Value="نادیده گرفتن" />
+  <String Id="FilesInUseLabel" Value="برنامه‌های زیر را ببندید و دوباره تلاش کنید." />
+  <String Id="FilesInUseNetfxCloseRadioButton" Value="بستن برنامه‌ها" />
+  <String Id="FilesInUseRetryButton" Value="دوباره تلاش" />
+  <String Id="FilesInUseTitle" Value="فایل‌های در حال استفاده" />
+  <String Id="HelpCloseButton" Value="بستن" />
+  <String Id="HelpHeader" Value="راهنما" />
+  <String Id="HelpText" Value="/install، /repair، /uninstall: نصب، تعمیر، حذف نصب. /quiet: حالت بی‌صدا. /norestart: راه‌اندازی مجدد نشود. DesktopShortcut=1: میانبر دسکتاپ. InstallFolder=&quot;D:\Applications\FuzeVPN&quot;: پوشه اولیه. به‌روزرسانی‌ها پوشه نصب‌شده را حفظ می‌کنند." />
+  <String Id="InstallAcceptCheckbox" Value="I &amp;agree to the license terms and conditions" />
+  <String Id="InstallCancelButton" Value="لغو" />
+  <String Id="InstallHeader" Value="خوش آمدید" />
+  <String Id="InstallInstallButton" Value="نصب" />
+  <String Id="InstallLicenseLinkText" Value="[WixBundleName] &lt;a href=&quot;#&quot;&gt;شرایط مجوز&lt;/a&gt;." />
+  <String Id="InstallMessage" Value="FuzeVPN را روی این رایانه نصب کنید." />
+  <String Id="InstallMessageOptions" Value="FuzeVPN را روی این رایانه نصب کنید." />
+  <String Id="InstallOptionsButton" Value="گزینه‌ها" />
+  <String Id="InstallVersion" Value="نسخه [WixBundleVersion]" />
+  <String Id="InstallVersionNotice" Value="نسخه [WixBundleVersion] [BuildNotice]" />
+  <String Id="ModifyCancelButton" Value="لغو" />
+  <String Id="ModifyHeader" Value="نگهداری" />
+  <String Id="ModifyRepairButton" Value="تعمیر" />
+  <String Id="ModifyUninstallButton" Value="حذف نصب" />
+  <String Id="OptionsBrowseButton" Value="مرور" />
+  <String Id="OptionsCancelButton" Value="لغو" />
+  <String Id="OptionsHeader" Value="گزینه‌ها" />
+  <String Id="OptionsLocationLabel" Value="پوشه نصب (محافظت‌شده توسط Windows)" />
+  <String Id="OptionsOkButton" Value="تأیید" />
+  <String Id="OptionsPerMachineScopeText" Value="همه کاربران" />
+  <String Id="OptionsPerUserScopeText" Value="کاربر فعلی" />
+  <String Id="OverallProgressPackageText" Value="آماده‌سازی…" />
+  <String Id="PreserveInstallFolder" Value="پوشه موجود هنگام به‌روزرسانی‌ها حفظ می‌شود. برای جابه‌جایی آزاد رابط، از آرشیو قابل‌حمل استفاده کنید." />
+  <String Id="ProgressCancelButton" Value="لغو" />
+  <String Id="ProgressHeader" Value="در حال نصب" />
+  <String Id="ProgressLabel" Value="پیشرفت" />
+  <String Id="SuccessCacheHeader" Value="فایل‌ها آماده‌اند" />
+  <String Id="SuccessCloseButton" Value="بستن" />
+  <String Id="SuccessHeader" Value="عملیات تکمیل شد" />
+  <String Id="SuccessInstallHeader" Value="نصب تکمیل شد" />
+  <String Id="SuccessLaunchButton" Value="باز کردن" />
+  <String Id="SuccessLayoutHeader" Value="فایل‌ها آماده‌اند" />
+  <String Id="SuccessModifyHeader" Value="تغییر تکمیل شد" />
+  <String Id="SuccessOpenApp" Value="FuzeVPN را از منوی شروع باز کنید. ترجیحات شخصی شما حفظ شده‌اند." />
+  <String Id="SuccessRepairHeader" Value="تعمیر تکمیل شد" />
+  <String Id="SuccessRestartButton" Value="راه‌اندازی مجدد" />
+  <String Id="SuccessRestartText" Value="برای تکمیل، رایانه خود را راه‌اندازی مجدد کنید." />
+  <String Id="SuccessUninstallHeader" Value="حذف نصب تکمیل شد" />
+  <String Id="SuccessUninstallRestartText" Value="برای تکمیل حذف نصب، راه‌اندازی مجدد کنید." />
+  <String Id="SuccessUnsafeUninstallHeader" Value="حذف نصب تکمیل شد" />
+  <String Id="Title" Value="[WixBundleName]" />
+  <String Id="UpdateButton" Value="به‌روزرسانی" />
+</WixLocalization>

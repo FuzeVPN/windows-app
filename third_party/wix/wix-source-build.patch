@@ -1,0 +1,86 @@
+diff --git a/src/Directory.Build.props b/src/Directory.Build.props
+index 35d10c3..ed99904 100644
+--- a/src/Directory.Build.props
++++ b/src/Directory.Build.props
+@@ -39,8 +39,8 @@
+     <Company Condition=" '$(WixOfficialBuild)'=='true' ">WiX Toolset</Company>
+     <Copyright>Copyright (c) .NET Foundation and contributors. All rights reserved.</Copyright>
+ 
+-    <PackageEulaSource>$(RootFolder)OSMFEULA.txt</PackageEulaSource>
+-    <PackageLicenseFile>OSMFEULA.txt</PackageLicenseFile>
++    <PackageEulaSource>$(RootFolder)LICENSE.TXT</PackageEulaSource>
++    <PackageLicenseFile>LICENSE.TXT</PackageLicenseFile>
+     <PackageLicenseAcceptanceTargets>$(MSBuildThisFileDirectory)internal\targets\CheckLicenseAcceptance.targets</PackageLicenseAcceptanceTargets>
+     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+ 
+diff --git a/src/Directory.csproj.props b/src/Directory.csproj.props
+index 6891ef2..a9a4292 100644
+--- a/src/Directory.csproj.props
++++ b/src/Directory.csproj.props
+@@ -1,6 +1,9 @@
+ <!-- Copyright (c) .NET Foundation and contributors. All rights reserved. Licensed under the Microsoft Reciprocal License. See LICENSE.TXT file in the project root for full license information. -->
+ 
+ <Project>
++  <PropertyGroup Condition="'$(FuzeSourceBuild)' == 'true'">
++    <DefineConstants>$(DefineConstants);FUZE_SOURCE_BUILD</DefineConstants>
++  </PropertyGroup>
+   <PropertyGroup>
+     <LangVersion Condition=" '$(TargetFrameworkVersion)'=='' ">13.0</LangVersion>
+     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+diff --git a/src/internal/targets/CheckLicenseAcceptance.targets b/src/internal/targets/CheckLicenseAcceptance.targets
+index 6115582..9a30240 100644
+--- a/src/internal/targets/CheckLicenseAcceptance.targets
++++ b/src/internal/targets/CheckLicenseAcceptance.targets
+@@ -5,7 +5,7 @@
+ 
+   <Target
+     Name="CheckWix7LicenseAcceptance"
+-    BeforeTargets="CoreCompile">
++    BeforeTargets="CoreCompile" Condition="'$(FuzeSourceBuild)' != 'true'">
+ 
+     <ItemGroup>
+       <_AcceptEula Include="$(AcceptEula)" />
+diff --git a/src/wix/WixToolset.Core/CommandLine/EulaCommand.cs b/src/wix/WixToolset.Core/CommandLine/EulaCommand.cs
+index 2104140..ffed471 100644
+--- a/src/wix/WixToolset.Core/CommandLine/EulaCommand.cs
++++ b/src/wix/WixToolset.Core/CommandLine/EulaCommand.cs
+@@ -108,6 +108,10 @@ namespace WixToolset.Core.CommandLine
+ 
+         internal static bool IsAccepted(HashSet<string> acceptedEulaIds)
+         {
++#if FUZE_SOURCE_BUILD
++            // Private build from MS-RL source, not the official OSMF binaries.
++            return true;
++#else
+             if (AcceptedThisVersionsEulaId(acceptedEulaIds))
+             {
+                 return true;
+@@ -115,6 +119,7 @@ namespace WixToolset.Core.CommandLine
+ 
+             var path = GetEulaFilePath();
+             return File.Exists(path);
++#endif
+         }
+ 
+         private static bool Accept(HashSet<string> acceptedEulaIds)
+diff --git a/src/wix/wix/wix.csproj b/src/wix/wix/wix.csproj
+index 11099b1..24d92dd 100644
+--- a/src/wix/wix/wix.csproj
++++ b/src/wix/wix/wix.csproj
+@@ -4,6 +4,8 @@
+ <Project Sdk="Microsoft.NET.Sdk">
+   <PropertyGroup>
+     <TargetFrameworks>net8.0;net472</TargetFrameworks>
++    <TargetFrameworks Condition="'$(FuzeSourceBuild)' == 'true'"></TargetFrameworks>
++    <TargetFramework Condition="'$(FuzeSourceBuild)' == 'true'">net8.0</TargetFramework>
+     <OutputType>Exe</OutputType>
+     <Description>WiX Toolset creates installation packages.</Description>
+     <DebugType>embedded</DebugType>
+@@ -15,6 +17,7 @@
+     <RollForward>Major</RollForward>
+     <NuspecBasePath>$(OutputPath)publish\wix\</NuspecBasePath>
+     <RequiresNativeWixAssets Condition=" '$(NCrunch)'=='' ">true</RequiresNativeWixAssets>
++    <RequiresNativeWixAssets Condition="'$(FuzeSourceBuild)' == 'true'">true</RequiresNativeWixAssets>
+   </PropertyGroup>
+ 
+   <ItemGroup>

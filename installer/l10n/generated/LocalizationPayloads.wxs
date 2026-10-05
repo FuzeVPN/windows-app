@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Fragment>
+    <PayloadGroup Id="InstallerLocalizations">
+      <Payload Id="Localization_1033_thm_wxl" Name="1033\thm.wxl" SourceFile="$(var.InstallerDir)\l10n\generated\1033\thm.wxl" />
+      <Payload Id="Localization_1033_thm_xml" Name="1033\thm.xml" SourceFile="$(var.InstallerDir)\l10n\generated\1033\thm.xml" />
+      <Payload Id="Localization_3082_thm_wxl" Name="3082\thm.wxl" SourceFile="$(var.InstallerDir)\l10n\generated\3082\thm.wxl" />
+      <Payload Id="Localization_3082_thm_xml" Name="3082\thm.xml" SourceFile="$(var.InstallerDir)\l10n\generated\3082\thm.xml" />
+      <Payload Id="Localization_1034_thm_wxl" Name="1034\thm.wxl" SourceFile="$(var.InstallerDir)\l10n\generated\1034\thm.wxl" />
+      <Payload Id="Localization_1034_thm_xml" Name="1034\thm.xml" SourceFile="$(var.InstallerDir)\l10n\generated\1034\thm.xml" />
+      <Payload Id="Localization_1046_thm_wxl" Name="1046\thm.wxl" SourceFile="$(var.InstallerDir)\l10n\generated\1046\thm.wxl" />
+      <Payload Id="Localization_1046_thm_xml" Name="1046\thm.xml" SourceFile="$(var.InstallerDir)\l10n\generated\1046\thm.xml" />
+      <Payload Id="Localization_2070_thm_wxl" Name="2070\thm.wxl" SourceFile="$(var.InstallerDir)\l10n\generated\2070\thm.wxl" />
+      <Payload Id="Localization_2070_thm_xml" Name="2070\thm.xml" SourceFile="$(var.InstallerDir)\l10n\generated\2070\thm.xml" />
+      <Payload Id="Localization_1031_thm_wxl" Name="1031\thm.wxl" SourceFile="$(var.InstallerDir)\l10n\generated\1031\thm.wxl" />
+      <Payload Id="Localization_1031_thm_xml" Name="1031\thm.xml" SourceFile="$(var.InstallerDir)\l10n\generated\1031\thm.xml" />
+      <Payload Id="Localization_1036_thm_wxl" Name="1036\thm.wxl" SourceFile="$(var.InstallerDir)\l10n\generated\1036\thm.wxl" />
+      <Payload Id="Localization_1036_thm_xml" Name="1036\thm.xml" SourceFile="$(var.InstallerDir)\l10n\generated\1036\thm.xml" />
+      <Payload Id="Localization_1025_thm_wxl" Name="1025\thm.wxl" SourceFile="$(var.InstallerDir)\l10n\generated\1025\thm.wxl" />
+      <Payload Id="Localization_1025_thm_xml" Name="1025\thm.xml" SourceFile="$(var.InstallerDir)\l10n\generated\1025\thm.xml" />
+      <Payload Id="Localization_1055_thm_wxl" Name="1055\thm.wxl" SourceFile="$(var.InstallerDir)\l10n\generated\1055\thm.wxl" />
+      <Payload Id="Localization_1055_thm_xml" Name="1055\thm.xml" SourceFile="$(var.InstallerDir)\l10n\generated\1055\thm.xml" />
+      <Payload Id="Localization_1041_thm_wxl" Name="1041\thm.wxl" SourceFile="$(var.InstallerDir)\l10n\generated\1041\thm.wxl" />
+      <Payload Id="Localization_1041_thm_xml" Name="1041\thm.xml" SourceFile="$(var.InstallerDir)\l10n\generated\1041\thm.xml" />
+      <Payload Id="Localization_1057_thm_wxl" Name="1057\thm.wxl" SourceFile="$(var.InstallerDir)\l10n\generated\1057\thm.wxl" />
+      <Payload Id="Localization_1057_thm_xml" Name="1057\thm.xml" SourceFile="$(var.InstallerDir)\l10n\generated\1057\thm.xml" />
+      <Payload Id="Localization_1049_thm_wxl" Name="1049\thm.wxl" SourceFile="$(var.InstallerDir)\l10n\generated\1049\thm.wxl" />
+      <Payload Id="Localization_1049_thm_xml" Name="1049\thm.xml" SourceFile="$(var.InstallerDir)\l10n\generated\1049\thm.xml" />
+      <Payload Id="Localization_1040_thm_wxl" Name="1040\thm.wxl" SourceFile="$(var.InstallerDir)\l10n\generated\1040\thm.wxl" />
+      <Payload Id="Localization_1040_thm_xml" Name="1040\thm.xml" SourceFile="$(var.InstallerDir)\l10n\generated\1040\thm.xml" />
+      <Payload Id="Localization_1042_thm_wxl" Name="1042\thm.wxl" SourceFile="$(var.InstallerDir)\l10n\generated\1042\thm.wxl" />
+      <Payload Id="Localization_1042_thm_xml" Name="1042\thm.xml" SourceFile="$(var.InstallerDir)\l10n\generated\1042\thm.xml" />
+      <Payload Id="Localization_1045_thm_wxl" Name="1045\thm.wxl" SourceFile="$(var.InstallerDir)\l10n\generated\1045\thm.wxl" />
+      <Payload Id="Localization_1045_thm_xml" Name="1045\thm.xml" SourceFile="$(var.InstallerDir)\l10n\generated\1045\thm.xml" />
+      <Payload Id="Localization_1043_thm_wxl" Name="1043\thm.wxl" SourceFile="$(var.InstallerDir)\l10n\generated\1043\thm.wxl" />
+      <Payload Id="Localization_1043_thm_xml" Name="1043\thm.xml" SourceFile="$(var.InstallerDir)\l10n\generated\1043\thm.xml" />
+      <Payload Id="Localization_1081_thm_wxl" Name="1081\thm.wxl" SourceFile="$(var.InstallerDir)\l10n\generated\1081\thm.wxl" />
+      <Payload Id="Localization_1081_thm_xml" Name="1081\thm.xml" SourceFile="$(var.InstallerDir)\l10n\generated\1081\thm.xml" />
+      <Payload Id="Localization_1066_thm_wxl" Name="1066\thm.wxl" SourceFile="$(var.InstallerDir)\l10n\generated\1066\thm.wxl" />
+      <Payload Id="Localization_1066_thm_xml" Name="1066\thm.xml" SourceFile="$(var.InstallerDir)\l10n\generated\1066\thm.xml" />
+      <Payload Id="Localization_1058_thm_wxl" Name="1058\thm.wxl" SourceFile="$(var.InstallerDir)\l10n\generated\1058\thm.wxl" />
+      <Payload Id="Localization_1058_thm_xml" Name="1058\thm.xml" SourceFile="$(var.InstallerDir)\l10n\generated\1058\thm.xml" />
+      <Payload Id="Localization_1054_thm_wxl" Name="1054\thm.wxl" SourceFile="$(var.InstallerDir)\l10n\generated\1054\thm.wxl" />
+      <Payload Id="Localization_1054_thm_xml" Name="1054\thm.xml" SourceFile="$(var.InstallerDir)\l10n\generated\1054\thm.xml" />
+      <Payload Id="Localization_2052_thm_wxl" Name="2052\thm.wxl" SourceFile="$(var.InstallerDir)\l10n\generated\2052\thm.wxl" />
+      <Payload Id="Localization_2052_thm_xml" Name="2052\thm.xml" SourceFile="$(var.InstallerDir)\l10n\generated\2052\thm.xml" />
+      <Payload Id="Localization_4100_thm_wxl" Name="4100\thm.wxl" SourceFile="$(var.InstallerDir)\l10n\generated\4100\thm.wxl" />
+      <Payload Id="Localization_4100_thm_xml" Name="4100\thm.xml" SourceFile="$(var.InstallerDir)\l10n\generated\4100\thm.xml" />
+      <Payload Id="Localization_4_thm_wxl" Name="4\thm.wxl" SourceFile="$(var.InstallerDir)\l10n\generated\4\thm.wxl" />
+      <Payload Id="Localization_4_thm_xml" Name="4\thm.xml" SourceFile="$(var.InstallerDir)\l10n\generated\4\thm.xml" />
+      <Payload Id="Localization_1028_thm_wxl" Name="1028\thm.wxl" SourceFile="$(var.InstallerDir)\l10n\generated\1028\thm.wxl" />
+      <Payload Id="Localization_1028_thm_xml" Name="1028\thm.xml" SourceFile="$(var.InstallerDir)\l10n\generated\1028\thm.xml" />
+      <Payload Id="Localization_3076_thm_wxl" Name="3076\thm.wxl" SourceFile="$(var.InstallerDir)\l10n\generated\3076\thm.wxl" />
+      <Payload Id="Localization_3076_thm_xml" Name="3076\thm.xml" SourceFile="$(var.InstallerDir)\l10n\generated\3076\thm.xml" />
+      <Payload Id="Localization_5124_thm_wxl" Name="5124\thm.wxl" SourceFile="$(var.InstallerDir)\l10n\generated\5124\thm.wxl" />
+      <Payload Id="Localization_5124_thm_xml" Name="5124\thm.xml" SourceFile="$(var.InstallerDir)\l10n\generated\5124\thm.xml" />
+      <Payload Id="Localization_31748_thm_wxl" Name="31748\thm.wxl" SourceFile="$(var.InstallerDir)\l10n\generated\31748\thm.wxl" />
+      <Payload Id="Localization_31748_thm_xml" Name="31748\thm.xml" SourceFile="$(var.InstallerDir)\l10n\generated\31748\thm.xml" />
+      <Payload Id="Localization_1065_thm_wxl" Name="1065\thm.wxl" SourceFile="$(var.InstallerDir)\l10n\generated\1065\thm.wxl" />
+      <Payload Id="Localization_1065_thm_xml" Name="1065\thm.xml" SourceFile="$(var.InstallerDir)\l10n\generated\1065\thm.xml" />
+      <Payload Id="Localization_1056_thm_wxl" Name="1056\thm.wxl" SourceFile="$(var.InstallerDir)\l10n\generated\1056\thm.wxl" />
+      <Payload Id="Localization_1056_thm_xml" Name="1056\thm.xml" SourceFile="$(var.InstallerDir)\l10n\generated\1056\thm.xml" />
+      <Payload Id="Localization_1124_thm_wxl" Name="1124\thm.wxl" SourceFile="$(var.InstallerDir)\l10n\generated\1124\thm.wxl" />
+      <Payload Id="Localization_1124_thm_xml" Name="1124\thm.xml" SourceFile="$(var.InstallerDir)\l10n\generated\1124\thm.xml" />
+      <Payload Id="Localization_1086_thm_wxl" Name="1086\thm.wxl" SourceFile="$(var.InstallerDir)\l10n\generated\1086\thm.wxl" />
+      <Payload Id="Localization_1086_thm_xml" Name="1086\thm.xml" SourceFile="$(var.InstallerDir)\l10n\generated\1086\thm.xml" />
+      <Payload Id="Localization_1048_thm_wxl" Name="1048\thm.wxl" SourceFile="$(var.InstallerDir)\l10n\generated\1048\thm.wxl" />
+      <Payload Id="Localization_1048_thm_xml" Name="1048\thm.xml" SourceFile="$(var.InstallerDir)\l10n\generated\1048\thm.xml" />
+      <Payload Id="Localization_1029_thm_wxl" Name="1029\thm.wxl" SourceFile="$(var.InstallerDir)\l10n\generated\1029\thm.wxl" />
+      <Payload Id="Localization_1029_thm_xml" Name="1029\thm.xml" SourceFile="$(var.InstallerDir)\l10n\generated\1029\thm.xml" />
+      <Payload Id="Localization_1053_thm_wxl" Name="1053\thm.wxl" SourceFile="$(var.InstallerDir)\l10n\generated\1053\thm.wxl" />
+      <Payload Id="Localization_1053_thm_xml" Name="1053\thm.xml" SourceFile="$(var.InstallerDir)\l10n\generated\1053\thm.xml" />
+      <Payload Id="Localization_1030_thm_wxl" Name="1030\thm.wxl" SourceFile="$(var.InstallerDir)\l10n\generated\1030\thm.wxl" />
+      <Payload Id="Localization_1030_thm_xml" Name="1030\thm.xml" SourceFile="$(var.InstallerDir)\l10n\generated\1030\thm.xml" />
+      <Payload Id="Localization_1044_thm_wxl" Name="1044\thm.wxl" SourceFile="$(var.InstallerDir)\l10n\generated\1044\thm.wxl" />
+      <Payload Id="Localization_1044_thm_xml" Name="1044\thm.xml" SourceFile="$(var.InstallerDir)\l10n\generated\1044\thm.xml" />
+      <Payload Id="Localization_2068_thm_wxl" Name="2068\thm.wxl" SourceFile="$(var.InstallerDir)\l10n\generated\2068\thm.wxl" />
+      <Payload Id="Localization_2068_thm_xml" Name="2068\thm.xml" SourceFile="$(var.InstallerDir)\l10n\generated\2068\thm.xml" />
+      <Payload Id="Localization_1032_thm_wxl" Name="1032\thm.wxl" SourceFile="$(var.InstallerDir)\l10n\generated\1032\thm.wxl" />
+      <Payload Id="Localization_1032_thm_xml" Name="1032\thm.xml" SourceFile="$(var.InstallerDir)\l10n\generated\1032\thm.xml" />
+    </PayloadGroup>
+  </Fragment>
+</Wix>

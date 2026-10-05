@@ -1,0 +1,16 @@
+[
+  {
+    "Name": "ovpn-dco-win-2.8.7-source.zip",
+    "Repository": "OpenVPN/ovpn-dco-win",
+    "Commit": "b530217a0126e89506cee69240ed5a82bcdb8d2c",
+    "Source": "https://codeload.github.com/OpenVPN/ovpn-dco-win/zip/b530217a0126e89506cee69240ed5a82bcdb8d2c",
+    "Sha256": "222154002c5ade411ce2abc9baa38af26de2f19a50641c5fad3230581b94a233"
+  },
+  {
+    "Name": "wireguard-windows-1.1.1-source.zip",
+    "Repository": "WireGuard/wireguard-windows",
+    "Commit": "f0605c3e3dcc5ff801e19158fd6255378b99e17c",
+    "Source": "https://codeload.github.com/WireGuard/wireguard-windows/zip/f0605c3e3dcc5ff801e19158fd6255378b99e17c",
+    "Sha256": "2c49616a38ed328b7ae92c0353228ec368d3b3c40262db23445e2a41a3d85357"
+  }
+]

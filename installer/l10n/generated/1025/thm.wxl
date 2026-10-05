@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="ar-SA" Language="1025" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+  <String Id="Caption" Value="تثبيت [WixBundleName]" />
+  <String Id="CheckingForUpdatesLabel" Value="البحث عن تحديثات" />
+  <String Id="ConfirmCancelMessage" Value="هل تريد الإلغاء؟" />
+  <String Id="DesktopShortcut" Value="إنشاء اختصار على سطح المكتب" />
+  <String Id="ExecuteUpgradeRelatedBundleMessage" Value="الإصدار السابق" />
+  <String Id="FailureCacheHeader" Value="فشل الإعداد" />
+  <String Id="FailureCloseButton" Value="إغلاق" />
+  <String Id="FailureHeader" Value="فشل" />
+  <String Id="FailureHyperlinkLogText" Value="توقفت العملية. راجع &lt;a href=&quot;#&quot;&gt;السجل&lt;/a&gt;، وأصلح المشكلة ثم حاول مرة أخرى." />
+  <String Id="FailureInstallHeader" Value="توقّف التثبيت" />
+  <String Id="FailureLayoutHeader" Value="فشل النسخ" />
+  <String Id="FailureModifyHeader" Value="توقّف التعديل" />
+  <String Id="FailureRepairHeader" Value="توقّف الإصلاح" />
+  <String Id="FailureRestartButton" Value="إعادة التشغيل" />
+  <String Id="FailureRestartText" Value="أعد التشغيل لإكمال الاستعادة." />
+  <String Id="FailureUninstallHeader" Value="توقّف إلغاء التثبيت" />
+  <String Id="FailureUnsafeUninstallHeader" Value="توقّف إلغاء التثبيت" />
+  <String Id="FilesInUseCloseRadioButton" Value="إغلاق التطبيقات" />
+  <String Id="FilesInUseDontCloseRadioButton" Value="الإبقاء على التطبيقات مفتوحة" />
+  <String Id="FilesInUseExitButton" Value="إلغاء" />
+  <String Id="FilesInUseIgnoreButton" Value="تجاهل" />
+  <String Id="FilesInUseLabel" Value="أغلق التطبيقات التالية، ثم حاول مرة أخرى." />
+  <String Id="FilesInUseNetfxCloseRadioButton" Value="إغلاق التطبيقات" />
+  <String Id="FilesInUseRetryButton" Value="إعادة المحاولة" />
+  <String Id="FilesInUseTitle" Value="الملفات قيد الاستخدام" />
+  <String Id="HelpCloseButton" Value="إغلاق" />
+  <String Id="HelpHeader" Value="مساعدة" />
+  <String Id="HelpText" Value="/install و/repair و/uninstall: تثبيت وإصلاح وإلغاء التثبيت. /quiet: الوضع الصامت. /norestart: عدم إعادة التشغيل. DesktopShortcut=1: اختصار سطح المكتب. InstallFolder=&quot;D:\Applications\FuzeVPN&quot;: المجلد الأولي. تحتفظ التحديثات بالمجلد المثبت." />
+  <String Id="InstallAcceptCheckbox" Value="أوافق على شروط وأحكام الترخيص" />
+  <String Id="InstallCancelButton" Value="إلغاء" />
+  <String Id="InstallHeader" Value="مرحبًا" />
+  <String Id="InstallInstallButton" Value="تثبيت" />
+  <String Id="InstallLicenseLinkText" Value="[WixBundleName] &lt;a href=&quot;#&quot;&gt;شروط الترخيص&lt;/a&gt;." />
+  <String Id="InstallMessage" Value="ثبّت FuzeVPN على هذا الكمبيوتر." />
+  <String Id="InstallMessageOptions" Value="ثبّت FuzeVPN على هذا الكمبيوتر." />
+  <String Id="InstallOptionsButton" Value="خيارات" />
+  <String Id="InstallVersion" Value="الإصدار [WixBundleVersion]" />
+  <String Id="InstallVersionNotice" Value="الإصدار [WixBundleVersion] [BuildNotice]" />
+  <String Id="ModifyCancelButton" Value="إلغاء" />
+  <String Id="ModifyHeader" Value="الصيانة" />
+  <String Id="ModifyRepairButton" Value="إصلاح" />
+  <String Id="ModifyUninstallButton" Value="إلغاء التثبيت" />
+  <String Id="OptionsBrowseButton" Value="استعراض" />
+  <String Id="OptionsCancelButton" Value="إلغاء" />
+  <String Id="OptionsHeader" Value="خيارات" />
+  <String Id="OptionsLocationLabel" Value="مجلد التثبيت (محمي بواسطة Windows)" />
+  <String Id="OptionsOkButton" Value="موافق" />
+  <String Id="OptionsPerMachineScopeText" Value="جميع المستخدمين" />
+  <String Id="OptionsPerUserScopeText" Value="المستخدم الحالي" />
+  <String Id="OverallProgressPackageText" Value="جارٍ الإعداد…" />
+  <String Id="PreserveInstallFolder" Value="يتم الاحتفاظ بالمجلد الحالي أثناء التحديثات. لنقل الواجهة بحرية، استخدم الأرشيف المحمول." />
+  <String Id="ProgressCancelButton" Value="إلغاء" />
+  <String Id="ProgressHeader" Value="جارٍ التثبيت" />
+  <String Id="ProgressLabel" Value="التقدم" />
+  <String Id="SuccessCacheHeader" Value="الملفات جاهزة" />
+  <String Id="SuccessCloseButton" Value="إغلاق" />
+  <String Id="SuccessHeader" Value="اكتملت العملية" />
+  <String Id="SuccessInstallHeader" Value="اكتمل التثبيت" />
+  <String Id="SuccessLaunchButton" Value="فتح" />
+  <String Id="SuccessLayoutHeader" Value="الملفات جاهزة" />
+  <String Id="SuccessModifyHeader" Value="اكتمل التعديل" />
+  <String Id="SuccessOpenApp" Value="افتح FuzeVPN من قائمة ابدأ. تم الاحتفاظ بتفضيلاتك الشخصية." />
+  <String Id="SuccessRepairHeader" Value="اكتمل الإصلاح" />
+  <String Id="SuccessRestartButton" Value="إعادة التشغيل" />
+  <String Id="SuccessRestartText" Value="أعد تشغيل الكمبيوتر لإكمال العملية." />
+  <String Id="SuccessUninstallHeader" Value="اكتمل إلغاء التثبيت" />
+  <String Id="SuccessUninstallRestartText" Value="أعد التشغيل لإكمال إلغاء التثبيت." />
+  <String Id="SuccessUnsafeUninstallHeader" Value="اكتمل إلغاء التثبيت" />
+  <String Id="Title" Value="[WixBundleName]" />
+  <String Id="UpdateButton" Value="تحديث" />
+</WixLocalization>

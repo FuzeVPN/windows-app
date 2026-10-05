@@ -1,0 +1,29 @@
+{
+    "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg/master/scripts/vcpkg.schema.json",
+    "name": "openvpn3",
+    "version-string": "3.11",
+    "builtin-baseline": "7e43e0768a5af180a9cf75d87d692dce1b9da34f",
+    "dependencies": [
+        "asio",
+        "fmt",
+        "jsoncpp",
+        "lz4",
+        "openssl",
+        "tap-windows6",
+        "xxhash",
+        {
+          "name": "gtest",
+          "host": true
+        }
+    ],
+    "overrides": [
+        { "name": "asio", "version": "1.36.0" },
+        { "name": "fmt", "version": "12.2.0", "port-version": 1 },
+        { "name": "gtest", "version": "1.18.0" },
+        { "name": "jsoncpp", "version": "1.9.6" },
+        { "name": "lz4", "version": "1.10.0" },
+        { "name": "openssl", "version": "3.6.5" },
+        { "name": "tap-windows6", "version": "9.21.2-0e30f5c", "port-version": 2 },
+        { "name": "xxhash", "version": "0.8.3" }
+    ]
+  }

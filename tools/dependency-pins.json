@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "flutter": {
+    "version": "3.44.9",
+    "dart_version": "3.12.2",
+    "repository": "https://github.com/flutter/flutter.git",
+    "tag": "3.44.9",
+    "commit": "6b182d2c7585eba26d4edce0f97630effd256c33",
+    "engine": "5a2a6a42cce67f965cf540fcecf616faca624aa1"
+  },
+  "vcpkg": {
+    "repository": "https://github.com/microsoft/vcpkg.git",
+    "commit": "7e43e0768a5af180a9cf75d87d692dce1b9da34f",
+    "manifest": "third_party/openvpn3-core/vcpkg.json",
+    "overlays": "third_party/openvpn3-core/fuzevpn-vcpkg-overlays",
+    "triplets": ["x64-windows", "arm64-windows"],
+    "host_triplet": "x64-windows"
+  },
+  "llvm": {
+    "version": "21.1.8",
+    "name": "LLVM-21.1.8-win64.exe",
+    "url": "https://github.com/llvm/llvm-project/releases/download/llvmorg-21.1.8/LLVM-21.1.8-win64.exe",
+    "algorithm": "SHA512",
+    "hash": "69ee513fb41bafd159f33c54fad44739e1c150fee37ddf0d5d4cfd88424b42a9177d828ba2a3f19f1a09a8cf84225bade94681fe075994c83e49cc84e15a0718"
+  },
+  "dotnet": {
+    "version": "9.0.318",
+    "name": "dotnet-sdk-9.0.318-win-x64.zip",
+    "url": "https://builds.dotnet.microsoft.com/dotnet/Sdk/9.0.318/dotnet-sdk-9.0.318-win-x64.zip",
+    "algorithm": "SHA512",
+    "hash": "d961a84ebcbc316f06c98d16958422f7bb1b3a1f29b5d6011cabf59984390690ff669c3dd9b739554ad00771d6393dbbde6bdb14da81faa7fe499f59501864b6"
+  },
+  "wix": {
+    "version": "7.0.0",
+    "source_archive": "third_party/wix/wix-source-7.0.0-fuze-x64.zip",
+    "hash": "b84393a1966de1fc5542825b2659a5fe9fcac0da737439fd97a3288ff6574206",
+    "prefix": ".toolchain/wix-source/"
+  },
+  "arm64_engine_artifacts": [
+    {
+      "name": "windows-arm64-tools.zip",
+      "url": "https://storage.googleapis.com/flutter_infra_release/flutter/5a2a6a42cce67f965cf540fcecf616faca624aa1/windows-arm64/artifacts.zip",
+      "algorithm": "SHA256",
+      "hash": "963fafe5a12e60835088f8732092f275499c9c3484be7e5286c2b6baed92f480",
+      "destination": "windows-arm64"
+    },
+    {
+      "name": "cpp-wrapper.zip",
+      "url": "https://storage.googleapis.com/flutter_infra_release/flutter/5a2a6a42cce67f965cf540fcecf616faca624aa1/windows-arm64/flutter-cpp-client-wrapper.zip",
+      "algorithm": "SHA256",
+      "hash": "a7823aed90d22aafc523fb7cf7474af813b470d2eee8e63a340d8f9023d75c42",
+      "destination": "windows-arm64"
+    },
+    {
+      "name": "windows-arm64-debug.zip",
+      "url": "https://storage.googleapis.com/flutter_infra_release/flutter/5a2a6a42cce67f965cf540fcecf616faca624aa1/windows-arm64-debug/windows-arm64-flutter.zip",
+      "algorithm": "SHA256",
+      "hash": "2173b32180fabebe1cd15ccf1ef330d7ab4ca6b74c731a66e386e5da0fa205fb",
+      "destination": "windows-arm64"
+    },
+    {
+      "name": "windows-arm64-release.zip",
+      "url": "https://storage.googleapis.com/flutter_infra_release/flutter/5a2a6a42cce67f965cf540fcecf616faca624aa1/windows-arm64-release/windows-arm64-flutter.zip",
+      "algorithm": "SHA256",
+      "hash": "7da4ab8d7a8f1c588c747ca1ba8bb14bed691fbab627b433586ed84284c52051",
+      "destination": "windows-arm64-release"
+    }
+  ]
+}

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: MPL-2.0 -->
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Package Name="FuzeVPN" Manufacturer="FuzeVPN" Version="$(var.PublicVersion)"
+           ProductCode="$(var.ProductCode)" UpgradeCode="{71B1A5A7-6393-4780-AF2B-C26952F66D24}"
+           Scope="perMachine" InstallerVersion="500" Language="1033" Codepage="65001">
+    <SummaryInformation Description="$(var.PackageDescription)" Manufacturer="FuzeVPN" />
+    <MajorUpgrade DowngradeErrorMessage="[FUZEVPN_DOWNGRADE]" IgnoreLanguage="yes"
+                  Schedule="afterInstallExecute" />
+    <MediaTemplate EmbedCab="yes" CompressionLevel="high" />
+    <Launch Condition="VersionNT64" Message="[FUZEVPN_WINDOWS_X64]" />
+    <Launch Condition="NOT RollbackDisabled" Message="[FUZEVPN_ROLLBACK]" />
+    <Property Id="FUZEVPN_LANGUAGE" Secure="yes" />
+    <Property Id="FUZEVPN_DOWNGRADE" Value="!(loc.msi_Downgrade)" Secure="yes" />
+    <Property Id="FUZEVPN_WINDOWS_X64" Value="!(loc.msi_WindowsX64)" Secure="yes" />
+    <Property Id="FUZEVPN_ROLLBACK" Value="!(loc.msi_Rollback)" Secure="yes" />
+    <Property Id="FUZEVPN_SERVICE_NAME" Value="!(loc.msi_ServiceDisplayName)" Secure="yes" />
+    <Property Id="FUZEVPN_SERVICE_DESCRIPTION" Value="!(loc.msi_ServiceDescription)" Secure="yes" />
+    <Property Id="FUZEVPN_VERSION4" Value="$(var.PublicVersion).0" Secure="yes" />
+    <Property Id="DESKTOP_SHORTCUT" Value="-1" Secure="yes" />
+    <Property Id="INSTALLFOLDER" Secure="yes" />
+    <Property Id="PREVIOUS_INSTALLFOLDER" Secure="yes">
+      <!-- The registered key path is a file. With no FileSearch signature,
+           AppSearch returns its containing directory. -->
+      <ComponentSearch Id="PreviousInstallFolder" Guid="{7BFDFB64-AEB8-4957-8C31-F4B4C62EE911}" Type="file" />
+    </Property>
+    <Property Id="MSIRESTARTMANAGERCONTROL" Value="Disable" />
+    <Property Id="REBOOT" Value="ReallySuppress" />
+    <Property Id="ARPNOMODIFY" Value="1" />
+    <Property Id="ARPPRODUCTICON" Value="FuzeVpnIcon" />
+    <Property Id="BeginMaintenance" Hidden="yes" />
+    <Property Id="CommitMaintenance" Hidden="yes" />
+    <Property Id="RollbackMaintenance" Hidden="yes" />
+    <Icon Id="FuzeVpnIcon" SourceFile="$(var.ReleaseDir)\fuzevpn_tray.ico" />
+    <Binary Id="InstallerActions" SourceFile="$(var.CustomActionDll)" />
+    <CustomAction Id="InitializeDesktopShortcut" BinaryRef="InstallerActions" DllEntry="InitializeDesktopShortcut" Execute="immediate" Return="check" />
+    <CustomAction Id="RestoreInstallFolder" Property="INSTALLFOLDER" Value="[PREVIOUS_INSTALLFOLDER]" />
+    <CustomAction Id="InitializeLocalization" BinaryRef="InstallerActions" DllEntry="InitializeLocalization" Execute="immediate" Return="check" />
+    <CustomAction Id="InitializeMaintenance" BinaryRef="InstallerActions" DllEntry="InitializeMaintenance" Execute="immediate" Return="check" />
+    <CustomAction Id="RollbackMaintenance" BinaryRef="InstallerActions" DllEntry="RollbackMaintenance" Execute="rollback" Impersonate="no" Return="check" HideTarget="yes" />
+    <CustomAction Id="BeginMaintenance" BinaryRef="InstallerActions" DllEntry="BeginMaintenance" Execute="deferred" Impersonate="no" Return="check" HideTarget="yes" />
+    <CustomAction Id="CommitMaintenance" BinaryRef="InstallerActions" DllEntry="CommitMaintenance" Execute="commit" Impersonate="no" Return="check" HideTarget="yes" />
+    <InstallExecuteSequence>
+      <Custom Action="InitializeLocalization" Before="LaunchConditions" />
+      <Custom Action="RestoreInstallFolder" Before="CostFinalize" Condition="PREVIOUS_INSTALLFOLDER" />
+      <Custom Action="InitializeDesktopShortcut" Before="CostFinalize" Condition="DESKTOP_SHORTCUT = -1" />
+      <Custom Action="InitializeMaintenance" Before="InstallInitialize" Condition="NOT UPGRADINGPRODUCTCODE" />
+      <Custom Action="RollbackMaintenance" After="InstallInitialize" Condition="NOT UPGRADINGPRODUCTCODE" />
+      <Custom Action="BeginMaintenance" After="RollbackMaintenance" Condition="NOT UPGRADINGPRODUCTCODE" />
+      <Custom Action="CommitMaintenance" Before="InstallFinalize" Condition="NOT UPGRADINGPRODUCTCODE" />
+    </InstallExecuteSequence>
+    <InstallUISequence>
+      <Custom Action="InitializeLocalization" Before="LaunchConditions" />
+      <Custom Action="RestoreInstallFolder" Before="CostFinalize" Condition="PREVIOUS_INSTALLFOLDER" />
+      <Custom Action="InitializeDesktopShortcut" Before="CostFinalize" Condition="DESKTOP_SHORTCUT = -1" />
+    </InstallUISequence>
+    <StandardDirectory Id="ProgramFiles64Folder">
+      <Directory Id="INSTALLFOLDER" Name="FuzeVPN">
+        <Component Id="ProtectedInstallFolder" Guid="{790A1F30-BF56-4E9A-827B-09D868B923D0}" Bitness="always64">
+          <CreateFolder>
+            <PermissionEx Sddl="D:P(A;OICI;FA;;;SY)(A;OICI;FA;;;BA)(A;OICI;0x1200a9;;;BU)" />
+          </CreateFolder>
+          <RegistryValue Root="HKLM" Key="Software\FuzeVPN\Installer" Name="InstallDirectory" Value="[INSTALLFOLDER]" Type="string" KeyPath="yes" />
+          <RegistryValue Root="HKLM" Key="Software\FuzeVPN\Installer" Name="Version" Value="$(var.PublicVersion)" Type="string" />
+        </Component>
+        <Component Id="VpnServiceComponent" Guid="{7BFDFB64-AEB8-4957-8C31-F4B4C62EE911}" Bitness="always64">
+          <File Id="VpnServiceExe" Source="$(var.ReleaseDir)\fuzevpn-service.exe" KeyPath="yes" />
+          <ServiceInstall Id="VpnServiceInstall" Name="FuzeVPNService" DisplayName="[FUZEVPN_SERVICE_NAME]"
+                          Description="[FUZEVPN_SERVICE_DESCRIPTION]"
+                          Type="ownProcess" Start="disabled" ErrorControl="normal" Account="LocalSystem"
+                          Arguments="--fuzevpn-vpn-service" Vital="yes">
+            <ServiceDependency Id="Nsi" />
+            <ServiceDependency Id="TcpIp" />
+            <PermissionEx Sddl="D:P(A;;GA;;;SY)(A;;GA;;;BA)(A;;CCLCSWLORC;;;BU)" />
+          </ServiceInstall>
+          <ServiceControl Id="VpnServiceStopRemove" Name="FuzeVPNService" Stop="both" Remove="uninstall" Wait="yes" />
+        </Component>
+        <Directory Id="InstallerLicenseDirectory" Name="installer-licenses">
+          <Component Id="WiXLicense" Guid="{B1C0D531-874A-4B36-AC66-0C55ED79C097}" Bitness="always64">
+            <File Id="WiXLicenseFile" Source="$(var.InstallerDir)\WiX-MS-RL.txt" KeyPath="yes" />
+          </Component>
+          <Component Id="WiXCorrespondingSource" Guid="{9F21188E-82E6-4243-907A-CF1586F64989}" Bitness="always64">
+            <File Id="WiXSourceFile" Name="WiX-corresponding-source.zip" Source="$(var.WixSourceArchive)" KeyPath="yes" />
+          </Component>
+        </Directory>
+      </Directory>
+    </StandardDirectory>
+    <StandardDirectory Id="ProgramMenuFolder">
+      <Directory Id="FuzeMenuFolder" Name="FuzeVPN">
+        <Component Id="StartMenuShortcut" Guid="{81AF45C9-07C7-47A9-ACD5-B76E764B17E7}" Bitness="always64">
+          <Shortcut Id="StartMenuFuzeVpn" Name="FuzeVPN" Target="[INSTALLFOLDER]fuzevpn_windows.exe" WorkingDirectory="INSTALLFOLDER" Icon="FuzeVpnIcon" />
+          <RemoveFolder Id="RemoveFuzeMenuFolder" On="uninstall" />
+          <RegistryValue Root="HKLM" Key="Software\FuzeVPN\Installer" Name="StartMenu" Value="1" Type="integer" KeyPath="yes" />
+        </Component>
+      </Directory>
+    </StandardDirectory>
+    <StandardDirectory Id="DesktopFolder">
+      <Component Id="DesktopShortcut" Guid="{816C5662-8421-4DA8-8B3E-1B2D17C1E117}" Bitness="always64" Condition="DESKTOP_SHORTCUT=1">
+        <Shortcut Id="DesktopFuzeVpn" Name="FuzeVPN" Target="[INSTALLFOLDER]fuzevpn_windows.exe" WorkingDirectory="INSTALLFOLDER" Icon="FuzeVpnIcon" />
+        <RegistryValue Root="HKLM" Key="Software\FuzeVPN\Installer" Name="Desktop" Value="1" Type="integer" KeyPath="yes" />
+      </Component>
+    </StandardDirectory>
+    <Feature Id="MainFeature" Title="FuzeVPN" Level="1">
+      <ComponentRef Id="ProtectedInstallFolder" />
+      <ComponentRef Id="VpnServiceComponent" />
+      <ComponentRef Id="StartMenuShortcut" />
+      <ComponentRef Id="DesktopShortcut" />
+      <ComponentRef Id="WiXLicense" />
+      <ComponentRef Id="WiXCorrespondingSource" />
+      <ComponentGroupRef Id="ReleasePayload" />
+    </Feature>
+  </Package>
+</Wix>

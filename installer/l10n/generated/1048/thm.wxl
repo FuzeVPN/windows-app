@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="ro-RO" Language="1048" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+  <String Id="Caption" Value="Instalarea [WixBundleName]" />
+  <String Id="CheckingForUpdatesLabel" Value="Se caută actualizări" />
+  <String Id="ConfirmCancelMessage" Value="Doriți să anulați?" />
+  <String Id="DesktopShortcut" Value="Creați o comandă rapidă pe desktop" />
+  <String Id="ExecuteUpgradeRelatedBundleMessage" Value="Versiunea anterioară" />
+  <String Id="FailureCacheHeader" Value="Pregătirea a eșuat" />
+  <String Id="FailureCloseButton" Value="Închideți" />
+  <String Id="FailureHeader" Value="Eșec" />
+  <String Id="FailureHyperlinkLogText" Value="Operațiune întreruptă. Consultați &lt;a href=&quot;#&quot;&gt;jurnalul&lt;/a&gt;, remediați problema și încercați din nou." />
+  <String Id="FailureInstallHeader" Value="Instalare întreruptă" />
+  <String Id="FailureLayoutHeader" Value="Copierea a eșuat" />
+  <String Id="FailureModifyHeader" Value="Modificare întreruptă" />
+  <String Id="FailureRepairHeader" Value="Reparare întreruptă" />
+  <String Id="FailureRestartButton" Value="Reporniți" />
+  <String Id="FailureRestartText" Value="Reporniți pentru a finaliza restaurarea." />
+  <String Id="FailureUninstallHeader" Value="Dezinstalare întreruptă" />
+  <String Id="FailureUnsafeUninstallHeader" Value="Dezinstalare întreruptă" />
+  <String Id="FilesInUseCloseRadioButton" Value="Închideți aplicațiile" />
+  <String Id="FilesInUseDontCloseRadioButton" Value="Păstrați aplicațiile deschise" />
+  <String Id="FilesInUseExitButton" Value="Anulați" />
+  <String Id="FilesInUseIgnoreButton" Value="Ignorați" />
+  <String Id="FilesInUseLabel" Value="Închideți următoarele aplicații, apoi încercați din nou." />
+  <String Id="FilesInUseNetfxCloseRadioButton" Value="Închideți aplicațiile" />
+  <String Id="FilesInUseRetryButton" Value="Încercați din nou" />
+  <String Id="FilesInUseTitle" Value="Fișiere utilizate" />
+  <String Id="HelpCloseButton" Value="Închideți" />
+  <String Id="HelpHeader" Value="Ajutor" />
+  <String Id="HelpText" Value="/install, /repair, /uninstall: instalare, reparare, dezinstalare. /quiet: modul silențios. /norestart: nu reporniți. DesktopShortcut=1: comandă rapidă pe desktop. InstallFolder=&quot;D:\Applications\FuzeVPN&quot;: folder inițial. Actualizările păstrează folderul instalat." />
+  <String Id="InstallAcceptCheckbox" Value="Sunt de acord cu termenii și condițiile licenței" />
+  <String Id="InstallCancelButton" Value="Anulați" />
+  <String Id="InstallHeader" Value="Bun venit" />
+  <String Id="InstallInstallButton" Value="Instalați" />
+  <String Id="InstallLicenseLinkText" Value="[WixBundleName] &lt;a href=&quot;#&quot;&gt;termenii licenței&lt;/a&gt;." />
+  <String Id="InstallMessage" Value="Instalați FuzeVPN pe acest computer." />
+  <String Id="InstallMessageOptions" Value="Instalați FuzeVPN pe acest computer." />
+  <String Id="InstallOptionsButton" Value="Opțiuni" />
+  <String Id="InstallVersion" Value="Versiunea [WixBundleVersion]" />
+  <String Id="InstallVersionNotice" Value="Versiunea [WixBundleVersion] [BuildNotice]" />
+  <String Id="ModifyCancelButton" Value="Anulați" />
+  <String Id="ModifyHeader" Value="Întreținere" />
+  <String Id="ModifyRepairButton" Value="Reparați" />
+  <String Id="ModifyUninstallButton" Value="Dezinstalați" />
+  <String Id="OptionsBrowseButton" Value="Răsfoiți" />
+  <String Id="OptionsCancelButton" Value="Anulați" />
+  <String Id="OptionsHeader" Value="Opțiuni" />
+  <String Id="OptionsLocationLabel" Value="Folder de instalare (protejat de Windows)" />
+  <String Id="OptionsOkButton" Value="OK" />
+  <String Id="OptionsPerMachineScopeText" Value="Toți utilizatorii" />
+  <String Id="OptionsPerUserScopeText" Value="Utilizatorul curent" />
+  <String Id="OverallProgressPackageText" Value="Pregătire…" />
+  <String Id="PreserveInstallFolder" Value="Folderul existent este păstrat în timpul actualizărilor. Pentru a muta liber interfața, folosiți arhiva portabilă." />
+  <String Id="ProgressCancelButton" Value="Anulați" />
+  <String Id="ProgressHeader" Value="Instalare în curs" />
+  <String Id="ProgressLabel" Value="Progres" />
+  <String Id="SuccessCacheHeader" Value="Fișiere pregătite" />
+  <String Id="SuccessCloseButton" Value="Închideți" />
+  <String Id="SuccessHeader" Value="Operațiune finalizată" />
+  <String Id="SuccessInstallHeader" Value="Instalare finalizată" />
+  <String Id="SuccessLaunchButton" Value="Deschideți" />
+  <String Id="SuccessLayoutHeader" Value="Fișiere pregătite" />
+  <String Id="SuccessModifyHeader" Value="Modificare finalizată" />
+  <String Id="SuccessOpenApp" Value="Deschideți FuzeVPN din meniul Start. Preferințele dvs. personale au fost păstrate." />
+  <String Id="SuccessRepairHeader" Value="Reparare finalizată" />
+  <String Id="SuccessRestartButton" Value="Reporniți" />
+  <String Id="SuccessRestartText" Value="Reporniți computerul pentru a finaliza." />
+  <String Id="SuccessUninstallHeader" Value="Dezinstalare finalizată" />
+  <String Id="SuccessUninstallRestartText" Value="Reporniți pentru a finaliza dezinstalarea." />
+  <String Id="SuccessUnsafeUninstallHeader" Value="Dezinstalare finalizată" />
+  <String Id="Title" Value="[WixBundleName]" />
+  <String Id="UpdateButton" Value="Actualizați" />
+</WixLocalization>

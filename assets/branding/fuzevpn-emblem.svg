@@ -1,0 +1,13 @@
+<!-- Emblem geometry from https://fuzevpn.com/assets/fuzevpn-logo.svg. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="FuzeVPN">
+  <defs>
+    <mask id="cut" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100" mask-type="luminance">
+      <rect width="100" height="100" fill="#fff"/>
+      <path fill="#000" d="M50 18L70 70L50 58L30 70Z"/>
+      <path fill="#000" d="M50 60L45.5 64L50 78L54.5 64Z"/>
+      <circle cx="50" cy="45" r="4.5" fill="#fff"/>
+      <path fill="#fff" d="M48.4 47H51.6V57L70 70H62L50 60L38 70H30L48.4 57Z"/>
+    </mask>
+  </defs>
+  <path fill="#101820" mask="url(#cut)" d="M50 5L87 20C87 48 81 68 68 81C63 86 57 91 50 96C43 91 37 86 32 81C19 68 13 48 13 20Z"/>
+</svg>

@@ -1,0 +1,22 @@
+[
+  {
+    "Architecture": "amd64",
+    "Machine": "0x8664",
+    "Sha256": "ebfeb225fcad7c8c85b97a1a9a9e9bc21b972daffa9f0448e38df71b4a725cff",
+    "SourceCommit": "f0605c3e3dcc5ff801e19158fd6255378b99e17c",
+    "SourceTag": "v1.1.1",
+    "GoVersion": "1.27.1",
+    "Compiler": "LLVM-MinGW 20260311 (clang22.1.1)",
+    "SignatureStatus": "NotSigned"
+  },
+  {
+    "Architecture": "arm64",
+    "Machine": "0xAA64",
+    "Sha256": "355520769f2a152377c0515654ec481d94364cb485ed1b28a4b8958d3b1c55f6",
+    "SourceCommit": "f0605c3e3dcc5ff801e19158fd6255378b99e17c",
+    "SourceTag": "v1.1.1",
+    "GoVersion": "1.27.1",
+    "Compiler": "LLVM-MinGW 20260311 (clang22.1.1)",
+    "SignatureStatus": "NotSigned"
+  }
+]

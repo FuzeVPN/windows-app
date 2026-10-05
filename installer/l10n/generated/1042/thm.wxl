@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="ko-KR" Language="1042" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+  <String Id="Caption" Value="[WixBundleName] 설치" />
+  <String Id="CheckingForUpdatesLabel" Value="업데이트 확인" />
+  <String Id="ConfirmCancelMessage" Value="취소하시겠습니까?" />
+  <String Id="DesktopShortcut" Value="바탕 화면 바로 가기 만들기" />
+  <String Id="ExecuteUpgradeRelatedBundleMessage" Value="이전 버전" />
+  <String Id="FailureCacheHeader" Value="준비 실패" />
+  <String Id="FailureCloseButton" Value="닫기" />
+  <String Id="FailureHeader" Value="실패" />
+  <String Id="FailureHyperlinkLogText" Value="작업이 중단되었습니다. &lt;a href=&quot;#&quot;&gt;로그&lt;/a&gt;를 확인하고 문제를 해결한 후 다시 시도하세요." />
+  <String Id="FailureInstallHeader" Value="설치 중단됨" />
+  <String Id="FailureLayoutHeader" Value="복사 실패" />
+  <String Id="FailureModifyHeader" Value="수정 중단됨" />
+  <String Id="FailureRepairHeader" Value="복구 중단됨" />
+  <String Id="FailureRestartButton" Value="다시 시작" />
+  <String Id="FailureRestartText" Value="복원을 완료하려면 다시 시작하세요." />
+  <String Id="FailureUninstallHeader" Value="제거 중단됨" />
+  <String Id="FailureUnsafeUninstallHeader" Value="제거 중단됨" />
+  <String Id="FilesInUseCloseRadioButton" Value="애플리케이션 닫기" />
+  <String Id="FilesInUseDontCloseRadioButton" Value="애플리케이션을 열린 상태로 유지" />
+  <String Id="FilesInUseExitButton" Value="취소" />
+  <String Id="FilesInUseIgnoreButton" Value="무시" />
+  <String Id="FilesInUseLabel" Value="다음 애플리케이션을 닫은 후 다시 시도하세요." />
+  <String Id="FilesInUseNetfxCloseRadioButton" Value="애플리케이션 닫기" />
+  <String Id="FilesInUseRetryButton" Value="다시 시도" />
+  <String Id="FilesInUseTitle" Value="사용 중인 파일" />
+  <String Id="HelpCloseButton" Value="닫기" />
+  <String Id="HelpHeader" Value="도움말" />
+  <String Id="HelpText" Value="/install, /repair, /uninstall: 설치, 복구, 제거. /quiet: 자동 모드. /norestart: 다시 시작하지 않음. DesktopShortcut=1: 바탕 화면 바로 가기. InstallFolder=&quot;D:\Applications\FuzeVPN&quot;: 초기 폴더. 업데이트 시 설치된 폴더가 유지됩니다." />
+  <String Id="InstallAcceptCheckbox" Value="라이선스 약관에 동의합니다" />
+  <String Id="InstallCancelButton" Value="취소" />
+  <String Id="InstallHeader" Value="환영합니다" />
+  <String Id="InstallInstallButton" Value="설치" />
+  <String Id="InstallLicenseLinkText" Value="[WixBundleName] &lt;a href=&quot;#&quot;&gt;라이선스 약관&lt;/a&gt;." />
+  <String Id="InstallMessage" Value="이 컴퓨터에 FuzeVPN을 설치합니다." />
+  <String Id="InstallMessageOptions" Value="이 컴퓨터에 FuzeVPN을 설치합니다." />
+  <String Id="InstallOptionsButton" Value="옵션" />
+  <String Id="InstallVersion" Value="버전 [WixBundleVersion]" />
+  <String Id="InstallVersionNotice" Value="버전 [WixBundleVersion] [BuildNotice]" />
+  <String Id="ModifyCancelButton" Value="취소" />
+  <String Id="ModifyHeader" Value="유지 관리" />
+  <String Id="ModifyRepairButton" Value="복구" />
+  <String Id="ModifyUninstallButton" Value="제거" />
+  <String Id="OptionsBrowseButton" Value="찾아보기" />
+  <String Id="OptionsCancelButton" Value="취소" />
+  <String Id="OptionsHeader" Value="옵션" />
+  <String Id="OptionsLocationLabel" Value="설치 폴더(Windows로 보호됨)" />
+  <String Id="OptionsOkButton" Value="확인" />
+  <String Id="OptionsPerMachineScopeText" Value="모든 사용자" />
+  <String Id="OptionsPerUserScopeText" Value="현재 사용자" />
+  <String Id="OverallProgressPackageText" Value="준비 중…" />
+  <String Id="PreserveInstallFolder" Value="업데이트 시 기존 폴더가 유지됩니다. 인터페이스를 자유롭게 이동하려면 휴대용 아카이브를 사용하세요." />
+  <String Id="ProgressCancelButton" Value="취소" />
+  <String Id="ProgressHeader" Value="설치 중" />
+  <String Id="ProgressLabel" Value="진행률" />
+  <String Id="SuccessCacheHeader" Value="파일 준비됨" />
+  <String Id="SuccessCloseButton" Value="닫기" />
+  <String Id="SuccessHeader" Value="작업 완료" />
+  <String Id="SuccessInstallHeader" Value="설치 완료" />
+  <String Id="SuccessLaunchButton" Value="열기" />
+  <String Id="SuccessLayoutHeader" Value="파일 준비됨" />
+  <String Id="SuccessModifyHeader" Value="수정 완료" />
+  <String Id="SuccessOpenApp" Value="시작 메뉴에서 FuzeVPN을 여세요. 개인 설정은 유지되었습니다." />
+  <String Id="SuccessRepairHeader" Value="복구 완료" />
+  <String Id="SuccessRestartButton" Value="다시 시작" />
+  <String Id="SuccessRestartText" Value="완료하려면 컴퓨터를 다시 시작하세요." />
+  <String Id="SuccessUninstallHeader" Value="제거 완료" />
+  <String Id="SuccessUninstallRestartText" Value="제거를 완료하려면 다시 시작하세요." />
+  <String Id="SuccessUnsafeUninstallHeader" Value="제거 완료" />
+  <String Id="Title" Value="[WixBundleName]" />
+  <String Id="UpdateButton" Value="업데이트" />
+</WixLocalization>

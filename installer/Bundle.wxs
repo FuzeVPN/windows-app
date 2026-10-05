@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: MPL-2.0 -->
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:bal="http://wixtoolset.org/schemas/v4/wxs/bal" xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util">
+  <Bundle Name="FuzeVPN" Manufacturer="FuzeVPN" Version="$(var.PublicVersion).0"
+          UpgradeCode="{FD69A760-5D2E-4D83-833A-98C0294356BC}" IconSourceFile="$(var.ReleaseDir)\fuzevpn_tray.ico"
+          DisableModify="yes" Compressed="yes">
+    <BootstrapperApplication>
+      <bal:WixStandardBootstrapperApplication Theme="hyperlinkLicense" LicenseUrl="" ShowVersion="yes"
+          ThemeFile="$(var.InstallerDir)\FuzeVpnTheme.xml" LocalizationFile="$(var.InstallerDir)\l10n\generated\thm.wxl"
+          LogoFile="$(var.ProjectRoot)\assets\branding\fuzevpn-emblem-512.png" />
+      <PayloadGroupRef Id="InstallerLocalizations" />
+    </BootstrapperApplication>
+    <Variable Name="DesktopShortcut" Type="numeric" Value="-1" bal:Overridable="yes" />
+    <Variable Name="InstallFolder" Type="formatted" Value="[ProgramFiles64Folder]FuzeVPN" bal:Overridable="yes" />
+    <Variable Name="InstallLocationExists" Type="numeric" Value="0" />
+    <!-- Public MSI registration can be queried before elevation, including for
+         legacy packages whose private Installer key is intentionally protected. -->
+    <util:ProductSearch Id="InstalledProduct" Variable="InstallLocationExists"
+        UpgradeCode="{71B1A5A7-6393-4780-AF2B-C26952F66D24}" Result="exists" />
+    <util:ComponentSearch Id="InstalledFolder" Variable="InstallFolder"
+        Guid="{7BFDFB64-AEB8-4957-8C31-F4B4C62EE911}" Result="directory"
+        After="InstalledProduct" Condition="InstallLocationExists" />
+    <Variable Name="PreviousDesktopShortcutState" Type="numeric" Value="0" />
+    <util:ComponentSearch Id="InstalledDesktopShortcut" Variable="PreviousDesktopShortcutState"
+        Guid="{816C5662-8421-4DA8-8B3E-1B2D17C1E117}" Result="state"
+        After="InstalledProduct" Condition="InstallLocationExists AND DesktopShortcut = -1" />
+    <!-- MSI LOCAL is 3 and ABSENT is 2; neither can be passed directly to a
+         checkbox or to DESKTOP_SHORTCUT. Explicit command-line 0/1 take priority. -->
+    <SetVariable Id="RestoreDesktopShortcut" Variable="DesktopShortcut" Type="numeric" Value="1"
+        After="InstalledDesktopShortcut" Condition="DesktopShortcut = -1 AND PreviousDesktopShortcutState = 3" />
+    <SetVariable Id="DefaultDesktopShortcut" Variable="DesktopShortcut" Type="numeric" Value="0"
+        After="RestoreDesktopShortcut" Condition="DesktopShortcut = -1" />
+    <Variable Name="BuildNotice" Type="string" Value="$(var.BuildNotice)" />
+    <Chain>
+      <MsiPackage Id="FuzeVpnMsi" SourceFile="$(var.MsiPath)" Vital="yes" Compressed="yes" Visible="no">
+        <MsiProperty Name="FUZEVPN_LANGUAGE" Value="[WixStdBALanguageId]" />
+        <MsiProperty Name="DESKTOP_SHORTCUT" Value="[DesktopShortcut]" />
+        <MsiProperty Name="INSTALLFOLDER" Value="[InstallFolder]" />
+      </MsiPackage>
+    </Chain>
+  </Bundle>
+</Wix>

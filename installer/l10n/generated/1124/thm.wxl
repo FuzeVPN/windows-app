@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="fil-PH" Language="1124" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+  <String Id="Caption" Value="Ini-install ang [WixBundleName]" />
+  <String Id="CheckingForUpdatesLabel" Value="Naghahanap ng mga update" />
+  <String Id="ConfirmCancelMessage" Value="Gusto mo bang kanselahin?" />
+  <String Id="DesktopShortcut" Value="Gumawa ng shortcut sa desktop" />
+  <String Id="ExecuteUpgradeRelatedBundleMessage" Value="Nakaraang bersyon" />
+  <String Id="FailureCacheHeader" Value="Nabigo ang paghahanda" />
+  <String Id="FailureCloseButton" Value="Isara" />
+  <String Id="FailureHeader" Value="Kabiguan" />
+  <String Id="FailureHyperlinkLogText" Value="Naputol ang operasyon. Tingnan ang &lt;a href=&quot;#&quot;&gt;log&lt;/a&gt;, ayusin ang problema, at subukan muli." />
+  <String Id="FailureInstallHeader" Value="Naputol ang pag-install" />
+  <String Id="FailureLayoutHeader" Value="Nabigo ang pagkopya" />
+  <String Id="FailureModifyHeader" Value="Naputol ang pagbabago" />
+  <String Id="FailureRepairHeader" Value="Naputol ang pag-aayos" />
+  <String Id="FailureRestartButton" Value="Mag-restart" />
+  <String Id="FailureRestartText" Value="Mag-restart para matapos ang pagpapanumbalik." />
+  <String Id="FailureUninstallHeader" Value="Naputol ang pag-uninstall" />
+  <String Id="FailureUnsafeUninstallHeader" Value="Naputol ang pag-uninstall" />
+  <String Id="FilesInUseCloseRadioButton" Value="Isara ang mga app" />
+  <String Id="FilesInUseDontCloseRadioButton" Value="Panatilihing bukas ang mga app" />
+  <String Id="FilesInUseExitButton" Value="Kanselahin" />
+  <String Id="FilesInUseIgnoreButton" Value="Balewalain" />
+  <String Id="FilesInUseLabel" Value="Isara ang mga sumusunod na app, pagkatapos ay subukan muli." />
+  <String Id="FilesInUseNetfxCloseRadioButton" Value="Isara ang mga app" />
+  <String Id="FilesInUseRetryButton" Value="Subukan muli" />
+  <String Id="FilesInUseTitle" Value="Ginagamit na mga file" />
+  <String Id="HelpCloseButton" Value="Isara" />
+  <String Id="HelpHeader" Value="Tulong" />
+  <String Id="HelpText" Value="/install, /repair, /uninstall: mag-install, mag-ayos, mag-uninstall. /quiet: tahimik na mode. /norestart: huwag mag-restart. DesktopShortcut=1: desktop shortcut. InstallFolder=&quot;D:\Applications\FuzeVPN&quot;: paunang folder. Pinapanatili ng mga update ang naka-install na folder." />
+  <String Id="InstallAcceptCheckbox" Value="Sumasang-ayon ako sa mga tuntunin at kondisyon ng lisensya" />
+  <String Id="InstallCancelButton" Value="Kanselahin" />
+  <String Id="InstallHeader" Value="Maligayang pagdating" />
+  <String Id="InstallInstallButton" Value="I-install" />
+  <String Id="InstallLicenseLinkText" Value="[WixBundleName] &lt;a href=&quot;#&quot;&gt;mga tuntunin ng lisensya&lt;/a&gt;." />
+  <String Id="InstallMessage" Value="I-install ang FuzeVPN sa computer na ito." />
+  <String Id="InstallMessageOptions" Value="I-install ang FuzeVPN sa computer na ito." />
+  <String Id="InstallOptionsButton" Value="Mga opsyon" />
+  <String Id="InstallVersion" Value="Bersyon [WixBundleVersion]" />
+  <String Id="InstallVersionNotice" Value="Bersyon [WixBundleVersion] [BuildNotice]" />
+  <String Id="ModifyCancelButton" Value="Kanselahin" />
+  <String Id="ModifyHeader" Value="Maintenance" />
+  <String Id="ModifyRepairButton" Value="Ayusin" />
+  <String Id="ModifyUninstallButton" Value="I-uninstall" />
+  <String Id="OptionsBrowseButton" Value="Mag-browse" />
+  <String Id="OptionsCancelButton" Value="Kanselahin" />
+  <String Id="OptionsHeader" Value="Mga opsyon" />
+  <String Id="OptionsLocationLabel" Value="Folder ng pag-install (pinoprotektahan ng Windows)" />
+  <String Id="OptionsOkButton" Value="OK" />
+  <String Id="OptionsPerMachineScopeText" Value="Lahat ng user" />
+  <String Id="OptionsPerUserScopeText" Value="Kasalukuyang user" />
+  <String Id="OverallProgressPackageText" Value="Naghahanda…" />
+  <String Id="PreserveInstallFolder" Value="Pinapanatili ang kasalukuyang folder sa mga update. Para malayang ilipat ang interface, gamitin ang portable archive." />
+  <String Id="ProgressCancelButton" Value="Kanselahin" />
+  <String Id="ProgressHeader" Value="Isinasagawa ang pag-install" />
+  <String Id="ProgressLabel" Value="Progreso" />
+  <String Id="SuccessCacheHeader" Value="Handa na ang mga file" />
+  <String Id="SuccessCloseButton" Value="Isara" />
+  <String Id="SuccessHeader" Value="Nakumpleto ang operasyon" />
+  <String Id="SuccessInstallHeader" Value="Nakumpleto ang pag-install" />
+  <String Id="SuccessLaunchButton" Value="Buksan" />
+  <String Id="SuccessLayoutHeader" Value="Handa na ang mga file" />
+  <String Id="SuccessModifyHeader" Value="Nakumpleto ang pagbabago" />
+  <String Id="SuccessOpenApp" Value="Buksan ang FuzeVPN mula sa Start menu. Napanatili ang iyong mga personal na preference." />
+  <String Id="SuccessRepairHeader" Value="Nakumpleto ang pag-aayos" />
+  <String Id="SuccessRestartButton" Value="Mag-restart" />
+  <String Id="SuccessRestartText" Value="Mag-restart ng computer para matapos." />
+  <String Id="SuccessUninstallHeader" Value="Nakumpleto ang pag-uninstall" />
+  <String Id="SuccessUninstallRestartText" Value="Mag-restart para matapos ang pag-uninstall." />
+  <String Id="SuccessUnsafeUninstallHeader" Value="Nakumpleto ang pag-uninstall" />
+  <String Id="Title" Value="[WixBundleName]" />
+  <String Id="UpdateButton" Value="I-update" />
+</WixLocalization>

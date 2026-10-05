@@ -1,0 +1,30 @@
+[
+  {
+    "Tool": "Go",
+    "Version": "1.27.1",
+    "Source": "https://go.dev/dl/go1.27.1.windows-amd64.zip",
+    "Sha256": "a3911b5e0e1b1053f25ed0675f4c1c6aad1e2bfcf253df2b9be4caabd2edd95d",
+    "DigestSource": "WireGuard Windows v1.1.1 official build script"
+  },
+  {
+    "Tool": "LLVM-MinGW",
+    "Version": "20260311 UCRT x86_64 (clang22.1.1)",
+    "Source": "https://download.wireguard.com/windows-toolchain/distfiles/llvm-mingw-20260311-ucrt-x86_64.zip",
+    "Sha256": "dd4c67d98959479c7be2fb6709ba074475991590848cb9d0eb2620be06b182e1",
+    "DigestSource": "WireGuard Windows v1.1.1 official build script"
+  },
+  {
+    "Tool": "OpenSSL ARM64 assembler",
+    "Version": "LLVM21.1.8",
+    "Source": "https://github.com/llvm/llvm-project/releases/download/llvmorg-21.1.8/LLVM-21.1.8-win64.exe",
+    "Sha512": "69ee513fb41bafd159f33c54fad44739e1c150fee37ddf0d5d4cfd88424b42a9177d828ba2a3f19f1a09a8cf84225bade94681fe075994c83e49cc84e15a0718",
+    "DigestSource": "Pinned vcpkg commit7e43e0768a5af180a9cf75d87d692dce1b9da34f"
+  },
+  {
+    "Tool": "MSVC",
+    "Version": "14.50.35717",
+    "Compiler": "Hostx64/arm64/cl.exe",
+    "RedistributableVersion": "14.50.35719.0",
+    "Installation": "Official Visual Studio18 BuildTools"
+  }
+]

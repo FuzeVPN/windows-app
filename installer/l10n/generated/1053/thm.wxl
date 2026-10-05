@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="sv-SE" Language="1053" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+  <String Id="Caption" Value="Installerar [WixBundleName]" />
+  <String Id="CheckingForUpdatesLabel" Value="Söker efter uppdateringar" />
+  <String Id="ConfirmCancelMessage" Value="Vill du avbryta?" />
+  <String Id="DesktopShortcut" Value="Skapa en skrivbordsgenväg" />
+  <String Id="ExecuteUpgradeRelatedBundleMessage" Value="Föregående version" />
+  <String Id="FailureCacheHeader" Value="Förberedelsen misslyckades" />
+  <String Id="FailureCloseButton" Value="Stäng" />
+  <String Id="FailureHeader" Value="Fel" />
+  <String Id="FailureHyperlinkLogText" Value="Åtgärden avbröts. Se &lt;a href=&quot;#&quot;&gt;loggen&lt;/a&gt;, åtgärda problemet och försök igen." />
+  <String Id="FailureInstallHeader" Value="Installationen avbröts" />
+  <String Id="FailureLayoutHeader" Value="Kopieringen misslyckades" />
+  <String Id="FailureModifyHeader" Value="Ändringen avbröts" />
+  <String Id="FailureRepairHeader" Value="Reparationen avbröts" />
+  <String Id="FailureRestartButton" Value="Starta om" />
+  <String Id="FailureRestartText" Value="Starta om för att slutföra återställningen." />
+  <String Id="FailureUninstallHeader" Value="Avinstallationen avbröts" />
+  <String Id="FailureUnsafeUninstallHeader" Value="Avinstallationen avbröts" />
+  <String Id="FilesInUseCloseRadioButton" Value="Stäng program" />
+  <String Id="FilesInUseDontCloseRadioButton" Value="Håll program öppna" />
+  <String Id="FilesInUseExitButton" Value="Avbryt" />
+  <String Id="FilesInUseIgnoreButton" Value="Ignorera" />
+  <String Id="FilesInUseLabel" Value="Stäng följande program och försök igen." />
+  <String Id="FilesInUseNetfxCloseRadioButton" Value="Stäng program" />
+  <String Id="FilesInUseRetryButton" Value="Försök igen" />
+  <String Id="FilesInUseTitle" Value="Filer används" />
+  <String Id="HelpCloseButton" Value="Stäng" />
+  <String Id="HelpHeader" Value="Hjälp" />
+  <String Id="HelpText" Value="/install, /repair, /uninstall: installera, reparera, avinstallera. /quiet: tyst läge. /norestart: starta inte om. DesktopShortcut=1: skrivbordsgenväg. InstallFolder=&quot;D:\Applications\FuzeVPN&quot;: ursprunglig mapp. Uppdateringar behåller den installerade mappen." />
+  <String Id="InstallAcceptCheckbox" Value="Jag godkänner licensvillkoren" />
+  <String Id="InstallCancelButton" Value="Avbryt" />
+  <String Id="InstallHeader" Value="Välkommen" />
+  <String Id="InstallInstallButton" Value="Installera" />
+  <String Id="InstallLicenseLinkText" Value="[WixBundleName] &lt;a href=&quot;#&quot;&gt;license terms&lt;/a&gt;." />
+  <String Id="InstallMessage" Value="Installera FuzeVPN på den här datorn." />
+  <String Id="InstallMessageOptions" Value="Installera FuzeVPN på den här datorn." />
+  <String Id="InstallOptionsButton" Value="Alternativ" />
+  <String Id="InstallVersion" Value="Version [WixBundleVersion]" />
+  <String Id="InstallVersionNotice" Value="Version [WixBundleVersion] [BuildNotice]" />
+  <String Id="ModifyCancelButton" Value="Avbryt" />
+  <String Id="ModifyHeader" Value="Underhåll" />
+  <String Id="ModifyRepairButton" Value="Reparera" />
+  <String Id="ModifyUninstallButton" Value="Avinstallera" />
+  <String Id="OptionsBrowseButton" Value="Bläddra" />
+  <String Id="OptionsCancelButton" Value="Avbryt" />
+  <String Id="OptionsHeader" Value="Alternativ" />
+  <String Id="OptionsLocationLabel" Value="Installationsmapp (skyddad av Windows)" />
+  <String Id="OptionsOkButton" Value="OK" />
+  <String Id="OptionsPerMachineScopeText" Value="Alla användare" />
+  <String Id="OptionsPerUserScopeText" Value="Aktuell användare" />
+  <String Id="OverallProgressPackageText" Value="Förbereder…" />
+  <String Id="PreserveInstallFolder" Value="Den befintliga mappen behålls vid uppdateringar. Använd det portabla arkivet för att flytta gränssnittet fritt." />
+  <String Id="ProgressCancelButton" Value="Avbryt" />
+  <String Id="ProgressHeader" Value="Installationen pågår" />
+  <String Id="ProgressLabel" Value="Förlopp" />
+  <String Id="SuccessCacheHeader" Value="Filer klara" />
+  <String Id="SuccessCloseButton" Value="Stäng" />
+  <String Id="SuccessHeader" Value="Åtgärden är klar" />
+  <String Id="SuccessInstallHeader" Value="Installationen är klar" />
+  <String Id="SuccessLaunchButton" Value="Öppna" />
+  <String Id="SuccessLayoutHeader" Value="Filer klara" />
+  <String Id="SuccessModifyHeader" Value="Ändringen är klar" />
+  <String Id="SuccessOpenApp" Value="Öppna FuzeVPN från Start-menyn. Dina personliga inställningar har behållits." />
+  <String Id="SuccessRepairHeader" Value="Reparationen är klar" />
+  <String Id="SuccessRestartButton" Value="Starta om" />
+  <String Id="SuccessRestartText" Value="Starta om datorn för att slutföra." />
+  <String Id="SuccessUninstallHeader" Value="Avinstallationen är klar" />
+  <String Id="SuccessUninstallRestartText" Value="Starta om för att slutföra avinstallationen." />
+  <String Id="SuccessUnsafeUninstallHeader" Value="Avinstallationen är klar" />
+  <String Id="Title" Value="[WixBundleName]" />
+  <String Id="UpdateButton" Value="Uppdatera" />
+</WixLocalization>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="ru-RU" Language="1049" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+  <String Id="Caption" Value="Установка [WixBundleName]" />
+  <String Id="CheckingForUpdatesLabel" Value="Поиск обновлений" />
+  <String Id="ConfirmCancelMessage" Value="Отменить?" />
+  <String Id="DesktopShortcut" Value="Создать ярлык на рабочем столе" />
+  <String Id="ExecuteUpgradeRelatedBundleMessage" Value="Предыдущая версия" />
+  <String Id="FailureCacheHeader" Value="Ошибка подготовки" />
+  <String Id="FailureCloseButton" Value="Закрыть" />
+  <String Id="FailureHeader" Value="Ошибка" />
+  <String Id="FailureHyperlinkLogText" Value="Операция прервана. Просмотрите &lt;a href=&quot;#&quot;&gt;журнал&lt;/a&gt;, устраните проблему и повторите попытку." />
+  <String Id="FailureInstallHeader" Value="Установка прервана" />
+  <String Id="FailureLayoutHeader" Value="Ошибка копирования" />
+  <String Id="FailureModifyHeader" Value="Изменение прервано" />
+  <String Id="FailureRepairHeader" Value="Восстановление прервано" />
+  <String Id="FailureRestartButton" Value="Перезагрузить" />
+  <String Id="FailureRestartText" Value="Перезагрузите компьютер для завершения восстановления." />
+  <String Id="FailureUninstallHeader" Value="Удаление прервано" />
+  <String Id="FailureUnsafeUninstallHeader" Value="Удаление прервано" />
+  <String Id="FilesInUseCloseRadioButton" Value="Закрыть приложения" />
+  <String Id="FilesInUseDontCloseRadioButton" Value="Оставить приложения открытыми" />
+  <String Id="FilesInUseExitButton" Value="Отмена" />
+  <String Id="FilesInUseIgnoreButton" Value="Пропустить" />
+  <String Id="FilesInUseLabel" Value="Закройте следующие приложения и повторите попытку." />
+  <String Id="FilesInUseNetfxCloseRadioButton" Value="Закрыть приложения" />
+  <String Id="FilesInUseRetryButton" Value="Повторить попытку" />
+  <String Id="FilesInUseTitle" Value="Используемые файлы" />
+  <String Id="HelpCloseButton" Value="Закрыть" />
+  <String Id="HelpHeader" Value="Помощь" />
+  <String Id="HelpText" Value="/install, /repair, /uninstall: установить, восстановить, удалить. /quiet: тихий режим. /norestart: не перезапускать. DesktopShortcut=1: ярлык на рабочем столе. InstallFolder=&quot;D:\Applications\FuzeVPN&quot;: исходная папка. Обновления сохраняют установленную папку." />
+  <String Id="InstallAcceptCheckbox" Value="Я &amp;соглашаюсь с условиями лицензии" />
+  <String Id="InstallCancelButton" Value="Отмена" />
+  <String Id="InstallHeader" Value="Добро пожаловать" />
+  <String Id="InstallInstallButton" Value="Установить" />
+  <String Id="InstallLicenseLinkText" Value="[WixBundleName] &lt;a href=&quot;#&quot;&gt;условия лицензии&lt;/a&gt;." />
+  <String Id="InstallMessage" Value="Установите FuzeVPN на этот компьютер." />
+  <String Id="InstallMessageOptions" Value="Установите FuzeVPN на этот компьютер." />
+  <String Id="InstallOptionsButton" Value="Параметры" />
+  <String Id="InstallVersion" Value="Версия [WixBundleVersion]" />
+  <String Id="InstallVersionNotice" Value="Версия [WixBundleVersion] [BuildNotice]" />
+  <String Id="ModifyCancelButton" Value="Отмена" />
+  <String Id="ModifyHeader" Value="Обслуживание" />
+  <String Id="ModifyRepairButton" Value="Восстановить" />
+  <String Id="ModifyUninstallButton" Value="Удалить" />
+  <String Id="OptionsBrowseButton" Value="Обзор" />
+  <String Id="OptionsCancelButton" Value="Отмена" />
+  <String Id="OptionsHeader" Value="Параметры" />
+  <String Id="OptionsLocationLabel" Value="Папка установки (защищена Windows)" />
+  <String Id="OptionsOkButton" Value="ОК" />
+  <String Id="OptionsPerMachineScopeText" Value="Все пользователи" />
+  <String Id="OptionsPerUserScopeText" Value="Текущий пользователь" />
+  <String Id="OverallProgressPackageText" Value="Подготовка…" />
+  <String Id="PreserveInstallFolder" Value="Существующая папка сохраняется при обновлениях. Чтобы свободно перемещать интерфейс, используйте портативный архив." />
+  <String Id="ProgressCancelButton" Value="Отмена" />
+  <String Id="ProgressHeader" Value="Идёт установка" />
+  <String Id="ProgressLabel" Value="Ход выполнения" />
+  <String Id="SuccessCacheHeader" Value="Файлы готовы" />
+  <String Id="SuccessCloseButton" Value="Закрыть" />
+  <String Id="SuccessHeader" Value="Операция завершена" />
+  <String Id="SuccessInstallHeader" Value="Установка завершена" />
+  <String Id="SuccessLaunchButton" Value="Открыть" />
+  <String Id="SuccessLayoutHeader" Value="Файлы готовы" />
+  <String Id="SuccessModifyHeader" Value="Изменение завершено" />
+  <String Id="SuccessOpenApp" Value="Откройте FuzeVPN через меню «Пуск». Ваши личные настройки сохранены." />
+  <String Id="SuccessRepairHeader" Value="Восстановление завершено" />
+  <String Id="SuccessRestartButton" Value="Перезагрузить" />
+  <String Id="SuccessRestartText" Value="Перезагрузите компьютер для завершения." />
+  <String Id="SuccessUninstallHeader" Value="Удаление завершено" />
+  <String Id="SuccessUninstallRestartText" Value="Перезагрузите компьютер для завершения удаления." />
+  <String Id="SuccessUnsafeUninstallHeader" Value="Удаление завершено" />
+  <String Id="Title" Value="[WixBundleName]" />
+  <String Id="UpdateButton" Value="Обновить" />
+</WixLocalization>

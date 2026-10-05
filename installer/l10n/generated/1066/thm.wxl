@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="vi-VN" Language="1066" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+  <String Id="Caption" Value="Cài đặt [WixBundleName]" />
+  <String Id="CheckingForUpdatesLabel" Value="Đang kiểm tra bản cập nhật" />
+  <String Id="ConfirmCancelMessage" Value="Bạn có muốn hủy không?" />
+  <String Id="DesktopShortcut" Value="Tạo lối tắt trên màn hình" />
+  <String Id="ExecuteUpgradeRelatedBundleMessage" Value="Phiên bản trước" />
+  <String Id="FailureCacheHeader" Value="Chuẩn bị thất bại" />
+  <String Id="FailureCloseButton" Value="Đóng" />
+  <String Id="FailureHeader" Value="Thất bại" />
+  <String Id="FailureHyperlinkLogText" Value="Thao tác bị gián đoạn. Xem &lt;a href=&quot;#&quot;&gt;nhật ký&lt;/a&gt;, khắc phục sự cố rồi thử lại." />
+  <String Id="FailureInstallHeader" Value="Cài đặt bị gián đoạn" />
+  <String Id="FailureLayoutHeader" Value="Sao chép thất bại" />
+  <String Id="FailureModifyHeader" Value="Sửa đổi bị gián đoạn" />
+  <String Id="FailureRepairHeader" Value="Sửa chữa bị gián đoạn" />
+  <String Id="FailureRestartButton" Value="Khởi động lại" />
+  <String Id="FailureRestartText" Value="Hãy khởi động lại để hoàn tất việc khôi phục." />
+  <String Id="FailureUninstallHeader" Value="Gỡ cài đặt bị gián đoạn" />
+  <String Id="FailureUnsafeUninstallHeader" Value="Gỡ cài đặt bị gián đoạn" />
+  <String Id="FilesInUseCloseRadioButton" Value="Đóng các ứng dụng" />
+  <String Id="FilesInUseDontCloseRadioButton" Value="Giữ các ứng dụng mở" />
+  <String Id="FilesInUseExitButton" Value="Hủy" />
+  <String Id="FilesInUseIgnoreButton" Value="Bỏ qua" />
+  <String Id="FilesInUseLabel" Value="Hãy đóng các ứng dụng sau rồi thử lại." />
+  <String Id="FilesInUseNetfxCloseRadioButton" Value="Đóng các ứng dụng" />
+  <String Id="FilesInUseRetryButton" Value="Thử lại" />
+  <String Id="FilesInUseTitle" Value="Tệp đang được sử dụng" />
+  <String Id="HelpCloseButton" Value="Đóng" />
+  <String Id="HelpHeader" Value="Trợ giúp" />
+  <String Id="HelpText" Value="/install, /repair, /uninstall: cài đặt, sửa chữa, gỡ cài đặt. /quiet: chế độ im lặng. /norestart: không khởi động lại. DesktopShortcut=1: lối tắt trên màn hình. InstallFolder=&quot;D:\Applications\FuzeVPN&quot;: thư mục ban đầu. Bản cập nhật giữ nguyên thư mục đã cài đặt." />
+  <String Id="InstallAcceptCheckbox" Value="Tôi &amp;đồng ý với các điều khoản và điều kiện cấp phép" />
+  <String Id="InstallCancelButton" Value="Hủy" />
+  <String Id="InstallHeader" Value="Chào mừng" />
+  <String Id="InstallInstallButton" Value="Cài đặt" />
+  <String Id="InstallLicenseLinkText" Value="[WixBundleName] &lt;a href=&quot;#&quot;&gt;điều khoản cấp phép&lt;/a&gt;." />
+  <String Id="InstallMessage" Value="Cài đặt FuzeVPN trên máy tính này." />
+  <String Id="InstallMessageOptions" Value="Cài đặt FuzeVPN trên máy tính này." />
+  <String Id="InstallOptionsButton" Value="Tùy chọn" />
+  <String Id="InstallVersion" Value="Phiên bản [WixBundleVersion]" />
+  <String Id="InstallVersionNotice" Value="Phiên bản [WixBundleVersion] [BuildNotice]" />
+  <String Id="ModifyCancelButton" Value="Hủy" />
+  <String Id="ModifyHeader" Value="Bảo trì" />
+  <String Id="ModifyRepairButton" Value="Sửa chữa" />
+  <String Id="ModifyUninstallButton" Value="Gỡ cài đặt" />
+  <String Id="OptionsBrowseButton" Value="Duyệt" />
+  <String Id="OptionsCancelButton" Value="Hủy" />
+  <String Id="OptionsHeader" Value="Tùy chọn" />
+  <String Id="OptionsLocationLabel" Value="Thư mục cài đặt (được Windows bảo vệ)" />
+  <String Id="OptionsOkButton" Value="OK" />
+  <String Id="OptionsPerMachineScopeText" Value="Tất cả người dùng" />
+  <String Id="OptionsPerUserScopeText" Value="Người dùng hiện tại" />
+  <String Id="OverallProgressPackageText" Value="Đang chuẩn bị…" />
+  <String Id="PreserveInstallFolder" Value="Thư mục hiện có được giữ nguyên khi cập nhật. Để tự do di chuyển giao diện, hãy sử dụng gói portable." />
+  <String Id="ProgressCancelButton" Value="Hủy" />
+  <String Id="ProgressHeader" Value="Đang cài đặt" />
+  <String Id="ProgressLabel" Value="Tiến trình" />
+  <String Id="SuccessCacheHeader" Value="Tệp đã sẵn sàng" />
+  <String Id="SuccessCloseButton" Value="Đóng" />
+  <String Id="SuccessHeader" Value="Đã hoàn tất thao tác" />
+  <String Id="SuccessInstallHeader" Value="Đã hoàn tất cài đặt" />
+  <String Id="SuccessLaunchButton" Value="Mở" />
+  <String Id="SuccessLayoutHeader" Value="Tệp đã sẵn sàng" />
+  <String Id="SuccessModifyHeader" Value="Đã hoàn tất sửa đổi" />
+  <String Id="SuccessOpenApp" Value="Mở FuzeVPN từ menu Bắt đầu. Các tùy chọn cá nhân của bạn đã được giữ lại." />
+  <String Id="SuccessRepairHeader" Value="Đã hoàn tất sửa chữa" />
+  <String Id="SuccessRestartButton" Value="Khởi động lại" />
+  <String Id="SuccessRestartText" Value="Hãy khởi động lại máy tính để hoàn tất." />
+  <String Id="SuccessUninstallHeader" Value="Đã hoàn tất gỡ cài đặt" />
+  <String Id="SuccessUninstallRestartText" Value="Hãy khởi động lại để hoàn tất việc gỡ cài đặt." />
+  <String Id="SuccessUnsafeUninstallHeader" Value="Đã hoàn tất gỡ cài đặt" />
+  <String Id="Title" Value="[WixBundleName]" />
+  <String Id="UpdateButton" Value="Cập nhật" />
+</WixLocalization>
