@@ -9,6 +9,7 @@ const sharp = require(process.argv.slice(2).find(argument => argument !== '--des
 const projectRoot = path.resolve(__dirname, '..');
 const brandingRoot = path.join(projectRoot, 'assets', 'branding');
 const iconPath = path.join(projectRoot, 'windows', 'runner', 'resources', 'app_icon.ico');
+const trayIconPath = path.join(projectRoot, 'windows', 'runner', 'resources', 'tray_icon.ico');
 const sizes = [16, 20, 24, 32, 40, 48, 64, 96, 128, 256];
 
 async function renderSvg(source, size) {
@@ -19,17 +20,8 @@ async function renderSvg(source, size) {
     .toBuffer();
 }
 
-async function main() {
-  const iconSource = fs.readFileSync(path.join(brandingRoot, 'fuzevpn-desktop-icon.svg'));
-  if (!desktopOnly) {
-    const emblemSource = fs.readFileSync(path.join(brandingRoot, 'fuzevpn-emblem.svg'));
-    fs.writeFileSync(
-      path.join(brandingRoot, 'fuzevpn-emblem-512.png'),
-      await renderSvg(emblemSource, 512),
-    );
-  }
-
-  // Fit the complete shield, including its outline, into each Windows size.
+async function generateIcon(iconSource, destination) {
+  // Fit the complete original shield into each Windows size.
   // Measure alpha instead of colour so the transparent cut-outs stay intact.
   const renderedIcon = await renderSvg(iconSource, 1024);
   const { data: iconPixels, info: iconInfo } = await sharp(renderedIcon)
@@ -53,26 +45,17 @@ async function main() {
 
   const entries = [];
   for (const size of sizes) {
-    const fittedIcon = await sharp(croppedIcon)
-      .resize(size - 2, size - 2, { fit: 'inside', kernel: 'lanczos2' })
+    // Place the artwork at a fractional coordinate before downsampling. Integer
+    // padding shifts odd-width shields half a pixel to the left on small icons.
+    const width = right - left + 1;
+    const height = bottom - top + 1;
+    const scale = size / Math.max(width, height);
+    const fittedWidth = width * scale;
+    const fittedHeight = height * scale;
+    const centered = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}"><image href="data:image/png;base64,${croppedIcon.toString('base64')}" x="${(size - fittedWidth) / 2}" y="${(size - fittedHeight) / 2}" width="${fittedWidth}" height="${fittedHeight}"/></svg>`);
+    const png = await sharp(centered, { density: 72 * 8 })
+      .resize(size, size, { kernel: 'lanczos2' })
       .png().toBuffer();
-    const fittedInfo = await sharp(fittedIcon).metadata();
-    const horizontalPadding = size - fittedInfo.width;
-    const verticalPadding = size - fittedInfo.height;
-    const png = await sharp(fittedIcon).extend({
-      left: Math.floor(horizontalPadding / 2), right: Math.ceil(horizontalPadding / 2),
-      top: Math.floor(verticalPadding / 2), bottom: Math.ceil(verticalPadding / 2),
-      background: { r: 0, g: 0, b: 0, alpha: 0 },
-    }).png().toBuffer();
-    const { data, info } = await sharp(png).raw().toBuffer({ resolveWithObject: true });
-    for (let coordinate = 0; coordinate < size; coordinate++) {
-      for (const [x, y] of [[coordinate, 0], [coordinate, size - 1],
-        [0, coordinate], [size - 1, coordinate]]) {
-        if (data[(y * info.width + x) * info.channels + 3] !== 0) {
-          throw new Error(`Icon ${size}px touches its image boundary.`);
-        }
-      }
-    }
     entries.push({ size, png });
   }
 
@@ -91,7 +74,23 @@ async function main() {
     directory.writeUInt32LE(dataOffset, offset + 12);
     dataOffset += entry.png.length;
   }
-  fs.writeFileSync(iconPath, Buffer.concat([directory, ...entries.map(entry => entry.png)]));
+  fs.writeFileSync(destination, Buffer.concat([directory, ...entries.map(entry => entry.png)]));
+}
+
+async function main() {
+  const iconSource = fs.readFileSync(path.join(brandingRoot, 'fuzevpn-desktop-icon.svg'));
+  if (!desktopOnly) {
+    const emblemSource = fs.readFileSync(path.join(brandingRoot, 'fuzevpn-emblem.svg'));
+    fs.writeFileSync(
+      path.join(brandingRoot, 'fuzevpn-emblem-512.png'),
+      await renderSvg(emblemSource, 512),
+    );
+  }
+
+  // Preserve the owner's black-and-white artwork without an added outline.
+  // Use the full available height and the same centre on both Windows surfaces.
+  await generateIcon(iconSource, iconPath);
+  await generateIcon(iconSource, trayIconPath);
   console.log(`Generated transparent Windows icon sizes: ${sizes.join(', ')} px.`);
 }
 

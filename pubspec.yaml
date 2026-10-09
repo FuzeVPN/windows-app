@@ -1,7 +1,7 @@
 name: fuzevpn_windows
 description: FuzeVPN Windows client
 publish_to: none
-version: 1.0.7+1
+version: 1.0.8+1
 
 environment:
   sdk: '>=3.12.2 <3.13.0'
@@ -13,6 +13,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   intl: 0.20.2
+  crypto: 3.0.7
   tray_manager: 0.5.3
   url_launcher: 6.3.2
 

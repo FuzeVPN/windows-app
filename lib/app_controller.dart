@@ -5,8 +5,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+import 'brand_config.dart';
 import 'core/api_client.dart';
+import 'core/browser_auth.dart';
 import 'core/connection_state_machine.dart';
 import 'core/diagnostic_log.dart';
 import 'core/diagnostics_bridge.dart';
@@ -28,6 +31,13 @@ part 'diagnostic_integration.dart';
 enum AppSection { connection, locations, devices, settings, help }
 
 enum DeviceRevocationResult { revoked, revokedWithLocalCleanupWarning, failed }
+
+enum BrowserSignInStatus {
+  idle,
+  openingBrowser,
+  waitingForBrowser,
+  completingSignIn,
+}
 
 enum LocationChangePreparation {
   selectedLocally,
@@ -79,12 +89,18 @@ class AppController extends ChangeNotifier {
     WindowsUpdateController? updates,
     DiagnosticsController? diagnostics,
     DiagnosticsBridge? diagnosticsBridge,
+    BrowserAuth? browserAuth,
+    Future<bool> Function(Uri)? browserLauncher,
     DateTime Function()? now,
   }) : _api = api ?? ApiClient(),
        _store = store ?? SecureStore(),
        _wireguard = wireguard ?? WireGuardBridge(),
        _openVpn = openVpn ?? OpenVpnBridge(),
        _window = window ?? const WindowBridge(),
+       _browserAuth = browserAuth ?? BrowserAuth(),
+       _browserLauncher =
+           browserLauncher ??
+           ((url) => launchUrl(url, mode: LaunchMode.externalApplication)),
        updates = updates ?? WindowsUpdateController(),
        _now = now ?? DateTime.now {
     this.updates.addListener(_onUpdateChanged);
@@ -105,6 +121,18 @@ class AppController extends ChangeNotifier {
   final WireGuardBridge _wireguard;
   final OpenVpnBridge _openVpn;
   final WindowBridge _window;
+  final BrowserAuth _browserAuth;
+  final Future<bool> Function(Uri) _browserLauncher;
+  BrowserAuthAttempt? _browserAuthAttempt;
+  Uri? _browserAuthorizationUri;
+  Completer<void>? _browserCancellation;
+  String _browserAuthStage = 'browser_auth_listener';
+  BrowserSignInStatus browserSignInStatus = BrowserSignInStatus.idle;
+  String? browserSignInErrorMessage;
+  bool get browserSignInBusy => browserSignInStatus != BrowserSignInStatus.idle;
+  bool _signInInProgress = false;
+  int _signInGeneration = 0;
+  Future<void>? _sessionTokenWrite;
   final DateTime Function() _now;
   final WindowsUpdateController updates;
   late final DiagnosticsController diagnostics;
@@ -3146,6 +3174,7 @@ class AppController extends ChangeNotifier {
         !isInitialized ||
         _disposed ||
         _isSigningOut ||
+        _signInInProgress ||
         isConnectionBusy ||
         _runtimeVerificationPending ||
         (requiresExplicitDisconnect && vpnStatus != VpnStatus.connected) ||
@@ -3420,8 +3449,202 @@ class AppController extends ChangeNotifier {
     }
   }
 
-  Future<bool> signIn({required String email, required String password}) async {
-    if (_isSigningOut || _disposed) return false;
+  Future<bool> signIn({required String email, required String password}) =>
+      _performSignIn(() => _api.login(email: email, password: password));
+
+  Future<bool> signInWithBrowser() async {
+    if (_signInInProgress || browserSignInBusy || _isSigningOut || _disposed) {
+      return false;
+    }
+    browserSignInErrorMessage = null;
+    final cancellation = Completer<void>();
+    _browserCancellation = cancellation;
+    var succeeded = false;
+    try {
+      succeeded = await _performSignIn(
+        () => _authenticateWithBrowser(cancellation),
+        browser: true,
+      );
+      if (!succeeded && !cancellation.isCompleted && !_disposed) {
+        browserSignInErrorMessage = errorMessage;
+      }
+      return succeeded;
+    } finally {
+      if (identical(_browserCancellation, cancellation)) {
+        if (!cancellation.isCompleted) cancellation.complete();
+        _browserCancellation = null;
+        final attempt = _browserAuthAttempt;
+        _browserAuthAttempt = null;
+        _browserAuthorizationUri = null;
+        if (attempt != null) await attempt.dispose();
+        browserSignInStatus = BrowserSignInStatus.idle;
+        if (!_disposed) notifyListeners();
+      }
+    }
+  }
+
+  Future<T> _browserWork<T>(Future<T> work, Completer<void> cancellation) =>
+      Future.any([
+        work,
+        cancellation.future.then<T>((_) => throw BrowserAuthException.canceled),
+      ]);
+
+  Future<AuthSession> _authenticateWithBrowser(
+    Completer<void> cancellation,
+  ) async {
+    final clock = Stopwatch()..start();
+    Future<T> beforeDeadline<T>(Future<T> work) {
+      final remaining = _browserAuth.timeout - clock.elapsed;
+      return _browserWork(work, cancellation)
+          .timeout(
+            remaining > Duration.zero ? remaining : Duration.zero,
+            onTimeout: () => throw BrowserAuthException.timeout,
+          )
+          .then((value) {
+            if (clock.elapsed >= _browserAuth.timeout) {
+              throw BrowserAuthException.timeout;
+            }
+            return value;
+          });
+    }
+
+    browserSignInStatus = BrowserSignInStatus.openingBrowser;
+    errorMessage = null;
+    notifyListeners();
+    _browserAuthStage = 'browser_auth_listener';
+    _traceControllerPhase('account', 'browser_auth_listener', 'begin');
+    final creating = _browserAuth.start();
+    // Binding can finish after an explicit cancellation. Close that listener
+    // as well; it must never become an orphan waiting for browser traffic.
+    unawaited(
+      creating.then<void>((attempt) {
+        if (cancellation.isCompleted) unawaited(attempt.dispose());
+      }, onError: (Object _, StackTrace _) {}),
+    );
+    final attempt = await beforeDeadline(creating);
+    _browserAuthAttempt = attempt;
+    _traceControllerPhase('account', 'browser_auth_listener', 'completed');
+    final url = attempt.authorizationUri(
+      BrandConfig.portalWindowsConnect,
+      BrandConfig.windowsBrowserClientId,
+    );
+    _browserAuthorizationUri = url;
+    _browserAuthStage = 'browser_auth_open';
+    _traceControllerPhase('account', 'browser_auth_open', 'begin');
+    bool opened;
+    try {
+      opened = await beforeDeadline(
+        _browserLauncher(url).timeout(const Duration(seconds: 10)),
+      );
+    } on BrowserAuthException {
+      rethrow;
+    } catch (_) {
+      // Platform messages can contain the complete authorization URL.
+      throw BrowserAuthException.launchFailed;
+    }
+    if (!opened) {
+      throw BrowserAuthException.launchFailed;
+    }
+    _traceControllerPhase('account', 'browser_auth_open', 'completed');
+    browserSignInStatus = BrowserSignInStatus.waitingForBrowser;
+    notifyListeners();
+    _browserAuthStage = 'browser_auth_callback';
+    _traceControllerPhase('account', 'browser_auth_callback', 'begin');
+    final code = await beforeDeadline(attempt.callback);
+    _traceControllerPhase('account', 'browser_auth_callback', 'completed');
+    browserSignInStatus = BrowserSignInStatus.completingSignIn;
+    notifyListeners();
+    _browserAuthStage = 'browser_auth_exchange';
+    _traceControllerPhase('account', 'browser_auth_exchange', 'begin');
+    // Do not retry this one-use code after a lost response. A fresh explicit
+    // browser authorization is required instead.
+    final session = await beforeDeadline(
+      _api.exchangeWindowsBrowserCode(
+        code: code,
+        redirectUri: attempt.redirectUri,
+        codeVerifier: attempt.codeVerifier,
+      ),
+    );
+    _traceControllerPhase('account', 'browser_auth_exchange', 'completed');
+    // Once the token arrives within the authorization deadline, finalize the
+    // normal session. Do not interrupt protected storage with that deadline.
+    await _browserWork(_window.show(), cancellation);
+    return session;
+  }
+
+  Future<bool> reopenBrowserSignIn() async {
+    final url = _browserAuthorizationUri;
+    final cancellation = _browserCancellation;
+    if (url == null ||
+        cancellation == null ||
+        cancellation.isCompleted ||
+        browserSignInStatus != BrowserSignInStatus.waitingForBrowser) {
+      return false;
+    }
+    bool current() =>
+        !_disposed &&
+        identical(_browserCancellation, cancellation) &&
+        !cancellation.isCompleted &&
+        browserSignInStatus == BrowserSignInStatus.waitingForBrowser;
+    try {
+      final opened = await _browserWork(
+        _browserLauncher(url).timeout(const Duration(seconds: 10)),
+        cancellation,
+      );
+      if (!opened) throw BrowserAuthException.launchFailed;
+      if (!current()) return false;
+      browserSignInErrorMessage = null;
+      notifyListeners();
+      return opened;
+    } catch (_) {
+      if (current()) {
+        browserSignInErrorMessage = _browserSignInFailureMessage(
+          'browser_auth_launch_failed',
+        );
+        _traceControllerPhase(
+          'account',
+          'browser_auth_open',
+          'failed',
+          code: 'browser_auth_launch_failed',
+        );
+        notifyListeners();
+      }
+      return false;
+    }
+  }
+
+  void cancelBrowserSignIn() {
+    final cancellation = _browserCancellation;
+    if (cancellation == null || cancellation.isCompleted) return;
+    cancellation.complete();
+    _signInGeneration++;
+    final attempt = _browserAuthAttempt;
+    if (attempt != null) unawaited(attempt.cancel());
+    browserSignInErrorMessage = null;
+    errorMessage = null;
+    _traceControllerPhase('account', 'account_authentication', 'cancelled');
+    if (!_disposed) notifyListeners();
+  }
+
+  static String _browserSignInFailureMessage(String code) => switch (code) {
+    'browser_auth_timeout' =>
+      'La demande de connexion a expiré. Ouvrez à nouveau le navigateur depuis FuzeVPN.',
+    'browser_auth_denied' => 'La connexion a été annulée dans le navigateur.',
+    'browser_auth_launch_failed' =>
+      'Le navigateur n’a pas pu être ouvert. Vérifiez votre navigateur par défaut puis réessayez.',
+    'browser_auth_callback_unavailable' =>
+      'FuzeVPN ne peut pas recevoir la connexion du navigateur sur cet appareil. Réessayez ou utilisez votre adresse e-mail et votre mot de passe.',
+    _ =>
+      'La réponse de connexion du navigateur est invalide. Recommencez depuis FuzeVPN.',
+  };
+
+  Future<bool> _performSignIn(
+    Future<AuthSession> Function() authenticate, {
+    bool browser = false,
+  }) async {
+    if (_isSigningOut || _disposed || _signInInProgress || browserSignInBusy) {
+      return false;
+    }
     if (runtimeOwnedByAnotherUser) {
       errorMessage = _otherSessionMessage;
       notifyListeners();
@@ -3438,21 +3661,26 @@ class AppController extends ChangeNotifier {
       notifyListeners();
       return false;
     }
-    final sessionEpoch = _sessionEpoch;
+    _signInInProgress = true;
+    final generation = ++_signInGeneration;
+    // An older saved-session validation must not overwrite this new account.
+    final sessionEpoch = ++_sessionEpoch;
+    _cancelSavedSessionVerificationRetry();
+    bool current() =>
+        !_isSigningOut &&
+        !_disposed &&
+        sessionEpoch == _sessionEpoch &&
+        generation == _signInGeneration;
     var credentialsAccepted = false;
     var profileLoaded = false;
     var signInStage = 'account_authentication';
     try {
-      final session = await _api.login(email: email, password: password);
-      if (_isSigningOut || _disposed || sessionEpoch != _sessionEpoch) {
-        return false;
-      }
+      final session = await authenticate();
+      if (!current()) return false;
       credentialsAccepted = true;
       signInStage = 'session_validation';
       final nextProfile = await _api.me(session.accessToken);
-      if (_isSigningOut || _disposed || sessionEpoch != _sessionEpoch) {
-        return false;
-      }
+      if (!current()) return false;
       profileLoaded = true;
       signInStage = 'local_identity';
 
@@ -3461,15 +3689,17 @@ class AppController extends ChangeNotifier {
       // older identity (and active tunnel), then creates a fresh pair when
       // another account signs in. No key material enters Dart here.
       await _wireguard.prepareIdentityForAccount(nextProfile.userId);
-      if (_isSigningOut || _disposed || sessionEpoch != _sessionEpoch) {
-        return false;
-      }
+      if (!current()) return false;
       _clearSubscriptionState();
       signInStage = 'saved_session_storage';
-      await _store.saveToken(session.accessToken);
-      if (_isSigningOut || _disposed || sessionEpoch != _sessionEpoch) {
-        return false;
+      final writing = _store.saveToken(session.accessToken);
+      _sessionTokenWrite = writing;
+      try {
+        await writing;
+      } finally {
+        if (identical(_sessionTokenWrite, writing)) _sessionTokenWrite = null;
       }
+      if (!current()) return false;
       profile = nextProfile;
       _sessionValidationPending = false;
       _sessionStorageUnavailable = false;
@@ -3478,22 +3708,53 @@ class AppController extends ChangeNotifier {
       _bindDiagnosticSession();
       signInStage = 'device_catalogue';
       await refreshDevices();
+      if (!current()) return false;
       if (currentDeviceId != null && _currentDevice == null) {
         await _forgetCurrentDeviceBinding();
       }
       await _resumeStoredLocationMigration();
+      if (!current()) return false;
       errorMessage = null;
       deviceEnrollmentIssue = null;
       notifyListeners();
       return true;
+    } on BrowserAuthException catch (error) {
+      if (!current()) return false;
+      _traceControllerFailure('account', _browserAuthStage, error);
+      errorMessage = _browserSignInFailureMessage(error.code);
+      notifyListeners();
+      return false;
     } on ApiException catch (error) {
-      if (_isSigningOut || _disposed || sessionEpoch != _sessionEpoch) {
-        return false;
-      }
-      _traceControllerFailure('account', signInStage, error);
+      if (!current()) return false;
+      _traceControllerFailure(
+        'account',
+        browser && !credentialsAccepted ? _browserAuthStage : signInStage,
+        error,
+      );
       final localMessage = _localApiFailureMessage(error);
       if (localMessage != null) {
         errorMessage = localMessage;
+      } else if (browser && error.errorCode == 'desktop_auth_invalid_grant') {
+        errorMessage =
+            'Cette demande de connexion a expiré ou a déjà été utilisée. Recommencez depuis FuzeVPN.';
+      } else if (browser && error.errorCode == 'desktop_auth_unavailable') {
+        errorMessage =
+            'La connexion par navigateur est momentanément indisponible. Utilisez votre adresse e-mail et votre mot de passe, ou réessayez plus tard.';
+      } else if (browser &&
+          !credentialsAccepted &&
+          (error.errorCode == 'account_login_required' ||
+              error.isUnauthorized)) {
+        errorMessage =
+            'Reconnectez-vous à votre compte dans le navigateur, puis réessayez depuis FuzeVPN.';
+      } else if (browser &&
+          const {
+            'desktop_auth_invalid_request',
+            'invalid_json',
+            'browser_auth_invalid_response',
+          }.contains(error.errorCode)) {
+        errorMessage = _browserSignInFailureMessage(
+          'browser_auth_invalid_response',
+        );
       } else if (!credentialsAccepted &&
           error.statusCode == HttpStatus.unauthorized &&
           error.errorCode == 'invalid_credentials') {
@@ -3519,10 +3780,12 @@ class AppController extends ChangeNotifier {
       notifyListeners();
       return false;
     } on PlatformException catch (error) {
-      if (_isSigningOut || _disposed || sessionEpoch != _sessionEpoch) {
-        return false;
-      }
-      _traceControllerFailure('account', signInStage, error);
+      if (!current()) return false;
+      _traceControllerFailure(
+        'account',
+        browser && !credentialsAccepted ? _browserAuthStage : signInStage,
+        error,
+      );
       errorMessage =
           error.code.startsWith('storage_') ||
               error.code.startsWith('secure_storage_')
@@ -3533,10 +3796,12 @@ class AppController extends ChangeNotifier {
       notifyListeners();
       return false;
     } catch (error) {
-      if (_isSigningOut || _disposed || sessionEpoch != _sessionEpoch) {
-        return false;
-      }
-      _traceControllerFailure('account', signInStage, error);
+      if (!current()) return false;
+      _traceControllerFailure(
+        'account',
+        browser && !credentialsAccepted ? _browserAuthStage : signInStage,
+        error,
+      );
       errorMessage = _signInFailureMessage(
         credentialsAccepted: credentialsAccepted,
         profileLoaded: profileLoaded,
@@ -3548,6 +3813,9 @@ class AppController extends ChangeNotifier {
       );
       notifyListeners();
       return false;
+    } finally {
+      _signInInProgress = false;
+      _scheduleSavedSessionVerificationRetry();
     }
   }
 
@@ -5339,6 +5607,7 @@ class AppController extends ChangeNotifier {
   Future<void> signOut() async {
     if (_isSigningOut || _disposed || _isInstallingUpdate) return;
     _isSigningOut = true;
+    cancelBrowserSignIn();
     _suspendDiagnostics(purge: true);
     _sessionEpoch++;
     _runtimeVerificationTimer?.cancel();
@@ -5384,6 +5653,10 @@ class AppController extends ChangeNotifier {
         await _restoreNetworkStateAfterFailedDisconnect(null);
       }
       try {
+        // A local sign-in write already in progress must finish before the
+        // sign-out clear. Otherwise its late completion could restore a token.
+        final writing = _sessionTokenWrite;
+        if (writing != null) await _safe<void>(writing);
         await _store.clearToken();
       } catch (_) {
         errorMessage =
@@ -5501,6 +5774,7 @@ class AppController extends ChangeNotifier {
   @override
   void dispose() {
     _disposed = true;
+    cancelBrowserSignIn();
     _cancelSavedSessionVerificationRetry();
     _runtimeVerificationTimer?.cancel();
     _runtimeVerificationTimer = null;

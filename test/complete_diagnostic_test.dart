@@ -140,7 +140,7 @@ void main() {
       await controller.runCompleteDiagnostic();
       expect(delivery.sent, hasLength(1));
       final report = delivery.sent.single;
-      expect(report.json['app_version'], '1.0.7');
+      expect(report.json['app_version'], '1.0.8');
       expect((report.json['checks'] as List).single['result'], 'passed');
       final support = supportOf(report);
       expect((support['service'] as Map)['state'], 'stopped');

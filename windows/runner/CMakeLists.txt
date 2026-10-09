@@ -353,7 +353,7 @@ add_custom_command(TARGET ${BINARY_NAME} POST_BUILD
     "${WIREGUARD_NOTICE_FILE}"
     "$<TARGET_FILE_DIR:${BINARY_NAME}>/WIREGUARD_NOTICE.md"
   COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    "${CMAKE_CURRENT_SOURCE_DIR}/resources/app_icon.ico"
+    "${CMAKE_CURRENT_SOURCE_DIR}/resources/tray_icon.ico"
     "$<TARGET_FILE_DIR:${BINARY_NAME}>/fuzevpn_tray.ico"
 )
 

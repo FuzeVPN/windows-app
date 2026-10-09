@@ -19,6 +19,11 @@ abstract final class BrandConfig {
       Uri.https(_publicHost, '/${websiteLocale(languageCode)}/support');
 
   static final portalLogin = Uri.https(_portalHost, '/login');
+  static const windowsBrowserClientId = 'fuzevpn-windows';
+  static final portalWindowsConnect = Uri.https(
+    _portalHost,
+    '/desktop/connect',
+  );
   static final portalRegister = Uri.https(_portalHost, '/register');
   static final portalDashboard = Uri.https(_portalHost, '/dashboard');
   static final portalVerifyEmail = Uri.https(_portalHost, '/verify-email');

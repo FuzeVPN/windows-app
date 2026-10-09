@@ -225,50 +225,52 @@ class WindowsUpdatePanel extends StatelessWidget {
                   ),
                 ),
               ],
-              const SizedBox(height: 22),
-              const Divider(height: 1),
-              const SizedBox(height: 20),
-              Wrap(
-                spacing: 12,
-                runSpacing: 10,
-                children: [
-                  OutlinedButton.icon(
-                    onPressed:
-                        controller.isBusy ||
-                            state == WindowsUpdateStatus.launched
-                        ? null
-                        : controller.checkForUpdates,
-                    icon: const Icon(Icons.refresh),
-                    label: Text(context.tr('Rechercher une mise à jour')),
-                  ),
-                  if (manualInstallation)
+              if (state != WindowsUpdateStatus.disabledForTesting) ...[
+                const SizedBox(height: 22),
+                const Divider(height: 1),
+                const SizedBox(height: 20),
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 10,
+                  children: [
                     OutlinedButton.icon(
-                      onPressed: controller.isBusy
+                      onPressed:
+                          controller.isBusy ||
+                              state == WindowsUpdateStatus.launched
                           ? null
-                          : () => _openOfficialWebsite(context),
-                      icon: const Icon(Icons.open_in_new),
-                      label: Text(context.tr('Ouvrir le site FuzeVPN')),
+                          : controller.checkForUpdates,
+                      icon: const Icon(Icons.refresh),
+                      label: Text(context.tr('Rechercher une mise à jour')),
                     ),
-                  if (controller.canAutomaticallyUpdate &&
-                      (state == WindowsUpdateStatus.available ||
-                          (state == WindowsUpdateStatus.error &&
-                              release != null)))
-                    FilledButton.icon(
-                      onPressed: controller.prepareUpdate,
-                      icon: const Icon(Icons.download_outlined),
-                      label: Text(context.tr('Télécharger la mise à jour')),
-                    ),
-                  if (controller.canAutomaticallyUpdate &&
-                      state == WindowsUpdateStatus.ready)
-                    FilledButton.icon(
-                      onPressed: canInstall
-                          ? () => _confirmInstall(context)
-                          : null,
-                      icon: const Icon(Icons.system_update_alt),
-                      label: Text(context.tr('Installer maintenant')),
-                    ),
-                ],
-              ),
+                    if (manualInstallation)
+                      OutlinedButton.icon(
+                        onPressed: controller.isBusy
+                            ? null
+                            : () => _openOfficialWebsite(context),
+                        icon: const Icon(Icons.open_in_new),
+                        label: Text(context.tr('Ouvrir le site FuzeVPN')),
+                      ),
+                    if (controller.canAutomaticallyUpdate &&
+                        (state == WindowsUpdateStatus.available ||
+                            (state == WindowsUpdateStatus.error &&
+                                release != null)))
+                      FilledButton.icon(
+                        onPressed: controller.prepareUpdate,
+                        icon: const Icon(Icons.download_outlined),
+                        label: Text(context.tr('Télécharger la mise à jour')),
+                      ),
+                    if (controller.canAutomaticallyUpdate &&
+                        state == WindowsUpdateStatus.ready)
+                      FilledButton.icon(
+                        onPressed: canInstall
+                            ? () => _confirmInstall(context)
+                            : null,
+                        icon: const Icon(Icons.system_update_alt),
+                        label: Text(context.tr('Installer maintenant')),
+                      ),
+                  ],
+                ),
+              ],
               if (controller.canUpdate &&
                   state == WindowsUpdateStatus.ready &&
                   !canInstall) ...[
@@ -337,6 +339,7 @@ class WindowsUpdatePanel extends StatelessWidget {
 
 IconData _statusIcon(WindowsUpdateStatus state) => switch (state) {
   WindowsUpdateStatus.idle => Icons.update_outlined,
+  WindowsUpdateStatus.disabledForTesting => Icons.info_outline,
   WindowsUpdateStatus.checking => Icons.search_outlined,
   WindowsUpdateStatus.available => Icons.new_releases_outlined,
   WindowsUpdateStatus.noUpdate ||
@@ -356,6 +359,8 @@ const _distributionUnavailableMessage =
 String _statusText(WindowsUpdateStatus state, {bool portable = false}) =>
     switch (state) {
       WindowsUpdateStatus.idle => 'Recherchez une nouvelle version de FuzeVPN.',
+      WindowsUpdateStatus.disabledForTesting =>
+        'Mises à jour désactivées dans cette version de test.',
       WindowsUpdateStatus.checking => 'Recherche de mises à jour…',
       WindowsUpdateStatus.available => 'Une nouvelle version est disponible.',
       WindowsUpdateStatus.noUpdate => 'Aucune mise à jour disponible.',

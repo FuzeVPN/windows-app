@@ -46,7 +46,10 @@ class ApiException implements Exception, DiagnosticFailureDetails {
 
   @override
   String get diagnosticFailureCode =>
-      localErrorCode ?? diagnosticCode(errorCode);
+      localErrorCode ??
+      (browserAuthTraceCodes.contains(errorCode)
+          ? errorCode
+          : diagnosticCode(errorCode));
   @override
   int? get diagnosticWindowsError => windowsError;
   @override
@@ -666,6 +669,84 @@ class ApiClient {
     return AuthSession.fromJson(body);
   }
 
+  /// Exchanges a one-use browser code for the same account session used by
+  /// email sign-in. The request has no bearer, cookies or client secret.
+  Future<AuthSession> exchangeWindowsBrowserCode({
+    required String code,
+    required Uri redirectUri,
+    required String codeVerifier,
+  }) async {
+    var canonicalCode = false;
+    try {
+      canonicalCode =
+          RegExp(r'^[A-Za-z0-9_-]{43}$').hasMatch(code) &&
+          base64Url.decode('$code=').length == 32 &&
+          base64Url.encode(base64Url.decode('$code=')).replaceAll('=', '') ==
+              code;
+    } on FormatException {
+      // Retain no rejected input in the error or diagnostic record.
+    }
+    if (!canonicalCode ||
+        RegExp(r'^[A-Za-z0-9._~-]{43,128}$').stringMatch(codeVerifier) !=
+            codeVerifier ||
+        redirectUri.scheme != 'http' ||
+        redirectUri.host != '127.0.0.1' ||
+        redirectUri.userInfo.isNotEmpty ||
+        redirectUri.port < 1024 ||
+        redirectUri.port > 65535 ||
+        redirectUri.path != '/auth/callback' ||
+        redirectUri.hasQuery ||
+        redirectUri.hasFragment) {
+      throw const ApiException(
+        statusCode: 400,
+        errorCode: 'desktop_auth_invalid_request',
+      );
+    }
+    final response = await _request(
+      'POST',
+      '/v1/auth/desktop/token',
+      body: {
+        'client_id': BrandConfig.windowsBrowserClientId,
+        'code': code,
+        'redirect_uri': redirectUri.toString(),
+        'code_verifier': codeVerifier,
+      },
+    );
+    if (response.statusCode != HttpStatus.created) {
+      await _readResponseBody(response);
+      throw ApiException(
+        statusCode: 502,
+        errorCode: 'browser_auth_invalid_response',
+        observedHttpStatus: response.statusCode,
+      );
+    }
+    try {
+      final body = await _readJsonObject(response);
+      final token = body['access_token'];
+      final expiresAt = body['expires_at'];
+      if (token is! String ||
+          RegExp(r'^[\x21-\x7e]{1,8192}$').stringMatch(token) != token ||
+          expiresAt is! String ||
+          expiresAt.length > 64 ||
+          DateTime.tryParse(expiresAt) == null) {
+        throw const FormatException('Invalid browser session response.');
+      }
+      return AuthSession(accessToken: token);
+    } on FormatException {
+      throw ApiException(
+        statusCode: 502,
+        errorCode: 'browser_auth_invalid_response',
+        observedHttpStatus: response.statusCode,
+      );
+    } on TypeError {
+      throw ApiException(
+        statusCode: 502,
+        errorCode: 'browser_auth_invalid_response',
+        observedHttpStatus: response.statusCode,
+      );
+    }
+  }
+
   Future<List<Location>> locations() async {
     final response = await _request('GET', '/v1/locations');
     final body = await _readJsonObject(response);
@@ -999,6 +1080,7 @@ class ApiClient {
       '/v1/updates/windows/latest' => 'update_manifest',
       '/v1/billing/subscription' => 'subscription',
       '/v1/auth/login' => 'login',
+      '/v1/auth/desktop/token' => 'browser_auth_token',
       '/v1/me' => 'account',
       '/v1/devices' => 'devices',
       '/v1/diagnostics' => 'diagnostic_report',

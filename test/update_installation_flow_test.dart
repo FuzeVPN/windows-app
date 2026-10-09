@@ -54,6 +54,11 @@ class UpdateApi extends ApiClient {
   }) async => candidate;
 }
 
+class TestBuildUpdates extends WindowsUpdateController {
+  @override
+  WindowsUpdateStatus get status => WindowsUpdateStatus.disabledForTesting;
+}
+
 class UpdateBridge extends WindowsUpdateBridge {
   int installs = 0;
   int preparations = 0;
@@ -144,6 +149,32 @@ class Fixture {
 }
 
 void main() {
+  testWidgets('disabled test updates show a neutral notice without actions', (
+    tester,
+  ) async {
+    final updates = TestBuildUpdates();
+    addTearDown(updates.dispose);
+    var installed = false;
+    await tester.pumpWidget(
+      localizedHost(
+        WindowsUpdatePanel(
+          controller: updates,
+          onInstall: () async => installed = true,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(
+      find.text('Mises à jour désactivées dans cette version de test.'),
+      findsOneWidget,
+    );
+    expect(find.textContaining('compatible avec cet ordinateur'), findsNothing);
+    expect(find.byIcon(Icons.error_outline), findsNothing);
+    expect(find.byType(OutlinedButton), findsNothing);
+    expect(find.byType(FilledButton), findsNothing);
+    expect(installed, isFalse);
+  });
+
   testWidgets('newer MSI offers the official website without automatic install', (
     tester,
   ) async {
@@ -534,6 +565,10 @@ void main() {
   testWidgets('update controls remain reachable without signing in', (
     tester,
   ) async {
+    tester.view.physicalSize = const Size(800, 600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
     final api = UpdateApi()..candidate = null;
     final updates = WindowsUpdateController(api: api, bridge: UpdateBridge());
     final controller = SignedOutController(updates: updates)
@@ -547,6 +582,7 @@ void main() {
     await tester.pumpWidget(FuzeVpnApp(controller: controller));
     await tester.pumpAndSettle();
     expect(find.text('Créer un compte sur le Web'), findsOneWidget);
+    expect(find.text('Mises à jour').hitTestable(), findsOneWidget);
     await tester.tap(find.text('Mises à jour'));
     await tester.pumpAndSettle();
     expect(find.text('Aucune mise à jour disponible.'), findsOneWidget);

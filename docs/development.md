@@ -71,6 +71,26 @@ Use a dedicated PowerShell session for these commands, then close it to restore
 your normal environment. Flutter tests use mocks or synthetic fixtures; they
 do not need production credentials or a live VPN service.
 
+### Browser sign-in checks
+
+The focused browser suite uses real local loopback sockets and synthetic
+account, storage and window bridges. It covers callback validation, PKCE,
+replay, cancellation, timeouts, logout races, the token request contract and
+the account dialog in both themes and compact layouts:
+
+```powershell
+flutter test --no-pub test/browser_auth_test.dart test/browser_sign_in_api_test.dart test/browser_sign_in_controller_test.dart test/browser_sign_in_ui_test.dart test/browser_diagnostic_contract_test.dart
+```
+
+Source and widget tests do not prove that the hosted sign-in page is deployed.
+An end-to-end check also needs the Web `/desktop/connect` page and the API
+desktop authorization routes enabled together. Use an isolated local API,
+disposable accounts and the actual Web consent flow. Confirm that the app
+receives its own session, the Web session still works, a reused code is denied,
+and cancellation returns to the form. Never put production tokens or browser
+authorization URLs in test fixtures. The Windows repository does not deploy
+the API or Web application.
+
 ## Native checks and CI
 
 The Windows CMake projects define C++ tests for native parsers, networking
