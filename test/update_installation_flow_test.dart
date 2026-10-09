@@ -534,6 +534,10 @@ void main() {
   testWidgets('update controls remain reachable without signing in', (
     tester,
   ) async {
+    tester.view.physicalSize = const Size(800, 600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
     final api = UpdateApi()..candidate = null;
     final updates = WindowsUpdateController(api: api, bridge: UpdateBridge());
     final controller = SignedOutController(updates: updates)
@@ -547,6 +551,7 @@ void main() {
     await tester.pumpWidget(FuzeVpnApp(controller: controller));
     await tester.pumpAndSettle();
     expect(find.text('Créer un compte sur le Web'), findsOneWidget);
+    expect(find.text('Mises à jour').hitTestable(), findsOneWidget);
     await tester.tap(find.text('Mises à jour'));
     await tester.pumpAndSettle();
     expect(find.text('Aucune mise à jour disponible.'), findsOneWidget);

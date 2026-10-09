@@ -13,6 +13,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   intl: 0.20.2
+  crypto: 3.0.7
   tray_manager: 0.5.3
   url_launcher: 6.3.2
 

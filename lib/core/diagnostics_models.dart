@@ -4,6 +4,21 @@ import 'dart:math';
 import 'dart:typed_data';
 import 'diagnostics_support.dart';
 
+/// Local complete-report trace references. These do not expand the version-1
+/// error/event catalogue sent outside windows.support.
+const browserAuthTraceCodes = <String>{
+  'browser_auth_canceled',
+  'browser_auth_timeout',
+  'browser_auth_denied',
+  'browser_auth_callback_unavailable',
+  'browser_auth_launch_failed',
+  'browser_auth_invalid_response',
+  'desktop_auth_invalid_request',
+  'desktop_auth_invalid_grant',
+  'desktop_auth_unavailable',
+  'account_login_required',
+};
+
 /// Version 1 of client-diagnostics-20260916. Never expand this from error text.
 const diagnosticCodes = <String>{
   'api_bootstrap_unavailable',

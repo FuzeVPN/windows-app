@@ -278,6 +278,7 @@ class DiagnosticLog {
 
   static bool _knownFailureCode(String value) =>
       diagnosticCodes.contains(value) ||
+      browserAuthTraceCodes.contains(value) ||
       const {
         'api_resolver_invalid_response',
         'runtime_detection_failed',

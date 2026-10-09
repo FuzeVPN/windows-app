@@ -493,10 +493,15 @@ void main() {
   testWidgets('local diagnostic is accessible while sign-in remains required', (
     tester,
   ) async {
+    tester.view.physicalSize = const Size(800, 600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
     final app = _UiController(_Snapshot())..isInitialized = true;
     addTearDown(app.dispose);
     await tester.pumpWidget(FuzeVpnApp(controller: app));
     await tester.pumpAndSettle();
+    expect(find.text('Diagnostic local').hitTestable(), findsOneWidget);
     await tester.tap(find.text('Diagnostic local'));
     await tester.pumpAndSettle();
     expect(find.byType(CheckboxListTile), findsNothing);

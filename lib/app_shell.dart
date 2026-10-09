@@ -2202,7 +2202,8 @@ class _SignInRoute extends DialogRoute<bool> {
     required AppController controller,
     required this.request,
     required super.themes,
-  }) : super(
+  }) : appController = controller,
+       super(
          builder: (_) => ListenableBuilder(
            listenable: request,
            builder: (_, _) => _SignInDialog(
@@ -2212,16 +2213,20 @@ class _SignInRoute extends DialogRoute<bool> {
          ),
        ) {
     request.addListener(changedInternalState);
+    appController.addListener(changedInternalState);
   }
 
   final _SignInRequest request;
+  final AppController appController;
 
   @override
-  bool get barrierDismissible => !request.authenticationRequired;
+  bool get barrierDismissible =>
+      !request.authenticationRequired && !appController.browserSignInBusy;
 
   @override
   void dispose() {
     request.removeListener(changedInternalState);
+    appController.removeListener(changedInternalState);
     request.dispose();
     super.dispose();
   }
@@ -2244,10 +2249,21 @@ class _SignInDialogState extends State<_SignInDialog> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isSubmitting = false;
+  bool _isBrowserSubmitting = false;
+  bool _isReopeningBrowser = false;
+  int _browserAttempt = 0;
   String? _submissionErrorMessage;
+
+  bool get _browserActive =>
+      _isBrowserSubmitting || widget.controller.browserSignInBusy;
+  bool get _browserCommitting =>
+      widget.controller.browserSignInStatus ==
+      BrowserSignInStatus.completingSignIn;
 
   @override
   void dispose() {
+    _browserAttempt++;
+    if (_isBrowserSubmitting) widget.controller.cancelBrowserSignIn();
     _emailController.clear();
     _passwordController.clear();
     _emailController.dispose();
@@ -2256,7 +2272,7 @@ class _SignInDialogState extends State<_SignInDialog> {
   }
 
   Future<void> _submit() async {
-    if (_isSubmitting) return;
+    if (_isSubmitting || _browserActive) return;
     setState(() {
       _isSubmitting = true;
       _submissionErrorMessage = null;
@@ -2276,164 +2292,388 @@ class _SignInDialogState extends State<_SignInDialog> {
     }
   }
 
+  Future<void> _signInWithBrowser() async {
+    if (_isSubmitting || _browserActive) return;
+    final attempt = ++_browserAttempt;
+    FocusManager.instance.primaryFocus?.unfocus();
+    setState(() {
+      _isBrowserSubmitting = true;
+      _submissionErrorMessage = null;
+    });
+    var success = false;
+    String? failure;
+    try {
+      success = await widget.controller.signInWithBrowser();
+      failure = widget.controller.browserSignInErrorMessage;
+    } catch (_) {
+      failure =
+          'La connexion par navigateur n’a pas pu être terminée. Réessayez.';
+    }
+    if (!mounted || attempt != _browserAttempt) return;
+    if (success) {
+      _isBrowserSubmitting = false;
+      Navigator.of(context).pop(true);
+    } else {
+      setState(() {
+        _isBrowserSubmitting = false;
+        _submissionErrorMessage = failure;
+      });
+    }
+  }
+
+  Future<void> _reopenBrowser() async {
+    if (!_browserActive || _browserCommitting || _isReopeningBrowser) return;
+    final attempt = _browserAttempt;
+    setState(() => _isReopeningBrowser = true);
+    try {
+      await widget.controller.reopenBrowserSignIn();
+    } catch (_) {
+      if (mounted && attempt == _browserAttempt) {
+        setState(() {
+          _submissionErrorMessage = 'Le navigateur n’a pas pu être ouvert.';
+        });
+      }
+    } finally {
+      if (mounted && attempt == _browserAttempt) {
+        setState(() => _isReopeningBrowser = false);
+      }
+    }
+  }
+
+  void _cancelBrowserSignIn() {
+    if (_browserCommitting) return;
+    _browserAttempt++;
+    widget.controller.cancelBrowserSignIn();
+    setState(() {
+      _isBrowserSubmitting = false;
+      _isReopeningBrowser = false;
+      _submissionErrorMessage = null;
+    });
+  }
+
   @override
-  Widget build(BuildContext context) => PopScope(
-    canPop: !widget.authenticationRequired,
-    child: AlertDialog(
-      scrollable: true,
-      title: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(9),
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primaryContainer,
-              borderRadius: BorderRadius.circular(8),
+  Widget build(BuildContext context) => ListenableBuilder(
+    listenable: widget.controller,
+    builder: (context, _) => _buildDialog(context),
+  );
+
+  Widget _buildDialog(BuildContext context) {
+    final busy = _isSubmitting || _browserActive;
+    final compact = MediaQuery.sizeOf(context).height < 700;
+    final sectionGap = compact ? 12.0 : 18.0;
+    return PopScope(
+      canPop: !widget.authenticationRequired && !busy,
+      child: AlertDialog(
+        scrollable: true,
+        titlePadding: compact ? const EdgeInsets.fromLTRB(24, 20, 24, 0) : null,
+        contentPadding: compact
+            ? const EdgeInsets.fromLTRB(24, 12, 24, 12)
+            : null,
+        actionsPadding: compact
+            ? const EdgeInsets.fromLTRB(24, 0, 24, 16)
+            : null,
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(9),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primaryContainer,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                Icons.login,
+                size: 22,
+                color: Theme.of(context).colorScheme.onPrimaryContainer,
+              ),
             ),
-            child: Icon(
-              Icons.login,
-              size: 22,
-              color: Theme.of(context).colorScheme.onPrimaryContainer,
+            const SizedBox(width: 14),
+            Expanded(
+              child: Text(
+                context.tr('Se connecter'),
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
             ),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Text(
-              context.tr('Se connecter'),
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-          ),
-        ],
-      ),
-      content: SizedBox(
-        width: 420,
-        child: SingleChildScrollView(
-          child: AutofillGroup(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: Text(
-                    context.tr(
-                      'Utilisez votre compte FuzeVPN. La création de compte se fait sur le Web.',
-                    ),
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                TextField(
-                  controller: _emailController,
-                  textDirection: TextDirection.ltr,
-                  keyboardType: TextInputType.emailAddress,
-                  autofillHints: const [AutofillHints.email],
-                  textInputAction: TextInputAction.next,
-                  autofocus: true,
-                  decoration: InputDecoration(
-                    labelText: context.tr('Adresse e-mail'),
-                    prefixIcon: const Icon(Icons.alternate_email),
-                  ),
-                ),
-                const SizedBox(height: 14),
-                TextField(
-                  controller: _passwordController,
-                  obscureText: true,
-                  enableSuggestions: false,
-                  autocorrect: false,
-                  autofillHints: const [AutofillHints.password],
-                  onSubmitted: (_) => _submit(),
-                  decoration: InputDecoration(
-                    labelText: context.tr('Mot de passe'),
-                    prefixIcon: const Icon(Icons.lock_outline),
-                  ),
-                ),
-                if (_submissionErrorMessage != null) ...[
-                  const SizedBox(height: 12),
+          ],
+        ),
+        content: SizedBox(
+          width: 420,
+          child: SingleChildScrollView(
+            child: AutofillGroup(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
                   Align(
                     alignment: AlignmentDirectional.centerStart,
                     child: Text(
-                      context.tr(_submissionErrorMessage!),
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.error,
+                      context.tr(
+                        'Utilisez votre compte FuzeVPN. La création de compte se fait sur le Web.',
+                      ),
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ),
-                ],
-                const SizedBox(height: 18),
-                const Divider(),
-                const SizedBox(height: 6),
-                Wrap(
-                  alignment: WrapAlignment.center,
-                  children: [
-                    TextButton(
-                      onPressed: _isSubmitting
-                          ? null
-                          : () => _openWebsite(
-                              context,
-                              BrandConfig.portalRegister,
-                            ),
-                      child: Text(context.tr('Créer un compte sur le Web')),
+                  SizedBox(height: compact ? 12 : 20),
+                  if (_browserActive)
+                    _browserWaitingCard(context)
+                  else ...[
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton.icon(
+                        key: const ValueKey('sign-in-browser'),
+                        onPressed: busy ? null : _signInWithBrowser,
+                        icon: const Icon(Icons.open_in_browser_outlined),
+                        label: Text(context.tr('Continuer dans le navigateur')),
+                      ),
                     ),
-                    TextButton(
-                      onPressed: _isSubmitting
-                          ? null
-                          : () =>
-                                _showUpdatesDialog(context, widget.controller),
-                      child: Text(context.tr('Mises à jour')),
+                    SizedBox(height: sectionGap),
+                    Row(
+                      children: [
+                        const Expanded(child: Divider()),
+                        const SizedBox(width: 12),
+                        Flexible(
+                          flex: 2,
+                          fit: FlexFit.tight,
+                          child: Text(
+                            context.tr('ou par e-mail'),
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
+                                ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        const Expanded(child: Divider()),
+                      ],
                     ),
-                    TextButton(
-                      onPressed: _isSubmitting
-                          ? null
-                          : () => _showDiagnosticsDialog(
-                              context,
-                              widget.controller,
-                            ),
-                      child: Text(context.tr('Diagnostic local')),
+                    SizedBox(height: sectionGap),
+                    TextField(
+                      controller: _emailController,
+                      enabled: !busy,
+                      textDirection: TextDirection.ltr,
+                      keyboardType: TextInputType.emailAddress,
+                      autofillHints: const [AutofillHints.email],
+                      textInputAction: TextInputAction.next,
+                      autofocus: true,
+                      decoration: InputDecoration(
+                        labelText: context.tr('Adresse e-mail'),
+                        prefixIcon: const Icon(Icons.alternate_email),
+                      ),
+                    ),
+                    SizedBox(height: compact ? 12 : 14),
+                    TextField(
+                      controller: _passwordController,
+                      enabled: !busy,
+                      obscureText: true,
+                      enableSuggestions: false,
+                      autocorrect: false,
+                      autofillHints: const [AutofillHints.password],
+                      onSubmitted: (_) => _submit(),
+                      decoration: InputDecoration(
+                        labelText: context.tr('Mot de passe'),
+                        prefixIcon: const Icon(Icons.lock_outline),
+                      ),
                     ),
                   ],
-                ),
-              ],
+                  if (!_browserActive && _submissionErrorMessage != null) ...[
+                    const SizedBox(height: 12),
+                    Align(
+                      alignment: AlignmentDirectional.centerStart,
+                      child: Text(
+                        context.tr(_submissionErrorMessage!),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.error,
+                        ),
+                      ),
+                    ),
+                  ],
+                  SizedBox(height: sectionGap),
+                  const Divider(),
+                  SizedBox(height: compact ? 2 : 6),
+                  Column(
+                    children: [
+                      TextButton(
+                        onPressed: busy
+                            ? null
+                            : () => _openWebsite(
+                                context,
+                                BrandConfig.portalRegister,
+                              ),
+                        child: Text(context.tr('Créer un compte sur le Web')),
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextButton(
+                              onPressed: busy
+                                  ? null
+                                  : () => _showUpdatesDialog(
+                                      context,
+                                      widget.controller,
+                                    ),
+                              child: Text(
+                                context.tr('Mises à jour'),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: TextButton(
+                              onPressed: busy
+                                  ? null
+                                  : () => _showDiagnosticsDialog(
+                                      context,
+                                      widget.controller,
+                                    ),
+                              child: Text(
+                                context.tr('Diagnostic local'),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: _isSubmitting
-              ? null
-              : () => requestAppExit(context, widget.controller),
-          child: Text(context.tr('Quitter FuzeVPN')),
-        ),
-        if (!widget.authenticationRequired)
+        actions: [
           TextButton(
-            onPressed: _isSubmitting ? null : () => Navigator.of(context).pop(),
-            child: Text(context.tr('Annuler')),
+            onPressed: busy
+                ? null
+                : () => requestAppExit(context, widget.controller),
+            child: Text(context.tr('Quitter FuzeVPN')),
           ),
-        FilledButton(
-          onPressed: _isSubmitting ? null : _submit,
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
+          if (!widget.authenticationRequired && !_browserActive)
+            TextButton(
+              onPressed: _isSubmitting
+                  ? null
+                  : () => Navigator.of(context).pop(),
+              child: Text(context.tr('Annuler')),
+            ),
+          if (!_browserActive)
+            FilledButton(
+              onPressed: _isSubmitting ? null : _submit,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (_isSubmitting) ...[
+                    const SizedBox(
+                      width: 14,
+                      height: 14,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                    const SizedBox(width: 10),
+                  ],
+                  Flexible(
+                    child: Text(
+                      context.tr(_isSubmitting ? 'Connexion…' : 'Se connecter'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _browserWaitingCard(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final status = widget.controller.browserSignInStatus;
+    final message =
+        widget.controller.browserSignInErrorMessage ?? _submissionErrorMessage;
+    final title = status == BrowserSignInStatus.openingBrowser
+        ? 'Ouverture du navigateur…'
+        : _browserCommitting
+        ? 'Finalisation de la connexion…'
+        : 'Connexion dans le navigateur';
+    return Container(
+      key: const ValueKey('sign-in-browser-waiting'),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: scheme.primaryContainer.withValues(alpha: 0.55),
+        border: Border.all(color: scheme.outlineVariant),
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (_isSubmitting) ...[
-                const SizedBox(
-                  width: 14,
-                  height: 14,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                ),
-                const SizedBox(width: 10),
-              ],
-              Flexible(
-                child: Text(
-                  context.tr(_isSubmitting ? 'Connexion…' : 'Se connecter'),
+              const SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Semantics(
+                  liveRegion: true,
+                  child: Text(
+                    context.tr(title),
+                    style: Theme.of(context).textTheme.titleSmall,
+                  ),
                 ),
               ),
             ],
           ),
-        ),
-      ],
-    ),
-  );
+          const SizedBox(height: 12),
+          Text(
+            context.tr(
+              _browserCommitting
+                  ? 'Votre compte est en cours de vérification.'
+                  : 'Terminez la connexion dans votre navigateur. FuzeVPN vous connectera automatiquement.',
+            ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant),
+          ),
+          if (message != null) ...[
+            const SizedBox(height: 12),
+            Semantics(
+              liveRegion: true,
+              child: Text(
+                context.tr(message),
+                style: TextStyle(color: scheme.error),
+              ),
+            ),
+          ],
+          if (!_browserCommitting) ...[
+            const SizedBox(height: 16),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                OutlinedButton.icon(
+                  key: const ValueKey('sign-in-browser-reopen'),
+                  onPressed:
+                      status == BrowserSignInStatus.openingBrowser ||
+                          _isReopeningBrowser
+                      ? null
+                      : _reopenBrowser,
+                  icon: const Icon(Icons.open_in_new, size: 18),
+                  label: Text(context.tr('Ouvrir à nouveau le navigateur')),
+                ),
+                TextButton(
+                  key: const ValueKey('sign-in-browser-cancel'),
+                  onPressed: _cancelBrowserSignIn,
+                  child: Text(context.tr('Annuler la connexion')),
+                ),
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
+  }
 }
 
 Future<void> _openWebsite(BuildContext context, Uri url) async {

@@ -362,6 +362,10 @@ class LocalDiagnosticTrace {
       for (final stage in _runtimeStages) '${stage}_failed',
     },
     'stage': {
+      'browser_auth_listener',
+      'browser_auth_open',
+      'browser_auth_callback',
+      'browser_auth_exchange',
       'location_migration',
       'resolution',
       'tcp_connect',
@@ -420,6 +424,8 @@ class LocalDiagnosticTrace {
     },
     'code': {
       ...diagnosticCodes,
+      ...browserAuthTraceCodes,
+      'browser_auth_token',
       'operation_cancelled',
       ..._localUpdateCodes,
       'manual_installation',
