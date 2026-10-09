@@ -597,5 +597,6 @@
   "La réponse de connexion du navigateur est invalide. Recommencez depuis FuzeVPN.": "Het aanmeldantwoord van de browser is ongeldig. Begin opnieuw vanuit FuzeVPN.",
   "Cette demande de connexion a expiré ou a déjà été utilisée. Recommencez depuis FuzeVPN.": "Dit aanmeldverzoek is verlopen of is al gebruikt. Begin opnieuw vanuit FuzeVPN.",
   "La connexion par navigateur est momentanément indisponible. Utilisez votre adresse e-mail et votre mot de passe, ou réessayez plus tard.": "Aanmelden via de browser is tijdelijk niet beschikbaar. Gebruik je e-mailadres en wachtwoord of probeer het later opnieuw.",
-  "Reconnectez-vous à votre compte dans le navigateur, puis réessayez depuis FuzeVPN.": "Meld je opnieuw aan bij je account in de browser en probeer het daarna opnieuw vanuit FuzeVPN."
+  "Reconnectez-vous à votre compte dans le navigateur, puis réessayez depuis FuzeVPN.": "Meld je opnieuw aan bij je account in de browser en probeer het daarna opnieuw vanuit FuzeVPN.",
+  "Mises à jour désactivées dans cette version de test.": "Updates zijn uitgeschakeld in deze testversie."
 }

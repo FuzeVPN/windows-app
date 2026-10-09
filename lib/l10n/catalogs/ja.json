@@ -597,5 +597,6 @@
   "La réponse de connexion du navigateur est invalide. Recommencez depuis FuzeVPN.": "ブラウザーからのログイン応答が無効です。FuzeVPNからやり直してください。",
   "Cette demande de connexion a expiré ou a déjà été utilisée. Recommencez depuis FuzeVPN.": "このログイン要求は有効期限が切れているか、すでに使用されています。FuzeVPNからやり直してください。",
   "La connexion par navigateur est momentanément indisponible. Utilisez votre adresse e-mail et votre mot de passe, ou réessayez plus tard.": "ブラウザーでのログインは一時的に利用できません。メールアドレスとパスワードを使用するか、後でもう一度お試しください。",
-  "Reconnectez-vous à votre compte dans le navigateur, puis réessayez depuis FuzeVPN.": "ブラウザーでアカウントに再度ログインし、FuzeVPNからもう一度お試しください。"
+  "Reconnectez-vous à votre compte dans le navigateur, puis réessayez depuis FuzeVPN.": "ブラウザーでアカウントに再度ログインし、FuzeVPNからもう一度お試しください。",
+  "Mises à jour désactivées dans cette version de test.": "このテスト版では更新が無効になっています。"
 }

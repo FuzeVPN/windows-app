@@ -597,5 +597,6 @@
   "La réponse de connexion du navigateur est invalide. Recommencez depuis FuzeVPN.": "浏览器登录响应无效。请从 FuzeVPN 重新开始。",
   "Cette demande de connexion a expiré ou a déjà été utilisée. Recommencez depuis FuzeVPN.": "此登录请求已过期或已被使用。请从 FuzeVPN 重新开始。",
   "La connexion par navigateur est momentanément indisponible. Utilisez votre adresse e-mail et votre mot de passe, ou réessayez plus tard.": "浏览器登录暂时不可用。请使用您的电子邮件地址和密码，或稍后重试。",
-  "Reconnectez-vous à votre compte dans le navigateur, puis réessayez depuis FuzeVPN.": "请在浏览器中重新登录您的账户，然后从 FuzeVPN 重试。"
+  "Reconnectez-vous à votre compte dans le navigateur, puis réessayez depuis FuzeVPN.": "请在浏览器中重新登录您的账户，然后从 FuzeVPN 重试。",
+  "Mises à jour désactivées dans cette version de test.": "此测试版本已禁用更新。"
 }

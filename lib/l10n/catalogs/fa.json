@@ -597,5 +597,6 @@
   "La réponse de connexion du navigateur est invalide. Recommencez depuis FuzeVPN.": "پاسخ ورود از مرورگر نامعتبر است. دوباره از FuzeVPN شروع کنید.",
   "Cette demande de connexion a expiré ou a déjà été utilisée. Recommencez depuis FuzeVPN.": "این درخواست ورود منقضی شده یا قبلاً استفاده شده است. دوباره از FuzeVPN شروع کنید.",
   "La connexion par navigateur est momentanément indisponible. Utilisez votre adresse e-mail et votre mot de passe, ou réessayez plus tard.": "ورود از طریق مرورگر موقتاً در دسترس نیست. از نشانی ایمیل و گذرواژه خود استفاده کنید یا بعداً دوباره تلاش کنید.",
-  "Reconnectez-vous à votre compte dans le navigateur, puis réessayez depuis FuzeVPN.": "دوباره در مرورگر وارد حساب خود شوید، سپس از FuzeVPN دوباره تلاش کنید."
+  "Reconnectez-vous à votre compte dans le navigateur, puis réessayez depuis FuzeVPN.": "دوباره در مرورگر وارد حساب خود شوید، سپس از FuzeVPN دوباره تلاش کنید.",
+  "Mises à jour désactivées dans cette version de test.": "به‌روزرسانی‌ها در این نسخه آزمایشی غیرفعال هستند."
 }

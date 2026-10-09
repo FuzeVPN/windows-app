@@ -597,5 +597,6 @@
   "La réponse de connexion du navigateur est invalide. Recommencez depuis FuzeVPN.": "The browser sign-in response is invalid. Start again from FuzeVPN.",
   "Cette demande de connexion a expiré ou a déjà été utilisée. Recommencez depuis FuzeVPN.": "This sign-in request has expired or has already been used. Start again from FuzeVPN.",
   "La connexion par navigateur est momentanément indisponible. Utilisez votre adresse e-mail et votre mot de passe, ou réessayez plus tard.": "Browser sign-in is temporarily unavailable. Use your email address and password, or try again later.",
-  "Reconnectez-vous à votre compte dans le navigateur, puis réessayez depuis FuzeVPN.": "Sign in to your account again in the browser, then try again from FuzeVPN."
+  "Reconnectez-vous à votre compte dans le navigateur, puis réessayez depuis FuzeVPN.": "Sign in to your account again in the browser, then try again from FuzeVPN.",
+  "Mises à jour désactivées dans cette version de test.": "Updates are disabled in this test version."
 }

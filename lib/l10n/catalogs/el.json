@@ -597,5 +597,6 @@
   "La réponse de connexion du navigateur est invalide. Recommencez depuis FuzeVPN.": "Η απάντηση σύνδεσης από το πρόγραμμα περιήγησης δεν είναι έγκυρη. Ξεκινήστε ξανά από το FuzeVPN.",
   "Cette demande de connexion a expiré ou a déjà été utilisée. Recommencez depuis FuzeVPN.": "Αυτό το αίτημα σύνδεσης έληξε ή έχει ήδη χρησιμοποιηθεί. Ξεκινήστε ξανά από το FuzeVPN.",
   "La connexion par navigateur est momentanément indisponible. Utilisez votre adresse e-mail et votre mot de passe, ou réessayez plus tard.": "Η σύνδεση μέσω προγράμματος περιήγησης δεν είναι προσωρινά διαθέσιμη. Χρησιμοποιήστε τη διεύθυνση email και τον κωδικό πρόσβασής σας ή δοκιμάστε ξανά αργότερα.",
-  "Reconnectez-vous à votre compte dans le navigateur, puis réessayez depuis FuzeVPN.": "Συνδεθείτε ξανά στον λογαριασμό σας στο πρόγραμμα περιήγησης και μετά δοκιμάστε ξανά από το FuzeVPN."
+  "Reconnectez-vous à votre compte dans le navigateur, puis réessayez depuis FuzeVPN.": "Συνδεθείτε ξανά στον λογαριασμό σας στο πρόγραμμα περιήγησης και μετά δοκιμάστε ξανά από το FuzeVPN.",
+  "Mises à jour désactivées dans cette version de test.": "Οι ενημερώσεις είναι απενεργοποιημένες σε αυτή τη δοκιμαστική έκδοση."
 }

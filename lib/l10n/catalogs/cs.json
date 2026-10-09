@@ -597,5 +597,6 @@
   "La réponse de connexion du navigateur est invalide. Recommencez depuis FuzeVPN.": "Odpověď prohlížeče na přihlášení je neplatná. Začněte znovu z FuzeVPN.",
   "Cette demande de connexion a expiré ou a déjà été utilisée. Recommencez depuis FuzeVPN.": "Platnost této žádosti o přihlášení vypršela nebo již byla použita. Začněte znovu z FuzeVPN.",
   "La connexion par navigateur est momentanément indisponible. Utilisez votre adresse e-mail et votre mot de passe, ou réessayez plus tard.": "Přihlášení přes prohlížeč je dočasně nedostupné. Použijte svou e-mailovou adresu a heslo nebo to zkuste později.",
-  "Reconnectez-vous à votre compte dans le navigateur, puis réessayez depuis FuzeVPN.": "Znovu se přihlaste ke svému účtu v prohlížeči a poté to zkuste znovu z FuzeVPN."
+  "Reconnectez-vous à votre compte dans le navigateur, puis réessayez depuis FuzeVPN.": "Znovu se přihlaste ke svému účtu v prohlížeči a poté to zkuste znovu z FuzeVPN.",
+  "Mises à jour désactivées dans cette version de test.": "Aktualizace jsou v této testovací verzi vypnuté."
 }

@@ -597,5 +597,6 @@
   "La réponse de connexion du navigateur est invalide. Recommencez depuis FuzeVPN.": "Hindi wasto ang tugon sa pag-sign in mula sa browser. Magsimulang muli mula sa FuzeVPN.",
   "Cette demande de connexion a expiré ou a déjà été utilisée. Recommencez depuis FuzeVPN.": "Nag-expire na o nagamit na ang kahilingan sa pag-sign in na ito. Magsimulang muli mula sa FuzeVPN.",
   "La connexion par navigateur est momentanément indisponible. Utilisez votre adresse e-mail et votre mot de passe, ou réessayez plus tard.": "Pansamantalang hindi available ang pag-sign in sa browser. Gamitin ang iyong email address at password, o subukang muli sa ibang pagkakataon.",
-  "Reconnectez-vous à votre compte dans le navigateur, puis réessayez depuis FuzeVPN.": "Mag-sign in muli sa iyong account sa browser, pagkatapos ay subukang muli mula sa FuzeVPN."
+  "Reconnectez-vous à votre compte dans le navigateur, puis réessayez depuis FuzeVPN.": "Mag-sign in muli sa iyong account sa browser, pagkatapos ay subukang muli mula sa FuzeVPN.",
+  "Mises à jour désactivées dans cette version de test.": "Hindi pinagana ang mga update sa bersyong ito para sa pagsubok."
 }

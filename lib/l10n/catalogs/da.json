@@ -597,5 +597,6 @@
   "La réponse de connexion du navigateur est invalide. Recommencez depuis FuzeVPN.": "Loginsvaret fra browseren er ugyldigt. Start forfra fra FuzeVPN.",
   "Cette demande de connexion a expiré ou a déjà été utilisée. Recommencez depuis FuzeVPN.": "Denne loginanmodning er udløbet eller er allerede blevet brugt. Start forfra fra FuzeVPN.",
   "La connexion par navigateur est momentanément indisponible. Utilisez votre adresse e-mail et votre mot de passe, ou réessayez plus tard.": "Login via browseren er midlertidigt utilgængeligt. Brug din e-mailadresse og adgangskode, eller prøv igen senere.",
-  "Reconnectez-vous à votre compte dans le navigateur, puis réessayez depuis FuzeVPN.": "Log ind på din konto igen i browseren, og prøv derefter igen fra FuzeVPN."
+  "Reconnectez-vous à votre compte dans le navigateur, puis réessayez depuis FuzeVPN.": "Log ind på din konto igen i browseren, og prøv derefter igen fra FuzeVPN.",
+  "Mises à jour désactivées dans cette version de test.": "Opdateringer er deaktiveret i denne testversion."
 }

@@ -23,6 +23,7 @@ enum WindowsUpdateStatus {
   launched,
   error,
   unsupported,
+  disabledForTesting,
 }
 
 enum _UpdateOperation { check, prepare, install, discard }

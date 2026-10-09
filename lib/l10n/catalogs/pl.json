@@ -597,5 +597,6 @@
   "La réponse de connexion du navigateur est invalide. Recommencez depuis FuzeVPN.": "Odpowiedź logowania z przeglądarki jest nieprawidłowa. Zacznij ponownie z FuzeVPN.",
   "Cette demande de connexion a expiré ou a déjà été utilisée. Recommencez depuis FuzeVPN.": "To żądanie logowania wygasło lub zostało już użyte. Zacznij ponownie z FuzeVPN.",
   "La connexion par navigateur est momentanément indisponible. Utilisez votre adresse e-mail et votre mot de passe, ou réessayez plus tard.": "Logowanie przez przeglądarkę jest chwilowo niedostępne. Użyj swojego adresu e-mail i hasła lub spróbuj ponownie później.",
-  "Reconnectez-vous à votre compte dans le navigateur, puis réessayez depuis FuzeVPN.": "Zaloguj się ponownie na swoje konto w przeglądarce, a następnie spróbuj ponownie z FuzeVPN."
+  "Reconnectez-vous à votre compte dans le navigateur, puis réessayez depuis FuzeVPN.": "Zaloguj się ponownie na swoje konto w przeglądarce, a następnie spróbuj ponownie z FuzeVPN.",
+  "Mises à jour désactivées dans cette version de test.": "Aktualizacje są wyłączone w tej wersji testowej."
 }

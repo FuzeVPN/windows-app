@@ -597,5 +597,6 @@
   "La réponse de connexion du navigateur est invalide. Recommencez depuis FuzeVPN.": "Răspunsul de conectare din browser nu este valid. Reîncepe din FuzeVPN.",
   "Cette demande de connexion a expiré ou a déjà été utilisée. Recommencez depuis FuzeVPN.": "Această solicitare de conectare a expirat sau a fost deja folosită. Reîncepe din FuzeVPN.",
   "La connexion par navigateur est momentanément indisponible. Utilisez votre adresse e-mail et votre mot de passe, ou réessayez plus tard.": "Conectarea prin browser este temporar indisponibilă. Folosește adresa de e-mail și parola sau încearcă din nou mai târziu.",
-  "Reconnectez-vous à votre compte dans le navigateur, puis réessayez depuis FuzeVPN.": "Conectează-te din nou la contul tău în browser, apoi încearcă din nou din FuzeVPN."
+  "Reconnectez-vous à votre compte dans le navigateur, puis réessayez depuis FuzeVPN.": "Conectează-te din nou la contul tău în browser, apoi încearcă din nou din FuzeVPN.",
+  "Mises à jour désactivées dans cette version de test.": "Actualizările sunt dezactivate în această versiune de test."
 }

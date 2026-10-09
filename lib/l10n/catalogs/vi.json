@@ -597,5 +597,6 @@
   "La réponse de connexion du navigateur est invalide. Recommencez depuis FuzeVPN.": "Phản hồi đăng nhập từ trình duyệt không hợp lệ. Hãy bắt đầu lại từ FuzeVPN.",
   "Cette demande de connexion a expiré ou a déjà été utilisée. Recommencez depuis FuzeVPN.": "Yêu cầu đăng nhập này đã hết hạn hoặc đã được sử dụng. Hãy bắt đầu lại từ FuzeVPN.",
   "La connexion par navigateur est momentanément indisponible. Utilisez votre adresse e-mail et votre mot de passe, ou réessayez plus tard.": "Đăng nhập qua trình duyệt tạm thời không khả dụng. Hãy sử dụng địa chỉ email và mật khẩu của bạn hoặc thử lại sau.",
-  "Reconnectez-vous à votre compte dans le navigateur, puis réessayez depuis FuzeVPN.": "Đăng nhập lại vào tài khoản của bạn trong trình duyệt, rồi thử lại từ FuzeVPN."
+  "Reconnectez-vous à votre compte dans le navigateur, puis réessayez depuis FuzeVPN.": "Đăng nhập lại vào tài khoản của bạn trong trình duyệt, rồi thử lại từ FuzeVPN.",
+  "Mises à jour désactivées dans cette version de test.": "Các bản cập nhật bị tắt trong phiên bản thử nghiệm này."
 }
