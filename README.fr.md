@@ -60,6 +60,7 @@ architectures, la réutilisation hors ligne, les tests et les règles des paquet
 | [Architecture](docs/architecture.md) | Flutter, processus natifs, stockage et protections réseau |
 | [Développement](docs/development.md) | Prérequis, préparation, compilations et tests |
 | [Distribution](docs/distribution.md) | Paquets installés et portables, signatures et mises à jour |
+| [Versions signées](docs/releasing.md) | Procédure complète de compilation, signature et vérification x64/ARM64 |
 | [Diagnostics](docs/diagnostics.md) | Journaux locaux, consentement et signalements sûrs |
 | [Localisation](docs/localization.md) | Catalogues, génération et contrôles des traductions |
 | [Licences](LICENSING.md) | Périmètre MPL-2.0, licences tierces et marques |

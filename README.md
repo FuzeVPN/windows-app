@@ -55,6 +55,7 @@ test commands, and [distribution](docs/distribution.md) for package policies.
 | [Architecture](docs/architecture.md) | Flutter, native processes, storage and network protection |
 | [Development](docs/development.md) | Prerequisites, bootstrap, builds and tests |
 | [Distribution](docs/distribution.md) | Installed and portable packages, signatures and updates |
+| [Signed releases](docs/releasing.md) | Complete x64/ARM64 production build, signing and package verification |
 | [Diagnostics](docs/diagnostics.md) | Local traces, consent and safe bug reports |
 | [Localization](docs/localization.md) | Catalogs, generation and translation checks |
 | [Licensing](LICENSING.md) | MPL-2.0 scope, third-party licences and trademarks |
