@@ -1,2 +1,5 @@
-# Generated catalogs must stay byte-identical on Windows checkouts.
+# Generated files must stay byte-identical on Windows checkouts.
 lib/l10n/generated_catalogs.dart text eol=lf
+installer/l10n/generated/** text eol=lf
+windows/flutter/generated_plugin_registrant.* text eol=lf
+windows/flutter/generated_plugins.cmake text eol=lf

@@ -1,6 +1,7 @@
 # Distribution
 
 FuzeVPN supports installed and portable Windows distributions for x64 and ARM64.
+See [building signed releases](releasing.md) for the complete production procedure.
 Version 1.0.8 provides signed packages built from its matching public source
 tag: one EXE, one MSI and one portable ZIP per architecture. The initial 1.0.6
 source snapshot and its original signed packages remain available separately.

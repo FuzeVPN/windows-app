@@ -68,6 +68,12 @@ jobs:
           dart run tool/l10n/generate_catalogs.dart --check
           if ($LASTEXITCODE -ne 0) { throw 'Translation check failed.' }
 
+      - name: Check generated installer translations
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          .\installer\l10n\generate.ps1 -Check
+
       - name: Run Flutter tests with isolated storage
         shell: pwsh
         run: |
