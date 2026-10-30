@@ -4,7 +4,6 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:intl/intl.dart' show DateFormat;
 import 'package:url_launcher/url_launcher.dart';
 
 import 'app_controller.dart';
@@ -16,6 +15,7 @@ import 'core/models.dart';
 import 'core/windows_update_controller.dart';
 import 'fuze_emblem.dart';
 import 'l10n/app_localizations.dart';
+import 'l10n/date_time_format.dart';
 import 'windows_update_panel.dart';
 
 part 'settings_page.dart';
@@ -146,13 +146,7 @@ class _AppShellState extends State<AppShell> {
                 closeOnSelect: true,
               ),
             ),
-            body: Column(
-              children: [
-                _updateNotice(),
-                _savedSessionNotice(),
-                Expanded(child: _Content(controller: controller)),
-              ],
-            ),
+            body: _body(),
           );
         }
         return Scaffold(
@@ -160,15 +154,7 @@ class _AppShellState extends State<AppShell> {
             child: Row(
               children: [
                 _Sidebar(controller: controller, compact: false),
-                Expanded(
-                  child: Column(
-                    children: [
-                      _updateNotice(),
-                      _savedSessionNotice(),
-                      Expanded(child: _Content(controller: controller)),
-                    ],
-                  ),
-                ),
+                Expanded(child: _body()),
               ],
             ),
           ),
@@ -211,6 +197,25 @@ class _AppShellState extends State<AppShell> {
       child: shell,
     );
   }
+
+  Widget _body() => LayoutBuilder(
+    builder: (context, constraints) => SingleChildScrollView(
+      key: const ValueKey('shell-content-scroll'),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _updateNotice(),
+          _savedSessionNotice(),
+          // Preserve each page's viewport and fixed controls. Large notices
+          // scroll away instead of shrinking that viewport or overflowing.
+          SizedBox(
+            height: constraints.maxHeight,
+            child: _Content(controller: controller),
+          ),
+        ],
+      ),
+    ),
+  );
 
   Widget _savedSessionNotice() {
     if (!controller.savedSessionVerificationPending) {
@@ -1015,6 +1020,7 @@ Future<void> _requestLocationChange(
       final confirmed = await showDialog<bool>(
         context: context,
         builder: (dialogContext) => AlertDialog(
+          scrollable: true,
           title: Text(context.tr('Changer de serveur ?')),
           content: Text(
             context.tr(
@@ -2046,6 +2052,7 @@ Future<void> _confirmIdentityReset(
   final confirmed = await showDialog<bool>(
     context: context,
     builder: (dialogContext) => AlertDialog(
+      scrollable: true,
       title: Text(context.tr('Créer une nouvelle identité VPN ?')),
       content: Text(
         context.tr(
@@ -2076,6 +2083,7 @@ Future<void> _showNodeUnavailableDialog(
   final action = await showDialog<String>(
     context: context,
     builder: (dialogContext) => AlertDialog(
+      scrollable: true,
       title: Text(context.tr('Emplacement indisponible')),
       content: Text(
         context.tr('Réessayez maintenant ou choisissez un autre emplacement.'),
@@ -2248,6 +2256,7 @@ class _SignInDialog extends StatefulWidget {
 class _SignInDialogState extends State<_SignInDialog> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _submissionErrorKey = GlobalKey();
   bool _isSubmitting = false;
   bool _isBrowserSubmitting = false;
   bool _isReopeningBrowser = false;
@@ -2289,7 +2298,18 @@ class _SignInDialogState extends State<_SignInDialog> {
         _isSubmitting = false;
         _submissionErrorMessage = widget.controller.errorMessage;
       });
+      _revealSubmissionError();
     }
+  }
+
+  void _revealSubmissionError() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final errorContext = _submissionErrorKey.currentContext;
+      if (errorContext != null) {
+        unawaited(Scrollable.ensureVisible(errorContext, alignment: 0.5));
+      }
+    });
   }
 
   Future<void> _signInWithBrowser() async {
@@ -2318,6 +2338,7 @@ class _SignInDialogState extends State<_SignInDialog> {
         _isBrowserSubmitting = false;
         _submissionErrorMessage = failure;
       });
+      _revealSubmissionError();
     }
   }
 
@@ -2481,11 +2502,16 @@ class _SignInDialogState extends State<_SignInDialog> {
                   if (!_browserActive && _submissionErrorMessage != null) ...[
                     const SizedBox(height: 12),
                     Align(
+                      key: _submissionErrorKey,
                       alignment: AlignmentDirectional.centerStart,
-                      child: Text(
-                        context.tr(_submissionErrorMessage!),
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.error,
+                      child: Semantics(
+                        key: const ValueKey('sign-in-submission-error'),
+                        liveRegion: true,
+                        child: Text(
+                          context.tr(_submissionErrorMessage!),
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.error,
+                          ),
                         ),
                       ),
                     ),

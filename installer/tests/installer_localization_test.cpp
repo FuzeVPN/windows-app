@@ -5,9 +5,10 @@
 
 int main() {
   namespace loc = fuzevpn::installer::l10n;
-  if (std::size(loc::catalogs) != 30) return 1;
+  if (std::size(loc::catalogs) != 70) return 1;
   for (const auto& catalog : loc::catalogs) {
-    if (loc::Find(catalog.code) != &catalog || &loc::Resolve(catalog.language_id) != &catalog) return 2;
+    if (loc::Find(catalog.code) != &catalog ||
+        (catalog.language_id && &loc::Resolve(catalog.language_id) != &catalog)) return 2;
     for (const auto* text : catalog.text) if (!text || !*text) return 3;
   }
   for (const auto id : {1028u, 3076u, 5124u, 31748u})
@@ -16,6 +17,13 @@ int main() {
     if (std::wstring_view(loc::Resolve(id).code) != L"zh_Hans") return 5;
   if (std::wstring_view(loc::Resolve(0xffff).code) != L"en") return 6;
   if (std::wstring_view(loc::Resolve(2057).code) != L"en") return 7; // en-GB fallback.
+  if (!loc::Find(L"mg") || loc::Find(L"mg")->language_id != 0 ||
+      std::wstring_view(loc::Resolve(0).code) != L"en" ||
+      std::wstring_view(loc::Resolve(4096).code) != L"en") return 12;
+  for (const auto unsupported : {9242u, 2092u, 2115u, 2118u})
+    if (std::wstring_view(loc::Resolve(unsupported).code) != L"en") return 13;
+  if (std::wstring_view(loc::Resolve(4122).code) != L"hr" ||
+      std::wstring_view(loc::Resolve(10266).code) != L"sr") return 14;
   const std::wstring legacy = L"token\nC:\\Program Files\\FuzeVPN\n1.2.3.0\n1";
   const auto previous = fuzevpn::installer::SplitTransactionData(legacy);
   if (!previous || (*previous)[4] != L"en") return 8;

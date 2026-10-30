@@ -598,5 +598,14 @@
   "Cette demande de connexion a expiré ou a déjà été utilisée. Recommencez depuis FuzeVPN.": "此登录请求已过期或已被使用。请从 FuzeVPN 重新开始。",
   "La connexion par navigateur est momentanément indisponible. Utilisez votre adresse e-mail et votre mot de passe, ou réessayez plus tard.": "浏览器登录暂时不可用。请使用您的电子邮件地址和密码，或稍后重试。",
   "Reconnectez-vous à votre compte dans le navigateur, puis réessayez depuis FuzeVPN.": "请在浏览器中重新登录您的账户，然后从 FuzeVPN 重试。",
-  "Mises à jour désactivées dans cette version de test.": "此测试版本已禁用更新。"
+  "Mises à jour désactivées dans cette version de test.": "此测试版本已禁用更新。",
+  "Autorisation reçue": "已收到授权",
+  "Autorisation refusée": "授权被拒绝",
+  "Demande invalide": "无效请求",
+  "Revenez dans FuzeVPN pour terminer la connexion.": "请返回FuzeVPN以完成登录。",
+  "Délai avant réessai : {seconds} s.": "重试等待时间：{seconds}秒。",
+  "Serveurs : {count}": "服务器：{count}",
+  "Villes : {count}": "城市：{count}",
+  "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "阻止VPN隧道外的UDP。要同时保护通过TCP/TLS传输的WebRTC，请启用终止开关。",
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "阻止隧道外端口53和853上的DNS。要同时保护通过HTTPS传输的DNS，请启用终止开关。"
 }

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="my-MM" Language="1109" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+  <String Id="Caption" Value="[WixBundleName] ကို ထည့်သွင်းနေသည်" />
+  <String Id="CheckingForUpdatesLabel" Value="အပ်ဒိတ်များကို စစ်ဆေးနေသည်" />
+  <String Id="ConfirmCancelMessage" Value="ပယ်ဖျက်လိုပါသလား။" />
+  <String Id="DesktopShortcut" Value="ဒက်စ်တော့ ဖြတ်လမ်း ဖန်တီးရန်" />
+  <String Id="ExecuteUpgradeRelatedBundleMessage" Value="ယခင်ဗားရှင်း" />
+  <String Id="FailureCacheHeader" Value="ပြင်ဆင်မှု မအောင်မြင်ပါ" />
+  <String Id="FailureCloseButton" Value="ပိတ်ရန်" />
+  <String Id="FailureHeader" Value="မအောင်မြင်ပါ" />
+  <String Id="FailureHyperlinkLogText" Value="လုပ်ဆောင်ချက် ပြတ်တောက်သွားသည်။ &lt;a href=&quot;#&quot;&gt;မှတ်တမ်း&lt;/a&gt;ကို ကြည့်ပြီး ပြဿနာကို ဖြေရှင်းကာ ထပ်ကြိုးစားပါ။" />
+  <String Id="FailureInstallHeader" Value="ထည့်သွင်းမှု ပြတ်တောက်သွားသည်" />
+  <String Id="FailureLayoutHeader" Value="ကူးယူမှု မအောင်မြင်ပါ" />
+  <String Id="FailureModifyHeader" Value="ပြောင်းလဲမှု ပြတ်တောက်သွားသည်" />
+  <String Id="FailureRepairHeader" Value="ပြုပြင်မှု ပြတ်တောက်သွားသည်" />
+  <String Id="FailureRestartButton" Value="ပြန်စရန်" />
+  <String Id="FailureRestartText" Value="ပြန်လည်ရယူမှုကို အပြီးသတ်ရန် ပြန်စပါ။" />
+  <String Id="FailureUninstallHeader" Value="ဖြုတ်ခြင်း ပြတ်တောက်သွားသည်" />
+  <String Id="FailureUnsafeUninstallHeader" Value="ဖြုတ်ခြင်း ပြတ်တောက်သွားသည်" />
+  <String Id="FilesInUseCloseRadioButton" Value="အက်ပ်များကို ပိတ်ရန်" />
+  <String Id="FilesInUseDontCloseRadioButton" Value="အက်ပ်များကို ဖွင့်ထားရန်" />
+  <String Id="FilesInUseExitButton" Value="ပယ်ဖျက်ရန်" />
+  <String Id="FilesInUseIgnoreButton" Value="လျစ်လျူရှုရန်" />
+  <String Id="FilesInUseLabel" Value="အောက်ပါအက်ပ်များကို ပိတ်ပြီး ထပ်ကြိုးစားပါ။" />
+  <String Id="FilesInUseNetfxCloseRadioButton" Value="အက်ပ်များကို ပိတ်ရန်" />
+  <String Id="FilesInUseRetryButton" Value="ထပ်ကြိုးစားရန်" />
+  <String Id="FilesInUseTitle" Value="အသုံးပြုနေသော ဖိုင်များ" />
+  <String Id="HelpCloseButton" Value="ပိတ်ရန်" />
+  <String Id="HelpHeader" Value="အကူအညီ" />
+  <String Id="HelpText" Value="/install, /repair, /uninstall: ထည့်သွင်းရန်၊ ပြုပြင်ရန်၊ ဖြုတ်ရန်။ /quiet: အသံတိတ်မုဒ်။ /norestart: ပြန်မစရန်။ DesktopShortcut=1: ဒက်စ်တော့ ဖြတ်လမ်း။ InstallFolder=&quot;D:\Applications\FuzeVPN&quot;: မူလဖိုင်တွဲ။ အပ်ဒိတ်လုပ်သည့်အခါ ထည့်သွင်းထားသော ဖိုင်တွဲကို ဆက်လက်အသုံးပြုမည်။" />
+  <String Id="InstallAcceptCheckbox" Value="လိုင်စင်စည်းကမ်းချက်များကို &amp;သဘောတူပါသည်" />
+  <String Id="InstallCancelButton" Value="ပယ်ဖျက်ရန်" />
+  <String Id="InstallHeader" Value="ကြိုဆိုပါသည်" />
+  <String Id="InstallInstallButton" Value="ထည့်သွင်းရန်" />
+  <String Id="InstallLicenseLinkText" Value="[WixBundleName] &lt;a href=&quot;#&quot;&gt;လိုင်စင်စည်းကမ်းချက်များ&lt;/a&gt;။" />
+  <String Id="InstallMessage" Value="ဤကွန်ပျူတာတွင် FuzeVPN ကို ထည့်သွင်းပါ။" />
+  <String Id="InstallMessageOptions" Value="ဤကွန်ပျူတာတွင် FuzeVPN ကို ထည့်သွင်းပါ။" />
+  <String Id="InstallOptionsButton" Value="ရွေးချယ်စရာများ" />
+  <String Id="InstallVersion" Value="ဗားရှင်း [WixBundleVersion]" />
+  <String Id="InstallVersionNotice" Value="ဗားရှင်း [WixBundleVersion] [BuildNotice]" />
+  <String Id="ModifyCancelButton" Value="ပယ်ဖျက်ရန်" />
+  <String Id="ModifyHeader" Value="ထိန်းသိမ်းပြုပြင်ခြင်း" />
+  <String Id="ModifyRepairButton" Value="ပြုပြင်ရန်" />
+  <String Id="ModifyUninstallButton" Value="ဖြုတ်ရန်" />
+  <String Id="OptionsBrowseButton" Value="ရှာဖွေရန်" />
+  <String Id="OptionsCancelButton" Value="ပယ်ဖျက်ရန်" />
+  <String Id="OptionsHeader" Value="ရွေးချယ်စရာများ" />
+  <String Id="OptionsLocationLabel" Value="ထည့်သွင်းမည့်ဖိုင်တွဲ (Windows က ကာကွယ်ထားသည်)" />
+  <String Id="OptionsOkButton" Value="အတည်ပြုရန်" />
+  <String Id="OptionsPerMachineScopeText" Value="အသုံးပြုသူအားလုံး" />
+  <String Id="OptionsPerUserScopeText" Value="လက်ရှိအသုံးပြုသူ" />
+  <String Id="OverallProgressPackageText" Value="ပြင်ဆင်နေသည်…" />
+  <String Id="PreserveInstallFolder" Value="အပ်ဒိတ်လုပ်သည့်အခါ ရှိပြီးသား ဖိုင်တွဲကို ဆက်လက်အသုံးပြုမည်။ အင်တာဖေ့စ်ကို လွတ်လပ်စွာ ရွှေ့ရန် portable archive ကို အသုံးပြုပါ။" />
+  <String Id="ProgressCancelButton" Value="ပယ်ဖျက်ရန်" />
+  <String Id="ProgressHeader" Value="ထည့်သွင်းနေသည်" />
+  <String Id="ProgressLabel" Value="တိုးတက်မှု" />
+  <String Id="SuccessCacheHeader" Value="ဖိုင်များ အဆင်သင့်ဖြစ်ပါပြီ" />
+  <String Id="SuccessCloseButton" Value="ပိတ်ရန်" />
+  <String Id="SuccessHeader" Value="လုပ်ဆောင်ချက် ပြီးဆုံးပါပြီ" />
+  <String Id="SuccessInstallHeader" Value="ထည့်သွင်းမှု ပြီးဆုံးပါပြီ" />
+  <String Id="SuccessLaunchButton" Value="ဖွင့်ရန်" />
+  <String Id="SuccessLayoutHeader" Value="ဖိုင်များ အဆင်သင့်ဖြစ်ပါပြီ" />
+  <String Id="SuccessModifyHeader" Value="ပြောင်းလဲမှု ပြီးဆုံးပါပြီ" />
+  <String Id="SuccessOpenApp" Value="Start မီနူးမှ FuzeVPN ကို ဖွင့်ပါ။ သင်၏ကိုယ်ပိုင် ဆက်တင်များကို ထိန်းသိမ်းထားပါသည်။" />
+  <String Id="SuccessRepairHeader" Value="ပြုပြင်မှု ပြီးဆုံးပါပြီ" />
+  <String Id="SuccessRestartButton" Value="ပြန်စရန်" />
+  <String Id="SuccessRestartText" Value="ပြီးဆုံးရန် ကွန်ပျူတာကို ပြန်စပါ။" />
+  <String Id="SuccessUninstallHeader" Value="ဖြုတ်ခြင်း ပြီးဆုံးပါပြီ" />
+  <String Id="SuccessUninstallRestartText" Value="ဖြုတ်ခြင်းကို အပြီးသတ်ရန် ပြန်စပါ။" />
+  <String Id="SuccessUnsafeUninstallHeader" Value="ဖြုတ်ခြင်း ပြီးဆုံးပါပြီ" />
+  <String Id="Title" Value="[WixBundleName]" />
+  <String Id="UpdateButton" Value="အပ်ဒိတ်လုပ်ရန်" />
+</WixLocalization>

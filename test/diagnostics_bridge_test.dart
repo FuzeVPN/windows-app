@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: MPL-2.0
+import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fuzevpn_windows/core/diagnostics_bridge.dart';
+import 'package:fuzevpn_windows/core/diagnostics_support.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -9,6 +11,74 @@ void main() {
   final messenger =
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
   tearDown(() => messenger.setMockMethodCallHandler(channel, null));
+
+  test(
+    'one rejected native section does not erase independently valid evidence',
+    () {
+      final value = DiagnosticSupport.nativeObservation({
+        'schema_version': 1,
+        'environment': {
+          'installation_mode': 'installed',
+          'private_path': 'secret',
+        },
+        'service': {
+          'name': 'FuzeVPNService',
+          'state': 'stopped',
+          'query_stage': 'completed',
+          'win32_exit_code': 50,
+        },
+        'runtime': {'presence': 'present'},
+        'native_log': {
+          'status': 'absent',
+          'truncated': false,
+          'discarded_lines': 0,
+          'events': [],
+        },
+      });
+      expect(value['environment'], isNull);
+      expect((value['service'] as Map)['win32_exit_code'], 50);
+      expect((value['collection'] as Map)['status'], 'rejected');
+      expect((value['collection'] as Map)['discarded_lines'], 1);
+    },
+  );
+
+  test(
+    'native reader exception retains other sections and collection error',
+    () {
+      final value = DiagnosticSupport.nativeObservation({
+        'schema_version': 1,
+        'collection_error': 574,
+        'environment': {'installation_mode': 'installed'},
+        'runtime': {'presence': 'present'},
+        'native_log': {
+          'status': 'absent',
+          'truncated': false,
+          'discarded_lines': 0,
+          'events': [],
+        },
+      });
+      expect(value['service'], isNull);
+      expect((value['environment'] as Map)['installation_mode'], 'installed');
+      expect((value['collection'] as Map)['status'], 'read_failed');
+      expect((value['collection'] as Map)['win32_error'], 574);
+    },
+  );
+
+  testWidgets('local collection pending deadline is a timeout', (tester) async {
+    messenger.setMockMethodCallHandler(
+      channel,
+      (_) async => {'schema_version': 1, 'collection_pending': true},
+    );
+    final pending = expectLater(
+      DiagnosticsBridge().collectLocalDiagnostics(),
+      throwsA(isA<TimeoutException>()),
+    );
+    await tester.pump();
+    for (var poll = 0; poll < 40; poll++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    await pending;
+  });
 
   test('collects only a passive no-argument snapshot', () async {
     messenger.setMockMethodCallHandler(channel, (call) async {

@@ -25,6 +25,20 @@ struct NetworkProtectionStatus {
 bool SetAuthenticatedBrokerUiPath(std::wstring path);
 void ClearAuthenticatedBrokerUiPath();
 
+// The broker supplies the already-authorized Windows SID, never frontend data.
+// Restore runs under the machine runtime lock before any status or request is
+// published and returns the persisted owner so IPC ownership survives a crash.
+bool SetNetworkProtectionUser(const std::string& user);
+bool RestoreNetworkProtection(std::string* recovered_user);
+bool PrepareNetworkProtectionForInternalStop();
+class ScopedNetworkProtectionRetention final {
+ public:
+  ScopedNetworkProtectionRetention();
+  ~ScopedNetworkProtectionRetention();
+  ScopedNetworkProtectionRetention(const ScopedNetworkProtectionRetention&) = delete;
+  ScopedNetworkProtectionRetention& operator=(const ScopedNetworkProtectionRetention&) = delete;
+};
+
 // Installs the fail-closed policy before a tunnel engine starts. When the kill
 // switch is enabled, only the privileged engine and the authenticated UI
 // executable may use the physical network, besides narrowly scoped DHCP
@@ -41,9 +55,11 @@ bool PromoteNetworkProtection(NetworkProtectionOwner owner,
                               std::uint64_t tunnel_interface_luid,
                               const NetworkProtectionOptions& options);
 
-// Dynamic WFP rules remain active if the UI exits and are removed only by an
-// explicit disconnect or when Windows stops the privileged runtime.
-void DisableNetworkProtection(NetworkProtectionOwner owner);
+// Persistent WFP objects survive UI/runtime exit; startup restores their intent
+// and verifies enforcement. Boot/BFE continuity requires supported-Windows VM
+// validation. Only explicit disconnect or authorized maintenance removes intent.
+// Failure retains the previous policy and must not be reported as success.
+bool DisableNetworkProtection(NetworkProtectionOwner owner);
 bool IsNetworkProtectionActive(NetworkProtectionOwner owner);
 bool IsTunnelNetworkProtectionActive(NetworkProtectionOwner owner);
 NetworkProtectionStatus GetNetworkProtectionStatus(NetworkProtectionOwner owner);

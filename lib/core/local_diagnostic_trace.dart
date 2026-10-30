@@ -6,6 +6,8 @@ import 'dart:math' as math;
 import 'diagnostic_log.dart';
 import 'diagnostics_models.dart';
 import 'windows_update_models.dart';
+import 'windows_update_trace_codes.dart';
+import 'runtime_storage_diagnostics.dart';
 
 /// Reads the two fixed application trace files for a local diagnostic export.
 /// File contents are untrusted: only the application's closed trace vocabulary
@@ -362,6 +364,7 @@ class LocalDiagnosticTrace {
       for (final stage in _runtimeStages) '${stage}_failed',
     },
     'stage': {
+      ...runtimeStorageStages,
       'browser_auth_listener',
       'browser_auth_open',
       'browser_auth_callback',
@@ -427,7 +430,7 @@ class LocalDiagnosticTrace {
       ...browserAuthTraceCodes,
       'browser_auth_token',
       'operation_cancelled',
-      ..._localUpdateCodes,
+      ...WindowsUpdateTraceCodes.values,
       'manual_installation',
       'ready',
       'api_resolver_invalid_response',
@@ -516,41 +519,6 @@ class LocalDiagnosticTrace {
     'download_prepare',
     'preinstall',
     'install_launch',
-  };
-  static const _localUpdateCodes = {
-    'update_application_architecture_mismatch',
-    'update_application_open_failed',
-    'update_application_signature_invalid',
-    'update_archive_extract_failed',
-    'update_archive_invalid',
-    'update_archive_too_large',
-    'update_archive_unsafe',
-    'update_busy',
-    'update_cancelled',
-    'update_changed',
-    'update_download_empty',
-    'update_download_http_error',
-    'update_download_network_error',
-    'update_download_redirect_rejected',
-    'update_download_timeout',
-    'update_download_too_large',
-    'update_download_url_invalid',
-    'update_hash_mismatch',
-    'update_installer_manual',
-    'update_network_timeout',
-    'update_package_architecture_mismatch',
-    'update_package_mode_mismatch',
-    'update_package_version_mismatch',
-    'update_portable_manifest_invalid',
-    'update_portable_manual',
-    'update_portable_replace_failed',
-    'update_portable_target_invalid',
-    'update_prepare_failed',
-    'update_publisher_mismatch',
-    'update_signature_invalid',
-    'update_uac_cancelled',
-    'update_untrusted_publisher',
-    'update_version_mismatch',
   };
   static const _runtimeStages = {
     'startup_wireguard_connected',

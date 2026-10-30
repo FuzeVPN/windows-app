@@ -598,5 +598,14 @@
   "Cette demande de connexion a expiré ou a déjà été utilisée. Recommencez depuis FuzeVPN.": "Permintaan log masuk ini telah tamat tempoh atau telah digunakan. Mulakan semula daripada FuzeVPN.",
   "La connexion par navigateur est momentanément indisponible. Utilisez votre adresse e-mail et votre mot de passe, ou réessayez plus tard.": "Log masuk melalui pelayar tidak tersedia buat sementara waktu. Gunakan alamat e-mel dan kata laluan anda, atau cuba lagi kemudian.",
   "Reconnectez-vous à votre compte dans le navigateur, puis réessayez depuis FuzeVPN.": "Log masuk semula ke akaun anda dalam pelayar, kemudian cuba lagi daripada FuzeVPN.",
-  "Mises à jour désactivées dans cette version de test.": "Kemas kini dinyahdayakan dalam versi ujian ini."
+  "Mises à jour désactivées dans cette version de test.": "Kemas kini dinyahdayakan dalam versi ujian ini.",
+  "Autorisation reçue": "Kebenaran diterima",
+  "Autorisation refusée": "Kebenaran ditolak",
+  "Demande invalide": "Permintaan tidak sah",
+  "Revenez dans FuzeVPN pour terminer la connexion.": "Kembali ke FuzeVPN untuk menyelesaikan log masuk.",
+  "Délai avant réessai : {seconds} s.": "Masa menunggu sebelum mencuba lagi: {seconds} s.",
+  "Serveurs : {count}": "Pelayan: {count}",
+  "Villes : {count}": "Bandar: {count}",
+  "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "Menyekat UDP di luar terowong VPN. Untuk meliputi juga WebRTC melalui TCP/TLS, aktifkan kill switch.",
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Menyekat DNS di luar terowong pada port 53 dan 853. Untuk meliputi juga DNS melalui HTTPS, aktifkan kill switch."
 }

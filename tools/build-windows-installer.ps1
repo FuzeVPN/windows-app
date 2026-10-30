@@ -23,6 +23,7 @@ $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 $projectRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 Import-Module (Join-Path $projectRoot 'installer\InstallerTools.psm1') -Force
+Import-Module (Join-Path $projectRoot 'installer\BundleVersion.psm1') -Force
 $policy = New-ReleaseSigningPolicy -CertificateThumbprint $CertificateThumbprint -ArtifactSigningMetadataPath $ArtifactSigningMetadataPath -ArtifactSigningDlibPath $ArtifactSigningDlibPath -ExpectedPublisherSubject $ExpectedPublisherSubject -ArtifactSigningCertificateThumbprint $ArtifactSigningCertificateThumbprint -TimestampUrl $TimestampUrl -DevTest:$DevTest
 if ($policy.Mode -eq 'artifact-signing') { [void](Assert-ArtifactSigningInputs $policy $projectRoot) }
 $verification = Get-ReleaseVerificationParameters $policy
@@ -161,6 +162,8 @@ try {
     '-d', "BuildNotice=$(if ($DevTest) { "- $Architecture DEVTEST-UNSIGNED" } else { "- Windows $Architecture" })",
     '-intermediateFolder', (Join-Path $OutputDirectory 'intermediate-bundle'), '-o', $bundle)
   [void](Assert-PeArchitecture $bundle $Architecture)
+  [void](Repair-BundleVersionStrings -Path $bundle)
+  Assert-BundleUpdaterVersion -Path $bundle -Version $publicVersion
   if (-not $DevTest) {
     $engine = Join-Path $OutputDirectory 'burn-engine.exe'
     Invoke-Wix @('burn', 'detach', $bundle, '-engine', $engine)
@@ -175,6 +178,7 @@ try {
     }
   }
   $bundleInfo = [Diagnostics.FileVersionInfo]::GetVersionInfo($bundle)
+  Assert-BundleUpdaterVersion -Path $bundle -Version $publicVersion
   $bundleVersion = '{0}.{1}.{2}.{3}' -f $bundleInfo.FileMajorPart,$bundleInfo.FileMinorPart,$bundleInfo.FileBuildPart,$bundleInfo.FilePrivatePart
   if ($bundleInfo.ProductName -cne 'FuzeVPN' -or $bundleVersion -ne "$publicVersion.0") { throw "Bundle resource contract mismatch: $($bundleInfo.ProductName) $bundleVersion" }
   if ((Get-Item -LiteralPath $bundle).Length -gt 512MB) { throw 'The updater accepts bundles of at most 512 MiB.' }

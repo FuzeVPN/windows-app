@@ -22,6 +22,55 @@ List<String> _since(int position) =>
     DiagnosticLog.recentLines.skip(position).toList();
 
 void main() {
+  test('OpenVPN native exceptions preserve only their fixed stage', () async {
+    final position = DiagnosticLog.recentLines.length;
+    await DiagnosticLog.recordFailure(
+      area: 'openvpn',
+      event: 'native_connect_failed',
+      error: PlatformException(
+        code: 'openvpn_connection_failed',
+        message: 'private-core-exception',
+        details: {
+          'stage': 'openvpn_native_exception',
+          'private': 'private-profile',
+        },
+      ),
+    );
+    final line = _since(position).single;
+    expect(line, contains('code=openvpn_connection_failed'));
+    expect(line, contains('stage=openvpn_native_exception'));
+    expect(line, isNot(contains('windows_error=')));
+    expect(line, isNot(contains('private')));
+  });
+
+  test(
+    'WFP failures retain the fixed API stage and unsigned Windows status',
+    () async {
+      final position = DiagnosticLog.recentLines.length;
+      for (final stage in ['wfp_filter_enum_create', 'private-native-stage']) {
+        await DiagnosticLog.recordFailure(
+          area: 'trace_test',
+          event: 'network_prepare_failed',
+          stage: 'network_protection_prepare',
+          error: PlatformException(
+            code: 'network_protection_failed',
+            message: 'private-native-message',
+            details: {
+              'stage': stage,
+              'win32_error': 0x80320004,
+              'private': 'private-native-detail',
+            },
+          ),
+        );
+      }
+      final lines = _since(position);
+      expect(lines[0], contains('stage=wfp_filter_enum_create'));
+      expect(lines[0], contains('windows_error=2150760452'));
+      expect(lines[1], contains('stage=network_protection_prepare'));
+      expect(lines.join('\n'), isNot(contains('private')));
+    },
+  );
+
   test(
     'socket and TLS traces retain numeric cause without exception text',
     () async {

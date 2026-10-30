@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="kk-KZ" Language="1087" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+  <String Id="Caption" Value="[WixBundleName] орнатылуда" />
+  <String Id="CheckingForUpdatesLabel" Value="Жаңартулар тексерілуде" />
+  <String Id="ConfirmCancelMessage" Value="Болдырмағыңыз келе ме?" />
+  <String Id="DesktopShortcut" Value="Жұмыс үстелінде жарлық жасау" />
+  <String Id="ExecuteUpgradeRelatedBundleMessage" Value="Алдыңғы нұсқа" />
+  <String Id="FailureCacheHeader" Value="Дайындау сәтсіз аяқталды" />
+  <String Id="FailureCloseButton" Value="Жабу" />
+  <String Id="FailureHeader" Value="Қате" />
+  <String Id="FailureHyperlinkLogText" Value="Әрекет үзілді. &lt;a href=&quot;#&quot;&gt;Журналды&lt;/a&gt; қарап, мәселені түзетіп, қайталап көріңіз." />
+  <String Id="FailureInstallHeader" Value="Орнату үзілді" />
+  <String Id="FailureLayoutHeader" Value="Көшіру сәтсіз аяқталды" />
+  <String Id="FailureModifyHeader" Value="Өзгерту үзілді" />
+  <String Id="FailureRepairHeader" Value="Жөндеу үзілді" />
+  <String Id="FailureRestartButton" Value="Қайта іске қосу" />
+  <String Id="FailureRestartText" Value="Қалпына келтіруді аяқтау үшін қайта іске қосыңыз." />
+  <String Id="FailureUninstallHeader" Value="Жою үзілді" />
+  <String Id="FailureUnsafeUninstallHeader" Value="Жою үзілді" />
+  <String Id="FilesInUseCloseRadioButton" Value="Қолданбаларды жабу" />
+  <String Id="FilesInUseDontCloseRadioButton" Value="Қолданбаларды ашық қалдыру" />
+  <String Id="FilesInUseExitButton" Value="Болдырмау" />
+  <String Id="FilesInUseIgnoreButton" Value="Елемеу" />
+  <String Id="FilesInUseLabel" Value="Төмендегі қолданбаларды жауып, қайталап көріңіз." />
+  <String Id="FilesInUseNetfxCloseRadioButton" Value="Қолданбаларды жабу" />
+  <String Id="FilesInUseRetryButton" Value="Қайталау" />
+  <String Id="FilesInUseTitle" Value="Қолданылып жатқан файлдар" />
+  <String Id="HelpCloseButton" Value="Жабу" />
+  <String Id="HelpHeader" Value="Көмек" />
+  <String Id="HelpText" Value="/install, /repair, /uninstall: орнату, жөндеу, жою. /quiet: үнсіз режим. /norestart: қайта іске қоспау. DesktopShortcut=1: жұмыс үстеліндегі жарлық. InstallFolder=&quot;D:\Applications\FuzeVPN&quot;: бастапқы қалта. Жаңарту кезінде орнатылған қалта сақталады." />
+  <String Id="InstallAcceptCheckbox" Value="Лицензия шарттарымен &amp;келісемін" />
+  <String Id="InstallCancelButton" Value="Болдырмау" />
+  <String Id="InstallHeader" Value="Қош келдіңіз" />
+  <String Id="InstallInstallButton" Value="Орнату" />
+  <String Id="InstallLicenseLinkText" Value="[WixBundleName] &lt;a href=&quot;#&quot;&gt;лицензия шарттары&lt;/a&gt;." />
+  <String Id="InstallMessage" Value="FuzeVPN қолданбасын осы компьютерге орнатыңыз." />
+  <String Id="InstallMessageOptions" Value="FuzeVPN қолданбасын осы компьютерге орнатыңыз." />
+  <String Id="InstallOptionsButton" Value="Опциялар" />
+  <String Id="InstallVersion" Value="[WixBundleVersion] нұсқасы" />
+  <String Id="InstallVersionNotice" Value="[WixBundleVersion] [BuildNotice] нұсқасы" />
+  <String Id="ModifyCancelButton" Value="Болдырмау" />
+  <String Id="ModifyHeader" Value="Қызмет көрсету" />
+  <String Id="ModifyRepairButton" Value="Жөндеу" />
+  <String Id="ModifyUninstallButton" Value="Жою" />
+  <String Id="OptionsBrowseButton" Value="Шолу" />
+  <String Id="OptionsCancelButton" Value="Болдырмау" />
+  <String Id="OptionsHeader" Value="Опциялар" />
+  <String Id="OptionsLocationLabel" Value="Орнату қалтасы (Windows қорғайды)" />
+  <String Id="OptionsOkButton" Value="OK" />
+  <String Id="OptionsPerMachineScopeText" Value="Барлық пайдаланушылар" />
+  <String Id="OptionsPerUserScopeText" Value="Ағымдағы пайдаланушы" />
+  <String Id="OverallProgressPackageText" Value="Дайындалуда…" />
+  <String Id="PreserveInstallFolder" Value="Жаңарту кезінде қолданыстағы қалта сақталады. Интерфейсті еркін жылжыту үшін портативті мұрағатты пайдаланыңыз." />
+  <String Id="ProgressCancelButton" Value="Болдырмау" />
+  <String Id="ProgressHeader" Value="Орнатылуда" />
+  <String Id="ProgressLabel" Value="Барысы" />
+  <String Id="SuccessCacheHeader" Value="Файлдар дайын" />
+  <String Id="SuccessCloseButton" Value="Жабу" />
+  <String Id="SuccessHeader" Value="Әрекет аяқталды" />
+  <String Id="SuccessInstallHeader" Value="Орнату аяқталды" />
+  <String Id="SuccessLaunchButton" Value="Ашу" />
+  <String Id="SuccessLayoutHeader" Value="Файлдар дайын" />
+  <String Id="SuccessModifyHeader" Value="Өзгерту аяқталды" />
+  <String Id="SuccessOpenApp" Value="FuzeVPN қолданбасын Бастау мәзірінен ашыңыз. Жеке параметрлеріңіз сақталды." />
+  <String Id="SuccessRepairHeader" Value="Жөндеу аяқталды" />
+  <String Id="SuccessRestartButton" Value="Қайта іске қосу" />
+  <String Id="SuccessRestartText" Value="Аяқтау үшін компьютерді қайта іске қосыңыз." />
+  <String Id="SuccessUninstallHeader" Value="Жою аяқталды" />
+  <String Id="SuccessUninstallRestartText" Value="Жоюды аяқтау үшін қайта іске қосыңыз." />
+  <String Id="SuccessUnsafeUninstallHeader" Value="Жою аяқталды" />
+  <String Id="Title" Value="[WixBundleName]" />
+  <String Id="UpdateButton" Value="Жаңарту" />
+</WixLocalization>

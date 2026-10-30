@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="et-EE" Language="1061" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+  <String Id="Caption" Value="[WixBundleName] installimine" />
+  <String Id="CheckingForUpdatesLabel" Value="Värskenduste otsimine" />
+  <String Id="ConfirmCancelMessage" Value="Kas soovite tühistada?" />
+  <String Id="DesktopShortcut" Value="Loo töölauale otsetee" />
+  <String Id="ExecuteUpgradeRelatedBundleMessage" Value="Eelmine versioon" />
+  <String Id="FailureCacheHeader" Value="Ettevalmistamine ebaõnnestus" />
+  <String Id="FailureCloseButton" Value="Sulge" />
+  <String Id="FailureHeader" Value="Tõrge" />
+  <String Id="FailureHyperlinkLogText" Value="Toiming katkestati. Vaadake &lt;a href=&quot;#&quot;&gt;logi&lt;/a&gt;, lahendage probleem ja proovige uuesti." />
+  <String Id="FailureInstallHeader" Value="Installimine katkestati" />
+  <String Id="FailureLayoutHeader" Value="Kopeerimine ebaõnnestus" />
+  <String Id="FailureModifyHeader" Value="Muutmine katkestati" />
+  <String Id="FailureRepairHeader" Value="Parandamine katkestati" />
+  <String Id="FailureRestartButton" Value="Taaskäivita" />
+  <String Id="FailureRestartText" Value="Taastamise lõpetamiseks taaskäivitage arvuti." />
+  <String Id="FailureUninstallHeader" Value="Desinstallimine katkestati" />
+  <String Id="FailureUnsafeUninstallHeader" Value="Desinstallimine katkestati" />
+  <String Id="FilesInUseCloseRadioButton" Value="Sulge rakendused" />
+  <String Id="FilesInUseDontCloseRadioButton" Value="Jäta rakendused avatuks" />
+  <String Id="FilesInUseExitButton" Value="Tühista" />
+  <String Id="FilesInUseIgnoreButton" Value="Ignoreeri" />
+  <String Id="FilesInUseLabel" Value="Sulgege järgmised rakendused ja proovige uuesti." />
+  <String Id="FilesInUseNetfxCloseRadioButton" Value="Sulge rakendused" />
+  <String Id="FilesInUseRetryButton" Value="Proovi uuesti" />
+  <String Id="FilesInUseTitle" Value="Failid on kasutusel" />
+  <String Id="HelpCloseButton" Value="Sulge" />
+  <String Id="HelpHeader" Value="Abi" />
+  <String Id="HelpText" Value="/install, /repair, /uninstall: installimine, parandamine, desinstallimine. /quiet: vaikne režiim. /norestart: ära taaskäivita. DesktopShortcut=1: töölaua otsetee. InstallFolder=&quot;D:\Applications\FuzeVPN&quot;: algkaust. Värskendused säilitavad installitud kausta." />
+  <String Id="InstallAcceptCheckbox" Value="&amp;Nõustun litsentsitingimustega" />
+  <String Id="InstallCancelButton" Value="Tühista" />
+  <String Id="InstallHeader" Value="Tere tulemast" />
+  <String Id="InstallInstallButton" Value="Installi" />
+  <String Id="InstallLicenseLinkText" Value="[WixBundleName] &lt;a href=&quot;#&quot;&gt;litsentsitingimused&lt;/a&gt;." />
+  <String Id="InstallMessage" Value="Installige FuzeVPN sellesse arvutisse." />
+  <String Id="InstallMessageOptions" Value="Installige FuzeVPN sellesse arvutisse." />
+  <String Id="InstallOptionsButton" Value="Valikud" />
+  <String Id="InstallVersion" Value="Versioon [WixBundleVersion]" />
+  <String Id="InstallVersionNotice" Value="Versioon [WixBundleVersion] [BuildNotice]" />
+  <String Id="ModifyCancelButton" Value="Tühista" />
+  <String Id="ModifyHeader" Value="Hooldus" />
+  <String Id="ModifyRepairButton" Value="Paranda" />
+  <String Id="ModifyUninstallButton" Value="Desinstalli" />
+  <String Id="OptionsBrowseButton" Value="Sirvi" />
+  <String Id="OptionsCancelButton" Value="Tühista" />
+  <String Id="OptionsHeader" Value="Valikud" />
+  <String Id="OptionsLocationLabel" Value="Installikaust (Windowsi kaitstud)" />
+  <String Id="OptionsOkButton" Value="OK" />
+  <String Id="OptionsPerMachineScopeText" Value="Kõik kasutajad" />
+  <String Id="OptionsPerUserScopeText" Value="Praegune kasutaja" />
+  <String Id="OverallProgressPackageText" Value="Ettevalmistamine…" />
+  <String Id="PreserveInstallFolder" Value="Värskendamisel säilitatakse olemasolev kaust. Liidese vabaks teisaldamiseks kasutage kantavat arhiivi." />
+  <String Id="ProgressCancelButton" Value="Tühista" />
+  <String Id="ProgressHeader" Value="Installimine käib" />
+  <String Id="ProgressLabel" Value="Edenemine" />
+  <String Id="SuccessCacheHeader" Value="Failid on valmis" />
+  <String Id="SuccessCloseButton" Value="Sulge" />
+  <String Id="SuccessHeader" Value="Toiming lõpetatud" />
+  <String Id="SuccessInstallHeader" Value="Installimine lõpetatud" />
+  <String Id="SuccessLaunchButton" Value="Ava" />
+  <String Id="SuccessLayoutHeader" Value="Failid on valmis" />
+  <String Id="SuccessModifyHeader" Value="Muutmine lõpetatud" />
+  <String Id="SuccessOpenApp" Value="Avage FuzeVPN menüüst Start. Teie isiklikud eelistused on säilitatud." />
+  <String Id="SuccessRepairHeader" Value="Parandamine lõpetatud" />
+  <String Id="SuccessRestartButton" Value="Taaskäivita" />
+  <String Id="SuccessRestartText" Value="Lõpetamiseks taaskäivitage arvuti." />
+  <String Id="SuccessUninstallHeader" Value="Desinstallimine lõpetatud" />
+  <String Id="SuccessUninstallRestartText" Value="Desinstallimise lõpetamiseks taaskäivitage arvuti." />
+  <String Id="SuccessUnsafeUninstallHeader" Value="Desinstallimine lõpetatud" />
+  <String Id="Title" Value="[WixBundleName]" />
+  <String Id="UpdateButton" Value="Värskenda" />
+</WixLocalization>

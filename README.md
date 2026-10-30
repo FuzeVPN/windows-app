@@ -4,7 +4,7 @@
 
 FuzeVPN is a Windows VPN client built with Flutter and native C++. It supports
 Windows 10 and 11 on x64 and ARM64, with WireGuard and OpenVPN, installed and
-portable versions, and an interface translated into 30 languages. Connecting
+portable versions, and an interface translated into 70 languages. Connecting
 to the FuzeVPN service requires a FuzeVPN account and an eligible subscription.
 Publishing this client does not include the service backend.
 

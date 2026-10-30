@@ -1,32 +1,510 @@
 [
-  {"code":"en","culture":"en-US","lcids":[1033]},
-  {"code":"es","culture":"es-ES","lcids":[3082,1034]},
-  {"code":"pt_BR","culture":"pt-BR","lcids":[1046,2070]},
-  {"code":"de","culture":"de-DE","lcids":[1031]},
-  {"code":"fr","culture":"fr-FR","lcids":[1036]},
-  {"code":"ar","culture":"ar-SA","lcids":[1025],"rtl":true},
-  {"code":"tr","culture":"tr-TR","lcids":[1055]},
-  {"code":"ja","culture":"ja-JP","lcids":[1041]},
-  {"code":"id","culture":"id-ID","lcids":[1057]},
-  {"code":"ru","culture":"ru-RU","lcids":[1049]},
-  {"code":"it","culture":"it-IT","lcids":[1040]},
-  {"code":"ko","culture":"ko-KR","lcids":[1042]},
-  {"code":"pl","culture":"pl-PL","lcids":[1045]},
-  {"code":"nl","culture":"nl-NL","lcids":[1043]},
-  {"code":"hi","culture":"hi-IN","lcids":[1081]},
-  {"code":"vi","culture":"vi-VN","lcids":[1066]},
-  {"code":"uk","culture":"uk-UA","lcids":[1058]},
-  {"code":"th","culture":"th-TH","lcids":[1054]},
-  {"code":"zh_Hans","culture":"zh-CN","lcids":[2052,4100,4]},
-  {"code":"zh_Hant","culture":"zh-TW","lcids":[1028,3076,5124,31748]},
-  {"code":"fa","culture":"fa-IR","lcids":[1065],"rtl":true},
-  {"code":"ur","culture":"ur-PK","lcids":[1056],"rtl":true},
-  {"code":"fil","culture":"fil-PH","lcids":[1124]},
-  {"code":"ms","culture":"ms-MY","lcids":[1086]},
-  {"code":"ro","culture":"ro-RO","lcids":[1048]},
-  {"code":"cs","culture":"cs-CZ","lcids":[1029]},
-  {"code":"sv","culture":"sv-SE","lcids":[1053]},
-  {"code":"da","culture":"da-DK","lcids":[1030]},
-  {"code":"nb","culture":"nb-NO","lcids":[1044,2068]},
-  {"code":"el","culture":"el-GR","lcids":[1032]}
+  {
+    "code": "en",
+    "culture": "en-US",
+    "lcids": [
+      1033
+    ]
+  },
+  {
+    "code": "es",
+    "culture": "es-ES",
+    "lcids": [
+      3082,
+      1034
+    ]
+  },
+  {
+    "code": "pt_BR",
+    "culture": "pt-BR",
+    "lcids": [
+      1046,
+      2070
+    ]
+  },
+  {
+    "code": "de",
+    "culture": "de-DE",
+    "lcids": [
+      1031
+    ]
+  },
+  {
+    "code": "fr",
+    "culture": "fr-FR",
+    "lcids": [
+      1036
+    ]
+  },
+  {
+    "code": "ar",
+    "culture": "ar-SA",
+    "lcids": [
+      1025
+    ],
+    "rtl": true
+  },
+  {
+    "code": "tr",
+    "culture": "tr-TR",
+    "lcids": [
+      1055
+    ]
+  },
+  {
+    "code": "ja",
+    "culture": "ja-JP",
+    "lcids": [
+      1041
+    ]
+  },
+  {
+    "code": "id",
+    "culture": "id-ID",
+    "lcids": [
+      1057
+    ]
+  },
+  {
+    "code": "ru",
+    "culture": "ru-RU",
+    "lcids": [
+      1049
+    ]
+  },
+  {
+    "code": "it",
+    "culture": "it-IT",
+    "lcids": [
+      1040
+    ]
+  },
+  {
+    "code": "ko",
+    "culture": "ko-KR",
+    "lcids": [
+      1042
+    ]
+  },
+  {
+    "code": "pl",
+    "culture": "pl-PL",
+    "lcids": [
+      1045
+    ]
+  },
+  {
+    "code": "nl",
+    "culture": "nl-NL",
+    "lcids": [
+      1043
+    ]
+  },
+  {
+    "code": "hi",
+    "culture": "hi-IN",
+    "lcids": [
+      1081
+    ]
+  },
+  {
+    "code": "vi",
+    "culture": "vi-VN",
+    "lcids": [
+      1066
+    ]
+  },
+  {
+    "code": "uk",
+    "culture": "uk-UA",
+    "lcids": [
+      1058
+    ]
+  },
+  {
+    "code": "th",
+    "culture": "th-TH",
+    "lcids": [
+      1054
+    ]
+  },
+  {
+    "code": "zh_Hans",
+    "culture": "zh-CN",
+    "lcids": [
+      2052,
+      4100,
+      4
+    ]
+  },
+  {
+    "code": "zh_Hant",
+    "culture": "zh-TW",
+    "lcids": [
+      1028,
+      3076,
+      5124,
+      31748
+    ]
+  },
+  {
+    "code": "fa",
+    "culture": "fa-IR",
+    "lcids": [
+      1065
+    ],
+    "rtl": true
+  },
+  {
+    "code": "ur",
+    "culture": "ur-PK",
+    "lcids": [
+      1056
+    ],
+    "rtl": true
+  },
+  {
+    "code": "fil",
+    "culture": "fil-PH",
+    "lcids": [
+      1124
+    ]
+  },
+  {
+    "code": "ms",
+    "culture": "ms-MY",
+    "lcids": [
+      1086
+    ]
+  },
+  {
+    "code": "ro",
+    "culture": "ro-RO",
+    "lcids": [
+      1048
+    ]
+  },
+  {
+    "code": "cs",
+    "culture": "cs-CZ",
+    "lcids": [
+      1029
+    ]
+  },
+  {
+    "code": "sv",
+    "culture": "sv-SE",
+    "lcids": [
+      1053
+    ]
+  },
+  {
+    "code": "da",
+    "culture": "da-DK",
+    "lcids": [
+      1030
+    ]
+  },
+  {
+    "code": "nb",
+    "culture": "nb-NO",
+    "lcids": [
+      1044,
+      2068
+    ]
+  },
+  {
+    "code": "el",
+    "culture": "el-GR",
+    "lcids": [
+      1032
+    ]
+  },
+  {
+    "code": "bn",
+    "culture": "bn-BD",
+    "lcids": [
+      2117,
+      1093
+    ]
+  },
+  {
+    "code": "sw",
+    "culture": "sw-KE",
+    "lcids": [
+      1089
+    ]
+  },
+  {
+    "code": "my",
+    "culture": "my-MM",
+    "lcids": [
+      1109
+    ]
+  },
+  {
+    "code": "km",
+    "culture": "km-KH",
+    "lcids": [
+      1107
+    ]
+  },
+  {
+    "code": "uz",
+    "culture": "uz-Latn-UZ",
+    "lcids": [
+      1091
+    ]
+  },
+  {
+    "code": "ne",
+    "culture": "ne-NP",
+    "lcids": [
+      1121,
+      2145
+    ]
+  },
+  {
+    "code": "si",
+    "culture": "si-LK",
+    "lcids": [
+      1115
+    ]
+  },
+  {
+    "code": "ta",
+    "culture": "ta-IN",
+    "lcids": [
+      1097,
+      2121
+    ]
+  },
+  {
+    "code": "te",
+    "culture": "te-IN",
+    "lcids": [
+      1098
+    ]
+  },
+  {
+    "code": "mr",
+    "culture": "mr-IN",
+    "lcids": [
+      1102
+    ]
+  },
+  {
+    "code": "gu",
+    "culture": "gu-IN",
+    "lcids": [
+      1095
+    ]
+  },
+  {
+    "code": "ha",
+    "culture": "ha-Latn-NG",
+    "lcids": [
+      1128
+    ]
+  },
+  {
+    "code": "am",
+    "culture": "am-ET",
+    "lcids": [
+      1118
+    ]
+  },
+  {
+    "code": "hu",
+    "culture": "hu-HU",
+    "lcids": [
+      1038
+    ]
+  },
+  {
+    "code": "bg",
+    "culture": "bg-BG",
+    "lcids": [
+      1026
+    ]
+  },
+  {
+    "code": "fi",
+    "culture": "fi-FI",
+    "lcids": [
+      1035
+    ]
+  },
+  {
+    "code": "sk",
+    "culture": "sk-SK",
+    "lcids": [
+      1051
+    ]
+  },
+  {
+    "code": "hr",
+    "culture": "hr-HR",
+    "lcids": [
+      1050,
+      4122
+    ]
+  },
+  {
+    "code": "sr",
+    "culture": "sr-Cyrl-RS",
+    "lcids": [
+      10266,
+      3098,
+      7194,
+      12314
+    ]
+  },
+  {
+    "code": "he",
+    "culture": "he-IL",
+    "lcids": [
+      1037
+    ],
+    "rtl": true
+  },
+  {
+    "code": "pa",
+    "culture": "pa-IN",
+    "lcids": [
+      1094
+    ]
+  },
+  {
+    "code": "kn",
+    "culture": "kn-IN",
+    "lcids": [
+      1099
+    ]
+  },
+  {
+    "code": "ml",
+    "culture": "ml-IN",
+    "lcids": [
+      1100
+    ]
+  },
+  {
+    "code": "or",
+    "culture": "or-IN",
+    "lcids": [
+      1096
+    ]
+  },
+  {
+    "code": "ps",
+    "culture": "ps-AF",
+    "lcids": [
+      1123
+    ],
+    "rtl": true
+  },
+  {
+    "code": "lt",
+    "culture": "lt-LT",
+    "lcids": [
+      1063
+    ]
+  },
+  {
+    "code": "lv",
+    "culture": "lv-LV",
+    "lcids": [
+      1062
+    ]
+  },
+  {
+    "code": "et",
+    "culture": "et-EE",
+    "lcids": [
+      1061
+    ]
+  },
+  {
+    "code": "sl",
+    "culture": "sl-SI",
+    "lcids": [
+      1060
+    ]
+  },
+  {
+    "code": "sq",
+    "culture": "sq-AL",
+    "lcids": [
+      1052
+    ]
+  },
+  {
+    "code": "kk",
+    "culture": "kk-KZ",
+    "lcids": [
+      1087
+    ]
+  },
+  {
+    "code": "az",
+    "culture": "az-Latn-AZ",
+    "lcids": [
+      1068
+    ]
+  },
+  {
+    "code": "hy",
+    "culture": "hy-AM",
+    "lcids": [
+      1067
+    ]
+  },
+  {
+    "code": "ka",
+    "culture": "ka-GE",
+    "lcids": [
+      1079
+    ]
+  },
+  {
+    "code": "lo",
+    "culture": "lo-LA",
+    "lcids": [
+      1108
+    ]
+  },
+  {
+    "code": "mg",
+    "culture": "mg-MG",
+    "lcids": []
+  },
+  {
+    "code": "so",
+    "culture": "so-SO",
+    "lcids": [
+      1143
+    ]
+  },
+  {
+    "code": "yo",
+    "culture": "yo-NG",
+    "lcids": [
+      1130
+    ]
+  },
+  {
+    "code": "ig",
+    "culture": "ig-NG",
+    "lcids": [
+      1136
+    ]
+  },
+  {
+    "code": "rw",
+    "culture": "rw-RW",
+    "lcids": [
+      1159
+    ]
+  }
 ]

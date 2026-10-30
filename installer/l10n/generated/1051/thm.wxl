@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="sk-SK" Language="1051" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+  <String Id="Caption" Value="Inštaluje sa [WixBundleName]" />
+  <String Id="CheckingForUpdatesLabel" Value="Vyhľadávajú sa aktualizácie" />
+  <String Id="ConfirmCancelMessage" Value="Chcete akciu zrušiť?" />
+  <String Id="DesktopShortcut" Value="Vytvoriť odkaz na pracovnej ploche" />
+  <String Id="ExecuteUpgradeRelatedBundleMessage" Value="Predchádzajúca verzia" />
+  <String Id="FailureCacheHeader" Value="Príprava zlyhala" />
+  <String Id="FailureCloseButton" Value="Zavrieť" />
+  <String Id="FailureHeader" Value="Zlyhanie" />
+  <String Id="FailureHyperlinkLogText" Value="Operácia bola prerušená. Pozrite si &lt;a href=&quot;#&quot;&gt;záznam&lt;/a&gt;, odstráňte problém a skúste to znova." />
+  <String Id="FailureInstallHeader" Value="Inštalácia bola prerušená" />
+  <String Id="FailureLayoutHeader" Value="Kopírovanie zlyhalo" />
+  <String Id="FailureModifyHeader" Value="Zmena bola prerušená" />
+  <String Id="FailureRepairHeader" Value="Oprava bola prerušená" />
+  <String Id="FailureRestartButton" Value="Reštartovať" />
+  <String Id="FailureRestartText" Value="Dokončite obnovenie reštartovaním počítača." />
+  <String Id="FailureUninstallHeader" Value="Odinštalovanie bolo prerušené" />
+  <String Id="FailureUnsafeUninstallHeader" Value="Odinštalovanie bolo prerušené" />
+  <String Id="FilesInUseCloseRadioButton" Value="Zatvoriť aplikácie" />
+  <String Id="FilesInUseDontCloseRadioButton" Value="Ponechať aplikácie otvorené" />
+  <String Id="FilesInUseExitButton" Value="Zrušiť" />
+  <String Id="FilesInUseIgnoreButton" Value="Ignorovať" />
+  <String Id="FilesInUseLabel" Value="Zatvorte nasledujúce aplikácie a skúste to znova." />
+  <String Id="FilesInUseNetfxCloseRadioButton" Value="Zatvoriť aplikácie" />
+  <String Id="FilesInUseRetryButton" Value="Skúsiť znova" />
+  <String Id="FilesInUseTitle" Value="Používané súbory" />
+  <String Id="HelpCloseButton" Value="Zavrieť" />
+  <String Id="HelpHeader" Value="Pomocník" />
+  <String Id="HelpText" Value="/install, /repair, /uninstall: inštalácia, oprava, odinštalovanie. /quiet: tichý režim. /norestart: nereštartovať. DesktopShortcut=1: odkaz na pracovnej ploche. InstallFolder=&quot;D:\Applications\FuzeVPN&quot;: počiatočný priečinok. Aktualizácie zachovajú inštalačný priečinok." />
+  <String Id="InstallAcceptCheckbox" Value="&amp;Súhlasím s licenčnými podmienkami" />
+  <String Id="InstallCancelButton" Value="Zrušiť" />
+  <String Id="InstallHeader" Value="Vitajte" />
+  <String Id="InstallInstallButton" Value="Inštalovať" />
+  <String Id="InstallLicenseLinkText" Value="[WixBundleName] &lt;a href=&quot;#&quot;&gt;licenčné podmienky&lt;/a&gt;." />
+  <String Id="InstallMessage" Value="Nainštalujte FuzeVPN do tohto počítača." />
+  <String Id="InstallMessageOptions" Value="Nainštalujte FuzeVPN do tohto počítača." />
+  <String Id="InstallOptionsButton" Value="Možnosti" />
+  <String Id="InstallVersion" Value="Verzia [WixBundleVersion]" />
+  <String Id="InstallVersionNotice" Value="Verzia [WixBundleVersion] [BuildNotice]" />
+  <String Id="ModifyCancelButton" Value="Zrušiť" />
+  <String Id="ModifyHeader" Value="Údržba" />
+  <String Id="ModifyRepairButton" Value="Opraviť" />
+  <String Id="ModifyUninstallButton" Value="Odinštalovať" />
+  <String Id="OptionsBrowseButton" Value="Prehľadávať" />
+  <String Id="OptionsCancelButton" Value="Zrušiť" />
+  <String Id="OptionsHeader" Value="Možnosti" />
+  <String Id="OptionsLocationLabel" Value="Inštalačný priečinok (chránený systémom Windows)" />
+  <String Id="OptionsOkButton" Value="OK" />
+  <String Id="OptionsPerMachineScopeText" Value="Všetci používatelia" />
+  <String Id="OptionsPerUserScopeText" Value="Aktuálny používateľ" />
+  <String Id="OverallProgressPackageText" Value="Pripravuje sa…" />
+  <String Id="PreserveInstallFolder" Value="Existujúci priečinok sa pri aktualizáciách zachová. Ak chcete rozhranie voľne presúvať, použite prenosný archív." />
+  <String Id="ProgressCancelButton" Value="Zrušiť" />
+  <String Id="ProgressHeader" Value="Prebieha inštalácia" />
+  <String Id="ProgressLabel" Value="Priebeh" />
+  <String Id="SuccessCacheHeader" Value="Súbory sú pripravené" />
+  <String Id="SuccessCloseButton" Value="Zavrieť" />
+  <String Id="SuccessHeader" Value="Operácia je dokončená" />
+  <String Id="SuccessInstallHeader" Value="Inštalácia je dokončená" />
+  <String Id="SuccessLaunchButton" Value="Otvoriť" />
+  <String Id="SuccessLayoutHeader" Value="Súbory sú pripravené" />
+  <String Id="SuccessModifyHeader" Value="Zmena je dokončená" />
+  <String Id="SuccessOpenApp" Value="Otvorte FuzeVPN z ponuky Štart. Vaše osobné nastavenia zostali zachované." />
+  <String Id="SuccessRepairHeader" Value="Oprava je dokončená" />
+  <String Id="SuccessRestartButton" Value="Reštartovať" />
+  <String Id="SuccessRestartText" Value="Dokončite operáciu reštartovaním počítača." />
+  <String Id="SuccessUninstallHeader" Value="Odinštalovanie je dokončené" />
+  <String Id="SuccessUninstallRestartText" Value="Dokončite odinštalovanie reštartovaním počítača." />
+  <String Id="SuccessUnsafeUninstallHeader" Value="Odinštalovanie je dokončené" />
+  <String Id="Title" Value="[WixBundleName]" />
+  <String Id="UpdateButton" Value="Aktualizovať" />
+</WixLocalization>

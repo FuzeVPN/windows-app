@@ -33,6 +33,23 @@ abstract final class AppTheme {
     'ja',
     'ko',
     'zh',
+    'bn',
+    'my',
+    'km',
+    'ne',
+    'si',
+    'ta',
+    'te',
+    'mr',
+    'gu',
+    'am',
+    'he',
+    'pa',
+    'kn',
+    'ml',
+    'or',
+    'ps',
+    'lo',
   }.contains(locale?.languageCode);
 
   static double tracking(BuildContext context, double latinValue) =>
@@ -55,9 +72,23 @@ abstract final class AppTheme {
                 const {'TW', 'HK', 'MO'}.contains(locale?.countryCode)
             ? ['Microsoft JhengHei UI', 'Microsoft JhengHei']
             : ['Microsoft YaHei UI', 'Microsoft YaHei'],
-      'hi' => ['Nirmala UI'],
-      'th' => ['Leelawadee UI', 'Tahoma'],
-      'ar' || 'fa' || 'ur' => ['Tahoma', 'Nirmala UI'],
+      'hi' ||
+      'bn' ||
+      'ne' ||
+      'si' ||
+      'ta' ||
+      'te' ||
+      'mr' ||
+      'gu' ||
+      'pa' ||
+      'kn' ||
+      'ml' ||
+      'or' => ['Nirmala UI'],
+      'th' || 'km' || 'lo' => ['Leelawadee UI', 'Tahoma'],
+      'my' => ['Myanmar Text'],
+      'am' => ['Ebrima', 'Nyala'],
+      'hy' || 'ka' => ['Sylfaen'],
+      'ar' || 'fa' || 'ur' || 'he' || 'ps' => ['Tahoma', 'Nirmala UI'],
       _ => <String>[],
     },
     'Arial',

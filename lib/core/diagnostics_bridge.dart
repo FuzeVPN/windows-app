@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MPL-2.0
+import 'dart:async';
 import 'package:flutter/services.dart';
 import 'diagnostics_support.dart';
 
@@ -22,7 +23,7 @@ class DiagnosticsBridge {
       }
       await Future<void>.delayed(const Duration(milliseconds: 100));
     }
-    throw const FormatException('Complete native diagnostics still pending.');
+    throw TimeoutException('Complete native diagnostics still pending.');
   }
 
   /// Only snapshot/checks/windows/environment may become report fragments.

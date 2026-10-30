@@ -3,6 +3,8 @@
 #include "installation_security.h"
 #include "runtime_architecture.h"
 #include "portable_service_lease.h"
+#include "portable_engine_job.h"
+#include "runtime_network_recovery.h"
 #include <shellapi.h>
 #include <array>
 #include <limits>
@@ -171,6 +173,9 @@ DWORD Prepare(DWORD parent_pid, const std::string& nonce) {
       server_pid != parent_pid || WaitForSingleObject(parent.value, 0) != WAIT_TIMEOUT) return ERROR_ACCESS_DENIED;
   BootstrapResult result;
   fuzevpn_handoff::InstalledServiceLease installed_service;
+  // Declared after the lease: on exceptional unwinding the job closes (and
+  // kills its child) before the lease waits for engine exit and restores SCM.
+  EngineJob engine_job;
   std::filesystem::path cached;
   HANDLE remote = nullptr;
   Handle engine;
@@ -193,14 +198,21 @@ DWORD Prepare(DWORD parent_pid, const std::string& nonce) {
       std::wstring command = L"\"" + executable.wstring() + L"\" --fuzevpn-portable-broker " + std::to_wstring(parent_pid);
       STARTUPINFOW startup{}; startup.cb = sizeof(startup);
       PROCESS_INFORMATION process{};
-      if (environment.empty() || !CreateProcessW(executable.c_str(), command.data(), nullptr, nullptr, FALSE,
+      if (!engine_job.Create(&error)) {
+        result.error = error;
+      } else if (environment.empty() || !CreateProcessW(executable.c_str(), command.data(), nullptr, nullptr, FALSE,
           CREATE_UNICODE_ENVIRONMENT | CREATE_NO_WINDOW | CREATE_SUSPENDED,
           environment.data(), cached.c_str(), &startup, &process)) {
         result.error = environment.empty() ? ERROR_BAD_ENVIRONMENT : GetLastError();
       } else {
         engine_thread.value = process.hThread;
         engine.value = process.hProcess;
-        if (!installed_service.TrackEngine(engine.value, &error)) {
+        // The suspended engine's PID/session/creation time must be durable
+        // before the GUI can ACK and before any VPN code can execute. Failure
+        // follows the existing terminate-and-wait path, then restores the lease.
+        if (!engine_job.AssignSuspended(engine.value, &error)) {
+          result.error = error;
+        } else if (!installed_service.TrackEngine(engine.value, &error)) {
           result.error = error;
         } else if (!DuplicateHandle(GetCurrentProcess(), engine.value, parent.value, &remote,
             PROCESS_QUERY_LIMITED_INFORMATION | SYNCHRONIZE, FALSE, 0)) {
@@ -245,7 +257,11 @@ int APIENTRY wWinMain(HINSTANCE, HINSTANCE, wchar_t*, int) {
   DWORD result = ERROR_INVALID_PARAMETER;
   try {
     DWORD parent_pid = 0;
-    if (count == 4 && wcscmp(arguments[1], L"--prepare-runtime") == 0 && ParsePid(arguments[2], &parent_pid)) {
+    if (count == 2 && wcscmp(arguments[1], L"--fuzevpn-recover-network") == 0) {
+      const HRESULT initialized = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
+      result = RecoverStoppedNetworkFromRuntime();
+      if (SUCCEEDED(initialized)) CoUninitialize();
+    } else if (count == 4 && wcscmp(arguments[1], L"--prepare-runtime") == 0 && ParsePid(arguments[2], &parent_pid)) {
       const auto nonce = Ascii(arguments[3]);
       if (fuzevpn_update::ValidToken(nonce)) {
         const HRESULT initialized = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);

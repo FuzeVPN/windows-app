@@ -93,15 +93,63 @@ the API or Web application.
 
 ## Native checks and CI
 
-The Windows CMake projects define C++ tests for native parsers, networking
-policies, service boundaries and update validation. Use the build scripts for
-the selected architecture and run the relevant test targets after native
-changes. State the tested architecture when submitting a change.
+The Windows CMake projects define isolated C++ tests for native parsers,
+networking policies, service boundaries and update validation. Build the
+`fuzevpn_native_tests` aggregate before CTest, including when reusing a previous
+build directory. Each `fuzevpn_add_native_test` declaration registers the test
+and adds its executable to the aggregate. Configuration rejects a raw native
+CTest registration that would escape this build dependency. Manual administrator
+and startup probes are kept outside this aggregate.
+Host-side PowerShell contracts use `fuzevpn_add_native_script_test`; they are
+interpreted by CTest without building a product executable. The x64 registry
+includes release-audit and build-provenance checks using synthetic fixtures.
 
-The public CI workflow pins `actions/checkout` by full commit SHA and checks
-out Flutter 3.44.9 by its verified upstream commit. It runs analysis, translation
-checks and Flutter tests with a read-only repository token. It does not sign,
-publish or install packages, change Windows services, or connect a VPN.
+After preparing the pinned dependencies, run a complete development build and
+the checks for both architectures:
+
+```powershell
+.\tools\rebuild-from-zero.ps1 -Architecture both -DevTest -Offline -SkipBootstrap
+```
+
+This compiles every registered native test for both architectures and executes
+the x64 tests. ARM64 tests must execute separately on an ARM64 Windows machine.
+`-SkipTests` skips both Flutter tests and native test compilation/execution.
+State the tested architecture when submitting a change.
+
+For focused native checks after a development application build:
+
+```powershell
+Import-Module .\tools\BuildSupport.psm1 -Force
+$tools = Get-FuzeVisualStudioTools -Architecture x64
+Invoke-FuzeChecked $tools.CMake @('--build','build/windows/x64','--config','Release','--target','fuzevpn_native_tests','--parallel','6')
+Invoke-FuzeChecked $tools.CTest @('--test-dir','build/windows/x64','-C','Release','--output-on-failure','--no-tests=error')
+.\tools\tests\native-test-registry-test.ps1
+.\tools\tests\bootstrap-tools-test.ps1
+.\tools\tests\portable-packaging-test.ps1
+.\tools\tests\dco-dependency-test.ps1
+.\tools\tests\openvpn-licensing-test.ps1
+```
+
+The registry regression builds a fresh synthetic project, executes its registered
+fixtures, proves that manual probes stay excluded, and rejects an orphan CTest
+registration. These checks do not install a package, driver or Windows service.
+The OpenVPN licensing check also exercises the real notice/archive generation
+with isolated fixtures after the x64 native dependencies have been bootstrapped.
+
+The public CI workflow pins `actions/checkout` and `actions/cache` by full commit
+SHA and checks out Flutter 3.44.9 by its verified upstream commit. It runs
+analysis, translation checks and Flutter tests with a read-only repository
+token. Separate x64 and ARM64 jobs bootstrap pinned public dependencies, then
+build development-policy application binaries and the complete native test
+aggregate offline on the `windows-2025-vs2026` image with Visual Studio 2026
+and ARM64 C++ tools. The x64 job executes native tests, isolated installer policy
+tests and the PowerShell contracts above. ARM64 is a compilation check, not
+hardware qualification. The dependency cache holds public downloads, vcpkg
+binaries keyed by ABI and the Dart package cache; it excludes signing material
+and previously built application binaries. CI does not sign, publish or install
+packages, change Windows services, or connect a VPN. The signed publication
+manifest tests still require independently prepared signed release fixtures and
+are not part of this credential-free CI.
 
 Public source builds do not include a production signing key. Read
 [distribution](distribution.md) before creating packages for other users.
@@ -111,7 +159,7 @@ Public source builds do not include a production signing key. Read
 The corresponding WiX 7.0.0 source archive retains its original SourceLink
 8.0.0 dependency. NuGet reports advisory
 [GHSA-23fw-v26w-5fgq](https://github.com/dotnet/sourcelink/security/advisories/GHSA-23fw-v26w-5fgq)
-for `Microsoft.Build.Tasks.Git 8.0.0`. The pinned .NET 9.0.318 SDK is patched,
+for `Microsoft.Build.Tasks.Git 8.0.0`. The pinned .NET 9.0.319 SDK is patched,
 but the explicitly referenced historical NuGet package still raises the warning.
 This dependency generates build metadata; it is not a VPN runtime component.
 Public CI does not build WiX. Keep credentials out of Git remote URLs and build

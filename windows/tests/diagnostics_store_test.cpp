@@ -185,11 +185,35 @@ void TestFiles(std::filesystem::path base) {
   Check(RemoveDirectoryW(unprotected.c_str()) != FALSE, "remove empty unprotected fixture");
   Wipe(&state); Wipe(&changed); Wipe(&restored);
 }
+void TestFileClockObservations(std::filesystem::path base) {
+  base.make_preferred();
+  Check(base.is_absolute() && base.filename() == L"diagnostics-fixtures", "isolated clock fixture root required");
+  std::filesystem::create_directories(base);
+  const auto directory = base / (L"clock-" + std::to_wstring(GetCurrentProcessId()) + L"-" + std::to_wstring(GetTickCount64()));
+  FileStore store(directory);
+  auto state = MakeState(); state.automatic_consent = true;
+  Check(Enqueue(&state, MakeReport(1, false), now).empty() && store.Save(state, [] { return true; }).empty(),
+      "save isolated clock observation fixture");
+  const auto later = now + 12 * kHourMs;
+  Check(store.PurgeExpired(later).empty(), "maintenance observes twelve hours without expiring payload");
+  State restored;
+  Check(store.Load(&restored).empty() && restored.last_seen == later && restored.reports.size() == 1 && restored.automatic_consent,
+      "maintenance persists newer clock even when no report or retry metadata expires");
+  Check(!Purge(&restored, later), "same clock does not require another encrypted rewrite");
+  Check(store.PurgeExpired(later - kClockToleranceMs).empty() && store.Load(&restored).empty() &&
+      restored.last_seen == later && restored.reports.size() == 1 && restored.automatic_consent,
+      "allowed clock tolerance preserves payload without lowering persisted observation");
+  Check(store.PurgeExpired(now + kHourMs).empty() && store.Load(&restored).empty() &&
+      restored.last_seen == later && restored.reports.empty() && !restored.automatic_consent,
+      "eleven-hour rollback after maintenance purges payload and revokes consent across reloads");
+  Check(store.Erase().empty() && RemoveDirectoryW(directory.c_str()) != FALSE, "remove only isolated clock fixture");
+  Wipe(&state); Wipe(&restored);
+}
 }  // namespace
 int wmain(int argc, wchar_t** argv) {
   try {
     Check(argc == 2, "pass only a workspace diagnostics-fixtures directory");
-    TestPolicy(); TestCodec(); TestManualPriority(); TestFiles(argv[1]);
+    TestPolicy(); TestCodec(); TestManualPriority(); TestFiles(argv[1]); TestFileClockObservations(argv[1]);
     std::cout << "Diagnostics DPAPI store, immutable queue, account fence, expiry and retry tests passed\n";
     return 0;
   } catch (const std::exception& error) {

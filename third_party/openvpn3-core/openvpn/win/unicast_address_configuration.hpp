@@ -43,14 +43,20 @@ struct UnicastAddressConfiguration {
 // finish initializing its data channel without waiting synchronously for DAD.
 inline UnicastAddressConfiguration EvaluateUnicastAddressConfiguration(
     std::span<const SOCKADDR_INET> expected, ULONG interface_index,
-    std::span<const MIB_UNICASTIPADDRESS_ROW> observed) {
+    std::span<const MIB_UNICASTIPADDRESS_ROW> observed,
+    std::span<const unsigned> prefixes = {}) {
     UnicastAddressConfiguration result;
     result.expected = static_cast<unsigned>(expected.size());
-    for (const auto& address : expected) {
+    for (size_t index = 0; index < expected.size(); ++index) {
+        const auto& address = expected[index];
         bool matched = false, assigned = false, tentative = false, duplicate = false, rejected = false;
         for (const auto& row : observed) {
             if (row.InterfaceIndex != interface_index || !SameUnicastAddress(address, row.Address)) continue;
             matched = true;
+            if (!prefixes.empty() && (prefixes.size() != expected.size() || row.OnLinkPrefixLength != prefixes[index])) {
+                rejected = true;
+                continue;
+            }
             assigned |= row.DadState == IpDadStatePreferred || row.DadState == IpDadStateTentative;
             tentative |= row.DadState == IpDadStateTentative;
             duplicate |= row.DadState == IpDadStateDuplicate;

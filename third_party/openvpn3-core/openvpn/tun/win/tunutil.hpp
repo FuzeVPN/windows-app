@@ -62,6 +62,9 @@
 #include <openvpn/win/unicode.hpp>
 #include <openvpn/win/cmd.hpp>
 #include <openvpn/win/winerr.hpp>
+#ifdef FUZEVPN_ENABLE_OPENVPN3_CORE
+#include <openvpn/win/dco_adapter_reuse.hpp>
+#endif
 
 namespace openvpn::TunWin {
 enum Type
@@ -576,6 +579,15 @@ inline HANDLE tap_open(const Type tun_type,
 
             if (hand.defined())
             {
+#ifdef FUZEVPN_ENABLE_OPENVPN3_CORE
+                // Inspect after acquiring the exclusive handle, so another VPN
+                // cannot configure and release the adapter between the check
+                // and our acquisition. Unknown state is never reset on reuse.
+                if (tun_type == OvpnDco && !Win::DcoAdapterNetworkStateReusable(tap.index)) {
+                    hand.reset();
+                    continue;
+                }
+#endif
                 used = tap;
                 path_opened = path;
                 break;

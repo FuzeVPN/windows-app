@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="hy-AM" Language="1067" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+  <String Id="Caption" Value="[WixBundleName]-ի տեղադրում" />
+  <String Id="CheckingForUpdatesLabel" Value="Թարմացումների ստուգում" />
+  <String Id="ConfirmCancelMessage" Value="Ցանկանո՞ւմ եք չեղարկել։" />
+  <String Id="DesktopShortcut" Value="Ստեղծել աշխատասեղանի դյուրանցում" />
+  <String Id="ExecuteUpgradeRelatedBundleMessage" Value="Նախորդ տարբերակ" />
+  <String Id="FailureCacheHeader" Value="Նախապատրաստումը ձախողվեց" />
+  <String Id="FailureCloseButton" Value="Փակել" />
+  <String Id="FailureHeader" Value="Ձախողում" />
+  <String Id="FailureHyperlinkLogText" Value="Գործողությունն ընդհատվեց։ Տեսեք &lt;a href=&quot;#&quot;&gt;մատյանը&lt;/a&gt;, շտկեք խնդիրը և կրկին փորձեք։" />
+  <String Id="FailureInstallHeader" Value="Տեղադրումն ընդհատվեց" />
+  <String Id="FailureLayoutHeader" Value="Պատճենումը ձախողվեց" />
+  <String Id="FailureModifyHeader" Value="Փոփոխությունն ընդհատվեց" />
+  <String Id="FailureRepairHeader" Value="Վերանորոգումն ընդհատվեց" />
+  <String Id="FailureRestartButton" Value="Վերագործարկել" />
+  <String Id="FailureRestartText" Value="Վերականգնումն ավարտելու համար վերագործարկեք։" />
+  <String Id="FailureUninstallHeader" Value="Հեռացումն ընդհատվեց" />
+  <String Id="FailureUnsafeUninstallHeader" Value="Հեռացումն ընդհատվեց" />
+  <String Id="FilesInUseCloseRadioButton" Value="Փակել հավելվածները" />
+  <String Id="FilesInUseDontCloseRadioButton" Value="Հավելվածները բաց պահել" />
+  <String Id="FilesInUseExitButton" Value="Չեղարկել" />
+  <String Id="FilesInUseIgnoreButton" Value="Անտեսել" />
+  <String Id="FilesInUseLabel" Value="Փակեք հետևյալ հավելվածները և կրկին փորձեք։" />
+  <String Id="FilesInUseNetfxCloseRadioButton" Value="Փակել հավելվածները" />
+  <String Id="FilesInUseRetryButton" Value="Կրկին փորձել" />
+  <String Id="FilesInUseTitle" Value="Օգտագործվող ֆայլեր" />
+  <String Id="HelpCloseButton" Value="Փակել" />
+  <String Id="HelpHeader" Value="Օգնություն" />
+  <String Id="HelpText" Value="/install, /repair, /uninstall՝ տեղադրել, վերանորոգել, հեռացնել։ /quiet՝ լուռ ռեժիմ։ /norestart՝ չվերագործարկել։ DesktopShortcut=1՝ աշխատասեղանի դյուրանցում։ InstallFolder=&quot;D:\Applications\FuzeVPN&quot;՝ սկզբնական պանակ։ Թարմացումների ժամանակ տեղադրման պանակը պահպանվում է։" />
+  <String Id="InstallAcceptCheckbox" Value="Ես &amp;համաձայն եմ արտոնագրի պայմաններին" />
+  <String Id="InstallCancelButton" Value="Չեղարկել" />
+  <String Id="InstallHeader" Value="Բարի գալուստ" />
+  <String Id="InstallInstallButton" Value="Տեղադրել" />
+  <String Id="InstallLicenseLinkText" Value="[WixBundleName] &lt;a href=&quot;#&quot;&gt;արտոնագրի պայմաններ&lt;/a&gt;։" />
+  <String Id="InstallMessage" Value="Տեղադրեք FuzeVPN-ն այս համակարգչում։" />
+  <String Id="InstallMessageOptions" Value="Տեղադրեք FuzeVPN-ն այս համակարգչում։" />
+  <String Id="InstallOptionsButton" Value="Ընտրանքներ" />
+  <String Id="InstallVersion" Value="Տարբերակ [WixBundleVersion]" />
+  <String Id="InstallVersionNotice" Value="Տարբերակ [WixBundleVersion] [BuildNotice]" />
+  <String Id="ModifyCancelButton" Value="Չեղարկել" />
+  <String Id="ModifyHeader" Value="Սպասարկում" />
+  <String Id="ModifyRepairButton" Value="Վերանորոգել" />
+  <String Id="ModifyUninstallButton" Value="Հեռացնել" />
+  <String Id="OptionsBrowseButton" Value="Ընտրել" />
+  <String Id="OptionsCancelButton" Value="Չեղարկել" />
+  <String Id="OptionsHeader" Value="Ընտրանքներ" />
+  <String Id="OptionsLocationLabel" Value="Տեղադրման պանակ (պաշտպանված Windows-ի կողմից)" />
+  <String Id="OptionsOkButton" Value="Լավ" />
+  <String Id="OptionsPerMachineScopeText" Value="Բոլոր օգտատերերը" />
+  <String Id="OptionsPerUserScopeText" Value="Ընթացիկ օգտատեր" />
+  <String Id="OverallProgressPackageText" Value="Նախապատրաստում…" />
+  <String Id="PreserveInstallFolder" Value="Թարմացումների ժամանակ առկա պանակը պահպանվում է։ Միջերեսն ազատ տեղափոխելու համար օգտագործեք դյուրակիր արխիվը։" />
+  <String Id="ProgressCancelButton" Value="Չեղարկել" />
+  <String Id="ProgressHeader" Value="Տեղադրումն ընթացքի մեջ է" />
+  <String Id="ProgressLabel" Value="Ընթացք" />
+  <String Id="SuccessCacheHeader" Value="Ֆայլերը պատրաստ են" />
+  <String Id="SuccessCloseButton" Value="Փակել" />
+  <String Id="SuccessHeader" Value="Գործողությունն ավարտված է" />
+  <String Id="SuccessInstallHeader" Value="Տեղադրումն ավարտված է" />
+  <String Id="SuccessLaunchButton" Value="Բացել" />
+  <String Id="SuccessLayoutHeader" Value="Ֆայլերը պատրաստ են" />
+  <String Id="SuccessModifyHeader" Value="Փոփոխությունն ավարտված է" />
+  <String Id="SuccessOpenApp" Value="Բացեք FuzeVPN-ը «Սկսել» ընտրացանկից։ Ձեր անձնական նախապատվությունները պահպանվել են։" />
+  <String Id="SuccessRepairHeader" Value="Վերանորոգումն ավարտված է" />
+  <String Id="SuccessRestartButton" Value="Վերագործարկել" />
+  <String Id="SuccessRestartText" Value="Ավարտելու համար վերագործարկեք համակարգիչը։" />
+  <String Id="SuccessUninstallHeader" Value="Հեռացումն ավարտված է" />
+  <String Id="SuccessUninstallRestartText" Value="Հեռացումն ավարտելու համար վերագործարկեք համակարգիչը։" />
+  <String Id="SuccessUnsafeUninstallHeader" Value="Հեռացումն ավարտված է" />
+  <String Id="Title" Value="[WixBundleName]" />
+  <String Id="UpdateButton" Value="Թարմացնել" />
+</WixLocalization>

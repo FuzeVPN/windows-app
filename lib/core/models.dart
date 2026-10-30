@@ -398,6 +398,17 @@ class DeviceConfiguration {
 
   factory DeviceConfiguration.fromJson(Map<String, dynamic> json) {
     final address = json['address'] as String;
+    final dns = _stringList(json['dns']);
+    if (dns.isEmpty ||
+        dns.length > 8 ||
+        dns.any(
+          (server) =>
+              server.contains('\u0000') ||
+              server.contains('%') ||
+              InternetAddress.tryParse(server) == null,
+        )) {
+      throw const FormatException('Configuration réseau invalide.');
+    }
     final historicalAllowedIps = _stringList(json['allowed_ips']);
     final tunnel = _parseTunnelIpConfiguration(
       json,
@@ -407,7 +418,7 @@ class DeviceConfiguration {
     return DeviceConfiguration(
       deviceId: json['device_id'] as String,
       address: address,
-      dns: _stringList(json['dns']),
+      dns: List.unmodifiable(dns),
       serverPublicKey: json['server_public_key'] as String,
       endpoint: json['endpoint'] as String,
       allowedIps: tunnel.allowedIps,
@@ -700,8 +711,10 @@ class AuthSession {
   final String accessToken;
 
   factory AuthSession.fromJson(Map<String, dynamic> json) {
-    final accessToken = json['access_token'] as String?;
-    if (accessToken == null || accessToken.isEmpty) {
+    final accessToken = json['access_token'];
+    if (accessToken is! String ||
+        RegExp(r'^[\x21-\x7e]{1,8192}$').stringMatch(accessToken) !=
+            accessToken) {
       throw const FormatException('Réponse d’authentification invalide.');
     }
     return AuthSession(accessToken: accessToken);

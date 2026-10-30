@@ -112,7 +112,7 @@ void main() {
     final languages = AppLanguage.sortedValues;
     expect(languages.first, AppLanguage.system);
     expect(languages.toSet(), AppLanguage.values.toSet());
-    expect(languages, hasLength(31));
+    expect(languages, hasLength(71));
     final names = languages
         .skip(1)
         .map((value) => value.nativeSortKey)

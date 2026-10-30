@@ -146,6 +146,20 @@ void ServiceChecks() {
       Integer(service, "configuration_win32_error") == ERROR_ACCESS_DENIED &&
       manager_access == SC_MANAGER_CONNECT, "minimal read permissions preserve status when config denied");
 }
+void PartialCollectionChecks() {
+  const auto valid = [] { return Map{{Value("fixture"), Value(true)}}; };
+  for (unsigned failed = 0; failed < 4; ++failed) {
+    unsigned called = 0;
+    const auto reader = [&]() -> Map {
+      if (called++ == failed) throw std::runtime_error("private exception text");
+      return valid();
+    };
+    const auto result = CollectSources(reader, reader, reader, reader);
+    Check(called == 4 && result.size() == 6 &&
+        Integer(result, "collection_error") == ERROR_UNHANDLED_EXCEPTION,
+        "a reader failure retains three independent observations and an explicit code");
+  }
+}
 void FileChecks(const std::filesystem::path& directory) {
   std::filesystem::create_directories(directory);
   const auto missing = ReadNativeLog(directory / L"missing.log");
@@ -173,7 +187,7 @@ void FileChecks(const std::filesystem::path& directory) {
 int wmain(int argc, wchar_t** argv) {
   try {
     Check(argc == 2, "isolated fixture directory required");
-    ParserChecks(); ServiceChecks(); FileChecks(argv[1]);
+    ParserChecks(); ServiceChecks(); PartialCollectionChecks(); FileChecks(argv[1]);
     std::cout << "native local diagnostics: parser, privacy, bounds, automatic SCM evidence passed\n";
     return 0;
   } catch (const std::exception& error) {

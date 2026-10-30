@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="ka-GE" Language="1079" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+  <String Id="Caption" Value="[WixBundleName]-ის ინსტალაცია" />
+  <String Id="CheckingForUpdatesLabel" Value="განახლებების ძიება" />
+  <String Id="ConfirmCancelMessage" Value="გსურთ გაუქმება?" />
+  <String Id="DesktopShortcut" Value="მალსახმობის შექმნა სამუშაო მაგიდაზე" />
+  <String Id="ExecuteUpgradeRelatedBundleMessage" Value="წინა ვერსია" />
+  <String Id="FailureCacheHeader" Value="მომზადება ვერ მოხერხდა" />
+  <String Id="FailureCloseButton" Value="დახურვა" />
+  <String Id="FailureHeader" Value="შეცდომა" />
+  <String Id="FailureHyperlinkLogText" Value="ოპერაცია შეწყდა. იხილეთ &lt;a href=&quot;#&quot;&gt;ჟურნალი&lt;/a&gt;, მოაგვარეთ პრობლემა და სცადეთ ხელახლა." />
+  <String Id="FailureInstallHeader" Value="ინსტალაცია შეწყდა" />
+  <String Id="FailureLayoutHeader" Value="კოპირება ვერ მოხერხდა" />
+  <String Id="FailureModifyHeader" Value="ცვლილება შეწყდა" />
+  <String Id="FailureRepairHeader" Value="შეკეთება შეწყდა" />
+  <String Id="FailureRestartButton" Value="გადატვირთვა" />
+  <String Id="FailureRestartText" Value="აღდგენის დასასრულებლად გადატვირთეთ კომპიუტერი." />
+  <String Id="FailureUninstallHeader" Value="წაშლა შეწყდა" />
+  <String Id="FailureUnsafeUninstallHeader" Value="წაშლა შეწყდა" />
+  <String Id="FilesInUseCloseRadioButton" Value="აპების დახურვა" />
+  <String Id="FilesInUseDontCloseRadioButton" Value="აპები ღიად დარჩეს" />
+  <String Id="FilesInUseExitButton" Value="გაუქმება" />
+  <String Id="FilesInUseIgnoreButton" Value="იგნორირება" />
+  <String Id="FilesInUseLabel" Value="დახურეთ შემდეგი აპლიკაციები და სცადეთ ხელახლა." />
+  <String Id="FilesInUseNetfxCloseRadioButton" Value="აპების დახურვა" />
+  <String Id="FilesInUseRetryButton" Value="ხელახლა ცდა" />
+  <String Id="FilesInUseTitle" Value="ამჟამად გამოყენებული ფაილები" />
+  <String Id="HelpCloseButton" Value="დახურვა" />
+  <String Id="HelpHeader" Value="დახმარება" />
+  <String Id="HelpText" Value="/install, /repair, /uninstall: ინსტალაცია, შეკეთება, წაშლა. /quiet: ჩუმი რეჟიმი. /norestart: გადატვირთვის გარეშე. DesktopShortcut=1: მალსახმობი სამუშაო მაგიდაზე. InstallFolder=&quot;D:\Applications\FuzeVPN&quot;: საწყისი საქაღალდე. განახლებები ინარჩუნებს ინსტალაციის საქაღალდეს." />
+  <String Id="InstallAcceptCheckbox" Value="ვეთანხმები ლიცენზიის &amp;პირობებს" />
+  <String Id="InstallCancelButton" Value="გაუქმება" />
+  <String Id="InstallHeader" Value="მოგესალმებით" />
+  <String Id="InstallInstallButton" Value="ინსტალაცია" />
+  <String Id="InstallLicenseLinkText" Value="[WixBundleName] &lt;a href=&quot;#&quot;&gt;ლიცენზიის პირობები&lt;/a&gt;." />
+  <String Id="InstallMessage" Value="დააინსტალირეთ FuzeVPN ამ კომპიუტერზე." />
+  <String Id="InstallMessageOptions" Value="დააინსტალირეთ FuzeVPN ამ კომპიუტერზე." />
+  <String Id="InstallOptionsButton" Value="პარამეტრები" />
+  <String Id="InstallVersion" Value="ვერსია [WixBundleVersion]" />
+  <String Id="InstallVersionNotice" Value="ვერსია [WixBundleVersion] [BuildNotice]" />
+  <String Id="ModifyCancelButton" Value="გაუქმება" />
+  <String Id="ModifyHeader" Value="მოვლა" />
+  <String Id="ModifyRepairButton" Value="შეკეთება" />
+  <String Id="ModifyUninstallButton" Value="წაშლა" />
+  <String Id="OptionsBrowseButton" Value="არჩევა" />
+  <String Id="OptionsCancelButton" Value="გაუქმება" />
+  <String Id="OptionsHeader" Value="პარამეტრები" />
+  <String Id="OptionsLocationLabel" Value="ინსტალაციის საქაღალდე (დაცულია Windows-ის მიერ)" />
+  <String Id="OptionsOkButton" Value="კარგი" />
+  <String Id="OptionsPerMachineScopeText" Value="ყველა მომხმარებელი" />
+  <String Id="OptionsPerUserScopeText" Value="მიმდინარე მომხმარებელი" />
+  <String Id="OverallProgressPackageText" Value="მომზადება…" />
+  <String Id="PreserveInstallFolder" Value="განახლებებისას არსებული საქაღალდე შენარჩუნდება. ინტერფეისის თავისუფლად გადასატანად გამოიყენეთ პორტატული არქივი." />
+  <String Id="ProgressCancelButton" Value="გაუქმება" />
+  <String Id="ProgressHeader" Value="ინსტალაცია მიმდინარეობს" />
+  <String Id="ProgressLabel" Value="პროგრესი" />
+  <String Id="SuccessCacheHeader" Value="ფაილები მზად არის" />
+  <String Id="SuccessCloseButton" Value="დახურვა" />
+  <String Id="SuccessHeader" Value="ოპერაცია დასრულდა" />
+  <String Id="SuccessInstallHeader" Value="ინსტალაცია დასრულდა" />
+  <String Id="SuccessLaunchButton" Value="გახსნა" />
+  <String Id="SuccessLayoutHeader" Value="ფაილები მზად არის" />
+  <String Id="SuccessModifyHeader" Value="ცვლილება დასრულდა" />
+  <String Id="SuccessOpenApp" Value="გახსენით FuzeVPN დაწყების მენიუდან. თქვენი პირადი პარამეტრები შენარჩუნებულია." />
+  <String Id="SuccessRepairHeader" Value="შეკეთება დასრულდა" />
+  <String Id="SuccessRestartButton" Value="გადატვირთვა" />
+  <String Id="SuccessRestartText" Value="დასასრულებლად გადატვირთეთ კომპიუტერი." />
+  <String Id="SuccessUninstallHeader" Value="წაშლა დასრულდა" />
+  <String Id="SuccessUninstallRestartText" Value="წაშლის დასასრულებლად გადატვირთეთ კომპიუტერი." />
+  <String Id="SuccessUnsafeUninstallHeader" Value="წაშლა დასრულდა" />
+  <String Id="Title" Value="[WixBundleName]" />
+  <String Id="UpdateButton" Value="განახლება" />
+</WixLocalization>

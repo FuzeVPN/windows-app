@@ -12,6 +12,7 @@ param(
   [string]$TimestampUrl,
 
   [string]$ReleaseDirectory,
+  [string]$BuildReceiptPath,
 
   [string[]]$AdditionalFiles = @(),
 
@@ -27,6 +28,7 @@ Set-StrictMode -Version Latest
 
 $projectRoot = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 Import-Module (Join-Path $projectRoot 'installer\InstallerTools.psm1') -Force
+Import-Module (Join-Path $PSScriptRoot 'BuildProvenance.psm1') -Force
 $policy = New-ReleaseSigningPolicy -CertificateThumbprint $CertificateThumbprint -ArtifactSigningMetadataPath $ArtifactSigningMetadataPath -ArtifactSigningDlibPath $ArtifactSigningDlibPath -ExpectedPublisherSubject $ExpectedPublisherSubject -ArtifactSigningCertificateThumbprint $ArtifactSigningCertificateThumbprint -TimestampUrl $TimestampUrl
 if ($policy.Mode -eq 'artifact-signing') { [void](Assert-ArtifactSigningInputs $policy $projectRoot) }
 $verification = Get-ReleaseVerificationParameters $policy
@@ -36,6 +38,9 @@ if ([string]::IsNullOrWhiteSpace($ReleaseDirectory)) {
 $ReleaseDirectory = [System.IO.Path]::GetFullPath($ReleaseDirectory)
 $executables = @()
 if (-not $OnlyAdditionalFiles) {
+  if (-not $BuildReceiptPath) { $BuildReceiptPath=Join-Path $ReleaseDirectory '../../build-provenance.json' }
+  $BuildReceiptPath=Assert-ProjectPath $BuildReceiptPath $projectRoot
+  [void](Assert-FuzeBuildReceipt -ReleaseDirectory $ReleaseDirectory -ReceiptPath $BuildReceiptPath -Architecture $Architecture)
   [void](Assert-ReleasePeArchitecture $ReleaseDirectory $projectRoot $Architecture)
   $executables += @(Get-UnsignedRuntimeSigningFiles $ReleaseDirectory $projectRoot)
   $executables += @(
@@ -151,4 +156,5 @@ if (-not $OnlyAdditionalFiles) {
   & $PSCommandPath -Architecture $Architecture -ReleaseDirectory $ReleaseDirectory @signing -OnlyAdditionalFiles -AdditionalFiles (Join-Path $ReleaseDirectory 'fuzevpn-runtime.exe') -ReplaceExistingSignature
   & (Join-Path $PSScriptRoot 'prepare-portable-runtime.ps1') @prepare -VerifyOnly | Out-Host
   [void]@(Get-ReleasePeSigningEvidence $policy @(Get-ReleasePeFiles $ReleaseDirectory $projectRoot) $Architecture)
+  Update-FuzeSignedBuildReceipt -ReleaseDirectory $ReleaseDirectory -ReceiptPath $BuildReceiptPath -Architecture $Architecture
 }

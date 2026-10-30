@@ -598,5 +598,14 @@
   "Cette demande de connexion a expiré ou a déjà été utilisée. Recommencez depuis FuzeVPN.": "Platnost této žádosti o přihlášení vypršela nebo již byla použita. Začněte znovu z FuzeVPN.",
   "La connexion par navigateur est momentanément indisponible. Utilisez votre adresse e-mail et votre mot de passe, ou réessayez plus tard.": "Přihlášení přes prohlížeč je dočasně nedostupné. Použijte svou e-mailovou adresu a heslo nebo to zkuste později.",
   "Reconnectez-vous à votre compte dans le navigateur, puis réessayez depuis FuzeVPN.": "Znovu se přihlaste ke svému účtu v prohlížeči a poté to zkuste znovu z FuzeVPN.",
-  "Mises à jour désactivées dans cette version de test.": "Aktualizace jsou v této testovací verzi vypnuté."
+  "Mises à jour désactivées dans cette version de test.": "Aktualizace jsou v této testovací verzi vypnuté.",
+  "Autorisation reçue": "Autorizace přijata",
+  "Autorisation refusée": "Autorizace zamítnuta",
+  "Demande invalide": "Neplatný požadavek",
+  "Revenez dans FuzeVPN pour terminer la connexion.": "Vraťte se do FuzeVPN a dokončete přihlášení.",
+  "Délai avant réessai : {seconds} s.": "Čekání před dalším pokusem: {seconds} s.",
+  "Serveurs : {count}": "Servery: {count}",
+  "Villes : {count}": "Města: {count}",
+  "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "Blokuje UDP mimo tunel VPN. Chcete-li pokrýt i WebRTC přes TCP/TLS, zapněte kill switch.",
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Blokuje DNS mimo tunel na portech 53 a 853. Chcete-li pokrýt i DNS přes HTTPS, zapněte kill switch."
 }

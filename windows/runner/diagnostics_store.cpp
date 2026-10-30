@@ -295,7 +295,13 @@ bool Purge(State* state, int64_t now) {
   if (state->retry_after_until && now >= state->retry_after_until) { state->retry_after_until = 0; changed = true; }
   rates.erase(std::remove_if(rates.begin(), rates.end(), [now](const RateAttempt& r) { return r.at <= now - kHourMs; }), rates.end());
   changed |= previous != rates.size();
-  if (Date(now) && now > state->last_seen) state->last_seen = now;
+  if (Date(now) && now > state->last_seen) {
+    state->last_seen = now;
+    // Maintenance reloads the encrypted state on each pass. Persist this
+    // observation even when no payload or retry metadata expired, otherwise
+    // a later clock rollback would be compared with an older write only.
+    changed = true;
+  }
   return changed;
 }
 std::string Enqueue(State* state, Report report, int64_t now) {

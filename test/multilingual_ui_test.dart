@@ -36,7 +36,7 @@ void main() {
       find.byType(DropdownButton<AppLanguage>),
     );
     expect(dropdown.items!.map((item) => item.value), AppLanguage.sortedValues);
-    expect(dropdown.items, hasLength(31));
+    expect(dropdown.items, hasLength(71));
     expect(dropdown.items!.first.value, AppLanguage.system);
     expect(find.text('System'), findsWidgets);
     expect(find.text('Système'), findsNothing);

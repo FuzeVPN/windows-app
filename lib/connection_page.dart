@@ -178,9 +178,8 @@ class _ConnectionHero extends StatelessWidget {
       final status = Semantics(
         liveRegion: true,
         excludeSemantics: true,
-        label: context
-            .tr('État VPN : {status}')
-            .replaceAll('{status}', state.label),
+        label:
+            '${context.tr('État VPN : {status}').replaceAll('{status}', state.label)}\n${state.description}',
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

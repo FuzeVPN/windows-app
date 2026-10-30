@@ -144,6 +144,13 @@ class Setup : public SetupBase
             adapter_handle.replace(get_handle(os));
         vpn_interface_index_ = tap_.index;
 
+#ifdef FUZEVPN_ENABLE_OPENVPN3_CORE
+        // Validate the independent activation contract before executing any
+        // address, DNS or route mutation from the server's PUSH_REPLY.
+        if (tun_type_ == OvpnDco && !activation_contract_met(pull))
+            throw tun_win_setup("activation network contract mismatch");
+#endif
+
         // create ActionLists for setting up and removing adapter properties
         ActionList::Ptr add_cmds(new ActionList());
         remove_cmds.reset(new ActionList());
@@ -323,16 +330,13 @@ class Setup : public SetupBase
 
   private:
 #ifdef FUZEVPN_ENABLE_OPENVPN3_CORE
-    bool verify_configuration(const TunBuilderCapture& pull)
+    static Win::NetworkPostcondition pushed_configuration(const TunBuilderCapture& pull)
     {
         Win::NetworkPostcondition expected;
         if (const auto* local = pull.vpn_ipv4()) expected.addresses.push_back(IP::Addr(local->address).to_string());
         if (!pull.block_ipv6) {
             if (const auto* local = pull.vpn_ipv6()) expected.addresses.push_back(IP::Addr(local->address).to_string());
         }
-        std::vector<SOCKADDR_INET> expected_unicast;
-        for (const auto& address : expected.addresses)
-            expected_unicast.push_back(Win::ParseExpectedUnicastAddress(address));
         if (pull.reroute_gw.ipv4) expected.routes = {"0.0.0.0/1", "128.0.0.0/1"};
         if (pull.reroute_gw.ipv6 && !pull.block_ipv6) {
             expected.routes.emplace_back("::/1");
@@ -342,11 +346,43 @@ class Setup : public SetupBase
             for (const auto& dns : pull.dns_options.servers.begin()->second.addresses)
                 if (UseDNS::enabled(dns.address, pull)) expected.dns.push_back(IP::Addr(dns.address).to_string());
         }
+        return expected;
+    }
+
+    static std::vector<unsigned> pushed_address_prefixes(const TunBuilderCapture& pull)
+    {
+        std::vector<unsigned> prefixes;
+        if (const auto* local = pull.vpn_ipv4()) prefixes.push_back(local->prefix_length);
+        if (!pull.block_ipv6)
+            if (const auto* local = pull.vpn_ipv6()) prefixes.push_back(local->prefix_length);
+        return prefixes;
+    }
+
+    static bool activation_contract_met(const TunBuilderCapture& pull)
+    {
+        const auto prefixes = pushed_address_prefixes(pull);
+        const auto failures = Win::command_control ? Win::ActivationNetworkContractFailures(
+            Win::command_control->activation_network, pushed_configuration(pull), prefixes) : 14u;
+        if (!failures) return true;
+        if (Win::command_control) Win::command_control->postcondition_failures.store(failures);
+        Win::RecordCommandFailure((failures & 2) ? Win::DiagnosticAction::postcondition_address :
+            (failures & 4) ? Win::DiagnosticAction::postcondition_route : Win::DiagnosticAction::postcondition_dns,
+            ERROR_INVALID_DATA);
+        return false;
+    }
+
+    bool verify_configuration(const TunBuilderCapture& pull)
+    {
+        if (!activation_contract_met(pull)) return false;
+        const auto expected = pushed_configuration(pull);
+        std::vector<SOCKADDR_INET> expected_unicast;
+        for (const auto& address : expected.addresses)
+            expected_unicast.push_back(Win::ParseExpectedUnicastAddress(address));
 #ifdef FUZEVPN_OPENVPN_CONFIGURATION_DIAGNOSTIC
         // Observation only: retain the exact pushed expectations locally for a
         // later manual read-only check. This hook cannot affect setup outcome.
         FUZEVPN_OPENVPN_CONFIGURATION_DIAGNOSTIC(expected, tap_.index,
-                                                NRPT::rule_id(GetCurrentProcessId()));
+            NRPT::rule_id(GetCurrentProcessId()), dns_adapter_configured_, dns_nrpt_configured_);
 #endif
         const auto text = [](const SOCKADDR* address) -> std::string {
             if (!address) return {};
@@ -391,7 +427,8 @@ class Setup : public SetupBase
             return false;
         }
         const auto address_state = Win::EvaluateUnicastAddressConfiguration(expected_unicast, tap_.index,
-            std::span<const MIB_UNICASTIPADDRESS_ROW>(unicast->Table, unicast->NumEntries));
+            std::span<const MIB_UNICASTIPADDRESS_ROW>(unicast->Table, unicast->NumEntries),
+            pushed_address_prefixes(pull));
         FreeMibTable(unicast);
         if (Win::command_control) {
             Win::command_control->address_expected.store(address_state.expected);
@@ -541,6 +578,7 @@ class Setup : public SetupBase
 
         const auto commands = Win::BuildAdapterDnsCommands(addresses, itf_index_name,
             pull.block_ipv6, IsWindowsVistaOrGreater() && !IsWindows7OrGreater());
+        dns_adapter_configured_ |= !commands.create.empty();
         for (const auto& command : commands.create) create.add(new WinCmd(command));
         for (const auto& command : commands.cleanup) destroy.add(new WinCmd(command));
     }
@@ -591,6 +629,11 @@ class Setup : public SetupBase
         const TunBuilderCapture::RouteAddress *local4 = pull.vpn_ipv4();
         const TunBuilderCapture::RouteAddress *local6 = pull.vpn_ipv6();
 
+        if (!l2_post) {
+            dns_adapter_configured_ = false;
+            dns_nrpt_configured_ = false;
+        }
+
         if (!l2_post)
         {
             // set TAP media status to CONNECTED
@@ -598,7 +641,12 @@ class Setup : public SetupBase
                 Util::tap_set_media_status(th, true);
 
             // try to delete any stale routes on interface left over from previous session
-            create.add(new Util::ActionDeleteAllRoutesOnInterface(tap.index));
+#ifdef FUZEVPN_ENABLE_OPENVPN3_CORE
+            // Selection rejects DCO adapters with foreign network state. Never
+            // clear routes wholesale: new route actions already track ownership.
+            if (tun_type_ != OvpnDco)
+#endif
+                create.add(new Util::ActionDeleteAllRoutesOnInterface(tap.index));
         }
 
         // Set IPv4 Interface
@@ -687,7 +735,13 @@ class Setup : public SetupBase
         //  [[store=]active|persistent]
         if (local6 && !pull.block_ipv6 && !l2_post)
         {
-            create.add(new WinCmd("netsh interface ipv6 set address " + tap_index_name + ' ' + local6->address + " store=active"));
+#ifdef FUZEVPN_ENABLE_OPENVPN3_CORE
+            if (tun_type_ == OvpnDco)
+                create.add(new WinCmd("netsh interface ipv6 add address " + tap_index_name + ' ' + local6->address + '/' +
+                    to_string(local6->prefix_length) + " store=active"));
+            else
+#endif
+                create.add(new WinCmd("netsh interface ipv6 set address " + tap_index_name + ' ' + local6->address + " store=active"));
             destroy.add(new WinCmd("netsh interface ipv6 delete address " + tap_index_name + ' ' + local6->address + " store=active"));
 
             Win::AddOwnedRoutePair(create, destroy, local6->gateway, local6->prefix_length,
@@ -881,6 +935,7 @@ class Setup : public SetupBase
                 if (!allow_local_dns_resolvers || !split_domains.empty())
                 {
                     create.add(new NRPT::ActionCreate(pid, split_domains, addresses, wide_search_domains, dnssec));
+                    dns_nrpt_configured_ = true;
                     destroy.add(new NRPT::ActionDelete(pid));
                 }
                 else if (allow_local_dns_resolvers && pull.block_outside_dns)
@@ -975,6 +1030,7 @@ class Setup : public SetupBase
                             wide_search_domains.emplace_back(wstring::from_utf8(domain.to_string()));
                         }
                         create.add(new NRPT::ActionCreate(pid, split_domains, dserv, wide_search_domains, false));
+                        dns_nrpt_configured_ = true;
                         destroy.add(new NRPT::ActionDelete(pid));
 
                         // Apply changes to DNS settings
@@ -1126,6 +1182,8 @@ class Setup : public SetupBase
     const Type tun_type_;
     Util::TapNameGuidPair tap_;
     bool allow_local_dns_resolvers = false;
+    bool dns_adapter_configured_ = false;
+    bool dns_nrpt_configured_ = false;
     DWORD process_id_ = 0;
 };
 } // namespace openvpn::TunWin

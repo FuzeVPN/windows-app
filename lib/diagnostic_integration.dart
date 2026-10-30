@@ -384,10 +384,14 @@ extension AppDiagnostics on AppController {
             .timeout(const Duration(seconds: 5));
         return <String, Object?>{
           'observation': value,
-          'collection': unavailable('ok'),
+          'collection': value['collection'] ?? unavailable('ok'),
         };
       } on TimeoutException {
         return <String, Object?>{'collection': unavailable('timeout')};
+      } on FormatException {
+        return <String, Object?>{'collection': unavailable('rejected')};
+      } on TypeError {
+        return <String, Object?>{'collection': unavailable('rejected')};
       } on PlatformException catch (error) {
         final details = error.details;
         final code = details is Map ? details['win32_error'] : null;
@@ -807,17 +811,18 @@ extension AppDiagnostics on AppController {
       );
       if (_disposed || generation != _diagnosticGeneration) return;
       _diagnosticSupport = support;
-      diagnosticResults = snapshot;
-      preparedDiagnosticReport = diagnostics.prepareManualReport(
-        snapshot: {
-          ...?snapshot,
-          if (snapshot == null) 'protocol': _diagnosticProtocol,
-          if (snapshot == null) 'state': _diagnosticState,
-          'windows': {
-            ...?snapshot?['windows'] as Map<String, Object?>?,
-            'support': support,
-          },
+      final completeSnapshot = <String, Object?>{
+        ...?snapshot,
+        if (snapshot == null) 'protocol': _diagnosticProtocol,
+        if (snapshot == null) 'state': _diagnosticState,
+        'windows': {
+          ...?snapshot?['windows'] as Map<String, Object?>?,
+          'support': support,
         },
+      };
+      diagnosticResults = snapshot == null ? null : completeSnapshot;
+      preparedDiagnosticReport = diagnostics.prepareManualReport(
+        snapshot: completeSnapshot,
       );
       diagnosticMessage =
           'Diagnostic terminé. Consultez les résultats ci-dessous.';
@@ -918,12 +923,28 @@ extension AppDiagnostics on AppController {
         _isSigningOut) {
       return;
     }
+    // A competing connection can make the recollection unavailable. Clear the
+    // previous result and require this recollection's generation before adding
+    // repair evidence, rather than attaching it to a stale snapshot.
+    final previousDiagnosticGeneration = _diagnosticGeneration;
+    diagnosticResults = null;
+    preparedDiagnosticReport = null;
+    _diagnosticSupport = null;
     await runUserDiagnostic();
     if (_disposed ||
         sessionEpoch != _sessionEpoch ||
         account != profile?.userId ||
         _isSigningOut ||
+        _diagnosticGeneration != previousDiagnosticGeneration + 1 ||
         diagnosticResults == null) {
+      if (!_disposed &&
+          sessionEpoch == _sessionEpoch &&
+          account == profile?.userId &&
+          !_isSigningOut &&
+          _diagnosticGeneration == previousDiagnosticGeneration) {
+        diagnosticMessage = 'Le diagnostic est incomplet. Réessayez.';
+        _notifyDiagnosticView();
+      }
       return;
     }
     diagnosticResults = {

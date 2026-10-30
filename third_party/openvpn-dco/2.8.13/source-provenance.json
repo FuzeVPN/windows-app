@@ -1,0 +1,9 @@
+{
+  "Name": "source-2.8.13.zip",
+  "Repository": "OpenVPN/ovpn-dco-win",
+  "Commit": "62a5db13f93a4b38ac193ee9cdfde1dbe2ab2b03",
+  "Source": "https://codeload.github.com/OpenVPN/ovpn-dco-win/zip/62a5db13f93a4b38ac193ee9cdfde1dbe2ab2b03",
+  "Sha256": "6e956400d5d130e706908df191c8154e017fa724ffe29ec2e62e352281b85d99",
+  "DigestSource": "Computed locally from the official commit archive; no independently published source ZIP digest",
+  "Bytes": 282317
+}

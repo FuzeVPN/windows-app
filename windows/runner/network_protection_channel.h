@@ -4,6 +4,18 @@
 
 #include <flutter/encodable_value.h>
 #include "network_protection.h"
+#include "network_protection_failure.h"
+
+inline flutter::EncodableValue NetworkProtectionFailureDetails() {
+  const auto failure = fuzevpn_network_failure::Read();
+  flutter::EncodableMap details;
+  if (failure.stage && failure.status) {
+    details[flutter::EncodableValue("stage")] = flutter::EncodableValue(failure.stage);
+    details[flutter::EncodableValue("win32_error")] =
+        flutter::EncodableValue(static_cast<int64_t>(failure.status));
+  }
+  return flutter::EncodableValue(details);
+}
 
 inline flutter::EncodableValue NetworkProtectionStatusValue(
     NetworkProtectionOwner owner) {

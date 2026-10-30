@@ -333,7 +333,7 @@ void main() {
   );
 
   test(
-    'le moteur natif installe des filtres dynamiques sans journal secret',
+    'le moteur garde une base persistante et des exceptions dynamiques sans secret',
     () {
       final source = File(
         'windows/runner/network_protection.cpp',
@@ -342,6 +342,8 @@ void main() {
         'windows/runner/network_protection_lifecycle.h',
       ).readAsStringSync();
       expect(source, contains('FWPM_SESSION_FLAG_DYNAMIC'));
+      expect(source, contains('FWPM_FILTER_FLAG_PERSISTENT'));
+      expect(source, contains('FWPM_FILTER_FLAG_BOOTTIME'));
       expect(source, contains('FWPM_LAYER_ALE_AUTH_CONNECT_V4'));
       expect(source, contains('FWPM_LAYER_ALE_AUTH_CONNECT_V6'));
       expect(source, contains('FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V4'));
@@ -373,7 +375,11 @@ void main() {
 
     expect(source, contains('configuration.addresses[index]'));
     expect(source, contains('configuration.allowed_ips[1] != "::/0"'));
-    expect(source, contains('IsUlaIPv6HostCidr(configuration.addresses[1])'));
+    expect(
+      source,
+      contains('fuzevpn::IsWireGuardUlaHostCidr(configuration.addresses[1])'),
+    );
+    expect(source, contains('fuzevpn::IsWireGuardDnsAddress(dns)'));
     expect(source, contains('StringListArgument(*arguments, "addresses"'));
   });
 

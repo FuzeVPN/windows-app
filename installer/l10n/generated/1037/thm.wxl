@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="he-IL" Language="1037" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+  <String Id="Caption" Value="התקנת [WixBundleName]" />
+  <String Id="CheckingForUpdatesLabel" Value="בודק עדכונים" />
+  <String Id="ConfirmCancelMessage" Value="האם לבטל?" />
+  <String Id="DesktopShortcut" Value="יצירת קיצור דרך בשולחן העבודה" />
+  <String Id="ExecuteUpgradeRelatedBundleMessage" Value="גרסה קודמת" />
+  <String Id="FailureCacheHeader" Value="ההכנה נכשלה" />
+  <String Id="FailureCloseButton" Value="סגירה" />
+  <String Id="FailureHeader" Value="כשל" />
+  <String Id="FailureHyperlinkLogText" Value="הפעולה הופסקה. יש לעיין ב&lt;a href=&quot;#&quot;&gt;יומן&lt;/a&gt;, לתקן את הבעיה ולנסות שוב." />
+  <String Id="FailureInstallHeader" Value="ההתקנה הופסקה" />
+  <String Id="FailureLayoutHeader" Value="ההעתקה נכשלה" />
+  <String Id="FailureModifyHeader" Value="השינוי הופסק" />
+  <String Id="FailureRepairHeader" Value="התיקון הופסק" />
+  <String Id="FailureRestartButton" Value="הפעלה מחדש" />
+  <String Id="FailureRestartText" Value="יש להפעיל מחדש כדי לסיים את השחזור." />
+  <String Id="FailureUninstallHeader" Value="ההסרה הופסקה" />
+  <String Id="FailureUnsafeUninstallHeader" Value="ההסרה הופסקה" />
+  <String Id="FilesInUseCloseRadioButton" Value="סגירת יישומים" />
+  <String Id="FilesInUseDontCloseRadioButton" Value="השארת היישומים פתוחים" />
+  <String Id="FilesInUseExitButton" Value="ביטול" />
+  <String Id="FilesInUseIgnoreButton" Value="התעלמות" />
+  <String Id="FilesInUseLabel" Value="יש לסגור את היישומים הבאים ולנסות שוב." />
+  <String Id="FilesInUseNetfxCloseRadioButton" Value="סגירת יישומים" />
+  <String Id="FilesInUseRetryButton" Value="ניסיון חוזר" />
+  <String Id="FilesInUseTitle" Value="קבצים בשימוש" />
+  <String Id="HelpCloseButton" Value="סגירה" />
+  <String Id="HelpHeader" Value="עזרה" />
+  <String Id="HelpText" Value="/install, /repair, /uninstall: התקנה, תיקון, הסרה. /quiet: מצב שקט. /norestart: ללא הפעלה מחדש. DesktopShortcut=1: קיצור דרך בשולחן העבודה. InstallFolder=&quot;D:\Applications\FuzeVPN&quot;: תיקייה התחלתית. עדכונים שומרים על תיקיית ההתקנה." />
+  <String Id="InstallAcceptCheckbox" Value="אני &amp;מסכים לתנאי הרישיון" />
+  <String Id="InstallCancelButton" Value="ביטול" />
+  <String Id="InstallHeader" Value="ברוכים הבאים" />
+  <String Id="InstallInstallButton" Value="התקנה" />
+  <String Id="InstallLicenseLinkText" Value="&lt;a href=&quot;#&quot;&gt;תנאי הרישיון&lt;/a&gt; של [WixBundleName]." />
+  <String Id="InstallMessage" Value="התקנת FuzeVPN במחשב זה." />
+  <String Id="InstallMessageOptions" Value="התקנת FuzeVPN במחשב זה." />
+  <String Id="InstallOptionsButton" Value="אפשרויות" />
+  <String Id="InstallVersion" Value="גרסה [WixBundleVersion]" />
+  <String Id="InstallVersionNotice" Value="גרסה [WixBundleVersion] [BuildNotice]" />
+  <String Id="ModifyCancelButton" Value="ביטול" />
+  <String Id="ModifyHeader" Value="תחזוקה" />
+  <String Id="ModifyRepairButton" Value="תיקון" />
+  <String Id="ModifyUninstallButton" Value="הסרה" />
+  <String Id="OptionsBrowseButton" Value="עיון" />
+  <String Id="OptionsCancelButton" Value="ביטול" />
+  <String Id="OptionsHeader" Value="אפשרויות" />
+  <String Id="OptionsLocationLabel" Value="תיקיית התקנה (מוגנת על ידי Windows)" />
+  <String Id="OptionsOkButton" Value="אישור" />
+  <String Id="OptionsPerMachineScopeText" Value="כל המשתמשים" />
+  <String Id="OptionsPerUserScopeText" Value="המשתמש הנוכחי" />
+  <String Id="OverallProgressPackageText" Value="מכין…" />
+  <String Id="PreserveInstallFolder" Value="התיקייה הקיימת נשמרת במהלך עדכונים. כדי להעביר את הממשק בחופשיות, יש להשתמש בארכיון הנייד." />
+  <String Id="ProgressCancelButton" Value="ביטול" />
+  <String Id="ProgressHeader" Value="ההתקנה מתבצעת" />
+  <String Id="ProgressLabel" Value="התקדמות" />
+  <String Id="SuccessCacheHeader" Value="הקבצים מוכנים" />
+  <String Id="SuccessCloseButton" Value="סגירה" />
+  <String Id="SuccessHeader" Value="הפעולה הושלמה" />
+  <String Id="SuccessInstallHeader" Value="ההתקנה הושלמה" />
+  <String Id="SuccessLaunchButton" Value="פתיחה" />
+  <String Id="SuccessLayoutHeader" Value="הקבצים מוכנים" />
+  <String Id="SuccessModifyHeader" Value="השינוי הושלם" />
+  <String Id="SuccessOpenApp" Value="יש לפתוח את FuzeVPN מתפריט התחל. ההעדפות האישיות שלך נשמרו." />
+  <String Id="SuccessRepairHeader" Value="התיקון הושלם" />
+  <String Id="SuccessRestartButton" Value="הפעלה מחדש" />
+  <String Id="SuccessRestartText" Value="יש להפעיל מחדש את המחשב כדי לסיים." />
+  <String Id="SuccessUninstallHeader" Value="ההסרה הושלמה" />
+  <String Id="SuccessUninstallRestartText" Value="יש להפעיל מחדש כדי לסיים את ההסרה." />
+  <String Id="SuccessUnsafeUninstallHeader" Value="ההסרה הושלמה" />
+  <String Id="Title" Value="[WixBundleName]" />
+  <String Id="UpdateButton" Value="עדכון" />
+</WixLocalization>

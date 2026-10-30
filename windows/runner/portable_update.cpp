@@ -8,6 +8,7 @@
 #include <array>
 #include <set>
 #include <memory>
+#include <map>
 
 namespace fuzevpn_portable_update {
 namespace {
@@ -66,6 +67,35 @@ bool ExtraSafe(const BYTE* extra, size_t size) {
     offset += length;
   }
   return true;
+}
+bool InventoryExcluded(const std::string& name) {
+  const auto value = Lower(name);
+  return value == "fuzevpn-runtime.exe" || value == "portable-runtime.manifest" ||
+      value == "fuzevpn.portable" || value == "readme-portable.txt";
+}
+bool InventorySize(std::string_view value, uint64_t* result) {
+  if (value.empty() || value.size() > 10 || value.front() == '0') return false;
+  uint64_t size = 0;
+  for (char c : value) {
+    if (c < '0' || c > '9' || size > (kMaximumEntryBytes - (c - '0')) / 10) return false;
+    size = size * 10 + (c - '0');
+  }
+  *result = size;
+  return true;
+}
+bool ReadEmbeddedInventory(const PinnedFile& carrier, Inventory* inventory) {
+  // The caller retains its authenticated handle while resource bytes are read;
+  // this mapping never executes the carrier or resolves its imports.
+  HMODULE resource = LoadLibraryExW(carrier.path().c_str(), nullptr,
+      LOAD_LIBRARY_AS_DATAFILE_EXCLUSIVE | LOAD_LIBRARY_AS_IMAGE_RESOURCE);
+  if (!resource) return false;
+  HRSRC found = FindResourceW(resource, MAKEINTRESOURCEW(kInventoryResourceId), MAKEINTRESOURCEW(10));
+  const DWORD size = found ? SizeofResource(resource, found) : 0;
+  HGLOBAL loaded = size && size <= kMaximumInventoryBytes ? LoadResource(resource, found) : nullptr;
+  const auto* bytes = loaded ? static_cast<const char*>(LockResource(loaded)) : nullptr;
+  const bool valid = bytes && ParseInventory(std::string_view(bytes, size), inventory);
+  FreeLibrary(resource);
+  return valid;
 }
 struct Entry {
   std::string name, relative;
@@ -201,6 +231,109 @@ int InflateOutput(const void* data, int length, void* context) {
   return length >= 0 && static_cast<Output*>(context)->Write(static_cast<const BYTE*>(data), length);
 }
 }  // namespace
+
+bool ParseInventory(std::string_view text, Inventory* inventory) {
+  if (!inventory || text.empty() || text.size() > kMaximumInventoryBytes || text.back() != '\n' ||
+      text.find('\0') != std::string_view::npos || text.find('\r') != std::string_view::npos) return false;
+  std::vector<std::string_view> lines;
+  for (size_t start = 0; start < text.size();) {
+    const auto end = text.find('\n', start);
+    lines.push_back(text.substr(start, end - start));
+    if (lines.size() > kMaximumArchiveEntries + 3) return false;
+    start = end + 1;
+  }
+  Inventory parsed;
+  if (lines.size() < 4 || lines[0] != "FUZEVPN_PORTABLE_V1" || lines[1].rfind("version=", 0) != 0 ||
+      !fuzevpn_update::ParseVersion(std::string(lines[1].substr(8)), &parsed.version) ||
+      lines[2] != kInventoryExclusions) return false;
+  std::set<std::string> names;
+  uint64_t total = 0;
+  for (size_t index = 3; index < lines.size(); ++index) {
+    const auto line = lines[index];
+    const auto first = line.find('\t');
+    const auto second = first == std::string_view::npos ? first : line.find('\t', first + 1);
+    InventoryFile file;
+    std::string relative;
+    if (line.rfind("file=", 0) != 0 || first == std::string_view::npos || second == std::string_view::npos ||
+        line.find('\t', second + 1) != std::string_view::npos ||
+        !InventorySize(line.substr(5, first - 5), &file.size) ||
+        file.size > kMaximumExpandedBytes - total) return false;
+    file.sha256 = Lower(std::string(line.substr(first + 1, second - first - 1)));
+    file.relative_path = std::string(line.substr(second + 1));
+    if (!fuzevpn_update::ValidHash(file.sha256) ||
+        !SafeName("FuzeVPN/" + file.relative_path, false, &relative) ||
+        InventoryExcluded(relative) || !names.insert(Lower(relative)).second) return false;
+    total += file.size;
+    parsed.files.push_back(std::move(file));
+  }
+  for (const auto& name : names)
+    for (auto slash = name.find('/'); slash != std::string::npos; slash = name.find('/', slash + 1))
+      if (names.count(name.substr(0, slash))) return false;
+  *inventory = std::move(parsed);
+  return true;
+}
+
+bool VerifyInventoryFiles(const std::filesystem::path& root, const Inventory& inventory, Failure* failure) {
+  if (failure) *failure = {};
+  std::vector<std::filesystem::path> paths;
+  if (!root.is_absolute() || root == root.root_path() || inventory.files.empty() ||
+      inventory.files.size() > kMaximumArchiveEntries || !Enumerate(root, root, &paths))
+    return Fail(failure, "update_portable_manifest_invalid", "portable_manifest");
+  std::map<std::string, const InventoryFile*> expected;
+  uint64_t total = 0;
+  for (const auto& file : inventory.files) {
+    std::string relative;
+    if (!file.size || file.size > kMaximumEntryBytes || file.size > kMaximumExpandedBytes - total ||
+        !fuzevpn_update::ValidHash(file.sha256) || !SafeName("FuzeVPN/" + file.relative_path, false, &relative) ||
+        InventoryExcluded(relative) || !expected.emplace(Lower(relative), &file).second)
+      return Fail(failure, "update_portable_manifest_invalid", "portable_manifest");
+    total += file.size;
+  }
+  std::vector<std::unique_ptr<PinnedFile>> pins;
+  size_t matched = 0;
+  for (const auto& path : paths) {
+    const auto name = Lower(path.lexically_relative(root).generic_string());
+    if (InventoryExcluded(name)) continue;
+    const auto entry = expected.find(name);
+    if (entry == expected.end()) return Fail(failure, "update_portable_manifest_invalid", "portable_manifest");
+    auto file = std::make_unique<PinnedFile>();
+    LARGE_INTEGER size{};
+    if (!file->Open(path, true) || !GetFileSizeEx(file->get(), &size) ||
+        size.QuadPart != static_cast<LONGLONG>(entry->second->size) ||
+        !fuzevpn_update::MatchesHash(file->get(), entry->second->sha256))
+      return Fail(failure, "update_portable_manifest_invalid", "portable_manifest");
+    pins.push_back(std::move(file));
+    ++matched;
+  }
+  if (matched != expected.size()) return Fail(failure, "update_portable_manifest_invalid", "portable_manifest");
+  return true;
+}
+
+bool CopyHelperForAttempt(const PinnedFile& source, const std::filesystem::path& destination,
+                          Failure* failure) {
+  if (failure) *failure = {};
+  if (!destination.is_absolute() || destination.filename() != L"fuzevpn-update.exe" ||
+      fuzevpn_installation::SamePath(source.path().wstring(), destination.wstring()))
+    return Fail(failure, "update_storage_failed", "portable_helper_copy", ERROR_INVALID_PARAMETER);
+  if (!DeleteFileW(destination.c_str())) {
+    const DWORD error = GetLastError();
+    if (error != ERROR_FILE_NOT_FOUND) return Fail(failure,
+        error == ERROR_SHARING_VIOLATION || error == ERROR_LOCK_VIOLATION || error == ERROR_ACCESS_DENIED ?
+            "update_busy" : "update_storage_failed", "portable_helper_copy", error);
+  }
+  HANDLE output = CreateFileW(destination.c_str(), GENERIC_WRITE, 0, nullptr, CREATE_NEW,
+      FILE_ATTRIBUTE_NORMAL | FILE_FLAG_OPEN_REPARSE_POINT, nullptr);
+  if (output == INVALID_HANDLE_VALUE)
+    return Fail(failure, "update_storage_failed", "portable_helper_copy", GetLastError());
+  const bool copied = fuzevpn_update::CopyFileContents(source.get(), output);
+  const DWORD error = copied ? ERROR_SUCCESS : GetLastError();
+  CloseHandle(output);
+  if (!copied) {
+    DeleteFileW(destination.c_str());
+    return Fail(failure, "update_storage_failed", "portable_helper_copy", error ? error : ERROR_WRITE_FAULT);
+  }
+  return true;
+}
 
 bool ExtractArchive(const PinnedFile& archive, const std::string& sha256,
                     const std::filesystem::path& destination, Failure* failure) {
@@ -413,8 +546,8 @@ bool ValidateBundle(const std::filesystem::path& root, const fuzevpn_update::Ver
       }
     }
     if (name == "data/app.so") {
-      // Flutter AOT snapshots use ELF64 on Windows, authenticated by the ZIP
-      // hash rather than Authenticode. Check their target without loading it.
+      // Flutter AOT snapshots use ELF64 on Windows. Resource 301 binds their
+      // exact bytes to the FuzeVPN signer; inspect the target without loading it.
       std::array<BYTE, 64> elf{};
       const unsigned machine = fuzevpn_architecture::kBuildMachine ==
           fuzevpn_architecture::kX64Machine ? 62 : 183;
@@ -437,6 +570,15 @@ bool ValidateBundle(const std::filesystem::path& root, const fuzevpn_update::Ver
   PinnedFile manifest_file;
   if (!manifest_file.Open(root / L"portable-runtime.manifest", true) ||
       !fuzevpn_update::MatchesHash(manifest_file.get(), manifest.sha256))
+    return Fail(failure, "update_portable_manifest_invalid", "portable_manifest");
+  // Resource 301 binds every frontend byte to the already authenticated FuzeVPN
+  // runtime signer. The API-supplied ZIP hash alone cannot authorize AOT/assets
+  // or a replacement DLL signed by another trusted publisher.
+  PinnedFile inventory_carrier;
+  Inventory inventory;
+  if (!inventory_carrier.Open(root / L"fuzevpn-runtime.exe", true) ||
+      !ReadEmbeddedInventory(inventory_carrier, &inventory) || !(inventory.version == target) ||
+      !VerifyInventoryFiles(root, inventory, failure))
     return Fail(failure, "update_portable_manifest_invalid", "portable_manifest");
   return true;
 }

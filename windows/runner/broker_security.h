@@ -5,6 +5,9 @@
 #include <windows.h>
 #include <sddl.h>
 
+#include "runtime_namespace.h"
+#include "legacy_runtime_guard.h"
+
 namespace fuzevpn_ipc {
 // Grant the client only byte I/O, server-PID inspection and synchronization.
 // In particular, FILE_CREATE_PIPE_INSTANCE must never be granted to clients.
@@ -24,21 +27,26 @@ class ExclusiveRuntimeLock final {
     if (handle_ != nullptr) CloseHandle(handle_);
   }
   bool Acquire(const wchar_t* name, SECURITY_ATTRIBUTES* security) {
-    if (handle_ != nullptr) return false;
+    if (handle_ != nullptr) { SetLastError(ERROR_INVALID_HANDLE); return false; }
     handle_ = CreateMutexW(security, FALSE, name);
     if (handle_ == nullptr) return false;
     const DWORD state = WaitForSingleObject(handle_, 0);
     owned_ = state == WAIT_OBJECT_0 || state == WAIT_ABANDONED;
+    if (!owned_ && state != WAIT_FAILED) SetLastError(ERROR_BUSY);
     return owned_;
   }
   bool AcquireMachineRuntime() {
+    if (!CanStartAlongsideLegacyRuntime()) return false;
+    if (!BindMachineRuntimeNamespace()) return false;
     PSECURITY_DESCRIPTOR descriptor = nullptr;
     if (!ConvertStringSecurityDescriptorToSecurityDescriptorW(
         L"D:P(A;;GA;;;SY)(A;;GA;;;BA)", SDDL_REVISION_1,
         &descriptor, nullptr)) return false;
     SECURITY_ATTRIBUTES security{sizeof(SECURITY_ATTRIBUTES), descriptor, FALSE};
-    const bool acquired = Acquire(L"Global\\FuzeVPN-ExclusiveRuntime-v1", &security);
+    const bool acquired = Acquire(kMachineRuntimeMutex, &security);
+    const DWORD error = acquired ? ERROR_SUCCESS : GetLastError();
     LocalFree(descriptor);
+    if (!acquired) SetLastError(error);
     return acquired;
   }
   ExclusiveRuntimeLock() = default;

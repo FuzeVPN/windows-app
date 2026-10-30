@@ -45,12 +45,8 @@ try {
     if (-not $SkipTests) {
       $tools = Get-FuzeVisualStudioTools -Architecture $arch
       $nativeBuild = Join-Path $projectRoot "build/windows/$arch"
-      $targets = @('fuzevpn_native_security_test','fuzevpn_network_runtime_test','fuzevpn_network_filter_test',
-        'fuzevpn_tray_icon_test','fuzevpn_openvpn_safety_test','fuzevpn_update_security_test',
-        'fuzevpn_portable_update_test','fuzevpn_portable_runtime_test','fuzevpn_distribution_mode_test',
-        'fuzevpn_api_resolver_adapter_test','fuzevpn_diagnostics_snapshot_test','fuzevpn_diagnostics_store_test',
-        'fuzevpn_window_geometry_test','fuzevpn_runtime_architecture_test')
-      Invoke-FuzeChecked $tools.CMake (@('--build',$nativeBuild,'--config','Release','--target') + $targets + @('--parallel',"$Parallel"))
+      Invoke-FuzeChecked $tools.CMake @('--build',$nativeBuild,'--config','Release',
+        '--target','fuzevpn_native_tests','--parallel',"$Parallel")
       if ($arch -eq 'x64') {
         Invoke-FuzeChecked $tools.CTest @('--test-dir',$nativeBuild,'-C','Release','--output-on-failure','--no-tests=error')
       } else { Write-Host 'ARM64 native fixtures compiled; execute them on an ARM64 Windows test machine.' }

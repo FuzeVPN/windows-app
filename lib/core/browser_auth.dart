@@ -41,16 +41,78 @@ class BrowserAuthException implements Exception, DiagnosticFailureDetails {
   String toString() => 'BrowserAuthException($code)';
 }
 
+/// Localized, public text only. Each attempt snapshots its selected language.
+class BrowserAuthPageTexts {
+  const BrowserAuthPageTexts({
+    required this.languageTag,
+    required this.isRightToLeft,
+    required this.receivedTitle,
+    required this.receivedMessage,
+    required this.deniedTitle,
+    required this.deniedMessage,
+    required this.invalidTitle,
+    required this.invalidMessage,
+  });
+
+  static const french = BrowserAuthPageTexts(
+    languageTag: 'fr',
+    isRightToLeft: false,
+    receivedTitle: 'Autorisation reçue',
+    receivedMessage: 'Revenez dans FuzeVPN pour terminer la connexion.',
+    deniedTitle: 'Autorisation refusée',
+    deniedMessage: 'La connexion a été annulée dans le navigateur.',
+    invalidTitle: 'Demande invalide',
+    invalidMessage:
+        'La réponse de connexion du navigateur est invalide. Recommencez depuis FuzeVPN.',
+  );
+
+  final String languageTag;
+  final bool isRightToLeft;
+  final String receivedTitle;
+  final String receivedMessage;
+  final String deniedTitle;
+  final String deniedMessage;
+  final String invalidTitle;
+  final String invalidMessage;
+
+  String get receivedPage => _page(receivedTitle, receivedMessage);
+  String get deniedPage => _page(deniedTitle, deniedMessage);
+  String get invalidPage => _page(invalidTitle, invalidMessage);
+
+  String _page(String title, String message) {
+    const textEscape = HtmlEscape(HtmlEscapeMode.element);
+    const attributeEscape = HtmlEscape(HtmlEscapeMode.attribute);
+    final direction = isRightToLeft ? 'rtl' : 'ltr';
+    return '<!doctype html><html lang="${attributeEscape.convert(languageTag)}" '
+        'dir="$direction"><head>'
+        '<meta charset="utf-8"><meta name="viewport" '
+        'content="width=device-width,initial-scale=1"><title>FuzeVPN</title>'
+        '<style>html{color-scheme:light dark}body{margin:0;min-height:100vh;'
+        'display:grid;place-items:center;background:#101a22;color:#f4f1e9;'
+        'font:17px/1.6 system-ui,sans-serif}main{max-width:540px;margin:24px;'
+        'padding:36px;border:1px solid #45505a;border-radius:18px}'
+        'strong{color:#f5cb58;letter-spacing:.03em}h1{font-size:28px;'
+        'line-height:1.25}p{color:#c9ced1;margin-bottom:0}</style>'
+        '</head><body><main><strong>FuzeVPN</strong>'
+        '<h1>${textEscape.convert(title)}</h1>'
+        '<p>${textEscape.convert(message)}</p></main></body></html>';
+  }
+}
+
 /// Reserves the callback before the caller opens the system browser. There is
 /// no wildcard interface, fixed port, Windows URL protocol or privileged work.
 class BrowserAuth {
-  BrowserAuth({this.timeout = const Duration(minutes: 10)}) {
+  BrowserAuth({
+    this.timeout = const Duration(minutes: 10),
+    this.pageTexts = BrowserAuthPageTexts.french,
+  }) {
     if (timeout <= Duration.zero) {
       throw ArgumentError('Browser authorization timeout must be positive.');
     }
   }
 
   final Duration timeout;
+  BrowserAuthPageTexts pageTexts;
 
   static const callbackPath = '/auth/callback';
   static final _verifierFormat = RegExp(r'^[A-Za-z0-9._~-]{43,128}$');
@@ -64,6 +126,7 @@ class BrowserAuth {
   }
 
   Future<BrowserAuthAttempt> start() async {
+    final selectedPageTexts = pageTexts;
     final clock = Stopwatch()..start();
     final String state;
     final String verifier;
@@ -104,6 +167,7 @@ class BrowserAuth {
         verifier,
         pkceChallenge(verifier),
         remaining,
+        selectedPageTexts,
       );
     } on TimeoutException {
       expired = true;
@@ -129,6 +193,7 @@ class BrowserAuthAttempt {
     this._codeVerifier,
     this._codeChallenge,
     Duration timeout,
+    this._pageTexts,
   ) : _server = server,
       redirectUri = Uri(
         scheme: 'http',
@@ -174,6 +239,7 @@ class BrowserAuthAttempt {
   String get state => _availableProof(_state);
   String get codeChallenge => _availableProof(_codeChallenge);
   final HttpServer _server;
+  final BrowserAuthPageTexts _pageTexts;
   final Completer<String> _callback = Completer<String>();
   StreamSubscription<HttpRequest>? _subscription;
   Timer? _timer;
@@ -218,13 +284,17 @@ class BrowserAuthAttempt {
 
   Future<void> _handle(HttpRequest request) async {
     if (_settled) {
-      await _respond(request, HttpStatus.gone, _invalidPage);
+      await _respond(request, HttpStatus.gone, _pageTexts.invalidPage);
       return;
     }
     try {
       if (request.method != 'GET') {
         request.response.headers.set(HttpHeaders.allowHeader, 'GET');
-        await _respond(request, HttpStatus.methodNotAllowed, _invalidPage);
+        await _respond(
+          request,
+          HttpStatus.methodNotAllowed,
+          _pageTexts.invalidPage,
+        );
         return;
       }
       final uri = request.uri;
@@ -236,7 +306,7 @@ class BrowserAuthAttempt {
           request.headers.value(HttpHeaders.hostHeader) !=
               '127.0.0.1:${redirectUri.port}' ||
           request.connectionInfo?.remoteAddress.address != '127.0.0.1') {
-        await _respond(request, HttpStatus.badRequest, _invalidPage);
+        await _respond(request, HttpStatus.badRequest, _pageTexts.invalidPage);
         return;
       }
       final parameters = uri.queryParametersAll;
@@ -246,13 +316,13 @@ class BrowserAuthAttempt {
           callbackState == null ||
           !_canonicalSecret(callbackState.single) ||
           !_sameState(callbackState.single)) {
-        await _respond(request, HttpStatus.badRequest, _invalidPage);
+        await _respond(request, HttpStatus.badRequest, _pageTexts.invalidPage);
         return;
       }
       final code = parameters['code']?.single;
       final denied = parameters['error']?.single == 'access_denied';
       if ((code == null || !_canonicalSecret(code)) && !denied) {
-        await _respond(request, HttpStatus.badRequest, _invalidPage);
+        await _respond(request, HttpStatus.badRequest, _pageTexts.invalidPage);
         return;
       }
       // Accept exactly one valid callback. Invalid or unrelated localhost
@@ -263,7 +333,7 @@ class BrowserAuthAttempt {
       await _respond(
         request,
         HttpStatus.ok,
-        denied ? _deniedPage : _receivedPage,
+        denied ? _pageTexts.deniedPage : _pageTexts.receivedPage,
       );
       await _close();
       if (_callback.isCompleted) return;
@@ -278,7 +348,7 @@ class BrowserAuthAttempt {
     } catch (_) {
       // Malformed HTTP/query input is neither logged nor reflected in HTML.
       if (!_settled) {
-        await _respond(request, HttpStatus.badRequest, _invalidPage);
+        await _respond(request, HttpStatus.badRequest, _pageTexts.invalidPage);
       }
     }
   }
@@ -373,28 +443,4 @@ class BrowserAuthAttempt {
       }
     }
   }
-
-  static const _receivedPage =
-      '$_pageStart<h1>Autorisation reçue</h1>'
-      '<p>Revenez dans FuzeVPN pour terminer la connexion.</p>$_pageEnd';
-  static const _deniedPage =
-      '$_pageStart<h1>Autorisation refusée</h1>'
-      '<p>Vous pouvez revenir dans FuzeVPN '
-      'et recommencer si vous le souhaitez.</p>$_pageEnd';
-  static const _invalidPage =
-      '$_pageStart<h1>Demande invalide</h1>'
-      '<p>Revenez dans FuzeVPN et poursuivez '
-      'la demande de connexion ouverte dans votre navigateur.</p>$_pageEnd';
-  static const _pageStart =
-      '<!doctype html><html lang="fr"><head>'
-      '<meta charset="utf-8"><meta name="viewport" '
-      'content="width=device-width,initial-scale=1"><title>FuzeVPN</title>'
-      '<style>html{color-scheme:light dark}body{margin:0;min-height:100vh;'
-      'display:grid;place-items:center;background:#101a22;color:#f4f1e9;'
-      'font:17px/1.6 system-ui,sans-serif}main{max-width:540px;margin:24px;'
-      'padding:36px;border:1px solid #45505a;border-radius:18px}'
-      'strong{color:#f5cb58;letter-spacing:.03em}h1{font-size:28px;'
-      'line-height:1.25}p{color:#c9ced1;margin-bottom:0}</style>'
-      '</head><body><main><strong>FuzeVPN</strong>';
-  static const _pageEnd = '</main></body></html>';
 }

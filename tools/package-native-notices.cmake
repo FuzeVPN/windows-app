@@ -5,7 +5,7 @@ if(NOT DEFINED SOURCE_ROOT OR NOT DEFINED BUNDLE_DIR)
 endif()
 set(CORE "${SOURCE_ROOT}/third_party/openvpn3-core")
 set(WIREGUARD "${SOURCE_ROOT}/third_party/wireguard/1.1")
-set(DCO "${SOURCE_ROOT}/third_party/openvpn-dco/2.8.7")
+set(DCO "${SOURCE_ROOT}/third_party/openvpn-dco/2.8.13")
 set(LICENSE_DIR "${BUNDLE_DIR}/licenses")
 file(MAKE_DIRECTORY "${LICENSE_DIR}")
 configure_file("${SOURCE_ROOT}/third_party/miniz/LICENSE"
@@ -37,8 +37,8 @@ if(OPENVPN_ENABLED)
     "${BUNDLE_DIR}/openvpn-dco/NOTICE.md" COPYONLY)
   configure_file("${DCO}/LICENSE.txt"
     "${BUNDLE_DIR}/openvpn-dco/LICENSE.txt" COPYONLY)
-  configure_file("${DCO}/source-2.8.7.zip"
-    "${BUNDLE_DIR}/openvpn-dco/source-2.8.7.zip" COPYONLY)
+  configure_file("${DCO}/source-2.8.13.zip"
+    "${BUNDLE_DIR}/openvpn-dco/source-2.8.13.zip" COPYONLY)
   configure_file("${CORE}/LICENSES/MPL-2.0.txt"
     "${LICENSE_DIR}/OpenVPN3-MPL-2.0.txt" COPYONLY)
   configure_file("${CORE}/FUZEVPN-PINNED-VERSION.txt"

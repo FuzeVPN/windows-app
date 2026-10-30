@@ -50,6 +50,14 @@ windows/flutter/ephemeral/
 !/third_party/openvpn-dco/2.8.7/arm64/win10/ovpn-dco.cat
 !/third_party/openvpn-dco/2.8.7/arm64/win11/ovpn-dco.sys
 !/third_party/openvpn-dco/2.8.7/arm64/win11/ovpn-dco.cat
+!/third_party/openvpn-dco/2.8.13/amd64/win10/ovpn-dco.sys
+!/third_party/openvpn-dco/2.8.13/amd64/win10/ovpn-dco.cat
+!/third_party/openvpn-dco/2.8.13/amd64/win11/ovpn-dco.sys
+!/third_party/openvpn-dco/2.8.13/amd64/win11/ovpn-dco.cat
+!/third_party/openvpn-dco/2.8.13/arm64/win10/ovpn-dco.sys
+!/third_party/openvpn-dco/2.8.13/arm64/win10/ovpn-dco.cat
+!/third_party/openvpn-dco/2.8.13/arm64/win11/ovpn-dco.sys
+!/third_party/openvpn-dco/2.8.13/arm64/win11/ovpn-dco.cat
 
 # Private signing material and local application data
 *.pfx

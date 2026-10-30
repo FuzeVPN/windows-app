@@ -10,8 +10,10 @@
 #include "vpn_reconnect_binding.h"
 #include "wireguard_runtime_state.h"
 #include "wireguard_endpoint.h"
+#include "wireguard_address_validation.h"
 #include "diagnostics_network.h"
 #include "installation_security.h"
+#include "wireguard_config_storage.h"
 
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
@@ -547,67 +549,6 @@ bool IsIPv4Cidr(const std::string& value) {
   return true;
 }
 
-bool IsUlaIPv6HostCidr(const std::string& value) {
-  const size_t slash = value.find('/');
-  if (slash == std::string::npos || value.substr(slash + 1) != "128") {
-    return false;
-  }
-  const std::string raw_address = value.substr(0, slash);
-  if (raw_address.empty() || raw_address.find('.') != std::string::npos) {
-    return false;
-  }
-  const size_t compression = raw_address.find("::");
-  if (compression == std::string::npos && raw_address.back() == ':') {
-    return false;
-  }
-  if (compression != std::string::npos &&
-      raw_address.find("::", compression + 2) != std::string::npos) {
-    return false;
-  }
-  auto count_groups = [](std::string_view part, size_t* count,
-                         unsigned long* first_group) {
-    if (part.empty()) return true;
-    size_t start = 0;
-    while (start < part.size()) {
-      const size_t colon = part.find(':', start);
-      const size_t finish = colon == std::string_view::npos ? part.size() : colon;
-      const std::string group(part.substr(start, finish - start));
-      if (group.empty() || group.size() > 4) return false;
-      for (const char character : group) {
-        if (!((character >= '0' && character <= '9') ||
-              (character >= 'a' && character <= 'f') ||
-              (character >= 'A' && character <= 'F'))) {
-          return false;
-        }
-      }
-      char* end = nullptr;
-      const unsigned long parsed = std::strtoul(group.c_str(), &end, 16);
-      if (end == group.c_str() || *end != '\0' || parsed > 0xffff) return false;
-      if (*count == 0 && first_group != nullptr) *first_group = parsed;
-      ++*count;
-      if (colon == std::string_view::npos) break;
-      start = colon + 1;
-    }
-    return true;
-  };
-  size_t groups = 0;
-  unsigned long first_group = 0;
-  if (compression == std::string::npos) {
-    if (!count_groups(raw_address, &groups, &first_group) || groups != 8) {
-      return false;
-    }
-  } else {
-    if (!count_groups(std::string_view(raw_address).substr(0, compression),
-                      &groups, &first_group) ||
-        !count_groups(std::string_view(raw_address).substr(compression + 2),
-                      &groups, nullptr) ||
-        groups >= 8) {
-      return false;
-    }
-  }
-  return groups > 0 && first_group >= 0xfc00 && first_group <= 0xfdff;
-}
-
 bool IsEndpointValue(const std::string& value) {
   fuzevpn::WireGuardEndpoint endpoint;
   return fuzevpn::ParseWireGuardEndpoint(value, &endpoint);
@@ -626,7 +567,7 @@ bool IsValidConfiguration(const TunnelConfiguration& configuration,
     return false;
   }
   for (const auto& dns : configuration.dns) {
-    if (!IsAddressValue(dns, false)) {
+    if (!fuzevpn::IsWireGuardDnsAddress(dns)) {
       return false;
     }
   }
@@ -636,7 +577,7 @@ bool IsValidConfiguration(const TunnelConfiguration& configuration,
     }
   }
   if (configuration.addresses.size() == 2) {
-    if (!IsUlaIPv6HostCidr(configuration.addresses[1]) ||
+    if (!fuzevpn::IsWireGuardUlaHostCidr(configuration.addresses[1]) ||
         configuration.allowed_ips.size() != 2 ||
         configuration.allowed_ips[0] != "0.0.0.0/0" ||
         configuration.allowed_ips[1] != "::/0") {
@@ -692,33 +633,6 @@ std::optional<std::filesystem::path> TunnelConfigPath() {
   fuzevpn_installation::ProtectedRuntimeDirectory directory;
   if (!directory.Open(false)) return std::nullopt;
   return directory.path() / kConfigFileName;
-}
-
-bool WriteRestrictedConfiguration(const std::string& configuration) {
-  fuzevpn_installation::ProtectedRuntimeDirectory directory;
-  if (!directory.Open(true)) return false;
-  const auto config_path = directory.path() / kConfigFileName;
-  auto temporary = config_path;
-  temporary += L".tmp." + std::to_wstring(GetCurrentProcessId()) + L"." +
-               std::to_wstring(GetTickCount64());
-  struct TemporaryCleanup {
-    const std::filesystem::path& path;
-    ~TemporaryCleanup() { std::error_code ignored; std::filesystem::remove(path, ignored); }
-  } temporary_cleanup{temporary};
-  HANDLE file = CreateFileW(temporary.c_str(), GENERIC_WRITE, 0, nullptr,
-                            CREATE_NEW, FILE_ATTRIBUTE_NORMAL, nullptr);
-  if (file == INVALID_HANDLE_VALUE) return false;
-  DWORD written = 0;
-  const bool complete = configuration.size() <= MAXDWORD &&
-      WriteFile(file, configuration.data(), static_cast<DWORD>(configuration.size()),
-                &written, nullptr) && written == configuration.size() && FlushFileBuffers(file);
-  CloseHandle(file);
-  if (!complete) return false;
-  if (!MoveFileExW(temporary.c_str(), config_path.c_str(),
-                    MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH)) {
-    return false;
-  }
-  return true;
 }
 
 void RemoveRestrictedConfiguration() {
@@ -972,6 +886,60 @@ std::optional<DWORD> QueryServiceState() {
   return status.dwCurrentState;
 }
 
+enum class LocalIdentityPreparation { ready, runtime_required, runtime_unknown, failed };
+
+LocalIdentityPreparation ObserveLocalIdentityRuntime() {
+  const auto runtime = PrivilegedRuntimePresence();
+  if (!runtime) return LocalIdentityPreparation::runtime_unknown;
+  if (*runtime) return LocalIdentityPreparation::runtime_required;
+  const auto tunnel = QueryServiceState();
+  if (!tunnel) return LocalIdentityPreparation::runtime_unknown;
+  return *tunnel == SERVICE_STOPPED ? LocalIdentityPreparation::ready
+                                   : LocalIdentityPreparation::runtime_required;
+}
+
+LocalIdentityPreparation PrepareLocalIdentityForAccount(
+    const std::string& account_id, TunnelFailure* failure) {
+  if (!IsAccountID(account_id)) {
+    *failure = TunnelFailure::kKeyUnavailable;
+    return LocalIdentityPreparation::failed;
+  }
+  auto presence = ObserveLocalIdentityRuntime();
+  if (presence != LocalIdentityPreparation::ready) return presence;
+
+  bool storage_error = false;
+  std::string public_key;
+  const bool existing = ReadStoredPublicKeyForAccount(account_id, &public_key,
+                                                     &storage_error);
+  SecureErase(&public_key);
+  if (existing) return LocalIdentityPreparation::ready;
+  if (storage_error) {
+    *failure = TunnelFailure::kStorageFailure;
+    return LocalIdentityPreparation::failed;
+  }
+  // Account sign-in must not request elevation or mutate machine-wide tunnel
+  // and WFP state. Recheck passive state immediately before replacing the
+  // current user's DPAPI identity; uncertain/active state belongs to the runtime.
+  presence = ObserveLocalIdentityRuntime();
+  if (presence != LocalIdentityPreparation::ready) return presence;
+  if (!DeleteStoredIdentity(failure) ||
+      !CreateIdentityForAccount(account_id, &public_key, failure)) {
+    SecureErase(&public_key);
+    return LocalIdentityPreparation::failed;
+  }
+  SecureErase(&public_key);
+  return LocalIdentityPreparation::ready;
+}
+
+LocalIdentityPreparation ResetLocalIdentity(TunnelFailure* failure) {
+  const auto presence = ObserveLocalIdentityRuntime();
+  if (presence != LocalIdentityPreparation::ready) return presence;
+  // Explicitly deleting the user's identity needs no machine-wide cleanup
+  // once both runtime and tunnel are confirmed inactive.
+  return DeleteStoredIdentity(failure) ? LocalIdentityPreparation::ready
+                                       : LocalIdentityPreparation::failed;
+}
+
 std::optional<bool> QueryServiceRunning() {
   const auto state = QueryServiceState();
   return state ? std::optional<bool>(*state == SERVICE_RUNNING) : std::nullopt;
@@ -1064,7 +1032,9 @@ std::optional<bool> ConnectedPeerState() {
 }
 
 bool ConnectTunnel(const TunnelConfiguration& configuration,
-                    TunnelFailure* failure) {
+                    TunnelFailure* failure,
+                    fuzevpn_installation::RuntimeStorageFailure* storage_failure) {
+  *storage_failure = {};
   // Leave 5 s of margin under the 75 s broker response deadline. Synchronous
   // Windows/driver calls cannot be forcibly interrupted, but all our waits,
   // including failure cleanup, consume this one monotonic budget.
@@ -1132,7 +1102,7 @@ bool ConnectTunnel(const TunnelConfiguration& configuration,
         TunnelConfiguration resolved = configuration;
         resolved.endpoint = endpoint;
         std::string config_text = ToWgQuickConfiguration(resolved, private_key);
-        const bool written = WriteRestrictedConfiguration(config_text);
+        const bool written = fuzevpn_installation::WriteWireGuardConfiguration(config_text, storage_failure);
         SecureErase(&config_text);
         if (!written) {
           *failure = TunnelFailure::kStorageFailure;
@@ -1199,7 +1169,11 @@ bool DisconnectTunnel(TunnelFailure* failure) {
   diagnostic_stop_failed = !stopped;
   active_peer.StopResult(stopped);
   if (stopped) {
-    DisableNetworkProtection(NetworkProtectionOwner::wire_guard);
+    if (!DisableNetworkProtection(NetworkProtectionOwner::wire_guard)) {
+      diagnostic_stop_failed = true;
+      *failure = TunnelFailure::kNetworkProtectionFailure;
+      return false;
+    }
     RemoveRestrictedConfiguration();
     diagnostic_network.reset();
   }
@@ -1230,7 +1204,10 @@ bool ResetIdentity(TunnelFailure* failure,
     return false;
   }
   if (release_network_protection) {
-    DisableNetworkProtection(NetworkProtectionOwner::wire_guard);
+    if (!DisableNetworkProtection(NetworkProtectionOwner::wire_guard)) {
+      *failure = TunnelFailure::kNetworkProtectionFailure;
+      return false;
+    }
   }
   RemoveRestrictedConfiguration();
   return DeleteStoredIdentity(failure);
@@ -1381,6 +1358,25 @@ std::pair<const char*, const char*> PublicFailure(TunnelFailure failure) {
   return {"tunnel_failure", "Le tunnel VPN n’a pas pu être démarré."};
 }
 
+void ReportConnectFailure(flutter::MethodResult<flutter::EncodableValue>* result,
+                          TunnelFailure failure,
+                          const fuzevpn_installation::RuntimeStorageFailure& storage) {
+  RecordDiagnosticFailure();
+  const auto [code, message] = PublicFailure(failure);
+  if (failure == TunnelFailure::kNetworkProtectionFailure) {
+    result->Error(code, message, NetworkProtectionFailureDetails());
+    return;
+  }
+  if (failure != TunnelFailure::kStorageFailure || storage.stage.empty()) {
+    result->Error(code, message);
+    return;
+  }
+  result->Error(code, message, flutter::EncodableValue(flutter::EncodableMap{
+      {flutter::EncodableValue("stage"), flutter::EncodableValue(storage.stage)},
+      {flutter::EncodableValue("win32_error"),
+       flutter::EncodableValue(static_cast<int64_t>(storage.win32_error))}}));
+}
+
 }  // namespace
 
 bool IsWireGuardTunnelConnected() {
@@ -1481,7 +1477,7 @@ void HandleWireGuardPrivilegedCall(
     } else {
       const auto [code, message] =
           PublicFailure(TunnelFailure::kNetworkProtectionFailure);
-      result->Error(code, message);
+      result->Error(code, message, NetworkProtectionFailureDetails());
     }
     return;
   }
@@ -1544,12 +1540,11 @@ void HandleWireGuardPrivilegedCall(
       return;
     }
     TunnelFailure failure = TunnelFailure::kNone;
-    if (ConnectTunnel(configuration, &failure)) {
+    fuzevpn_installation::RuntimeStorageFailure storage_failure;
+    if (ConnectTunnel(configuration, &failure, &storage_failure)) {
       result->Success();
     } else {
-      RecordDiagnosticFailure();
-      const auto [code, message] = PublicFailure(failure);
-      result->Error(code, message);
+      ReportConnectFailure(result, failure, storage_failure);
     }
     return;
   }
@@ -1567,12 +1562,11 @@ void HandleWireGuardPrivilegedCall(
     }
     const TunnelConfiguration configuration = reconnect_cache->configuration;
     TunnelFailure failure = TunnelFailure::kNone;
-    if (ConnectTunnel(configuration, &failure)) {
+    fuzevpn_installation::RuntimeStorageFailure storage_failure;
+    if (ConnectTunnel(configuration, &failure, &storage_failure)) {
       result->Success(flutter::EncodableValue(true));
     } else {
-      RecordDiagnosticFailure();
-      const auto [code, message] = PublicFailure(failure);
-      result->Error(code, message);
+      ReportConnectFailure(result, failure, storage_failure);
     }
     return;
   }
@@ -1701,11 +1695,6 @@ void RegisterWireGuardChannel(flutter::FlutterEngine* engine) {
       return;
     }
     if (call.method_name() == "prepareIdentityForAccount") {
-      if (IsServiceRunning() || IsPrivilegedBrokerRunning()) {
-        ForwardPrivilegedCall("wireguard", call, std::move(result), true);
-        return;
-      }
-      std::lock_guard<std::mutex> lock(tunnel_mutex);
       const auto* argument = call.arguments();
       const auto* arguments = argument == nullptr
                                   ? nullptr
@@ -1719,7 +1708,16 @@ void RegisterWireGuardChannel(flutter::FlutterEngine* engine) {
         return;
       }
       TunnelFailure failure = TunnelFailure::kNone;
-      if (PrepareIdentityForAccount(*account_id, &failure)) {
+      LocalIdentityPreparation prepared;
+      {
+        std::lock_guard<std::mutex> lock(tunnel_mutex);
+        prepared = PrepareLocalIdentityForAccount(*account_id, &failure);
+      }
+      if (prepared == LocalIdentityPreparation::runtime_required) {
+        ForwardPrivilegedCall("wireguard", call, std::move(result), true);
+      } else if (prepared == LocalIdentityPreparation::runtime_unknown) {
+        CompleteRuntimeStatusFailure(std::move(result));
+      } else if (prepared == LocalIdentityPreparation::ready) {
         result->Success();
       } else {
         const auto [code, message] = PublicFailure(failure);
@@ -1764,18 +1762,22 @@ void RegisterWireGuardChannel(flutter::FlutterEngine* engine) {
       return;
     }
     if (call.method_name() == "resetIdentity") {
-      if (IsServiceRunning() || IsPrivilegedBrokerRunning()) {
-        ForwardPrivilegedCall("wireguard", call, std::move(result), true);
-        return;
-      }
-      std::lock_guard<std::mutex> lock(tunnel_mutex);
       TunnelFailure failure = TunnelFailure::kNone;
-      if (!ResetIdentity(&failure)) {
+      LocalIdentityPreparation reset;
+      {
+        std::lock_guard<std::mutex> lock(tunnel_mutex);
+        reset = ResetLocalIdentity(&failure);
+      }
+      if (reset == LocalIdentityPreparation::runtime_required) {
+        ForwardPrivilegedCall("wireguard", call, std::move(result), true);
+      } else if (reset == LocalIdentityPreparation::runtime_unknown) {
+        CompleteRuntimeStatusFailure(std::move(result));
+      } else if (reset == LocalIdentityPreparation::failed) {
         const auto [code, message] = PublicFailure(failure);
         result->Error(code, message);
-        return;
+      } else {
+        result->Success();
       }
-      result->Success();
       return;
     }
     if (call.method_name() == "recreateIdentityForAccount") {

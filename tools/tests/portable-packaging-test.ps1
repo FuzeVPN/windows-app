@@ -42,4 +42,34 @@ MustReject { ConvertTo-PortableManifest '1.2.3' @([pscustomobject]@{ Path='large
 MustReject { ConvertTo-PortableManifest '1.2.3' @([pscustomobject]@{ Path='empty.dll'; Length=0; Sha256=('a'*64) }) } 'Empty runtime file must fail.'
 $badParent = @([pscustomobject]@{ Path='a'; Length=1; Sha256=('a'*64) }, [pscustomobject]@{ Path='a/b'; Length=1; Sha256=('a'*64) })
 MustReject { ConvertTo-PortableManifest '1.2.3' $badParent } 'File/directory overlap must fail.'
+$fullFixture = @($fixture)
+foreach ($name in @('fuzevpn_windows.exe','fuzevpn-update.exe','flutter_windows.dll','data/app.so',
+    'data/flutter_assets/AssetManifest.bin','plugins/frontend.dll','data/README-PORTABLE.txt')) {
+  $fullFixture += [pscustomobject]@{ Path=$name; Length=17; Sha256=('d'*64) }
+}
+foreach ($name in @('portable-runtime.manifest','fuzevpn.portable','README-PORTABLE.txt')) {
+  $fullFixture += [pscustomobject]@{ Path=$name; Length=21; Sha256=('e'*64) }
+}
+$complete = @(Get-PortableInventoryPaths $fullFixture)
+Check ($complete.Count -eq $fullFixture.Count - 4) 'The full distribution excludes only the four explicit V1 metadata/carrier paths.'
+foreach ($name in @('fuzevpn_windows.exe','fuzevpn-update.exe','flutter_windows.dll','data/app.so',
+    'data/flutter_assets/AssetManifest.bin','plugins/frontend.dll','data/README-PORTABLE.txt')) {
+  Check ($complete.Path -contains $name) "The signed full inventory must include $name"
+}
+$inventory = ConvertTo-PortableInventory '1.2.3' $complete
+$inventoryText = [Text.Encoding]::ASCII.GetString($inventory)
+$exclusions='exclude=fuzevpn-runtime.exe;portable-runtime.manifest;fuzevpn.portable;README-PORTABLE.txt'
+Check ($inventoryText.StartsWith("FUZEVPN_PORTABLE_V1`nversion=1.2.3`n$exclusions`n")) 'The complete inventory has a versioned, exact exclusion policy.'
+$nativeHeader = [IO.File]::ReadAllText((Join-Path $projectRoot 'windows/runner/portable_update.h'))
+Check ($nativeHeader.Contains($exclusions) -and $nativeHeader.Contains('kInventoryResourceId = 301')) 'Native resource and exclusion contract matches packaging.'
+$reverseComplete = @($fullFixture); [Array]::Reverse($reverseComplete)
+Check ([Convert]::ToBase64String($inventory) -ceq [Convert]::ToBase64String((ConvertTo-PortableInventory '1.2.3' @(Get-PortableInventoryPaths $reverseComplete)))) 'Complete inventory ordering is deterministic.'
+MustReject { Get-PortableInventoryPaths @($fullFixture + $fullFixture[0]) } 'Complete inventory rejects duplicate paths.'
+foreach ($name in @('fuzevpn-runtime.exe','portable-runtime.manifest','fuzevpn.portable','README-PORTABLE.TXT')) {
+  MustReject { ConvertTo-PortableInventory '1.2.3' @([pscustomobject]@{Path=$name;Length=1;Sha256=('a'*64)}) } "Excluded metadata cannot be circularly included: $name"
+}
+MustReject { ConvertTo-PortableInventory '1.2.3' $badParent } 'Complete inventory rejects file/directory overlap.'
+$manyFiles = @(0..128 | ForEach-Object { [pscustomobject]@{Path="assets/f-$_.bin";Length=1;Sha256=('a'*64)} })
+Check ((ConvertTo-PortableInventory '1.2.3' $manyFiles).Length -gt 0) 'Complete inventory supports more than the engine-only limit.'
+MustReject { ConvertTo-PortableManifest '1.2.3' $manyFiles } 'Engine-only manifest retains its narrower bound.'
 Write-Host 'Portable packaging contract tests passed (no binaries, certificates, services or machine state changed).'

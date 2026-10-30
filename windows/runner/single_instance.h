@@ -15,6 +15,35 @@ inline UINT FuzeVpnSingleInstanceMessage() noexcept {
   return message;
 }
 
+enum class FuzeVpnSingleInstanceDecision { primary, activated, unavailable };
+
+// An existing kernel object is only a signal to look for a genuine UI. It
+// cannot establish that activation succeeded, or authorize a second primary.
+template <typename Activate, typename ReportUnavailable>
+FuzeVpnSingleInstanceDecision FuzeVpnDecideSingleInstanceStartup(
+    HANDLE mutex, DWORD creation_error, Activate activate,
+    ReportUnavailable report_unavailable) {
+  if (mutex != nullptr) {
+    if (creation_error != ERROR_ALREADY_EXISTS)
+      return FuzeVpnSingleInstanceDecision::primary;
+    if (activate()) return FuzeVpnSingleInstanceDecision::activated;
+  }
+  report_unavailable();
+  return FuzeVpnSingleInstanceDecision::unavailable;
+}
+
+template <typename FindWindow, typename PostActivation, typename Wait>
+bool FuzeVpnTryActivateExistingWindow(FindWindow find_window,
+                                      PostActivation post_activation,
+                                      Wait wait, unsigned attempts = 100) {
+  for (unsigned attempt = 0; attempt < attempts; ++attempt) {
+    const HWND window = find_window();
+    if (window != nullptr && post_activation(window)) return true;
+    if (attempt + 1 < attempts) wait();
+  }
+  return false;
+}
+
 inline void ActivateFuzeVpnWindow(HWND window) noexcept {
   if (window == nullptr || !IsWindow(window)) {
     return;

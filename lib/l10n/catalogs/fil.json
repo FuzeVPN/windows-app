@@ -598,5 +598,14 @@
   "Cette demande de connexion a expiré ou a déjà été utilisée. Recommencez depuis FuzeVPN.": "Nag-expire na o nagamit na ang kahilingan sa pag-sign in na ito. Magsimulang muli mula sa FuzeVPN.",
   "La connexion par navigateur est momentanément indisponible. Utilisez votre adresse e-mail et votre mot de passe, ou réessayez plus tard.": "Pansamantalang hindi available ang pag-sign in sa browser. Gamitin ang iyong email address at password, o subukang muli sa ibang pagkakataon.",
   "Reconnectez-vous à votre compte dans le navigateur, puis réessayez depuis FuzeVPN.": "Mag-sign in muli sa iyong account sa browser, pagkatapos ay subukang muli mula sa FuzeVPN.",
-  "Mises à jour désactivées dans cette version de test.": "Hindi pinagana ang mga update sa bersyong ito para sa pagsubok."
+  "Mises à jour désactivées dans cette version de test.": "Hindi pinagana ang mga update sa bersyong ito para sa pagsubok.",
+  "Autorisation reçue": "Natanggap ang pahintulot",
+  "Autorisation refusée": "Tinanggihan ang pahintulot",
+  "Demande invalide": "Hindi wastong kahilingan",
+  "Revenez dans FuzeVPN pour terminer la connexion.": "Bumalik sa FuzeVPN para tapusin ang pag-sign in.",
+  "Délai avant réessai : {seconds} s.": "Paghihintay bago muling subukan: {seconds} s.",
+  "Serveurs : {count}": "Mga server: {count}",
+  "Villes : {count}": "Mga lungsod: {count}",
+  "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "Hinaharangan ang UDP sa labas ng VPN tunnel. Para masaklaw din ang WebRTC sa TCP/TLS, i-enable ang kill switch.",
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Hinaharangan ang DNS sa labas ng tunnel sa mga port 53 at 853. Para masaklaw din ang DNS sa HTTPS, i-enable ang kill switch."
 }

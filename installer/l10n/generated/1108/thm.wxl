@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="lo-LA" Language="1108" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+  <String Id="Caption" Value="ກຳລັງຕິດຕັ້ງ [WixBundleName]" />
+  <String Id="CheckingForUpdatesLabel" Value="ກຳລັງກວດຫາອັບເດດ" />
+  <String Id="ConfirmCancelMessage" Value="ທ່ານຕ້ອງການຍົກເລີກບໍ?" />
+  <String Id="DesktopShortcut" Value="ສ້າງທາງລັດໜ້າຈໍ" />
+  <String Id="ExecuteUpgradeRelatedBundleMessage" Value="ລຸ້ນກ່ອນໜ້າ" />
+  <String Id="FailureCacheHeader" Value="ການກະກຽມລົ້ມເຫຼວ" />
+  <String Id="FailureCloseButton" Value="ປິດ" />
+  <String Id="FailureHeader" Value="ລົ້ມເຫຼວ" />
+  <String Id="FailureHyperlinkLogText" Value="ການດຳເນີນງານຂັດຂ້ອງ. ເບິ່ງ&lt;a href=&quot;#&quot;&gt;ບັນທຶກ&lt;/a&gt;, ແກ້ໄຂບັນຫາ ແລ້ວລອງອີກຄັ້ງ." />
+  <String Id="FailureInstallHeader" Value="ການຕິດຕັ້ງຂັດຂ້ອງ" />
+  <String Id="FailureLayoutHeader" Value="ການຄັດລອກລົ້ມເຫຼວ" />
+  <String Id="FailureModifyHeader" Value="ການປ່ຽນແປງຂັດຂ້ອງ" />
+  <String Id="FailureRepairHeader" Value="ການສ້ອມແປງຂັດຂ້ອງ" />
+  <String Id="FailureRestartButton" Value="ຣີສະຕາດ" />
+  <String Id="FailureRestartText" Value="ຣີສະຕາດເພື່ອຟື້ນຟູໃຫ້ສຳເລັດ." />
+  <String Id="FailureUninstallHeader" Value="ການຖອນການຕິດຕັ້ງຂັດຂ້ອງ" />
+  <String Id="FailureUnsafeUninstallHeader" Value="ການຖອນການຕິດຕັ້ງຂັດຂ້ອງ" />
+  <String Id="FilesInUseCloseRadioButton" Value="ປິດແອັບ" />
+  <String Id="FilesInUseDontCloseRadioButton" Value="ເປີດແອັບໄວ້" />
+  <String Id="FilesInUseExitButton" Value="ຍົກເລີກ" />
+  <String Id="FilesInUseIgnoreButton" Value="ຂ້າມ" />
+  <String Id="FilesInUseLabel" Value="ປິດແອັບຕໍ່ໄປນີ້ ແລ້ວລອງອີກຄັ້ງ." />
+  <String Id="FilesInUseNetfxCloseRadioButton" Value="ປິດແອັບ" />
+  <String Id="FilesInUseRetryButton" Value="ລອງອີກຄັ້ງ" />
+  <String Id="FilesInUseTitle" Value="ໄຟລ໌ທີ່ກຳລັງໃຊ້" />
+  <String Id="HelpCloseButton" Value="ປິດ" />
+  <String Id="HelpHeader" Value="ຊ່ວຍເຫຼືອ" />
+  <String Id="HelpText" Value="/install, /repair, /uninstall: ຕິດຕັ້ງ, ສ້ອມແປງ, ຖອນການຕິດຕັ້ງ. /quiet: ໂໝດງຽບ. /norestart: ບໍ່ຣີສະຕາດ. DesktopShortcut=1: ທາງລັດໜ້າຈໍ. InstallFolder=&quot;D:\Applications\FuzeVPN&quot;: ໂຟນເດີເລີ່ມຕົ້ນ. ການອັບເດດຈະຮັກສາໂຟນເດີທີ່ຕິດຕັ້ງໄວ້." />
+  <String Id="InstallAcceptCheckbox" Value="ຂ້ອຍ&amp;ຍອມຮັບເງື່ອນໄຂໃບອະນຸຍາດ" />
+  <String Id="InstallCancelButton" Value="ຍົກເລີກ" />
+  <String Id="InstallHeader" Value="ຍິນດີຕ້ອນຮັບ" />
+  <String Id="InstallInstallButton" Value="ຕິດຕັ້ງ" />
+  <String Id="InstallLicenseLinkText" Value="&lt;a href=&quot;#&quot;&gt;ເງື່ອນໄຂໃບອະນຸຍາດ&lt;/a&gt; ຂອງ [WixBundleName]." />
+  <String Id="InstallMessage" Value="ຕິດຕັ້ງ FuzeVPN ໃນຄອມພິວເຕີນີ້." />
+  <String Id="InstallMessageOptions" Value="ຕິດຕັ້ງ FuzeVPN ໃນຄອມພິວເຕີນີ້." />
+  <String Id="InstallOptionsButton" Value="ຕົວເລືອກ" />
+  <String Id="InstallVersion" Value="ລຸ້ນ [WixBundleVersion]" />
+  <String Id="InstallVersionNotice" Value="ລຸ້ນ [WixBundleVersion] [BuildNotice]" />
+  <String Id="ModifyCancelButton" Value="ຍົກເລີກ" />
+  <String Id="ModifyHeader" Value="ການບຳລຸງຮັກສາ" />
+  <String Id="ModifyRepairButton" Value="ສ້ອມແປງ" />
+  <String Id="ModifyUninstallButton" Value="ຖອນການຕິດຕັ້ງ" />
+  <String Id="OptionsBrowseButton" Value="ເລືອກ" />
+  <String Id="OptionsCancelButton" Value="ຍົກເລີກ" />
+  <String Id="OptionsHeader" Value="ຕົວເລືອກ" />
+  <String Id="OptionsLocationLabel" Value="ໂຟນເດີຕິດຕັ້ງ (ປ້ອງກັນໂດຍ Windows)" />
+  <String Id="OptionsOkButton" Value="ຕົກລົງ" />
+  <String Id="OptionsPerMachineScopeText" Value="ຜູ້ໃຊ້ທັງໝົດ" />
+  <String Id="OptionsPerUserScopeText" Value="ຜູ້ໃຊ້ປັດຈຸບັນ" />
+  <String Id="OverallProgressPackageText" Value="ກຳລັງກະກຽມ…" />
+  <String Id="PreserveInstallFolder" Value="ໂຟນເດີທີ່ມີຢູ່ຈະຖືກຮັກສາໄວ້ໃນລະຫວ່າງອັບເດດ. ເພື່ອຍ້າຍອິນເຕີເຟດໄດ້ຢ່າງອິດສະຫຼະ ໃຫ້ໃຊ້ໄຟລ໌ສະບັບພົກພາ." />
+  <String Id="ProgressCancelButton" Value="ຍົກເລີກ" />
+  <String Id="ProgressHeader" Value="ກຳລັງຕິດຕັ້ງ" />
+  <String Id="ProgressLabel" Value="ຄວາມຄືບໜ້າ" />
+  <String Id="SuccessCacheHeader" Value="ໄຟລ໌ພ້ອມແລ້ວ" />
+  <String Id="SuccessCloseButton" Value="ປິດ" />
+  <String Id="SuccessHeader" Value="ດຳເນີນການສຳເລັດແລ້ວ" />
+  <String Id="SuccessInstallHeader" Value="ຕິດຕັ້ງສຳເລັດແລ້ວ" />
+  <String Id="SuccessLaunchButton" Value="ເປີດ" />
+  <String Id="SuccessLayoutHeader" Value="ໄຟລ໌ພ້ອມແລ້ວ" />
+  <String Id="SuccessModifyHeader" Value="ປ່ຽນແປງສຳເລັດແລ້ວ" />
+  <String Id="SuccessOpenApp" Value="ເປີດ FuzeVPN ຈາກເມນູເລີ່ມ. ການຕັ້ງຄ່າສ່ວນຕົວຂອງທ່ານຖືກຮັກສາໄວ້." />
+  <String Id="SuccessRepairHeader" Value="ສ້ອມແປງສຳເລັດແລ້ວ" />
+  <String Id="SuccessRestartButton" Value="ຣີສະຕາດ" />
+  <String Id="SuccessRestartText" Value="ຣີສະຕາດຄອມພິວເຕີເພື່ອສຳເລັດ." />
+  <String Id="SuccessUninstallHeader" Value="ຖອນການຕິດຕັ້ງສຳເລັດແລ້ວ" />
+  <String Id="SuccessUninstallRestartText" Value="ຣີສະຕາດເພື່ອຖອນການຕິດຕັ້ງໃຫ້ສຳເລັດ." />
+  <String Id="SuccessUnsafeUninstallHeader" Value="ຖອນການຕິດຕັ້ງສຳເລັດແລ້ວ" />
+  <String Id="Title" Value="[WixBundleName]" />
+  <String Id="UpdateButton" Value="ອັບເດດ" />
+</WixLocalization>

@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: MPL-2.0
 import 'package:flutter/material.dart';
 
+import '../core/browser_auth.dart' show BrowserAuthPageTexts;
 import 'generated_catalogs.dart';
+import 'date_time_format.dart';
 
 /// Persist stable locale identifiers; `system` follows Windows.
 enum AppLanguage {
@@ -35,7 +37,47 @@ enum AppLanguage {
   swedish,
   danish,
   norwegian,
-  greek;
+  greek,
+  bengali,
+  swahili,
+  burmese,
+  khmer,
+  uzbek,
+  nepali,
+  sinhala,
+  tamil,
+  telugu,
+  marathi,
+  gujarati,
+  hausa,
+  amharic,
+  hungarian,
+  bulgarian,
+  finnish,
+  slovak,
+  croatian,
+  serbian,
+  hebrew,
+  punjabi,
+  kannada,
+  malayalam,
+  odia,
+  pashto,
+  lithuanian,
+  latvian,
+  estonian,
+  slovenian,
+  albanian,
+  kazakh,
+  azerbaijani,
+  armenian,
+  georgian,
+  lao,
+  malagasy,
+  somali,
+  yoruba,
+  igbo,
+  kinyarwanda;
 
   /// Endonym order, independent of the currently selected interface language.
   /// Latin accents are ignored; deterministic Unicode order keeps other scripts together.
@@ -87,6 +129,61 @@ extension AppLanguageLocale on AppLanguage {
     AppLanguage.danish => const Locale('da'),
     AppLanguage.norwegian => const Locale('nb'),
     AppLanguage.greek => const Locale('el'),
+    AppLanguage.bengali => const Locale('bn'),
+    AppLanguage.swahili => const Locale('sw'),
+    AppLanguage.burmese => const Locale('my'),
+    AppLanguage.khmer => const Locale('km'),
+    AppLanguage.uzbek => const Locale.fromSubtags(
+      languageCode: 'uz',
+      scriptCode: 'Latn',
+    ),
+    AppLanguage.nepali => const Locale('ne'),
+    AppLanguage.sinhala => const Locale('si'),
+    AppLanguage.tamil => const Locale('ta'),
+    AppLanguage.telugu => const Locale('te'),
+    AppLanguage.marathi => const Locale('mr'),
+    AppLanguage.gujarati => const Locale('gu'),
+    AppLanguage.hausa => const Locale.fromSubtags(
+      languageCode: 'ha',
+      scriptCode: 'Latn',
+    ),
+    AppLanguage.amharic => const Locale('am'),
+    AppLanguage.hungarian => const Locale('hu'),
+    AppLanguage.bulgarian => const Locale('bg'),
+    AppLanguage.finnish => const Locale('fi'),
+    AppLanguage.slovak => const Locale('sk'),
+    AppLanguage.croatian => const Locale('hr'),
+    AppLanguage.serbian => const Locale.fromSubtags(
+      languageCode: 'sr',
+      scriptCode: 'Cyrl',
+    ),
+    AppLanguage.hebrew => const Locale('he'),
+    AppLanguage.punjabi => const Locale.fromSubtags(
+      languageCode: 'pa',
+      scriptCode: 'Guru',
+    ),
+    AppLanguage.kannada => const Locale('kn'),
+    AppLanguage.malayalam => const Locale('ml'),
+    AppLanguage.odia => const Locale('or'),
+    AppLanguage.pashto => const Locale('ps'),
+    AppLanguage.lithuanian => const Locale('lt'),
+    AppLanguage.latvian => const Locale('lv'),
+    AppLanguage.estonian => const Locale('et'),
+    AppLanguage.slovenian => const Locale('sl'),
+    AppLanguage.albanian => const Locale('sq'),
+    AppLanguage.kazakh => const Locale('kk'),
+    AppLanguage.azerbaijani => const Locale.fromSubtags(
+      languageCode: 'az',
+      scriptCode: 'Latn',
+    ),
+    AppLanguage.armenian => const Locale('hy'),
+    AppLanguage.georgian => const Locale('ka'),
+    AppLanguage.lao => const Locale('lo'),
+    AppLanguage.malagasy => const Locale('mg'),
+    AppLanguage.somali => const Locale('so'),
+    AppLanguage.yoruba => const Locale('yo'),
+    AppLanguage.igbo => const Locale('ig'),
+    AppLanguage.kinyarwanda => const Locale('rw'),
   };
 
   String get storageValue => switch (this) {
@@ -121,6 +218,46 @@ extension AppLanguageLocale on AppLanguage {
     AppLanguage.danish => 'da',
     AppLanguage.norwegian => 'nb',
     AppLanguage.greek => 'el',
+    AppLanguage.bengali => 'bn',
+    AppLanguage.swahili => 'sw',
+    AppLanguage.burmese => 'my',
+    AppLanguage.khmer => 'km',
+    AppLanguage.uzbek => 'uz',
+    AppLanguage.nepali => 'ne',
+    AppLanguage.sinhala => 'si',
+    AppLanguage.tamil => 'ta',
+    AppLanguage.telugu => 'te',
+    AppLanguage.marathi => 'mr',
+    AppLanguage.gujarati => 'gu',
+    AppLanguage.hausa => 'ha',
+    AppLanguage.amharic => 'am',
+    AppLanguage.hungarian => 'hu',
+    AppLanguage.bulgarian => 'bg',
+    AppLanguage.finnish => 'fi',
+    AppLanguage.slovak => 'sk',
+    AppLanguage.croatian => 'hr',
+    AppLanguage.serbian => 'sr',
+    AppLanguage.hebrew => 'he',
+    AppLanguage.punjabi => 'pa',
+    AppLanguage.kannada => 'kn',
+    AppLanguage.malayalam => 'ml',
+    AppLanguage.odia => 'or',
+    AppLanguage.pashto => 'ps',
+    AppLanguage.lithuanian => 'lt',
+    AppLanguage.latvian => 'lv',
+    AppLanguage.estonian => 'et',
+    AppLanguage.slovenian => 'sl',
+    AppLanguage.albanian => 'sq',
+    AppLanguage.kazakh => 'kk',
+    AppLanguage.azerbaijani => 'az',
+    AppLanguage.armenian => 'hy',
+    AppLanguage.georgian => 'ka',
+    AppLanguage.lao => 'lo',
+    AppLanguage.malagasy => 'mg',
+    AppLanguage.somali => 'so',
+    AppLanguage.yoruba => 'yo',
+    AppLanguage.igbo => 'ig',
+    AppLanguage.kinyarwanda => 'rw',
   };
 
   String get nativeName => switch (this) {
@@ -155,6 +292,46 @@ extension AppLanguageLocale on AppLanguage {
     AppLanguage.danish => 'Dansk',
     AppLanguage.norwegian => 'Norsk bokmål',
     AppLanguage.greek => 'Ελληνικά',
+    AppLanguage.bengali => 'বাংলা',
+    AppLanguage.swahili => 'Kiswahili',
+    AppLanguage.burmese => 'မြန်မာ',
+    AppLanguage.khmer => 'ខ្មែរ',
+    AppLanguage.uzbek => 'O‘zbekcha',
+    AppLanguage.nepali => 'नेपाली',
+    AppLanguage.sinhala => 'සිංහල',
+    AppLanguage.tamil => 'தமிழ்',
+    AppLanguage.telugu => 'తెలుగు',
+    AppLanguage.marathi => 'मराठी',
+    AppLanguage.gujarati => 'ગુજરાતી',
+    AppLanguage.hausa => 'Hausa',
+    AppLanguage.amharic => 'አማርኛ',
+    AppLanguage.hungarian => 'Magyar',
+    AppLanguage.bulgarian => 'Български',
+    AppLanguage.finnish => 'Suomi',
+    AppLanguage.slovak => 'Slovenčina',
+    AppLanguage.croatian => 'Hrvatski',
+    AppLanguage.serbian => 'Српски',
+    AppLanguage.hebrew => 'עברית',
+    AppLanguage.punjabi => 'ਪੰਜਾਬੀ',
+    AppLanguage.kannada => 'ಕನ್ನಡ',
+    AppLanguage.malayalam => 'മലയാളം',
+    AppLanguage.odia => 'ଓଡ଼ିଆ',
+    AppLanguage.pashto => 'پښتو',
+    AppLanguage.lithuanian => 'Lietuvių',
+    AppLanguage.latvian => 'Latviešu',
+    AppLanguage.estonian => 'Eesti',
+    AppLanguage.slovenian => 'Slovenščina',
+    AppLanguage.albanian => 'Shqip',
+    AppLanguage.kazakh => 'Қазақша',
+    AppLanguage.azerbaijani => 'Azərbaycanca',
+    AppLanguage.armenian => 'Հայերեն',
+    AppLanguage.georgian => 'ქართული',
+    AppLanguage.lao => 'ລາວ',
+    AppLanguage.malagasy => 'Malagasy',
+    AppLanguage.somali => 'Soomaali',
+    AppLanguage.yoruba => 'Yorùbá',
+    AppLanguage.igbo => 'Igbo',
+    AppLanguage.kinyarwanda => 'Ikinyarwanda',
   };
 
   /// Latin accents do not move endonyms after Z; other scripts use Unicode order.
@@ -215,18 +392,70 @@ extension AppLanguageLocale on AppLanguage {
     AppLanguage.danish => 'DK',
     AppLanguage.norwegian => 'NO',
     AppLanguage.greek => 'GR',
+    AppLanguage.bengali => 'BD',
+    AppLanguage.swahili => 'KE',
+    AppLanguage.burmese => 'MM',
+    AppLanguage.khmer => 'KH',
+    AppLanguage.uzbek => 'UZ',
+    AppLanguage.nepali => 'NP',
+    AppLanguage.sinhala => 'LK',
+    AppLanguage.tamil => 'IN',
+    AppLanguage.telugu => 'IN',
+    AppLanguage.marathi => 'IN',
+    AppLanguage.gujarati => 'IN',
+    AppLanguage.hausa => 'NG',
+    AppLanguage.amharic => 'ET',
+    AppLanguage.hungarian => 'HU',
+    AppLanguage.bulgarian => 'BG',
+    AppLanguage.finnish => 'FI',
+    AppLanguage.slovak => 'SK',
+    AppLanguage.croatian => 'HR',
+    AppLanguage.serbian => 'RS',
+    AppLanguage.hebrew => 'IL',
+    AppLanguage.punjabi => 'IN',
+    AppLanguage.kannada => 'IN',
+    AppLanguage.malayalam => 'IN',
+    AppLanguage.odia => 'IN',
+    AppLanguage.pashto => 'AF',
+    AppLanguage.lithuanian => 'LT',
+    AppLanguage.latvian => 'LV',
+    AppLanguage.estonian => 'EE',
+    AppLanguage.slovenian => 'SI',
+    AppLanguage.albanian => 'AL',
+    AppLanguage.kazakh => 'KZ',
+    AppLanguage.azerbaijani => 'AZ',
+    AppLanguage.armenian => 'AM',
+    AppLanguage.georgian => 'GE',
+    AppLanguage.lao => 'LA',
+    AppLanguage.malagasy => 'MG',
+    AppLanguage.somali => 'SO',
+    AppLanguage.yoruba => 'NG',
+    AppLanguage.igbo => 'NG',
+    AppLanguage.kinyarwanda => 'RW',
   };
 
   bool get isRightToLeft =>
       this == AppLanguage.arabic ||
       this == AppLanguage.persian ||
-      this == AppLanguage.urdu;
+      this == AppLanguage.urdu ||
+      this == AppLanguage.hebrew ||
+      this == AppLanguage.pashto;
 
   static AppLanguage fromStorage(String? value) {
     final normalized = value?.replaceAll('-', '_');
     if (normalized == 'pt') return AppLanguage.brazilianPortuguese;
     if (normalized == 'no') return AppLanguage.norwegian;
     if (normalized == 'tl') return AppLanguage.filipino;
+    if (normalized == 'iw') return AppLanguage.hebrew;
+    for (final (code, script, language) in [
+      ('pa', 'Guru', AppLanguage.punjabi),
+      ('az', 'Latn', AppLanguage.azerbaijani),
+      ('uz', 'Latn', AppLanguage.uzbek),
+      ('sr', 'Cyrl', AppLanguage.serbian),
+      ('ha', 'Latn', AppLanguage.hausa),
+    ]) {
+      if (normalized == '${code}_$script') return language;
+    }
     if (normalized == 'zh') return AppLanguage.simplifiedChinese;
     if (normalized == 'zh_TW' ||
         normalized == 'zh_HK' ||
@@ -258,6 +487,19 @@ extension AppLanguageLocale on AppLanguage {
           : AppLanguage.simplifiedChinese;
     }
     final selected = fromStorage(code);
+    final requiredScript = selected.locale?.scriptCode;
+    if (requiredScript != null &&
+        locale.scriptCode != null &&
+        locale.scriptCode!.toLowerCase() != requiredScript.toLowerCase()) {
+      return AppLanguage.french;
+    }
+    if (locale.scriptCode == null &&
+        ((selected == AppLanguage.punjabi && locale.countryCode == 'PK') ||
+            (selected == AppLanguage.azerbaijani &&
+                locale.countryCode == 'IR') ||
+            (selected == AppLanguage.uzbek && locale.countryCode == 'AF'))) {
+      return AppLanguage.french;
+    }
     return selected == AppLanguage.system ? AppLanguage.french : selected;
   }
 }
@@ -299,6 +541,46 @@ class AppStrings {
     Locale('da'),
     Locale('nb'),
     Locale('el'),
+    Locale('bn'),
+    Locale('sw'),
+    Locale('my'),
+    Locale('km'),
+    Locale.fromSubtags(languageCode: 'uz', scriptCode: 'Latn'),
+    Locale('ne'),
+    Locale('si'),
+    Locale('ta'),
+    Locale('te'),
+    Locale('mr'),
+    Locale('gu'),
+    Locale.fromSubtags(languageCode: 'ha', scriptCode: 'Latn'),
+    Locale('am'),
+    Locale('hu'),
+    Locale('bg'),
+    Locale('fi'),
+    Locale('sk'),
+    Locale('hr'),
+    Locale.fromSubtags(languageCode: 'sr', scriptCode: 'Cyrl'),
+    Locale('he'),
+    Locale.fromSubtags(languageCode: 'pa', scriptCode: 'Guru'),
+    Locale('kn'),
+    Locale('ml'),
+    Locale('or'),
+    Locale('ps'),
+    Locale('lt'),
+    Locale('lv'),
+    Locale('et'),
+    Locale('sl'),
+    Locale('sq'),
+    Locale('kk'),
+    Locale.fromSubtags(languageCode: 'az', scriptCode: 'Latn'),
+    Locale('hy'),
+    Locale('ka'),
+    Locale('lo'),
+    Locale('mg'),
+    Locale('so'),
+    Locale('yo'),
+    Locale('ig'),
+    Locale('rw'),
   ];
 
   static Locale resolveLocale(Locale? locale) =>
@@ -306,12 +588,42 @@ class AppStrings {
 
   String get _catalogCode =>
       language == AppLanguage.system ? 'fr' : language.storageValue;
+
+  BrowserAuthPageTexts get browserAuthPageTexts => BrowserAuthPageTexts(
+    languageTag: (language.locale ?? const Locale('fr')).toLanguageTag(),
+    isRightToLeft: language.isRightToLeft,
+    receivedTitle: text('Autorisation reçue'),
+    receivedMessage: text('Revenez dans FuzeVPN pour terminer la connexion.'),
+    deniedTitle: text('Autorisation refusée'),
+    deniedMessage: text('La connexion a été annulée dans le navigateur.'),
+    invalidTitle: text('Demande invalide'),
+    invalidMessage: text(
+      'La réponse de connexion du navigateur est invalide. Recommencez depuis FuzeVPN.',
+    ),
+  );
+
+  // Noun labels followed by values keep the same grammatical form for every
+  // count in every language, including zero and compound numbers.
+  String serverCount(int count) =>
+      text('Serveurs : {count}').replaceAll('{count}', '$count');
+
+  String cityCount(int count) =>
+      text('Villes : {count}').replaceAll('{count}', '$count');
+
+  String retryAfter(int seconds) => _retryDelay('$seconds');
+
+  String _retryDelay(String seconds) => text(
+    'Délai avant réessai : {seconds} s.',
+  ).replaceAll('{seconds}', seconds);
+
   String text(String french) {
     final catalog = translationCatalogs[_catalogCode];
     final exact = catalog?[french];
     if (exact != null) return exact;
+    final retry = _retryPattern.firstMatch(french);
+    if (retry != null) return _retryDelay(retry.group(1)!);
     // Controllers retain their original messages for state comparisons. Translate
-    // their three interpolated forms only at rendering, preserving user data.
+    // their interpolated forms only at rendering, preserving user data.
     for (final template in _legacyTemplates) {
       final match = template.pattern.firstMatch(french);
       if (match != null) {
@@ -324,6 +636,8 @@ class AppStrings {
     return french;
   }
 
+  static final _retryPattern = RegExp(r'^Réessayez dans ([0-9]+) secondes\.$');
+
   static final _legacyTemplates = [
     (
       pattern: RegExp(r'^Retrait de l’accès à (.+)…$', dotAll: true),
@@ -334,11 +648,6 @@ class AppStrings {
       pattern: RegExp(r'^Activation sur (.+)…$', dotAll: true),
       source: 'Activation sur {location}…',
       parameter: '{location}',
-    ),
-    (
-      pattern: RegExp(r'^Réessayez dans ([0-9]+) secondes\.$'),
-      source: 'Réessayez dans {seconds} secondes.',
-      parameter: '{seconds}',
     ),
   ];
 
@@ -406,6 +715,46 @@ class AppStrings {
     AppLanguage.danish => '🇩🇰',
     AppLanguage.norwegian => '🇳🇴',
     AppLanguage.greek => '🇬🇷',
+    AppLanguage.bengali => '🇧🇩',
+    AppLanguage.swahili => '🇰🇪',
+    AppLanguage.burmese => '🇲🇲',
+    AppLanguage.khmer => '🇰🇭',
+    AppLanguage.uzbek => '🇺🇿',
+    AppLanguage.nepali => '🇳🇵',
+    AppLanguage.sinhala => '🇱🇰',
+    AppLanguage.tamil => '🇮🇳',
+    AppLanguage.telugu => '🇮🇳',
+    AppLanguage.marathi => '🇮🇳',
+    AppLanguage.gujarati => '🇮🇳',
+    AppLanguage.hausa => '🇳🇬',
+    AppLanguage.amharic => '🇪🇹',
+    AppLanguage.hungarian => '🇭🇺',
+    AppLanguage.bulgarian => '🇧🇬',
+    AppLanguage.finnish => '🇫🇮',
+    AppLanguage.slovak => '🇸🇰',
+    AppLanguage.croatian => '🇭🇷',
+    AppLanguage.serbian => '🇷🇸',
+    AppLanguage.hebrew => '🇮🇱',
+    AppLanguage.punjabi => '🇮🇳',
+    AppLanguage.kannada => '🇮🇳',
+    AppLanguage.malayalam => '🇮🇳',
+    AppLanguage.odia => '🇮🇳',
+    AppLanguage.pashto => '🇦🇫',
+    AppLanguage.lithuanian => '🇱🇹',
+    AppLanguage.latvian => '🇱🇻',
+    AppLanguage.estonian => '🇪🇪',
+    AppLanguage.slovenian => '🇸🇮',
+    AppLanguage.albanian => '🇦🇱',
+    AppLanguage.kazakh => '🇰🇿',
+    AppLanguage.azerbaijani => '🇦🇿',
+    AppLanguage.armenian => '🇦🇲',
+    AppLanguage.georgian => '🇬🇪',
+    AppLanguage.lao => '🇱🇦',
+    AppLanguage.malagasy => '🇲🇬',
+    AppLanguage.somali => '🇸🇴',
+    AppLanguage.yoruba => '🇳🇬',
+    AppLanguage.igbo => '🇳🇬',
+    AppLanguage.kinyarwanda => '🇷🇼',
   };
 }
 
@@ -427,8 +776,11 @@ class _AppLocalizationsDelegate
     (item) => item.languageCode == locale.languageCode,
   );
   @override
-  Future<AppLocalizations> load(Locale locale) async =>
-      AppLocalizations(AppStrings.resolveLocale(locale));
+  Future<AppLocalizations> load(Locale locale) async {
+    await initializeAppDateFormatting();
+    return AppLocalizations(AppStrings.resolveLocale(locale));
+  }
+
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
 }

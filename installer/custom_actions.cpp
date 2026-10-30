@@ -42,6 +42,8 @@ const localization::Catalog& SelectedCatalog(MSIHANDLE install) {
     return localization::Resolve(1033);
   }
   const auto supplied = Property(install, L"FUZEVPN_LANGUAGE");
+  // Named locales need no synthetic or shared LOCALE_CUSTOM_UNSPECIFIED ID.
+  if (const auto* catalog = localization::Find(supplied)) return *catalog;
   if (!supplied.empty() && supplied.size() <= 5 && supplied.find_first_not_of(L"0123456789") == std::wstring::npos) {
     const auto value = std::wcstoul(supplied.c_str(), nullptr, 10);
     if (value <= 65535) return localization::Resolve(static_cast<unsigned>(value));

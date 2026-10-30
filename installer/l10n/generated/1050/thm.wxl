@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="hr-HR" Language="1050" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+  <String Id="Caption" Value="Instalacija programa [WixBundleName]" />
+  <String Id="CheckingForUpdatesLabel" Value="Provjera ažuriranja" />
+  <String Id="ConfirmCancelMessage" Value="Želite li odustati?" />
+  <String Id="DesktopShortcut" Value="Izradi prečac na radnoj površini" />
+  <String Id="ExecuteUpgradeRelatedBundleMessage" Value="Prethodna verzija" />
+  <String Id="FailureCacheHeader" Value="Priprema nije uspjela" />
+  <String Id="FailureCloseButton" Value="Zatvori" />
+  <String Id="FailureHeader" Value="Neuspjeh" />
+  <String Id="FailureHyperlinkLogText" Value="Operacija je prekinuta. Pogledajte &lt;a href=&quot;#&quot;&gt;zapisnik&lt;/a&gt;, riješite problem i pokušajte ponovno." />
+  <String Id="FailureInstallHeader" Value="Instalacija je prekinuta" />
+  <String Id="FailureLayoutHeader" Value="Kopiranje nije uspjelo" />
+  <String Id="FailureModifyHeader" Value="Izmjena je prekinuta" />
+  <String Id="FailureRepairHeader" Value="Popravak je prekinut" />
+  <String Id="FailureRestartButton" Value="Ponovno pokreni" />
+  <String Id="FailureRestartText" Value="Ponovno pokrenite računalo za dovršetak vraćanja." />
+  <String Id="FailureUninstallHeader" Value="Deinstalacija je prekinuta" />
+  <String Id="FailureUnsafeUninstallHeader" Value="Deinstalacija je prekinuta" />
+  <String Id="FilesInUseCloseRadioButton" Value="Zatvori aplikacije" />
+  <String Id="FilesInUseDontCloseRadioButton" Value="Ostavi aplikacije otvorenima" />
+  <String Id="FilesInUseExitButton" Value="Odustani" />
+  <String Id="FilesInUseIgnoreButton" Value="Zanemari" />
+  <String Id="FilesInUseLabel" Value="Zatvorite sljedeće aplikacije i pokušajte ponovno." />
+  <String Id="FilesInUseNetfxCloseRadioButton" Value="Zatvori aplikacije" />
+  <String Id="FilesInUseRetryButton" Value="Pokušaj ponovno" />
+  <String Id="FilesInUseTitle" Value="Datoteke se koriste" />
+  <String Id="HelpCloseButton" Value="Zatvori" />
+  <String Id="HelpHeader" Value="Pomoć" />
+  <String Id="HelpText" Value="/install, /repair, /uninstall: instalacija, popravak, deinstalacija. /quiet: tihi način. /norestart: bez ponovnog pokretanja. DesktopShortcut=1: prečac na radnoj površini. InstallFolder=&quot;D:\Applications\FuzeVPN&quot;: početna mapa. Ažuriranja zadržavaju instalacijsku mapu." />
+  <String Id="InstallAcceptCheckbox" Value="&amp;Prihvaćam licencne odredbe i uvjete" />
+  <String Id="InstallCancelButton" Value="Odustani" />
+  <String Id="InstallHeader" Value="Dobro došli" />
+  <String Id="InstallInstallButton" Value="Instaliraj" />
+  <String Id="InstallLicenseLinkText" Value="[WixBundleName] &lt;a href=&quot;#&quot;&gt;licencni uvjeti&lt;/a&gt;." />
+  <String Id="InstallMessage" Value="Instalirajte FuzeVPN na ovo računalo." />
+  <String Id="InstallMessageOptions" Value="Instalirajte FuzeVPN na ovo računalo." />
+  <String Id="InstallOptionsButton" Value="Mogućnosti" />
+  <String Id="InstallVersion" Value="Verzija [WixBundleVersion]" />
+  <String Id="InstallVersionNotice" Value="Verzija [WixBundleVersion] [BuildNotice]" />
+  <String Id="ModifyCancelButton" Value="Odustani" />
+  <String Id="ModifyHeader" Value="Održavanje" />
+  <String Id="ModifyRepairButton" Value="Popravi" />
+  <String Id="ModifyUninstallButton" Value="Deinstaliraj" />
+  <String Id="OptionsBrowseButton" Value="Pregledaj" />
+  <String Id="OptionsCancelButton" Value="Odustani" />
+  <String Id="OptionsHeader" Value="Mogućnosti" />
+  <String Id="OptionsLocationLabel" Value="Instalacijska mapa (zaštićena sustavom Windows)" />
+  <String Id="OptionsOkButton" Value="U redu" />
+  <String Id="OptionsPerMachineScopeText" Value="Svi korisnici" />
+  <String Id="OptionsPerUserScopeText" Value="Trenutačni korisnik" />
+  <String Id="OverallProgressPackageText" Value="Priprema…" />
+  <String Id="PreserveInstallFolder" Value="Postojeća mapa zadržava se tijekom ažuriranja. Za slobodno premještanje sučelja koristite prijenosnu arhivu." />
+  <String Id="ProgressCancelButton" Value="Odustani" />
+  <String Id="ProgressHeader" Value="Instalacija je u tijeku" />
+  <String Id="ProgressLabel" Value="Napredak" />
+  <String Id="SuccessCacheHeader" Value="Datoteke su spremne" />
+  <String Id="SuccessCloseButton" Value="Zatvori" />
+  <String Id="SuccessHeader" Value="Operacija je dovršena" />
+  <String Id="SuccessInstallHeader" Value="Instalacija je dovršena" />
+  <String Id="SuccessLaunchButton" Value="Otvori" />
+  <String Id="SuccessLayoutHeader" Value="Datoteke su spremne" />
+  <String Id="SuccessModifyHeader" Value="Izmjena je dovršena" />
+  <String Id="SuccessOpenApp" Value="Otvorite FuzeVPN iz izbornika Start. Vaše osobne postavke su sačuvane." />
+  <String Id="SuccessRepairHeader" Value="Popravak je dovršen" />
+  <String Id="SuccessRestartButton" Value="Ponovno pokreni" />
+  <String Id="SuccessRestartText" Value="Ponovno pokrenite računalo za dovršetak." />
+  <String Id="SuccessUninstallHeader" Value="Deinstalacija je dovršena" />
+  <String Id="SuccessUninstallRestartText" Value="Ponovno pokrenite računalo za dovršetak deinstalacije." />
+  <String Id="SuccessUnsafeUninstallHeader" Value="Deinstalacija je dovršena" />
+  <String Id="Title" Value="[WixBundleName]" />
+  <String Id="UpdateButton" Value="Ažuriraj" />
+</WixLocalization>

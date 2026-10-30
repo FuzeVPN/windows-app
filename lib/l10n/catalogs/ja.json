@@ -598,5 +598,14 @@
   "Cette demande de connexion a expiré ou a déjà été utilisée. Recommencez depuis FuzeVPN.": "このログイン要求は有効期限が切れているか、すでに使用されています。FuzeVPNからやり直してください。",
   "La connexion par navigateur est momentanément indisponible. Utilisez votre adresse e-mail et votre mot de passe, ou réessayez plus tard.": "ブラウザーでのログインは一時的に利用できません。メールアドレスとパスワードを使用するか、後でもう一度お試しください。",
   "Reconnectez-vous à votre compte dans le navigateur, puis réessayez depuis FuzeVPN.": "ブラウザーでアカウントに再度ログインし、FuzeVPNからもう一度お試しください。",
-  "Mises à jour désactivées dans cette version de test.": "このテスト版では更新が無効になっています。"
+  "Mises à jour désactivées dans cette version de test.": "このテスト版では更新が無効になっています。",
+  "Autorisation reçue": "認証を受け付けました",
+  "Autorisation refusée": "認証が拒否されました",
+  "Demande invalide": "無効なリクエスト",
+  "Revenez dans FuzeVPN pour terminer la connexion.": "FuzeVPNに戻ってログインを完了してください。",
+  "Délai avant réessai : {seconds} s.": "再試行までの待機時間：{seconds}秒。",
+  "Serveurs : {count}": "サーバー：{count}",
+  "Villes : {count}": "都市：{count}",
+  "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "VPNトンネル外のUDPをブロックします。TCP/TLS経由のWebRTCも対象にするには、キルスイッチを有効にしてください。",
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "トンネル外のポート53および853でDNSをブロックします。HTTPS経由のDNSも対象にするには、キルスイッチを有効にしてください。"
 }

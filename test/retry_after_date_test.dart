@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MPL-2.0
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -72,10 +73,70 @@ void main() {
     );
   });
 
+  test('numeric delays clamp at the same report lifetime as HTTP dates', () {
+    for (final seconds in [0, 1, 86399, 86400, 86401, 172800]) {
+      final expected = seconds > 86400 ? 86400 : seconds;
+      expect(parse('$seconds').retryAfterSeconds, expected);
+      expect(
+        parse(
+          HttpDate.format(now.add(Duration(seconds: seconds))),
+        ).retryAfterSeconds,
+        expected,
+      );
+      for (final value in [seconds, '$seconds', seconds.toDouble()]) {
+        expect(
+          ApiException.fromResponse(
+            statusCode: 429,
+            body: jsonEncode({'retry_after_seconds': value}),
+          ).retryAfterSeconds,
+          expected,
+        );
+      }
+    }
+  });
+
+  test('positive numeric overflow never falls back to a short retry', () {
+    final overflow = List.filled(100, '9').join();
+    expect(parse(overflow).retryAfterSeconds, 86400);
+    expect(
+      ApiException.fromResponse(
+        statusCode: 503,
+        body: jsonEncode({'retry_after_seconds': overflow}),
+      ).retryAfterSeconds,
+      86400,
+    );
+    expect(
+      ApiException.fromResponse(
+        statusCode: 503,
+        body: '{"retry_after_seconds":9223372036854775807}',
+      ).retryAfterSeconds,
+      86400,
+    );
+  });
+
+  test('invalid and fractional JSON delays never shorten server backoff', () {
+    for (final value in [-1, 0.5, 60.5, true, null, '+60', '1e3']) {
+      expect(
+        ApiException.fromResponse(
+          statusCode: 429,
+          body: jsonEncode({'retry_after_seconds': value}),
+        ).retryAfterSeconds,
+        isNull,
+      );
+    }
+    expect(
+      ApiException.fromResponse(
+        statusCode: 429,
+        body: '{"retry_after_seconds":1e999}',
+      ).retryAfterSeconds,
+      isNull,
+    );
+  });
+
   test(
     'malformed dates and invalid numeric values retain bounded fallback',
     () {
-      for (final value in ['not-a-date', '-1', '86401', '']) {
+      for (final value in ['not-a-date', '-1', '+60', '60.5', '']) {
         expect(parse(value).retryAfterSeconds, isNull, reason: value);
       }
       expect(parse(' 60 ').retryAfterSeconds, 60);

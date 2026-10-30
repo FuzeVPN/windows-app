@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="lt-LT" Language="1063" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+  <String Id="Caption" Value="Diegiama [WixBundleName]" />
+  <String Id="CheckingForUpdatesLabel" Value="Tikrinama, ar yra naujinimų" />
+  <String Id="ConfirmCancelMessage" Value="Ar norite atšaukti?" />
+  <String Id="DesktopShortcut" Value="Sukurti darbalaukio nuorodą" />
+  <String Id="ExecuteUpgradeRelatedBundleMessage" Value="Ankstesnė versija" />
+  <String Id="FailureCacheHeader" Value="Paruošimas nepavyko" />
+  <String Id="FailureCloseButton" Value="Uždaryti" />
+  <String Id="FailureHeader" Value="Nesėkmė" />
+  <String Id="FailureHyperlinkLogText" Value="Operacija nutraukta. Peržiūrėkite &lt;a href=&quot;#&quot;&gt;žurnalą&lt;/a&gt;, išspręskite problemą ir bandykite dar kartą." />
+  <String Id="FailureInstallHeader" Value="Diegimas nutrauktas" />
+  <String Id="FailureLayoutHeader" Value="Kopijavimas nepavyko" />
+  <String Id="FailureModifyHeader" Value="Keitimas nutrauktas" />
+  <String Id="FailureRepairHeader" Value="Taisymas nutrauktas" />
+  <String Id="FailureRestartButton" Value="Paleisti iš naujo" />
+  <String Id="FailureRestartText" Value="Norėdami baigti atkūrimą, paleiskite kompiuterį iš naujo." />
+  <String Id="FailureUninstallHeader" Value="Pašalinimas nutrauktas" />
+  <String Id="FailureUnsafeUninstallHeader" Value="Pašalinimas nutrauktas" />
+  <String Id="FilesInUseCloseRadioButton" Value="Uždaryti programas" />
+  <String Id="FilesInUseDontCloseRadioButton" Value="Palikti programas atidarytas" />
+  <String Id="FilesInUseExitButton" Value="Atšaukti" />
+  <String Id="FilesInUseIgnoreButton" Value="Nepaisyti" />
+  <String Id="FilesInUseLabel" Value="Uždarykite toliau nurodytas programas ir bandykite dar kartą." />
+  <String Id="FilesInUseNetfxCloseRadioButton" Value="Uždaryti programas" />
+  <String Id="FilesInUseRetryButton" Value="Bandyti dar kartą" />
+  <String Id="FilesInUseTitle" Value="Naudojami failai" />
+  <String Id="HelpCloseButton" Value="Uždaryti" />
+  <String Id="HelpHeader" Value="Pagalba" />
+  <String Id="HelpText" Value="/install, /repair, /uninstall: įdiegti, pataisyti, pašalinti. /quiet: tylusis režimas. /norestart: nepaleisti iš naujo. DesktopShortcut=1: darbalaukio nuoroda. InstallFolder=&quot;D:\Applications\FuzeVPN&quot;: pradinis aplankas. Naujinant įdiegtos programos aplankas išsaugomas." />
+  <String Id="InstallAcceptCheckbox" Value="&amp;Sutinku su licencijos sąlygomis" />
+  <String Id="InstallCancelButton" Value="Atšaukti" />
+  <String Id="InstallHeader" Value="Sveiki" />
+  <String Id="InstallInstallButton" Value="Įdiegti" />
+  <String Id="InstallLicenseLinkText" Value="[WixBundleName] &lt;a href=&quot;#&quot;&gt;licencijos sąlygos&lt;/a&gt;." />
+  <String Id="InstallMessage" Value="Įdiekite FuzeVPN šiame kompiuteryje." />
+  <String Id="InstallMessageOptions" Value="Įdiekite FuzeVPN šiame kompiuteryje." />
+  <String Id="InstallOptionsButton" Value="Parinktys" />
+  <String Id="InstallVersion" Value="Versija [WixBundleVersion]" />
+  <String Id="InstallVersionNotice" Value="Versija [WixBundleVersion] [BuildNotice]" />
+  <String Id="ModifyCancelButton" Value="Atšaukti" />
+  <String Id="ModifyHeader" Value="Priežiūra" />
+  <String Id="ModifyRepairButton" Value="Taisyti" />
+  <String Id="ModifyUninstallButton" Value="Pašalinti" />
+  <String Id="OptionsBrowseButton" Value="Naršyti" />
+  <String Id="OptionsCancelButton" Value="Atšaukti" />
+  <String Id="OptionsHeader" Value="Parinktys" />
+  <String Id="OptionsLocationLabel" Value="Diegimo aplankas (apsaugotas Windows priemonėmis)" />
+  <String Id="OptionsOkButton" Value="Gerai" />
+  <String Id="OptionsPerMachineScopeText" Value="Visi naudotojai" />
+  <String Id="OptionsPerUserScopeText" Value="Dabartinis naudotojas" />
+  <String Id="OverallProgressPackageText" Value="Ruošiama…" />
+  <String Id="PreserveInstallFolder" Value="Naujinant esamas aplankas išsaugomas. Norėdami laisvai perkelti sąsają, naudokite nešiojamosios versijos archyvą." />
+  <String Id="ProgressCancelButton" Value="Atšaukti" />
+  <String Id="ProgressHeader" Value="Vyksta diegimas" />
+  <String Id="ProgressLabel" Value="Eiga" />
+  <String Id="SuccessCacheHeader" Value="Failai paruošti" />
+  <String Id="SuccessCloseButton" Value="Uždaryti" />
+  <String Id="SuccessHeader" Value="Operacija baigta" />
+  <String Id="SuccessInstallHeader" Value="Diegimas baigtas" />
+  <String Id="SuccessLaunchButton" Value="Atidaryti" />
+  <String Id="SuccessLayoutHeader" Value="Failai paruošti" />
+  <String Id="SuccessModifyHeader" Value="Keitimas baigtas" />
+  <String Id="SuccessOpenApp" Value="Atidarykite FuzeVPN iš meniu Pradžia. Jūsų asmeninės nuostatos išsaugotos." />
+  <String Id="SuccessRepairHeader" Value="Taisymas baigtas" />
+  <String Id="SuccessRestartButton" Value="Paleisti iš naujo" />
+  <String Id="SuccessRestartText" Value="Norėdami baigti, paleiskite kompiuterį iš naujo." />
+  <String Id="SuccessUninstallHeader" Value="Pašalinimas baigtas" />
+  <String Id="SuccessUninstallRestartText" Value="Norėdami baigti šalinimą, paleiskite kompiuterį iš naujo." />
+  <String Id="SuccessUnsafeUninstallHeader" Value="Pašalinimas baigtas" />
+  <String Id="Title" Value="[WixBundleName]" />
+  <String Id="UpdateButton" Value="Atnaujinti" />
+</WixLocalization>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="ml-IN" Language="1100" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+  <String Id="Caption" Value="[WixBundleName] ഇൻസ്റ്റാൾ ചെയ്യുന്നു" />
+  <String Id="CheckingForUpdatesLabel" Value="അപ്‌ഡേറ്റുകൾ പരിശോധിക്കുന്നു" />
+  <String Id="ConfirmCancelMessage" Value="റദ്ദാക്കണോ?" />
+  <String Id="DesktopShortcut" Value="ഡെസ്ക്ടോപ്പ് കുറുക്കുവഴി സൃഷ്ടിക്കുക" />
+  <String Id="ExecuteUpgradeRelatedBundleMessage" Value="മുൻ പതിപ്പ്" />
+  <String Id="FailureCacheHeader" Value="തയ്യാറാക്കൽ പരാജയപ്പെട്ടു" />
+  <String Id="FailureCloseButton" Value="അടയ്ക്കുക" />
+  <String Id="FailureHeader" Value="പരാജയം" />
+  <String Id="FailureHyperlinkLogText" Value="പ്രവർത്തനം തടസ്സപ്പെട്ടു. &lt;a href=&quot;#&quot;&gt;ലോഗ്&lt;/a&gt; പരിശോധിച്ച് പ്രശ്നം പരിഹരിച്ച ശേഷം വീണ്ടും ശ്രമിക്കുക." />
+  <String Id="FailureInstallHeader" Value="ഇൻസ്റ്റാളേഷൻ തടസ്സപ്പെട്ടു" />
+  <String Id="FailureLayoutHeader" Value="പകർത്തൽ പരാജയപ്പെട്ടു" />
+  <String Id="FailureModifyHeader" Value="മാറ്റം തടസ്സപ്പെട്ടു" />
+  <String Id="FailureRepairHeader" Value="നന്നാക്കൽ തടസ്സപ്പെട്ടു" />
+  <String Id="FailureRestartButton" Value="പുനരാരംഭിക്കുക" />
+  <String Id="FailureRestartText" Value="പുനഃസ്ഥാപിക്കൽ പൂർത്തിയാക്കാൻ പുനരാരംഭിക്കുക." />
+  <String Id="FailureUninstallHeader" Value="അൺഇൻസ്റ്റാളേഷൻ തടസ്സപ്പെട്ടു" />
+  <String Id="FailureUnsafeUninstallHeader" Value="അൺഇൻസ്റ്റാളേഷൻ തടസ്സപ്പെട്ടു" />
+  <String Id="FilesInUseCloseRadioButton" Value="ആപ്പുകൾ അടയ്ക്കുക" />
+  <String Id="FilesInUseDontCloseRadioButton" Value="ആപ്പുകൾ തുറന്നുവയ്ക്കുക" />
+  <String Id="FilesInUseExitButton" Value="റദ്ദാക്കുക" />
+  <String Id="FilesInUseIgnoreButton" Value="അവഗണിക്കുക" />
+  <String Id="FilesInUseLabel" Value="താഴെപ്പറയുന്ന ആപ്പുകൾ അടച്ച ശേഷം വീണ്ടും ശ്രമിക്കുക." />
+  <String Id="FilesInUseNetfxCloseRadioButton" Value="ആപ്പുകൾ അടയ്ക്കുക" />
+  <String Id="FilesInUseRetryButton" Value="വീണ്ടും ശ്രമിക്കുക" />
+  <String Id="FilesInUseTitle" Value="ഉപയോഗത്തിലുള്ള ഫയലുകൾ" />
+  <String Id="HelpCloseButton" Value="അടയ്ക്കുക" />
+  <String Id="HelpHeader" Value="സഹായം" />
+  <String Id="HelpText" Value="/install, /repair, /uninstall: ഇൻസ്റ്റാൾ ചെയ്യുക, നന്നാക്കുക, അൺഇൻസ്റ്റാൾ ചെയ്യുക. /quiet: നിശബ്ദ മോഡ്. /norestart: പുനരാരംഭിക്കരുത്. DesktopShortcut=1: ഡെസ്ക്ടോപ്പ് കുറുക്കുവഴി. InstallFolder=&quot;D:\Applications\FuzeVPN&quot;: പ്രാരംഭ ഫോൾഡർ. അപ്‌ഡേറ്റുകൾ ഇൻസ്റ്റാൾ ചെയ്ത ഫോൾഡർ നിലനിർത്തും." />
+  <String Id="InstallAcceptCheckbox" Value="ലൈസൻസ് നിബന്ധനകളും വ്യവസ്ഥകളും ഞാൻ &amp;അംഗീകരിക്കുന്നു" />
+  <String Id="InstallCancelButton" Value="റദ്ദാക്കുക" />
+  <String Id="InstallHeader" Value="സ്വാഗതം" />
+  <String Id="InstallInstallButton" Value="ഇൻസ്റ്റാൾ ചെയ്യുക" />
+  <String Id="InstallLicenseLinkText" Value="[WixBundleName] &lt;a href=&quot;#&quot;&gt;ലൈസൻസ് നിബന്ധനകൾ&lt;/a&gt;." />
+  <String Id="InstallMessage" Value="ഈ കമ്പ്യൂട്ടറിൽ FuzeVPN ഇൻസ്റ്റാൾ ചെയ്യുക." />
+  <String Id="InstallMessageOptions" Value="ഈ കമ്പ്യൂട്ടറിൽ FuzeVPN ഇൻസ്റ്റാൾ ചെയ്യുക." />
+  <String Id="InstallOptionsButton" Value="ഓപ്ഷനുകൾ" />
+  <String Id="InstallVersion" Value="പതിപ്പ് [WixBundleVersion]" />
+  <String Id="InstallVersionNotice" Value="പതിപ്പ് [WixBundleVersion] [BuildNotice]" />
+  <String Id="ModifyCancelButton" Value="റദ്ദാക്കുക" />
+  <String Id="ModifyHeader" Value="പരിപാലനം" />
+  <String Id="ModifyRepairButton" Value="നന്നാക്കുക" />
+  <String Id="ModifyUninstallButton" Value="അൺഇൻസ്റ്റാൾ" />
+  <String Id="OptionsBrowseButton" Value="ബ്രൗസ് ചെയ്യുക" />
+  <String Id="OptionsCancelButton" Value="റദ്ദാക്കുക" />
+  <String Id="OptionsHeader" Value="ഓപ്ഷനുകൾ" />
+  <String Id="OptionsLocationLabel" Value="ഇൻസ്റ്റാളേഷൻ ഫോൾഡർ (Windows പരിരക്ഷിക്കുന്നത്)" />
+  <String Id="OptionsOkButton" Value="ശരി" />
+  <String Id="OptionsPerMachineScopeText" Value="എല്ലാ ഉപയോക്താക്കളും" />
+  <String Id="OptionsPerUserScopeText" Value="നിലവിലെ ഉപയോക്താവ്" />
+  <String Id="OverallProgressPackageText" Value="തയ്യാറാക്കുന്നു…" />
+  <String Id="PreserveInstallFolder" Value="അപ്‌ഡേറ്റുകളിൽ നിലവിലുള്ള ഫോൾഡർ നിലനിർത്തും. ഇന്റർഫേസ് സ്വതന്ത്രമായി മാറ്റാൻ പോർട്ടബിൾ ആർക്കൈവ് ഉപയോഗിക്കുക." />
+  <String Id="ProgressCancelButton" Value="റദ്ദാക്കുക" />
+  <String Id="ProgressHeader" Value="ഇൻസ്റ്റാളേഷൻ പുരോഗമിക്കുന്നു" />
+  <String Id="ProgressLabel" Value="പുരോഗതി" />
+  <String Id="SuccessCacheHeader" Value="ഫയലുകൾ തയ്യാർ" />
+  <String Id="SuccessCloseButton" Value="അടയ്ക്കുക" />
+  <String Id="SuccessHeader" Value="പ്രവർത്തനം പൂർത്തിയായി" />
+  <String Id="SuccessInstallHeader" Value="ഇൻസ്റ്റാളേഷൻ പൂർത്തിയായി" />
+  <String Id="SuccessLaunchButton" Value="തുറക്കുക" />
+  <String Id="SuccessLayoutHeader" Value="ഫയലുകൾ തയ്യാർ" />
+  <String Id="SuccessModifyHeader" Value="മാറ്റം പൂർത്തിയായി" />
+  <String Id="SuccessOpenApp" Value="Start മെനുവിൽ നിന്ന് FuzeVPN തുറക്കുക. നിങ്ങളുടെ വ്യക്തിഗത മുൻഗണനകൾ നിലനിർത്തിയിരിക്കുന്നു." />
+  <String Id="SuccessRepairHeader" Value="നന്നാക്കൽ പൂർത്തിയായി" />
+  <String Id="SuccessRestartButton" Value="പുനരാരംഭിക്കുക" />
+  <String Id="SuccessRestartText" Value="പൂർത്തിയാക്കാൻ കമ്പ്യൂട്ടർ പുനരാരംഭിക്കുക." />
+  <String Id="SuccessUninstallHeader" Value="അൺഇൻസ്റ്റാളേഷൻ പൂർത്തിയായി" />
+  <String Id="SuccessUninstallRestartText" Value="അൺഇൻസ്റ്റാളേഷൻ പൂർത്തിയാക്കാൻ പുനരാരംഭിക്കുക." />
+  <String Id="SuccessUnsafeUninstallHeader" Value="അൺഇൻസ്റ്റാളേഷൻ പൂർത്തിയായി" />
+  <String Id="Title" Value="[WixBundleName]" />
+  <String Id="UpdateButton" Value="അപ്‌ഡേറ്റ് ചെയ്യുക" />
+</WixLocalization>

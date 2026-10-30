@@ -16,6 +16,14 @@
     "triplets": ["x64-windows", "arm64-windows"],
     "host_triplet": "x64-windows"
   },
+  "openvpn_dco": {
+    "version": "2.8.13",
+    "directory": "third_party/openvpn-dco/2.8.13",
+    "commit": "62a5db13f93a4b38ac193ee9cdfde1dbe2ab2b03",
+    "payload_manifest": "third_party/openvpn-dco/2.8.13/payload-sha256.json",
+    "source_archive": "third_party/openvpn-dco/2.8.13/source-2.8.13.zip",
+    "source_hash": "6e956400d5d130e706908df191c8154e017fa724ffe29ec2e62e352281b85d99"
+  },
   "llvm": {
     "version": "21.1.8",
     "name": "LLVM-21.1.8-win64.exe",
@@ -24,11 +32,11 @@
     "hash": "69ee513fb41bafd159f33c54fad44739e1c150fee37ddf0d5d4cfd88424b42a9177d828ba2a3f19f1a09a8cf84225bade94681fe075994c83e49cc84e15a0718"
   },
   "dotnet": {
-    "version": "9.0.318",
-    "name": "dotnet-sdk-9.0.318-win-x64.zip",
-    "url": "https://builds.dotnet.microsoft.com/dotnet/Sdk/9.0.318/dotnet-sdk-9.0.318-win-x64.zip",
+    "version": "9.0.319",
+    "name": "dotnet-sdk-9.0.319-win-x64.zip",
+    "url": "https://builds.dotnet.microsoft.com/dotnet/Sdk/9.0.319/dotnet-sdk-9.0.319-win-x64.zip",
     "algorithm": "SHA512",
-    "hash": "d961a84ebcbc316f06c98d16958422f7bb1b3a1f29b5d6011cabf59984390690ff669c3dd9b739554ad00771d6393dbbde6bdb14da81faa7fe499f59501864b6"
+    "hash": "663d866ad213602d8e267ea5eb575e79bf3f4b920b29f246017021551e93e895e1b2a1f0abee08ec26030eb95b818792a2a7a5835fbada90798ad66eb5c7b168"
   },
   "wix": {
     "version": "7.0.0",

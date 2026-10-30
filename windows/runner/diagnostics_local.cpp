@@ -293,7 +293,7 @@ Map ObserveService(const std::string& application_version) {
   CloseServiceHandle(manager);
   return result;
 }
-Map Collect(const AsyncSnapshot<Map>::Request&) {
+Map ObserveEnvironment() {
   const auto mode = fuzevpn_distribution::CurrentMode();
   const auto mode_error = GetLastError();
   const auto image = ImagePath();
@@ -309,6 +309,9 @@ Map Collect(const AsyncSnapshot<Map>::Request&) {
     environment[Value(sibling.second)] = Value(attributes != INVALID_FILE_ATTRIBUTES &&
         !(attributes & (FILE_ATTRIBUTE_DIRECTORY | FILE_ATTRIBUTE_REPARSE_POINT)));
   }
+  return environment;
+}
+Map ObserveRuntime() {
   bool detection_failed = false;
   SetLastError(ERROR_SUCCESS);
   const auto presence = PrivilegedRuntimePresence(&detection_failed);
@@ -316,9 +319,30 @@ Map Collect(const AsyncSnapshot<Map>::Request&) {
   Map runtime{{Value("presence"), Value(!presence ? "unknown" : *presence ? "present" : "absent")},
       {Value("detection_failed"), Value(detection_failed)}};
   if (!presence) runtime[Value("win32_error")] = Value(static_cast<int64_t>(runtime_error));
-  return {{Value("schema_version"), Value(int64_t(1))}, {Value("collection_pending"), Value(false)},
-      {Value("environment"), Value(environment)}, {Value("runtime"), Value(runtime)},
-      {Value("service"), Value(ObserveService(application_version))}, {Value("native_log"), Value(ReadUserNativeLog())}};
+  return runtime;
+}
+template<class Environment, class Runtime, class Service, class Log>
+Map CollectSources(const Environment& environment, const Runtime& runtime,
+                   const Service& service, const Log& log) {
+  Map result{{Value("schema_version"), Value(int64_t(1))},
+             {Value("collection_pending"), Value(false)}};
+  const auto collect = [&result](const char* key, const auto& reader) {
+    try { result[Value(key)] = Value(reader()); }
+    catch (...) {
+      // A local reader exception must neither erase the other observations nor
+      // become an unexplained empty map. Never export exception text.
+      result[Value("collection_error")] = Value(int64_t(ERROR_UNHANDLED_EXCEPTION));
+    }
+  };
+  collect("environment", environment);
+  collect("runtime", runtime);
+  collect("service", service);
+  collect("native_log", log);
+  return result;
+}
+Map Collect(const AsyncSnapshot<Map>::Request&) {
+  return CollectSources(ObserveEnvironment, ObserveRuntime,
+      [] { return ObserveService(BinaryVersion(ImagePath())); }, ReadUserNativeLog);
 }
 AsyncSnapshot<Map>& Cache() { static AsyncSnapshot<Map> cache(Collect); return cache; }
 }  // namespace

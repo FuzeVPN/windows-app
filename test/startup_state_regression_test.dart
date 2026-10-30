@@ -68,9 +68,13 @@ class _StartupWireGuard extends fixture.ProbeWireGuard {
 }
 
 class _StartupOpenVpn extends fixture.ProbeOpenVpn {
+  bool available = false;
   bool statusUnavailable = false;
   bool snapshotUnavailable = false;
   bool protectionUnavailable = false;
+
+  @override
+  Future<bool> isAvailable() async => available && !statusUnavailable;
 
   @override
   Future<bool> isConnected() async {
@@ -100,11 +104,53 @@ class _StartupOpenVpn extends fixture.ProbeOpenVpn {
 class _StartupApi extends fixture.ProbeApi {
   int locationsCalls = 0;
   int loginCalls = 0;
+  bool failLocations = false;
+  String? registeredLocation;
+
+  @override
+  Future<DeviceConfiguration> registerDevice({
+    required String token,
+    required String name,
+    required String publicKey,
+    required String locationId,
+    List<IpFamily>? ipFamilies,
+  }) {
+    registeredLocation = locationId;
+    return super.registerDevice(
+      token: token,
+      name: name,
+      publicKey: publicKey,
+      locationId: locationId,
+      ipFamilies: ipFamilies,
+    );
+  }
 
   @override
   Future<List<Location>> locations() async {
     locationsCalls++;
-    return super.locations();
+    if (failLocations) {
+      throw const ApiException(
+        statusCode: 503,
+        errorCode: 'service_unavailable',
+      );
+    }
+    if (offline) return super.locations();
+    return const [
+      Location(
+        id: 'target',
+        city: 'Target',
+        countryCode: 'DE',
+        displayName: 'Target',
+        supportedProtocols: {VpnProtocol.wireGuard, VpnProtocol.openVpn},
+      ),
+      Location(
+        id: 'source',
+        city: 'Source',
+        countryCode: 'DE',
+        displayName: 'Source',
+        supportedProtocols: {VpnProtocol.wireGuard, VpnProtocol.openVpn},
+      ),
+    ];
   }
 
   @override
@@ -118,6 +164,15 @@ class _StartupApi extends fixture.ProbeApi {
 }
 
 class _StartupStore extends fixture.ProbeStore {
+  String protocol = 'wireguard';
+  String savedLocation = fixture.source.id;
+
+  @override
+  Future<String?> vpnProtocol() async => protocol;
+  @override
+  Future<String?> selectedLocation() async => savedLocation;
+  @override
+  Future<void> saveAutoConnectOnLaunch(bool value) async => autoConnect = value;
   @override
   Future<SecuritySettings> securitySettings() async => const SecuritySettings(
     killSwitch: true,
@@ -194,6 +249,248 @@ Future<void> _closeApp(WidgetTester tester, AppController controller) async {
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  for (final protocol in ['wireguard', 'openvpn']) {
+    testWidgets(
+      'delayed service resumes launch $protocol once without restarting the UI',
+      (tester) async {
+        final api = _StartupApi();
+        final wg = _StartupWireGuard()
+          ..statusUnavailable = true
+          ..statusErrorCode = 'broker_unavailable';
+        final ov = _StartupOpenVpn()
+          ..statusUnavailable = true
+          ..available = true;
+        final app = _makeController(
+          api: api,
+          store: _StartupStore()
+            ..autoConnect = true
+            ..protocol = protocol
+            ..savedLocation = fixture.source.id,
+          wireguard: wg,
+          openVpn: ov,
+        );
+        await app.initialize();
+        // Reach the delayed SCM start window, well beyond the old 3.25s budget.
+        for (final delay in [
+          250,
+          1000,
+          2000,
+          5000,
+          10000,
+          15000,
+          30000,
+          30000,
+          30000,
+        ]) {
+          await tester.pump(Duration(milliseconds: delay));
+          await tester.pump();
+        }
+        expect(app.runtimeVerificationPending, isTrue);
+        expect(api.meCalls + api.locationsCalls, 0);
+        expect(wg.prepareCalls + wg.connectCalls + ov.importCalls, 0);
+        wg.statusUnavailable = false;
+        ov.statusUnavailable = false;
+        await tester.pump(const Duration(seconds: 30));
+        await tester.pump();
+        expect(app.runtimeVerificationPending, isFalse);
+        expect(app.vpnStatus, VpnStatus.connected);
+        expect(
+          app.activeProtocol,
+          protocol == 'wireguard' ? VpnProtocol.wireGuard : VpnProtocol.openVpn,
+        );
+        expect(wg.connectCalls + ov.importCalls, 1);
+        expect(app.selectedLocation?.id, fixture.source.id);
+        expect(app.locations.first.id, fixture.target.id);
+        if (protocol == 'wireguard') {
+          expect(api.registeredLocation, fixture.source.id);
+        }
+        await tester.pump(const Duration(minutes: 5));
+        expect(wg.connectCalls + ov.importCalls, 1);
+        expect(wg.disconnectCalls + ov.disconnectCalls, 0);
+        app.dispose();
+      },
+    );
+  }
+
+  for (final cancellation in ['disabled', 'explicit retry', 'sign out']) {
+    testWidgets('delayed launch is cancelled by $cancellation', (tester) async {
+      final wg = _StartupWireGuard()
+        ..statusUnavailable = true
+        ..statusErrorCode = 'broker_unavailable';
+      final api = _StartupApi();
+      final app = _makeController(
+        api: api,
+        store: _StartupStore()..autoConnect = true,
+        wireguard: wg,
+      );
+      await app.initialize();
+      switch (cancellation) {
+        case 'disabled':
+          await app.setAutoConnectOnLaunch(false);
+        case 'explicit retry':
+          await app.retryRuntimeVerification();
+        case 'sign out':
+          await app.signOut();
+      }
+      wg.statusUnavailable = false;
+      await tester.pump(const Duration(seconds: 30));
+      await tester.pump();
+      expect(wg.prepareCalls + wg.connectCalls + wg.reconnectCalls, 0);
+      expect(wg.disconnectCalls, 0);
+      if (cancellation == 'sign out') {
+        expect(api.meCalls + api.locationsCalls, 0);
+      }
+      app.dispose();
+    });
+  }
+
+  testWidgets('delayed service recovery keeps autoconnect OFF passive', (
+    tester,
+  ) async {
+    final wg = _StartupWireGuard()
+      ..statusUnavailable = true
+      ..statusErrorCode = 'broker_unavailable';
+    final app = _makeController(api: _StartupApi(), wireguard: wg);
+    await app.initialize();
+    wg.statusUnavailable = false;
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
+    expect(app.vpnStatus, VpnStatus.disconnected);
+    expect(wg.prepareCalls + wg.connectCalls + wg.reconnectCalls, 0);
+    app.dispose();
+  });
+
+  for (final retained in [false, true]) {
+    testWidgets(
+      'delayed startup preserves existing tunnel/filter state $retained',
+      (tester) async {
+        final wg = _StartupWireGuard()
+          ..statusUnavailable = true
+          ..statusErrorCode = 'broker_unavailable';
+        final app = _makeController(
+          api: _StartupApi(),
+          store: _StartupStore()..autoConnect = true,
+          wireguard: wg,
+        );
+        await app.initialize();
+        wg.statusUnavailable = false;
+        wg.connected = !retained;
+        wg.protectionActive = true;
+        await tester.pump(const Duration(seconds: 1));
+        await tester.pump();
+        expect(
+          app.vpnStatus,
+          retained ? VpnStatus.blocked : VpnStatus.connected,
+        );
+        expect(
+          wg.prepareCalls +
+              wg.connectCalls +
+              wg.reconnectCalls +
+              wg.disconnectCalls,
+          0,
+        );
+        app.dispose();
+      },
+    );
+  }
+
+  testWidgets(
+    'service recovery defers launch until saved account is verified',
+    (tester) async {
+      final api = _StartupApi()..offline = true;
+      final wg = _StartupWireGuard()
+        ..statusUnavailable = true
+        ..statusErrorCode = 'broker_unavailable';
+      final app = _makeController(
+        api: api,
+        store: _StartupStore()..autoConnect = true,
+        wireguard: wg,
+      );
+      await app.initialize();
+      wg.statusUnavailable = false;
+      await tester.pump(const Duration(milliseconds: 250));
+      await tester.pump();
+      expect(app.savedSessionVerificationPending, isTrue);
+      expect(wg.connectCalls + wg.prepareCalls, 0);
+      api.offline = false;
+      await tester.pump(const Duration(milliseconds: 250));
+      await tester.pump();
+      expect(app.savedSessionVerificationPending, isFalse);
+      expect(app.vpnStatus, VpnStatus.connected);
+      expect(wg.connectCalls, 1);
+      app.dispose();
+    },
+  );
+
+  testWidgets('delayed launch retries the unavailable location catalogue', (
+    tester,
+  ) async {
+    final api = _StartupApi()..failLocations = true;
+    final wg = _StartupWireGuard()
+      ..statusUnavailable = true
+      ..statusErrorCode = 'broker_unavailable';
+    final app = _makeController(
+      api: api,
+      store: _StartupStore()..autoConnect = true,
+      wireguard: wg,
+    );
+    await app.initialize();
+    wg.statusUnavailable = false;
+    await tester.pump(const Duration(milliseconds: 250));
+    await tester.pump();
+    expect(app.savedSessionVerificationPending, isFalse);
+    expect(app.apiReachable, isFalse);
+    expect(wg.prepareCalls + wg.connectCalls, 0);
+    api.failLocations = false;
+    await tester.pump(const Duration(milliseconds: 250));
+    await tester.pump();
+    expect(app.vpnStatus, VpnStatus.connected);
+    expect(wg.connectCalls, 1);
+    expect(api.meCalls, 1);
+    app.dispose();
+  });
+
+  testWidgets(
+    'unavailable service observations stop after the boot retry budget',
+    (tester) async {
+      final wg = _StartupWireGuard()
+        ..statusUnavailable = true
+        ..statusErrorCode = 'broker_unavailable';
+      final app = _makeController(
+        api: _StartupApi(),
+        store: _StartupStore()..autoConnect = true,
+        wireguard: wg,
+      );
+      await app.initialize();
+      for (final delay in [
+        250,
+        1000,
+        2000,
+        5000,
+        10000,
+        15000,
+        30000,
+        30000,
+        30000,
+        30000,
+        30000,
+        30000,
+        30000,
+        30000,
+        30000,
+      ]) {
+        await tester.pump(Duration(milliseconds: delay));
+        await tester.pump();
+      }
+      final calls = wg.statusCalls;
+      await tester.pump(const Duration(minutes: 5));
+      expect(wg.statusCalls, calls);
+      expect(app.runtimeVerificationPending, isTrue);
+      expect(wg.prepareCalls + wg.connectCalls + wg.disconnectCalls, 0);
+      app.dispose();
+    },
+  );
 
   for (final protocol in VpnProtocol.values) {
     for (final unavailableTunnel in [false, true]) {
@@ -314,7 +611,7 @@ void main() {
     expect(api.locationsCalls, 0);
   });
 
-  test('startup messages already exist in all 30 translation catalogs', () {
+  test('startup messages already exist in all 70 translation catalogs', () {
     for (final message in [
       _unknownProtectionMessage,
       _interruptedMessage,
@@ -326,7 +623,7 @@ void main() {
         expect(catalog[message]?.trim(), isNotEmpty);
       }
     }
-    expect(translationCatalogs, hasLength(30));
+    expect(translationCatalogs, hasLength(70));
   });
 
   testWidgets('sign-in excludes startup warning until an account attempt', (

@@ -14,7 +14,7 @@ published unchanged with their existing notices and source archives.
 | WireGuard Windows embeddable service | v1.1.1, f0605c3e3dcc5ff801e19158fd6255378b99e17c; AMD64/ARM64 | MIT, `licenses/WireGuard-NOTICE.md`; Go/module BSD and LLVM runtime notices included |
 | WireGuardNT | 1.1, original vendor-signed AMD64/ARM64 DLLs | WireGuardNT Prebuilt Binaries License, `licenses/WireGuardNT-LICENSE.txt` and `WIREGUARD_NOTICE.md` |
 | OpenVPN 3 Core | 28469efe3ae770268b2b5c6aa607ed1489e101f0, local build source | MPL-2.0 option, `licenses/OpenVPN3-MPL-2.0.txt` |
-| OpenVPN DCO driver | 2.8.7, b530217a0126e89506cee69240ed5a82bcdb8d2c; AMD64/ARM64 | MIT, `openvpn-dco/NOTICE.md` and `openvpn-dco/LICENSE.txt` |
+| OpenVPN DCO driver | 2.8.13, 62a5db13f93a4b38ac193ee9cdfde1dbe2ab2b03; AMD64/ARM64 | MIT, `openvpn-dco/NOTICE.md` and `openvpn-dco/LICENSE.txt` |
 | OpenSSL | 3.6.5 | Apache-2.0, `licenses/openssl-copyright.txt` |
 | Asio | 1.36.0 | Boost-1.0, `licenses/asio-copyright.txt` |
 | fmt | 12.2.0#1 | MIT, `licenses/fmt-copyright.txt` |
@@ -44,6 +44,13 @@ source rather than the precompiled vcpkg dependencies. Their individual license
 texts are included separately above. Components used only by the build may be
 listed conservatively even if their code is not linked into the executable.
 
+The Core source archive also includes `FUZEVPN-LICENSING-CLARIFICATION.md`, which
+records the upstream maintainers' clarification of four inherited GPLv3 header
+notices missed during relicensing. The four downstream metadata headers use the
+canonical dual-license expression; original notices and patch provenance are
+preserved as historical evidence in `fuzevpn-license-provenance/`. See
+[OpenVPN/openvpn3 issue 445](https://github.com/OpenVPN/openvpn3/issues/445).
+
 ## miniz
 
 The Windows portable updater statically includes only the low-level Deflate
@@ -63,7 +70,7 @@ The unmodified official WireGuard Windows v1.1.1 source is supplied in
 `licenses/wireguard-windows-1.1.1-source.zip`. The full WireGuard, Go and LLVM
 notices are retained in `WIREGUARD_NOTICE.md` and `licenses/WireGuard-NOTICE.md`.
 
-The original OpenVPN DCO 2.8.7 source is supplied in
-`openvpn-dco/source-2.8.7.zip`. Its SYS/CAT/INF files retain the original vendor
-kernel-signing chain. Release 2.8.7 fixes CVE-2026-82325; see the vendor advisory
+The original OpenVPN DCO 2.8.13 source is supplied in
+`openvpn-dco/source-2.8.13.zip`. Its SYS/CAT/INF files retain the original vendor
+kernel-signing chain. Release 2.8.13 fixes CVE-2026-105390; see the vendor advisory
 linked in `openvpn-dco/NOTICE.md`.

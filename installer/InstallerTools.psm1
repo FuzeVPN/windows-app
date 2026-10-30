@@ -336,7 +336,7 @@ function Get-ReleasePeSigningEvidence {
 }
 
 function Assert-DcoPayload {
-  param([Parameter(Mandatory)][string]$ReleaseDirectory, [ValidateSet('2.8.7')][string]$Version='2.8.7',
+  param([Parameter(Mandatory)][string]$ReleaseDirectory, [ValidateSet('2.8.13')][string]$Version='2.8.13',
     [ValidateSet('x64','arm64')][string]$Architecture='x64')
   foreach ($variant in @('win10','win11')) {
     $inf = Join-Path $ReleaseDirectory "openvpn-dco\$variant\ovpn-dco.inf"
@@ -346,8 +346,12 @@ function Assert-DcoPayload {
     }
     $platform = if ($Architecture -eq 'arm64') { 'NTARM64' } else { 'NTamd64' }
     if ($text -notmatch ('(?im)^%ovpn-dco\.CompanyName%\s*=\s*%ovpn-dco\.Name%,\s*' + $platform + '\s*$')) { throw "DCO INF architecture mismatch: $inf" }
+    $driver = Join-Path $ReleaseDirectory "openvpn-dco\$variant\ovpn-dco.sys"
+    if ((Get-Item -LiteralPath $driver).VersionInfo.FileVersion -cne $Version) {
+      throw "DCO binary version $Version is required: $driver"
+    }
     [void](Assert-SignedFile (Join-Path $ReleaseDirectory "openvpn-dco\$variant\ovpn-dco.cat"))
-    [void](Assert-SignedFile (Join-Path $ReleaseDirectory "openvpn-dco\$variant\ovpn-dco.sys"))
+    [void](Assert-SignedFile $driver)
   }
 }
 

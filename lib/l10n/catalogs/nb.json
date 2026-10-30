@@ -598,5 +598,14 @@
   "Cette demande de connexion a expiré ou a déjà été utilisée. Recommencez depuis FuzeVPN.": "Denne innloggingsforespørselen har utløpt eller er allerede brukt. Start på nytt fra FuzeVPN.",
   "La connexion par navigateur est momentanément indisponible. Utilisez votre adresse e-mail et votre mot de passe, ou réessayez plus tard.": "Innlogging via nettleseren er midlertidig utilgjengelig. Bruk e-postadressen og passordet ditt eller prøv igjen senere.",
   "Reconnectez-vous à votre compte dans le navigateur, puis réessayez depuis FuzeVPN.": "Logg inn på kontoen din igjen i nettleseren, og prøv deretter igjen fra FuzeVPN.",
-  "Mises à jour désactivées dans cette version de test.": "Oppdateringer er deaktivert i denne testversjonen."
+  "Mises à jour désactivées dans cette version de test.": "Oppdateringer er deaktivert i denne testversjonen.",
+  "Autorisation reçue": "Godkjenning mottatt",
+  "Autorisation refusée": "Godkjenning avvist",
+  "Demande invalide": "Ugyldig forespørsel",
+  "Revenez dans FuzeVPN pour terminer la connexion.": "Gå tilbake til FuzeVPN for å fullføre innloggingen.",
+  "Délai avant réessai : {seconds} s.": "Ventetid før nytt forsøk: {seconds} s.",
+  "Serveurs : {count}": "Servere: {count}",
+  "Villes : {count}": "Byer: {count}",
+  "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "Blokkerer UDP utenfor VPN-tunnelen. Aktiver kill switch for også å dekke WebRTC via TCP/TLS.",
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Blokkerer DNS utenfor tunnelen på port 53 og 853. Aktiver kill switch for også å dekke DNS via HTTPS."
 }

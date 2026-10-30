@@ -50,3 +50,12 @@ storage, close the app and replace the extracted folder manually.
 
 Public release publication and the live update API are separate actions.
 Uploading files to GitHub does not change the hosted update service.
+
+## Microsoft Store MSI parameters
+
+The Store MSI silent installation field uses `/quiet /norestart`. The EXE
+bootstrapper's `/install` switch must not be copied into that field. Run
+`tools/check-windows-store-manifest.ps1` after a catalogue update; it inspects
+the live manifest without installing anything. See the
+[Windows qualification fixes](windows-qa-fixes.md) for the confirmed 1.0.8
+catalogue problem and the separate startup recovery retest.

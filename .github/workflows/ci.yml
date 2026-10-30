@@ -85,3 +85,70 @@ jobs:
           $env:TMP = $testTemp
           flutter test --no-pub --reporter expanded
           if ($LASTEXITCODE -ne 0) { throw 'Flutter tests failed.' }
+
+  native:
+    name: Native development build (${{ matrix.architecture }})
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        architecture: [x64, arm64]
+    env:
+      CI: 'true'
+      FLUTTER_SUPPRESS_ANALYTICS: 'true'
+      DART_SUPPRESS_ANALYTICS: 'true'
+    steps:
+      - name: Check out source
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+
+      # Cache verified public downloads and vcpkg ABI-keyed binaries only.
+      # SDK checkouts, build outputs and signing configuration are never cached.
+      - name: Restore public dependency cache
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: |
+            .toolchain/downloads
+            .toolchain/vcpkg-binary-cache
+            .toolchain/pub-cache
+          key: native-${{ runner.os }}-${{ matrix.architecture }}-${{ hashFiles('tools/dependency-pins.json', 'third_party/openvpn3-core/vcpkg.json', 'third_party/openvpn3-core/vcpkg-configuration.json', 'third_party/openvpn3-core/fuzevpn-vcpkg-overlays/**', 'pubspec.lock') }}
+
+      - name: Prepare pinned public dependencies
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          .\tools\bootstrap-windows.ps1 -Architecture '${{ matrix.architecture }}'
+
+      - name: Build development application and every native test offline
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          .\tools\build-windows-multiarch.ps1 -Architecture '${{ matrix.architecture }}' -DevTest -Offline
+          Import-Module .\tools\BuildSupport.psm1 -Force
+          $tools = Get-FuzeVisualStudioTools -Architecture '${{ matrix.architecture }}'
+          $build = Join-Path $env:GITHUB_WORKSPACE 'build/windows/${{ matrix.architecture }}'
+          Invoke-FuzeChecked $tools.CMake @('--build', $build, '--config', 'Release', '--target', 'fuzevpn_native_tests', '--parallel', '6')
+          if ('${{ matrix.architecture }}' -eq 'x64') {
+            Invoke-FuzeChecked $tools.CTest @('--test-dir', $build, '-C', 'Release', '--output-on-failure', '--no-tests=error')
+          } else {
+            Write-Host 'ARM64 application and native tests compiled; execution needs an ARM64 Windows test machine.'
+          }
+
+      - name: Check isolated installer policies and PowerShell contracts
+        if: matrix.architecture == 'x64'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          Import-Module .\tools\BuildSupport.psm1 -Force
+          $tools = Get-FuzeVisualStudioTools -Architecture x64
+          $build = Join-Path $env:GITHUB_WORKSPACE 'build/ci-installer-tests'
+          Invoke-FuzeChecked $tools.CMake @('-S', 'installer', '-B', $build, '-G', 'Visual Studio 18 2026', '-A', 'x64')
+          Invoke-FuzeChecked $tools.CMake @('--build', $build, '--config', 'Release', '--parallel', '6')
+          Invoke-FuzeChecked $tools.CTest @('--test-dir', $build, '-C', 'Release', '--output-on-failure', '--no-tests=error')
+          .\tools\tests\bootstrap-tools-test.ps1
+          .\tools\tests\portable-packaging-test.ps1
+          .\tools\tests\dco-dependency-test.ps1
+          .\tools\tests\openvpn-licensing-test.ps1
+          .\tools\tests\native-test-registry-test.ps1

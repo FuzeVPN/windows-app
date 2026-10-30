@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MPL-2.0
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,8 +21,25 @@ import 'support/audit_fixtures.dart' as fixtures;
 class _Snapshot extends DiagnosticsBridge {
   Completer<void>? gate;
   int calls = 0;
+  int supportCalls = 0;
   bool otherUser = false;
   bool cleanup = false;
+  @override
+  Future<Map<String, Object?>> collectLocalDiagnostics() async => {
+    'service': {
+      'name': 'FuzeVPNService',
+      'state': 'stopped',
+      'query_stage': 'completed',
+      // Distinguish freshly recollected evidence from the previous report.
+      'service_exit_code': ++supportCalls,
+    },
+    'native_log': {
+      'status': 'absent',
+      'truncated': false,
+      'discarded_lines': 0,
+      'events': [],
+    },
+  };
   @override
   Future<Map<String, Object?>> collectSnapshot() async {
     calls++;
@@ -84,6 +102,7 @@ class _UpdateDiagnosticsFixture extends WindowsUpdateController {
 class _CleanupWireGuard extends fixtures.ProbeWireGuard {
   bool cleanupFails = false;
   bool verificationFails = false;
+  void Function()? afterDisconnect;
   @override
   Future<void> prepareIdentityForAccount(String accountId) async {}
   @override
@@ -93,6 +112,7 @@ class _CleanupWireGuard extends fixtures.ProbeWireGuard {
       throw PlatformException(code: 'cleanup_failed');
     }
     await super.disconnect();
+    afterDisconnect?.call();
   }
 
   @override
@@ -100,6 +120,21 @@ class _CleanupWireGuard extends fixtures.ProbeWireGuard {
     if (verificationFails) throw PlatformException(code: 'broker_unavailable');
     return super.networkProtectionStatus();
   }
+}
+
+class _BusyAfterRepairController extends AppController {
+  _BusyAfterRepairController(_CleanupWireGuard wireguard, _Snapshot bridge)
+    : super(
+        api: fixtures.ProbeApi(),
+        store: fixtures.ProbeStore(),
+        window: fixtures.ProbeWindow(),
+        wireguard: wireguard,
+        openVpn: fixtures.ProbeOpenVpn(),
+        diagnosticsBridge: bridge,
+      );
+  bool blockRecollection = false;
+  @override
+  bool get isConnectionBusy => blockRecollection || super.isConnectionBusy;
 }
 
 class _SwitchAccountApi extends fixtures.ProbeApi {
@@ -378,6 +413,12 @@ void main() {
         addTearDown(app.dispose);
         await app.runUserDiagnostic();
         final before = app.preparedDiagnosticReport!.reportId;
+        expect(
+          (((app.preparedDiagnosticReport!.json['windows'] as Map)['support']
+                  as Map)['service']
+              as Map)['service_exit_code'],
+          1,
+        );
         expect(app.canRepairDiagnosticCleanup, isTrue);
         await app.repairDiagnosticCleanup();
         expect(wg.disconnectCalls, 1);
@@ -386,6 +427,12 @@ void main() {
         expect(report.reportId, isNot(before));
         final repair = (report.json['repairs'] as List).single as Map;
         expect(repair['after'], verificationFails ? 'unknown' : 'passed');
+        final support = (report.json['windows'] as Map)['support'] as Map;
+        expect((support['service'] as Map)['service_exit_code'], 2);
+        expect(support['timeline'], isA<List>());
+        expect((support['collection'] as Map)['report'], 'ok');
+        expect(bridge.supportCalls, 2);
+        expect(jsonDecode(app.diagnosticLocalExport), report.json);
         expect(app.diagnostics.pendingReports, isEmpty);
         expect(app.diagnostics.receipts, isEmpty);
         expect(
@@ -397,6 +444,26 @@ void main() {
       },
     );
   }
+
+  test(
+    'cleanup cannot attach repair results to an unavailable recollection',
+    () async {
+      final bridge = _Snapshot()..cleanup = true;
+      final wireguard = _CleanupWireGuard()..connected = true;
+      final app = _BusyAfterRepairController(wireguard, bridge)
+        ..activeProtocol = VpnProtocol.wireGuard;
+      addTearDown(app.dispose);
+      await app.runUserDiagnostic();
+      expect(app.preparedDiagnosticReport, isNotNull);
+      wireguard.afterDisconnect = () => app.blockRecollection = true;
+      await app.repairDiagnosticCleanup();
+      expect(bridge.calls, 1);
+      expect(bridge.supportCalls, 1);
+      expect(app.diagnosticResults, isNull);
+      expect(app.preparedDiagnosticReport, isNull);
+      expect(app.diagnosticMessage, 'Le diagnostic est incomplet. Réessayez.');
+    },
+  );
 
   for (final terminalFailure in [false, true]) {
     test(
@@ -464,7 +531,7 @@ void main() {
     },
   );
 
-  test('diagnostic consent and cleanup messages cover all 30 languages', () {
+  test('diagnostic consent and cleanup messages cover all 70 languages', () {
     const messages = [
       'Diagnostic',
       'Diagnostic complet',
@@ -473,7 +540,7 @@ void main() {
       'En cas d’échec d’envoi, le rapport reste chiffré en attente pendant 24 heures au maximum. Vous pouvez annuler les tentatives restantes.',
       'Cette action réessaie l’arrêt du VPN et son nettoyage. Si elle réussit, le tunnel et ses protections sont retirés. Votre connexion Internet habituelle peut reprendre.',
     ];
-    expect(translationCatalogs, hasLength(30));
+    expect(translationCatalogs, hasLength(70));
     for (final key in messages) {
       expect(sourceCatalog, contains(key), reason: key);
       for (final language in AppLanguage.values.where(

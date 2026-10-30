@@ -27,12 +27,14 @@ inline std::optional<std::uint64_t> BoundedAge(std::uint64_t now, std::uint64_t 
 
 // Internal only. Never serialize this structure: the OS configuration remains
 // inside the authenticated privileged runtime, including pushed OpenVPN DNS.
+enum class DnsConfigurationMode { adapter, nrpt, adapter_and_nrpt };
 struct NetworkExpectation {
   std::uint64_t luid = 0;
   std::uint32_t index = 0;
   std::vector<std::string> addresses, routes, dns;
   std::string nrpt_rule;
   std::uint64_t generation = 0;
+  DnsConfigurationMode dns_mode = DnsConfigurationMode::adapter;
 };
 struct NetworkObservation {
   CheckResult adapter = CheckResult::skipped;
@@ -69,7 +71,8 @@ class NetworkExpectationCapture {
   void Store(const std::vector<std::string>& addresses,
              const std::vector<std::string>& routes,
              const std::vector<std::string>& dns, std::uint32_t index,
-             std::string nrpt_rule, std::uint64_t luid) noexcept {
+             std::string nrpt_rule, std::uint64_t luid,
+             DnsConfigurationMode dns_mode = DnsConfigurationMode::adapter_and_nrpt) noexcept {
     try {
       if (!index || !luid || addresses.size() > 16 || routes.size() > 256 || dns.size() > 16 ||
           nrpt_rule.size() > 128) { Invalidate(); return; }
@@ -79,6 +82,7 @@ class NetworkExpectationCapture {
       };
       if (!bounded(addresses) || !bounded(routes) || !bounded(dns)) { Invalidate(); return; }
       NetworkExpectation next{luid, index, addresses, routes, dns, std::move(nrpt_rule)};
+      next.dns_mode = dns_mode;
       std::lock_guard<std::mutex> lock(mutex_);
       next.generation = ++generation_;
       value_ = std::move(next);
@@ -108,8 +112,9 @@ class ScopedNetworkExpectationCapture {
 };
 inline void CaptureNetworkExpectation(const std::vector<std::string>& addresses,
     const std::vector<std::string>& routes, const std::vector<std::string>& dns,
-    std::uint32_t index, std::string nrpt_rule, std::uint64_t luid) noexcept {
-  if (network_capture) network_capture->Store(addresses, routes, dns, index, std::move(nrpt_rule), luid);
+    std::uint32_t index, std::string nrpt_rule, std::uint64_t luid,
+    DnsConfigurationMode dns_mode = DnsConfigurationMode::adapter_and_nrpt) noexcept {
+  if (network_capture) network_capture->Store(addresses, routes, dns, index, std::move(nrpt_rule), luid, dns_mode);
 }
 }  // namespace fuzevpn_diagnostics
 #endif

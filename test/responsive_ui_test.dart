@@ -91,7 +91,7 @@ void main() {
     }
   });
 
-  testWidgets('toutes les pages acceptent trente langues et le texte agrandi', (
+  testWidgets('toutes les pages acceptent soixante-dix langues et le texte agrandi', (
     tester,
   ) async {
     tester.view.devicePixelRatio = 1;

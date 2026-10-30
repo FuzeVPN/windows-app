@@ -39,6 +39,8 @@ foreach ($required in @('fuzevpn_windows.exe','fuzevpn-service.exe','fuzevpn-upd
 }
 if ($sourceInventory.Path -contains 'fuzevpn.portable') { throw 'Source Release must remain an ordinary build; the portable marker is added only to staging.' }
 [void][IO.Directory]::CreateDirectory($OutputDirectory)
+$buildReceiptPath=Join-Path $OutputDirectory 'build-provenance.json'
+Copy-Item -LiteralPath (Join-Path ([IO.Path]::GetDirectoryName($SourceBuildCache)) 'build-provenance.json') -Destination $buildReceiptPath
 $staging = Assert-ProjectPath (Join-Path $OutputDirectory 'FuzeVPN') $projectRoot
 [void][IO.Directory]::CreateDirectory($staging)
 foreach ($entry in $sourceInventory) {
@@ -51,6 +53,7 @@ foreach ($entry in $sourceInventory) {
 $sign = Get-ReleaseSigningParameters $policy
 $sign['ReleaseDirectory']=$staging
 $sign['Architecture']=$Architecture
+$sign['BuildReceiptPath']=$buildReceiptPath
 if (-not $DevTest) { & (Join-Path $PSScriptRoot 'sign-windows-release.ps1') @sign }
 $prepare = @{ ReleaseDirectory = $staging; DevTest = $DevTest; Architecture=$Architecture }
 if ($policy.CertificateThumbprint) { $prepare['CertificateThumbprint'] = $policy.CertificateThumbprint }

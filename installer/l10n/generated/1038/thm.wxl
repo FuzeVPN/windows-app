@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="hu-HU" Language="1038" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+  <String Id="Caption" Value="[WixBundleName] telepítése" />
+  <String Id="CheckingForUpdatesLabel" Value="Frissítések keresése" />
+  <String Id="ConfirmCancelMessage" Value="Megszakítja a műveletet?" />
+  <String Id="DesktopShortcut" Value="Asztali parancsikon létrehozása" />
+  <String Id="ExecuteUpgradeRelatedBundleMessage" Value="Korábbi verzió" />
+  <String Id="FailureCacheHeader" Value="Az előkészítés sikertelen" />
+  <String Id="FailureCloseButton" Value="Bezárás" />
+  <String Id="FailureHeader" Value="Hiba" />
+  <String Id="FailureHyperlinkLogText" Value="A művelet megszakadt. Tekintse meg a &lt;a href=&quot;#&quot;&gt;naplót&lt;/a&gt;, hárítsa el a problémát, és próbálja újra." />
+  <String Id="FailureInstallHeader" Value="A telepítés megszakadt" />
+  <String Id="FailureLayoutHeader" Value="A másolás sikertelen" />
+  <String Id="FailureModifyHeader" Value="A módosítás megszakadt" />
+  <String Id="FailureRepairHeader" Value="A javítás megszakadt" />
+  <String Id="FailureRestartButton" Value="Újraindítás" />
+  <String Id="FailureRestartText" Value="A visszaállítás befejezéséhez indítsa újra a számítógépet." />
+  <String Id="FailureUninstallHeader" Value="Az eltávolítás megszakadt" />
+  <String Id="FailureUnsafeUninstallHeader" Value="Az eltávolítás megszakadt" />
+  <String Id="FilesInUseCloseRadioButton" Value="Alkalmazások bezárása" />
+  <String Id="FilesInUseDontCloseRadioButton" Value="Alkalmazások nyitva tartása" />
+  <String Id="FilesInUseExitButton" Value="Mégse" />
+  <String Id="FilesInUseIgnoreButton" Value="Kihagyás" />
+  <String Id="FilesInUseLabel" Value="Zárja be az alábbi alkalmazásokat, majd próbálja újra." />
+  <String Id="FilesInUseNetfxCloseRadioButton" Value="Alkalmazások bezárása" />
+  <String Id="FilesInUseRetryButton" Value="Újrapróbálás" />
+  <String Id="FilesInUseTitle" Value="Használatban lévő fájlok" />
+  <String Id="HelpCloseButton" Value="Bezárás" />
+  <String Id="HelpHeader" Value="Súgó" />
+  <String Id="HelpText" Value="/install, /repair, /uninstall: telepítés, javítás, eltávolítás. /quiet: csendes mód. /norestart: újraindítás nélkül. DesktopShortcut=1: asztali parancsikon. InstallFolder=&quot;D:\Applications\FuzeVPN&quot;: kezdeti mappa. A frissítések megőrzik a telepítési mappát." />
+  <String Id="InstallAcceptCheckbox" Value="&amp;Elfogadom a licenc feltételeit" />
+  <String Id="InstallCancelButton" Value="Mégse" />
+  <String Id="InstallHeader" Value="Üdvözöljük" />
+  <String Id="InstallInstallButton" Value="Telepítés" />
+  <String Id="InstallLicenseLinkText" Value="[WixBundleName] &lt;a href=&quot;#&quot;&gt;licencfeltételek&lt;/a&gt;." />
+  <String Id="InstallMessage" Value="Telepítse a FuzeVPN-t erre a számítógépre." />
+  <String Id="InstallMessageOptions" Value="Telepítse a FuzeVPN-t erre a számítógépre." />
+  <String Id="InstallOptionsButton" Value="Beállítások" />
+  <String Id="InstallVersion" Value="Verzió: [WixBundleVersion]" />
+  <String Id="InstallVersionNotice" Value="Verzió: [WixBundleVersion] [BuildNotice]" />
+  <String Id="ModifyCancelButton" Value="Mégse" />
+  <String Id="ModifyHeader" Value="Karbantartás" />
+  <String Id="ModifyRepairButton" Value="Javítás" />
+  <String Id="ModifyUninstallButton" Value="Eltávolítás" />
+  <String Id="OptionsBrowseButton" Value="Tallózás" />
+  <String Id="OptionsCancelButton" Value="Mégse" />
+  <String Id="OptionsHeader" Value="Beállítások" />
+  <String Id="OptionsLocationLabel" Value="Telepítési mappa (a Windows védi)" />
+  <String Id="OptionsOkButton" Value="OK" />
+  <String Id="OptionsPerMachineScopeText" Value="Minden felhasználó" />
+  <String Id="OptionsPerUserScopeText" Value="Jelenlegi felhasználó" />
+  <String Id="OverallProgressPackageText" Value="Előkészítés…" />
+  <String Id="PreserveInstallFolder" Value="Frissítéskor a meglévő mappa megmarad. A felület szabad áthelyezéséhez használja a hordozható csomagot." />
+  <String Id="ProgressCancelButton" Value="Mégse" />
+  <String Id="ProgressHeader" Value="Telepítés folyamatban" />
+  <String Id="ProgressLabel" Value="Előrehaladás" />
+  <String Id="SuccessCacheHeader" Value="A fájlok készen állnak" />
+  <String Id="SuccessCloseButton" Value="Bezárás" />
+  <String Id="SuccessHeader" Value="A művelet befejeződött" />
+  <String Id="SuccessInstallHeader" Value="A telepítés befejeződött" />
+  <String Id="SuccessLaunchButton" Value="Megnyitás" />
+  <String Id="SuccessLayoutHeader" Value="A fájlok készen állnak" />
+  <String Id="SuccessModifyHeader" Value="A módosítás befejeződött" />
+  <String Id="SuccessOpenApp" Value="Nyissa meg a FuzeVPN-t a Start menüből. Személyes beállításai megmaradtak." />
+  <String Id="SuccessRepairHeader" Value="A javítás befejeződött" />
+  <String Id="SuccessRestartButton" Value="Újraindítás" />
+  <String Id="SuccessRestartText" Value="A befejezéshez indítsa újra a számítógépet." />
+  <String Id="SuccessUninstallHeader" Value="Az eltávolítás befejeződött" />
+  <String Id="SuccessUninstallRestartText" Value="Az eltávolítás befejezéséhez indítsa újra a számítógépet." />
+  <String Id="SuccessUnsafeUninstallHeader" Value="Az eltávolítás befejeződött" />
+  <String Id="Title" Value="[WixBundleName]" />
+  <String Id="UpdateButton" Value="Frissítés" />
+</WixLocalization>

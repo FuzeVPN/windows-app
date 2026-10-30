@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: MPL-2.0
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'app_controller.dart';
 import 'app_exit.dart';
@@ -9,6 +8,7 @@ import 'app_theme.dart';
 import 'brand_config.dart';
 import 'core/tray_controller.dart';
 import 'l10n/app_localizations.dart';
+import 'l10n/framework_localizations.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -82,9 +82,7 @@ class _FuzeVpnAppState extends State<FuzeVpnApp> with WidgetsBindingObserver {
       supportedLocales: AppStrings.supportedLocales,
       localizationsDelegates: [
         AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
+        ...appFrameworkLocalizationsDelegates,
       ],
       localeResolutionCallback: (locale, supportedLocales) =>
           AppStrings.resolveLocale(locale),

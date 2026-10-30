@@ -598,5 +598,14 @@
   "Cette demande de connexion a expiré ou a déjà été utilisée. Recommencez depuis FuzeVPN.": "این درخواست ورود منقضی شده یا قبلاً استفاده شده است. دوباره از FuzeVPN شروع کنید.",
   "La connexion par navigateur est momentanément indisponible. Utilisez votre adresse e-mail et votre mot de passe, ou réessayez plus tard.": "ورود از طریق مرورگر موقتاً در دسترس نیست. از نشانی ایمیل و گذرواژه خود استفاده کنید یا بعداً دوباره تلاش کنید.",
   "Reconnectez-vous à votre compte dans le navigateur, puis réessayez depuis FuzeVPN.": "دوباره در مرورگر وارد حساب خود شوید، سپس از FuzeVPN دوباره تلاش کنید.",
-  "Mises à jour désactivées dans cette version de test.": "به‌روزرسانی‌ها در این نسخه آزمایشی غیرفعال هستند."
+  "Mises à jour désactivées dans cette version de test.": "به‌روزرسانی‌ها در این نسخه آزمایشی غیرفعال هستند.",
+  "Autorisation reçue": "مجوز دریافت شد",
+  "Autorisation refusée": "مجوز رد شد",
+  "Demande invalide": "درخواست نامعتبر",
+  "Revenez dans FuzeVPN pour terminer la connexion.": "برای تکمیل ورود به FuzeVPN برگردید.",
+  "Délai avant réessai : {seconds} s.": "زمان انتظار پیش از تلاش مجدد: {seconds} ثانیه.",
+  "Serveurs : {count}": "سرورها: {count}",
+  "Villes : {count}": "شهرها: {count}",
+  "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "UDP خارج از تونل VPN را مسدود می‌کند. برای پوشش WebRTC از طریق TCP/TLS نیز، کلید قطع اضطراری را فعال کنید.",
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "DNS خارج از تونل را روی درگاه‌های 53 و 853 مسدود می‌کند. برای پوشش DNS از طریق HTTPS نیز، کلید قطع اضطراری را فعال کنید."
 }

@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MPL-2.0
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -57,14 +58,87 @@ Future<_Reply> _request(Uri uri, {String method = 'GET', String? host}) async {
 Matcher _failure(String code) =>
     isA<BrowserAuthException>().having((error) => error.code, 'code', code);
 
+final class _SystemIO extends IOOverrides {}
+
+class _TrackedListener extends Stream<Socket> implements ServerSocket {
+  _TrackedListener(this._socket, this._closeGate)
+    : port = _socket.port,
+      address = _socket.address;
+
+  final ServerSocket _socket;
+  final Future<void>? _closeGate;
+  final closeStarted = Completer<void>();
+  bool closeCompleted = false;
+  Future<ServerSocket>? _closing;
+
+  @override
+  final int port;
+  @override
+  final InternetAddress address;
+
+  @override
+  StreamSubscription<Socket> listen(
+    void Function(Socket)? onData, {
+    Function? onError,
+    void Function()? onDone,
+    bool? cancelOnError,
+  }) => _socket.listen(
+    onData,
+    onError: onError,
+    onDone: onDone,
+    cancelOnError: cancelOnError,
+  );
+
+  @override
+  Future<ServerSocket> close() => _closing ??= _close();
+
+  Future<ServerSocket> _close() async {
+    closeStarted.complete();
+    await _closeGate;
+    await _socket.close();
+    closeCompleted = true;
+    return this;
+  }
+}
+
+final _listeners = Expando<_TrackedListener>();
+
+Future<BrowserAuthAttempt> _start([
+  BrowserAuth? auth,
+  Future<void>? closeGate,
+]) async {
+  late _TrackedListener listener;
+  final attempt = await IOOverrides.runZoned(
+    () => (auth ?? BrowserAuth()).start(),
+    serverSocketBind:
+        (
+          address,
+          int port, {
+          int backlog = 0,
+          bool v6Only = false,
+          bool shared = false,
+        }) async {
+          final socket = await _SystemIO().serverSocketBind(
+            address,
+            port,
+            backlog: backlog,
+            v6Only: v6Only,
+            shared: shared,
+          );
+          return listener = _TrackedListener(socket, closeGate);
+        },
+  );
+  _listeners[attempt] = listener;
+  return attempt;
+}
+
 Future<void> _closed(BrowserAuthAttempt attempt) async {
-  await expectLater(
-    Socket.connect(
-      InternetAddress.loopbackIPv4,
-      attempt.redirectUri.port,
-      timeout: const Duration(seconds: 1),
-    ),
-    throwsA(isA<SocketException>()),
+  // Observe this attempt's exact socket. Its former ephemeral port can already
+  // belong to an unrelated listener once close() completes.
+  expect(
+    _listeners[attempt]!.closeCompleted,
+    isTrue,
+    reason: 'The owned listener must be fully closed before completion.',
   );
 }
 
@@ -82,8 +156,8 @@ void main() {
   test(
     'starts exclusively on IPv4 loopback with independent secure proofs',
     () async {
-      final first = await BrowserAuth().start();
-      final second = await BrowserAuth().start();
+      final first = await _start();
+      final second = await _start();
       addTearDown(first.dispose);
       addTearDown(second.dispose);
       expect(first.redirectUri.scheme, 'http');
@@ -111,7 +185,7 @@ void main() {
   );
 
   test('authorization URI contains only the public PKCE request', () async {
-    final attempt = await BrowserAuth().start();
+    final attempt = await _start();
     addTearDown(attempt.dispose);
     final uri = attempt.authorizationUri(
       Uri.parse('https://app.fuzevpn.com/windows/connect'),
@@ -147,7 +221,7 @@ void main() {
   test(
     'valid callback returns one code, static secure page, and closes listener',
     () async {
-      final attempt = await BrowserAuth().start();
+      final attempt = await _start();
       addTearDown(attempt.dispose);
       final logPosition = DiagnosticLog.recentLines.length;
       final code = _secret(8);
@@ -177,13 +251,69 @@ void main() {
       );
       expect(DiagnosticLog.recentLines.skip(logPosition), isEmpty);
       await _closed(attempt);
-      await expectLater(
-        _request(_callback(attempt, code: code)),
-        throwsA(anyOf(isA<SocketException>(), isA<HttpException>())),
-      );
+      // Re-reading the one-use result must remain idempotent. Do not send a
+      // replay to a released port which another process may already own.
       expect(await attempt.callback, code);
     },
   );
+
+  for (final outcome in ['success', 'cancel', 'timeout']) {
+    test(
+      '$outcome completes only after its exact listener is closed',
+      () async {
+        final closeGate = Completer<void>();
+        final attempt = await _start(
+          outcome == 'timeout'
+              ? BrowserAuth(timeout: const Duration(milliseconds: 80))
+              : null,
+          closeGate.future,
+        );
+        addTearDown(() async {
+          if (!closeGate.isCompleted) closeGate.complete();
+          await attempt.dispose();
+        });
+        var callbackCompleted = false;
+        unawaited(
+          attempt.callback.then<void>(
+            (_) => callbackCompleted = true,
+            onError: (Object _, StackTrace _) => callbackCompleted = true,
+          ),
+        );
+        final expected = expectLater(
+          attempt.callback,
+          outcome == 'success'
+              ? completion(_secret(9))
+              : throwsA(
+                  _failure(
+                    outcome == 'cancel'
+                        ? 'browser_auth_canceled'
+                        : 'browser_auth_timeout',
+                  ),
+                ),
+        );
+        Future<void>? canceling;
+        var cancelCompleted = false;
+        if (outcome == 'success') {
+          expect(
+            (await _request(_callback(attempt, code: _secret(9)))).status,
+            HttpStatus.ok,
+          );
+        } else if (outcome == 'cancel') {
+          canceling = attempt.cancel().then((_) => cancelCompleted = true);
+        }
+        final listener = _listeners[attempt]!;
+        await listener.closeStarted.future.timeout(const Duration(seconds: 2));
+        await Future<void>.delayed(Duration.zero);
+        expect(listener.closeCompleted, isFalse);
+        expect(callbackCompleted, isFalse);
+        if (outcome == 'cancel') expect(cancelCompleted, isFalse);
+        closeGate.complete();
+        await expected;
+        await canceling;
+        await _closed(attempt);
+      },
+    );
+  }
 
   final invalidQueries = <String, String Function(BrowserAuthAttempt)>{
     'missing state': (_) => 'code=${_secret(1)}',
@@ -215,7 +345,7 @@ void main() {
     test(
       '${entry.key} is rejected without consuming legitimate callback',
       () async {
-        final attempt = await BrowserAuth().start();
+        final attempt = await _start();
         addTearDown(attempt.dispose);
         final rejected = await _request(
           attempt.redirectUri.replace(query: entry.value(attempt)),
@@ -234,7 +364,7 @@ void main() {
   test(
     'POST, unexpected path and foreign Host cannot consume authorization',
     () async {
-      final attempt = await BrowserAuth().start();
+      final attempt = await _start();
       addTearDown(attempt.dispose);
       final post = await _request(_callback(attempt), method: 'POST');
       expect(post.status, HttpStatus.methodNotAllowed);
@@ -256,8 +386,8 @@ void main() {
   test(
     'a second attempt cannot complete the first or exchange its code',
     () async {
-      final first = await BrowserAuth().start();
-      final second = await BrowserAuth().start();
+      final first = await _start();
+      final second = await _start();
       addTearDown(first.dispose);
       addTearDown(second.dispose);
       expect(
@@ -278,8 +408,14 @@ void main() {
   );
 
   test('concurrent valid callbacks accept exactly one code', () async {
-    final attempt = await BrowserAuth().start();
-    addTearDown(attempt.dispose);
+    // Keep ownership of the listener until both synthetic requests finish;
+    // neither request may be redirected to a later owner of the same port.
+    final closeGate = Completer<void>();
+    final attempt = await _start(null, closeGate.future);
+    addTearDown(() async {
+      if (!closeGate.isCompleted) closeGate.complete();
+      await attempt.dispose();
+    });
     Future<int> status(String code) async {
       try {
         return (await _request(_callback(attempt, code: code))).status;
@@ -296,6 +432,7 @@ void main() {
     ]);
     expect(outcomes.where((value) => value == HttpStatus.ok).length, 1);
     expect(outcomes.where((value) => value == HttpStatus.gone).length, 1);
+    closeGate.complete();
     expect(await attempt.callback, anyOf(_secret(3), _secret(4)));
     await _closed(attempt);
   });
@@ -303,7 +440,7 @@ void main() {
   test(
     'explicit access denial with correct state closes the attempt',
     () async {
-      final attempt = await BrowserAuth().start();
+      final attempt = await _start();
       addTearDown(attempt.dispose);
       final callbackState = attempt.state;
       final failed = expectLater(
@@ -327,7 +464,7 @@ void main() {
     test(
       '${dispose ? 'dispose' : 'cancel'} fails callback once and releases port',
       () async {
-        final attempt = await BrowserAuth().start();
+        final attempt = await _start();
         final failed = expectLater(
           attempt.callback,
           throwsA(_failure('browser_auth_canceled')),
@@ -348,9 +485,9 @@ void main() {
   test(
     'timeout closes the callback even when no browser request arrives',
     () async {
-      final attempt = await BrowserAuth(
-        timeout: const Duration(milliseconds: 80),
-      ).start();
+      final attempt = await _start(
+        BrowserAuth(timeout: const Duration(milliseconds: 80)),
+      );
       await expectLater(
         attempt.callback,
         throwsA(_failure('browser_auth_timeout')),
@@ -363,9 +500,9 @@ void main() {
   test(
     'invalid callbacks do not extend the global authorization deadline',
     () async {
-      final attempt = await BrowserAuth(
-        timeout: const Duration(milliseconds: 120),
-      ).start();
+      final attempt = await _start(
+        BrowserAuth(timeout: const Duration(milliseconds: 120)),
+      );
       final failed = expectLater(
         attempt.callback,
         throwsA(_failure('browser_auth_timeout')),
@@ -382,7 +519,7 @@ void main() {
   test(
     'cancellation is safe before anyone listens to the callback future',
     () async {
-      final attempt = await BrowserAuth().start();
+      final attempt = await _start();
       await attempt.cancel();
       await Future<void>.delayed(Duration.zero);
       await expectLater(
@@ -396,7 +533,7 @@ void main() {
   test(
     'proofs remain available for exchange and are discarded on final dispose',
     () async {
-      final attempt = await BrowserAuth().start();
+      final attempt = await _start();
       final verifier = attempt.codeVerifier;
       final state = attempt.state;
       expect((await _request(_callback(attempt))).status, HttpStatus.ok);

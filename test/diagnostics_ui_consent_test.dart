@@ -21,14 +21,18 @@ const _saveFailure =
 class _Diagnostics extends DiagnosticsController {
   bool saved = false;
   bool consent = false;
+  bool sending = false;
   Completer<bool>? saveGate;
   Completer<Map<String, Object?>?>? runGate;
   int runCount = 0;
   final queued = <QueuedDiagnosticReport>[];
   final cancelled = <String>[];
+  final retried = <String>[];
 
   @override
   bool get hasSession => true;
+  @override
+  bool get isSending => sending;
   @override
   bool get automaticConsent => consent;
   @override
@@ -69,6 +73,12 @@ class _Diagnostics extends DiagnosticsController {
     cancelled.add(reportId);
     queued.removeWhere((r) => r.reportId == reportId);
     notifyListeners();
+  }
+
+  @override
+  Future<bool> retry(String reportId) async {
+    retried.add(reportId);
+    return false;
   }
 }
 
@@ -125,6 +135,57 @@ Future<void> _waitForDiagnostic(_UiController app) async {
 }
 
 void main() {
+  testWidgets('paused delivery resumes the existing report from its card', (
+    tester,
+  ) async {
+    final diagnostics = _Diagnostics();
+    final report = diagnostics.prepareManualReport()!;
+    diagnostics.queued.add(
+      QueuedDiagnosticReport(
+        report: report,
+        expiresAt: report.createdAt.add(const Duration(hours: 24)),
+        attempts: 6,
+        automaticAttempts: 5,
+      ),
+    );
+    final app = _UiController(diagnostics);
+    await _mount(tester, app);
+    expect(
+      find.text('Envoi suspendu : réessayez manuellement.'),
+      findsOneWidget,
+    );
+    final retry = find.widgetWithText(TextButton, 'Réessayer');
+    expect(retry, findsOneWidget);
+    await tester.ensureVisible(retry);
+    await tester.tap(retry);
+    await tester.pumpAndSettle();
+    expect(diagnostics.retried, [report.reportId]);
+    expect(diagnostics.queued.single.report, same(report));
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  for (final blocked in ['authentication', 'terminal', 'sending']) {
+    testWidgets('$blocked delivery does not offer a manual retry', (
+      tester,
+    ) async {
+      final diagnostics = _Diagnostics()..sending = blocked == 'sending';
+      final report = diagnostics.prepareManualReport()!;
+      diagnostics.queued.add(
+        QueuedDiagnosticReport(
+          report: report,
+          expiresAt: report.createdAt.add(const Duration(hours: 24)),
+          attempts: 6,
+          automaticAttempts: 5,
+          pausedForAuth: blocked == 'authentication',
+          terminalCode: blocked == 'terminal' ? 'invalid_diagnostic' : null,
+        ),
+      );
+      await _mount(tester, _UiController(diagnostics));
+      expect(find.widgetWithText(TextButton, 'Réessayer'), findsNothing);
+      await tester.pumpWidget(const SizedBox.shrink());
+    });
+  }
+
   testWidgets(
     'one diagnostic action discloses sending and has no extra steps',
     (tester) async {

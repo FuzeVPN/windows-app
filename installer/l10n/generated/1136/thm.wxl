@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="ig-NG" Language="1136" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+  <String Id="Caption" Value="Na-arụnye [WixBundleName]" />
+  <String Id="CheckingForUpdatesLabel" Value="Na-achọ mmelite" />
+  <String Id="ConfirmCancelMessage" Value="Ị chọrọ ịkagbu?" />
+  <String Id="DesktopShortcut" Value="Mepụta ụzọ mkpirisi desktọpụ" />
+  <String Id="ExecuteUpgradeRelatedBundleMessage" Value="Ụdị gara aga" />
+  <String Id="FailureCacheHeader" Value="Nkwadebe adaghị" />
+  <String Id="FailureCloseButton" Value="Mechie" />
+  <String Id="FailureHeader" Value="Ọdịda" />
+  <String Id="FailureHyperlinkLogText" Value="Ọrụ kwụsịrị. Lee &lt;a href=&quot;#&quot;&gt;ndekọ&lt;/a&gt;, dozie nsogbu ahụ, ma gbalịa ọzọ." />
+  <String Id="FailureInstallHeader" Value="Nrụnye kwụsịrị" />
+  <String Id="FailureLayoutHeader" Value="Ndepụtaghachi adaghị" />
+  <String Id="FailureModifyHeader" Value="Mgbanwe kwụsịrị" />
+  <String Id="FailureRepairHeader" Value="Nrụzi kwụsịrị" />
+  <String Id="FailureRestartButton" Value="Malitegharịa" />
+  <String Id="FailureRestartText" Value="Malitegharịa iji mechaa iweghachi." />
+  <String Id="FailureUninstallHeader" Value="Mwepụ nrụnye kwụsịrị" />
+  <String Id="FailureUnsafeUninstallHeader" Value="Mwepụ nrụnye kwụsịrị" />
+  <String Id="FilesInUseCloseRadioButton" Value="Mechie ngwa" />
+  <String Id="FilesInUseDontCloseRadioButton" Value="Hapụ ngwa ka ha ghe oghe" />
+  <String Id="FilesInUseExitButton" Value="Kagbuo" />
+  <String Id="FilesInUseIgnoreButton" Value="Eleghara anya" />
+  <String Id="FilesInUseLabel" Value="Mechie ngwa ndị a, wee gbalịa ọzọ." />
+  <String Id="FilesInUseNetfxCloseRadioButton" Value="Mechie ngwa" />
+  <String Id="FilesInUseRetryButton" Value="Gbalịa ọzọ" />
+  <String Id="FilesInUseTitle" Value="A na-eji faịlụ" />
+  <String Id="HelpCloseButton" Value="Mechie" />
+  <String Id="HelpHeader" Value="Enyemaka" />
+  <String Id="HelpText" Value="/install, /repair, /uninstall: wụnye, rụzie, wepụ nrụnye. /quiet: ọnọdụ dị jụụ. /norestart: emela ka ọ malitegharịa. DesktopShortcut=1: ụzọ mkpirisi desktọpụ. InstallFolder=&quot;D:\Applications\FuzeVPN&quot;: folda mbụ. Mmelite na-edobe folda arụnyere." />
+  <String Id="InstallAcceptCheckbox" Value="E&amp;kwenyere m na usoro na ọnọdụ ikike" />
+  <String Id="InstallCancelButton" Value="Kagbuo" />
+  <String Id="InstallHeader" Value="Nnọọ" />
+  <String Id="InstallInstallButton" Value="Wụnye" />
+  <String Id="InstallLicenseLinkText" Value="&lt;a href=&quot;#&quot;&gt;Usoro ikike&lt;/a&gt; [WixBundleName]." />
+  <String Id="InstallMessage" Value="Wụnye FuzeVPN na kọmputa a." />
+  <String Id="InstallMessageOptions" Value="Wụnye FuzeVPN na kọmputa a." />
+  <String Id="InstallOptionsButton" Value="Nhọrọ" />
+  <String Id="InstallVersion" Value="Ụdị [WixBundleVersion]" />
+  <String Id="InstallVersionNotice" Value="Ụdị [WixBundleVersion] [BuildNotice]" />
+  <String Id="ModifyCancelButton" Value="Kagbuo" />
+  <String Id="ModifyHeader" Value="Nlekọta" />
+  <String Id="ModifyRepairButton" Value="Rụzie" />
+  <String Id="ModifyUninstallButton" Value="Wepụ nrụnye" />
+  <String Id="OptionsBrowseButton" Value="Chọgharịa" />
+  <String Id="OptionsCancelButton" Value="Kagbuo" />
+  <String Id="OptionsHeader" Value="Nhọrọ" />
+  <String Id="OptionsLocationLabel" Value="Folda nrụnye (Windows chebere ya)" />
+  <String Id="OptionsOkButton" Value="Ọ dị mma" />
+  <String Id="OptionsPerMachineScopeText" Value="Ndị ọrụ niile" />
+  <String Id="OptionsPerUserScopeText" Value="Onye ọrụ ugbu a" />
+  <String Id="OverallProgressPackageText" Value="Na-akwadebe…" />
+  <String Id="PreserveInstallFolder" Value="A na-edobe folda dịbu n&apos;oge mmelite. Iji bugharịa ihu ngwa ahụ ebe ọ bụla, jiri faịlụ a na-ebugharị ebugharị." />
+  <String Id="ProgressCancelButton" Value="Kagbuo" />
+  <String Id="ProgressHeader" Value="Nrụnye na-aga n&apos;ihu" />
+  <String Id="ProgressLabel" Value="Ọganihu" />
+  <String Id="SuccessCacheHeader" Value="Faịlụ adịla njikere" />
+  <String Id="SuccessCloseButton" Value="Mechie" />
+  <String Id="SuccessHeader" Value="Ọrụ agwụla" />
+  <String Id="SuccessInstallHeader" Value="Nrụnye agwụla" />
+  <String Id="SuccessLaunchButton" Value="Mepee" />
+  <String Id="SuccessLayoutHeader" Value="Faịlụ adịla njikere" />
+  <String Id="SuccessModifyHeader" Value="Mgbanwe agwụla" />
+  <String Id="SuccessOpenApp" Value="Mepee FuzeVPN site na menu Mmalite. Edobela nhọrọ nke gị." />
+  <String Id="SuccessRepairHeader" Value="Nrụzi agwụla" />
+  <String Id="SuccessRestartButton" Value="Malitegharịa" />
+  <String Id="SuccessRestartText" Value="Malitegharịa kọmputa gị iji mechaa." />
+  <String Id="SuccessUninstallHeader" Value="Mwepụ nrụnye agwụla" />
+  <String Id="SuccessUninstallRestartText" Value="Malitegharịa iji mechaa mwepụ nrụnye." />
+  <String Id="SuccessUnsafeUninstallHeader" Value="Mwepụ nrụnye agwụla" />
+  <String Id="Title" Value="[WixBundleName]" />
+  <String Id="UpdateButton" Value="Melite" />
+</WixLocalization>

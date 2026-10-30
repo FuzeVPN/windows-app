@@ -6,7 +6,9 @@
 #include <optional>
 
 namespace fuzevpn_handoff {
-constexpr DWORD kYieldIdleControl = 128;
+// A distinct control prevents legacy helpers/services (which used 128 without
+// a durable acceptance record) from participating in this crash-safe protocol.
+constexpr DWORD kYieldIdleControl = 129;
 constexpr ULONGLONG kRequestLifetimeMs = 8000;
 constexpr ULONGLONG kHelperWaitMs = 12000;
 constexpr wchar_t kHelperMutex[] = L"Global\\FuzeVPN-Service-PortableHandoff-v1";

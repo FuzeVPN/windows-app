@@ -1,0 +1,44 @@
+{
+  "Change": "Downstream licensing metadata correction only",
+  "Date": "2026-10-19",
+  "BaseCommit": "28469efe3ae770268b2b5c6aa607ed1489e101f0",
+  "OfficialPatchCommit": null,
+  "SPDX": "MPL-2.0 OR AGPL-3.0-only WITH openvpn3-openssl-exception",
+  "Authority": [
+    "https://github.com/OpenVPN/openvpn3/issues/445#issuecomment-6059978285",
+    "https://github.com/OpenVPN/openvpn3/issues/445#issuecomment-6062270333",
+    "https://github.com/OpenVPN/openvpn3/issues/445#issuecomment-6211547173"
+  ],
+  "HistoricalNoticesArchive": "original-header-notices-2026-10-19.zip",
+  "HistoricalNoticesSha256": "cab571c118b71c9cc8d4e27eb69f792495538b842e9ec16580e7192f797c73a7",
+  "Files": [
+    {
+      "Path": "openvpn/crypto/tls_crypt_v2.hpp",
+      "OriginalSha256": "d21d5017ad664d57db55f3709cf94c57be15479653a890a8f2c7ac3f50fd2fd6",
+      "CorrectedSha256": "911a32a6e76f7e0e4636a15a5a0cbc4ed95f1f1a206b85847f8f64ee37180e9e",
+      "UnchangedTailSha256": "91e74a1e54a916d5f8a9b1762a45038e8ef31ba54d7a635a0b3594d3fb9505e6",
+      "HistoricalNoticeEntry": "openvpn/crypto/tls_crypt_v2.hpp.notice.txt"
+    },
+    {
+      "Path": "openvpn/mbedtls/util/pem.hpp",
+      "OriginalSha256": "5189400ab445507f95710730abee0b29edc0c4ceff01bae2ac0681ee59b5ea36",
+      "CorrectedSha256": "a88780ccf6f69f42e4ba1548503db6899cd656a03d44c2ff597e13a4dca1b859",
+      "UnchangedTailSha256": "eaabb22bcb9dbee27b1b62f8f190ec539116a75d854c81aadf2745b620d0a543",
+      "HistoricalNoticeEntry": "openvpn/mbedtls/util/pem.hpp.notice.txt"
+    },
+    {
+      "Path": "openvpn/openssl/util/pem.hpp",
+      "OriginalSha256": "8cc5739d59c834db3921300d2ec689e422fc62c60dba15848e91ceb8cb3624f1",
+      "CorrectedSha256": "15fdf1b7a327d1d55f7855218bbe4a50290fd5eae266e91d55a02f788eb8e73c",
+      "UnchangedTailSha256": "c6ac75414653736297cddceb3acc26efdfb6ab225dd58d297d7cc8a21a1a4d6c",
+      "HistoricalNoticeEntry": "openvpn/openssl/util/pem.hpp.notice.txt"
+    },
+    {
+      "Path": "openvpn/asio/asioresolverres.hpp",
+      "OriginalSha256": "005bc50fa091058bea5b16448997bda85bc6d52dc1782f861ea157885130c4c3",
+      "CorrectedSha256": "b95770144346030211619d3b94196c77c301be739f40554175a7754b95d3bae5",
+      "UnchangedTailSha256": "7958ad31637a1d471c4829215e863c27113606bc282208f06b1112abcfb47b31",
+      "HistoricalNoticeEntry": "openvpn/asio/asioresolverres.hpp.notice.txt"
+    }
+  ]
+}

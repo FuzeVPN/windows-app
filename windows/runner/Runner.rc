@@ -120,6 +120,27 @@ END
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
 
+// Build policy is compiled from the same target definitions as the broker.
+// Neutral language keeps release verification independent of the host locale.
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+#if !defined(FUZEVPN_ALLOW_PORTABLE_DEV) || !defined(FUZEVPN_BUILD_ARCH_ARM64)
+#error FuzeVPN build policy definitions are required for application resources.
+#endif
+302 RCDATA
+BEGIN
+    "FUZEVPN_BUILD_POLICY_V1\n",
+#if FUZEVPN_ALLOW_PORTABLE_DEV
+    "portable_dev=1\n",
+#else
+    "portable_dev=0\n",
+#endif
+#if FUZEVPN_BUILD_ARCH_ARM64
+    "architecture=arm64\n"
+#else
+    "architecture=x64\n"
+#endif
+END
+
 
 
 #ifndef APSTUDIO_INVOKED

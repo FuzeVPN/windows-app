@@ -133,8 +133,10 @@ set_source_files_properties("miniz_inflate.cpp" PROPERTIES
 # The portable bootstrap must import only OS DLLs before its entry point:
 # static CRT plus System32-only dependent library resolution by the loader.
 add_executable(fuzevpn_runtime WIN32 "portable_runtime_main.cpp"
-  "portable_runtime.cpp" "portable_service_lease.cpp" "update_security.cpp" "Runner.rc" "runtime.exe.manifest")
+  "portable_runtime.cpp" "portable_service_lease.cpp" "runtime_network_recovery.cpp"
+  "maintenance_network_state.cpp" "update_security.cpp" "Runner.rc" "runtime.exe.manifest")
 apply_standard_settings(fuzevpn_runtime)
+target_compile_features(fuzevpn_runtime PRIVATE cxx_std_20)
 set_target_properties(fuzevpn_runtime PROPERTIES OUTPUT_NAME "fuzevpn-runtime"
   MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 target_compile_options(fuzevpn_runtime PRIVATE
@@ -150,8 +152,18 @@ target_compile_definitions(fuzevpn_runtime PRIVATE NOMINMAX WIN32_LEAN_AND_MEAN
   "FUZEVPN_INTERNAL_NAME=\"fuzevpn-runtime\""
   "FUZEVPN_ORIGINAL_FILENAME=\"fuzevpn-runtime.exe\""
   "FUZEVPN_FILE_DESCRIPTION=\"FuzeVPN portable runtime\"")
-target_link_libraries(fuzevpn_runtime PRIVATE advapi32 bcrypt crypt32 shell32 ole32 wintrust version)
+target_link_libraries(fuzevpn_runtime PRIVATE advapi32 bcrypt crypt32 shell32 ole32 wintrust version
+  fwpuclnt iphlpapi rpcrt4 ws2_32)
 add_dependencies(${BINARY_NAME} fuzevpn_runtime)
+
+# Bind the resource attestation to the actual compiler architecture and policy
+# for every application executable, including the standalone update helper.
+foreach(application_target IN ITEMS ${BINARY_NAME} ${FUZEVPN_SERVICE_TARGET}
+    fuzevpn_update fuzevpn_runtime)
+  target_compile_definitions(${application_target} PRIVATE
+    "FUZEVPN_BUILD_ARCH_ARM64=$<STREQUAL:${FUZEVPN_TARGET_ARCH},arm64>"
+    "FUZEVPN_ALLOW_PORTABLE_DEV=$<BOOL:${FUZEVPN_ALLOW_PORTABLE_DEV}>")
+endforeach()
 
 # Manual administrator integration probe, never part of CTest or INSTALL.
 # It exercises production signed-service validation, idle SCM handoff and
@@ -316,7 +328,7 @@ if(FUZEVPN_ENABLE_OPENVPN3 AND EXISTS "${FUZEVPN_OPENVPN3_CORE_DIR}/client/ovpnc
   else()
     set(FUZEVPN_DRIVER_ARCH "arm64")
   endif()
-  set(OPENVPN_DCO_RUNTIME_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../../third_party/openvpn-dco/2.8.7")
+  set(OPENVPN_DCO_RUNTIME_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../../third_party/openvpn-dco/2.8.13")
   set(OPENVPN_DCO_RUNTIME_DIR "${OPENVPN_DCO_RUNTIME_ROOT}/${FUZEVPN_DRIVER_ARCH}")
   if(NOT EXISTS "${OPENVPN_DCO_RUNTIME_DIR}/win10/ovpn-dco.inf" OR
      NOT EXISTS "${OPENVPN_DCO_RUNTIME_DIR}/win11/ovpn-dco.inf")
@@ -372,6 +384,8 @@ add_dependencies(${FUZEVPN_SERVICE_TARGET} flutter_assemble)
 
 # Isolated regression executables never start a VPN, install a service or
 # modify Windows filtering. Keep them out of the distributed application.
+include("${CMAKE_CURRENT_SOURCE_DIR}/native_test_registry.cmake")
+
 add_executable(fuzevpn_runtime_architecture_test EXCLUDE_FROM_ALL
   "../tests/runtime_architecture_test.cpp")
 apply_standard_settings(fuzevpn_runtime_architecture_test)
@@ -379,7 +393,7 @@ target_compile_definitions(fuzevpn_runtime_architecture_test PRIVATE NOMINMAX WI
 target_include_directories(fuzevpn_runtime_architecture_test PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
 set_target_properties(fuzevpn_runtime_architecture_test PROPERTIES
   RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/native-tests")
-add_test(NAME runtime_architecture COMMAND fuzevpn_runtime_architecture_test)
+fuzevpn_add_native_test(runtime_architecture fuzevpn_runtime_architecture_test)
 set_tests_properties(runtime_architecture PROPERTIES TIMEOUT 10)
 
 add_executable(fuzevpn_native_security_test EXCLUDE_FROM_ALL
@@ -408,11 +422,18 @@ target_link_libraries(fuzevpn_native_security_test PRIVATE
   iphlpapi rpcrt4 ws2_32 wintrust ole32 bcrypt version msi)
 set_target_properties(fuzevpn_native_security_test PROPERTIES
   RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/native-tests")
-add_test(NAME native_security COMMAND fuzevpn_native_security_test)
+fuzevpn_add_native_test(native_security fuzevpn_native_security_test)
 set_tests_properties(native_security PROPERTIES TIMEOUT 45)
 
 add_executable(fuzevpn_update_security_test EXCLUDE_FROM_ALL
   "../tests/update_security_test.cpp" "update_security.cpp")
+add_executable(fuzevpn_update_bundle_probe EXCLUDE_FROM_ALL
+  "../tests/update_bundle_probe.cpp" "update_security.cpp")
+apply_standard_settings(fuzevpn_update_bundle_probe)
+target_compile_definitions(fuzevpn_update_bundle_probe PRIVATE NOMINMAX WIN32_LEAN_AND_MEAN CERT_CHAIN_PARA_HAS_EXTRA_FIELDS)
+target_include_directories(fuzevpn_update_bundle_probe PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
+target_link_libraries(fuzevpn_update_bundle_probe PRIVATE advapi32 bcrypt crypt32 shell32 ole32 wintrust version)
+set_target_properties(fuzevpn_update_bundle_probe PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/native-tests")
 apply_standard_settings(fuzevpn_update_security_test)
 target_compile_definitions(fuzevpn_update_security_test PRIVATE NOMINMAX WIN32_LEAN_AND_MEAN
   CERT_CHAIN_PARA_HAS_EXTRA_FIELDS)
@@ -421,7 +442,7 @@ target_link_libraries(fuzevpn_update_security_test PRIVATE
   advapi32 bcrypt crypt32 shell32 ole32 wintrust version)
 set_target_properties(fuzevpn_update_security_test PROPERTIES
   RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/native-tests")
-add_test(NAME update_security COMMAND fuzevpn_update_security_test
+fuzevpn_add_native_test(update_security fuzevpn_update_security_test
   "${CMAKE_BINARY_DIR}/native-tests/update-fixtures")
 set_tests_properties(update_security PROPERTIES TIMEOUT 30)
 
@@ -436,7 +457,7 @@ target_link_libraries(fuzevpn_portable_update_test PRIVATE
   advapi32 bcrypt crypt32 shell32 ole32 wintrust version)
 set_target_properties(fuzevpn_portable_update_test PROPERTIES
   RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/native-tests")
-add_test(NAME portable_update COMMAND fuzevpn_portable_update_test
+fuzevpn_add_native_test(portable_update fuzevpn_portable_update_test
   "${CMAKE_BINARY_DIR}/native-tests/portable-update-fixtures")
 set_tests_properties(portable_update PROPERTIES TIMEOUT 45)
 
@@ -450,7 +471,7 @@ target_include_directories(fuzevpn_portable_runtime_test PRIVATE "${CMAKE_CURREN
 target_link_libraries(fuzevpn_portable_runtime_test PRIVATE advapi32 bcrypt crypt32 shell32 ole32 wintrust version)
 set_target_properties(fuzevpn_portable_runtime_test PROPERTIES
   RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/native-tests")
-add_test(NAME portable_runtime COMMAND fuzevpn_portable_runtime_test
+fuzevpn_add_native_test(portable_runtime fuzevpn_portable_runtime_test
   "${CMAKE_BINARY_DIR}/native-tests/portable-fixtures")
 set_tests_properties(portable_runtime PROPERTIES TIMEOUT 45)
 
@@ -474,7 +495,35 @@ target_include_directories(fuzevpn_distribution_mode_test PRIVATE "${CMAKE_CURRE
 target_link_libraries(fuzevpn_distribution_mode_test PRIVATE advapi32 msi)
 set_target_properties(fuzevpn_distribution_mode_test PROPERTIES
   RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/native-tests")
-add_test(NAME distribution_mode COMMAND fuzevpn_distribution_mode_test)
+fuzevpn_add_native_test(distribution_mode fuzevpn_distribution_mode_test)
+
+add_executable(fuzevpn_single_instance_test EXCLUDE_FROM_ALL
+  "../tests/single_instance_test.cpp")
+apply_standard_settings(fuzevpn_single_instance_test)
+target_compile_definitions(fuzevpn_single_instance_test PRIVATE NOMINMAX WIN32_LEAN_AND_MEAN)
+target_include_directories(fuzevpn_single_instance_test PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
+target_link_libraries(fuzevpn_single_instance_test PRIVATE ole32)
+set_target_properties(fuzevpn_single_instance_test PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/native-tests")
+fuzevpn_add_native_test(single_instance fuzevpn_single_instance_test)
+set_tests_properties(single_instance PROPERTIES TIMEOUT 10)
+
+add_executable(fuzevpn_wireguard_local_identity_test EXCLUDE_FROM_ALL
+  "../tests/wireguard_local_identity_test.cpp" "privileged_runtime.cpp")
+apply_standard_settings(fuzevpn_wireguard_local_identity_test)
+target_compile_features(fuzevpn_wireguard_local_identity_test PRIVATE cxx_std_20)
+target_compile_definitions(fuzevpn_wireguard_local_identity_test PRIVATE NOMINMAX WIN32_LEAN_AND_MEAN)
+target_compile_options(fuzevpn_wireguard_local_identity_test PRIVATE /Gy)
+target_link_options(fuzevpn_wireguard_local_identity_test PRIVATE /OPT:REF)
+target_include_directories(fuzevpn_wireguard_local_identity_test PRIVATE
+  "${CMAKE_CURRENT_SOURCE_DIR}" "${FLUTTER_MANAGED_DIR}/ephemeral"
+  "${FUZEVPN_FLUTTER_WRAPPER_DIR}/include")
+target_link_libraries(fuzevpn_wireguard_local_identity_test PRIVATE
+  crypt32 advapi32 shell32 ole32 ws2_32 iphlpapi wintrust fwpuclnt rpcrt4 bcrypt user32 version msi)
+set_target_properties(fuzevpn_wireguard_local_identity_test PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/native-tests")
+fuzevpn_add_native_test(wireguard_local_identity fuzevpn_wireguard_local_identity_test)
+set_tests_properties(wireguard_local_identity PROPERTIES TIMEOUT 10)
 
 add_executable(fuzevpn_api_resolver_adapter_test EXCLUDE_FROM_ALL
   "../tests/api_resolver_adapter_test.cpp")
@@ -484,7 +533,7 @@ target_compile_definitions(fuzevpn_api_resolver_adapter_test PRIVATE NOMINMAX WI
 target_link_libraries(fuzevpn_api_resolver_adapter_test PRIVATE advapi32 ws2_32 iphlpapi)
 set_target_properties(fuzevpn_api_resolver_adapter_test PROPERTIES
   RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/native-tests")
-add_test(NAME api_resolver_adapters COMMAND fuzevpn_api_resolver_adapter_test)
+fuzevpn_add_native_test(api_resolver_adapters fuzevpn_api_resolver_adapter_test)
 set_tests_properties(api_resolver_adapters PROPERTIES TIMEOUT 10)
 
 add_executable(fuzevpn_diagnostics_snapshot_test EXCLUDE_FROM_ALL
@@ -499,8 +548,32 @@ target_include_directories(fuzevpn_diagnostics_snapshot_test PRIVATE
 target_link_libraries(fuzevpn_diagnostics_snapshot_test PRIVATE iphlpapi ws2_32 advapi32)
 set_target_properties(fuzevpn_diagnostics_snapshot_test PROPERTIES
   RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/native-tests")
-add_test(NAME diagnostics_snapshot COMMAND fuzevpn_diagnostics_snapshot_test)
+fuzevpn_add_native_test(diagnostics_snapshot fuzevpn_diagnostics_snapshot_test)
 set_tests_properties(diagnostics_snapshot PROPERTIES TIMEOUT 30)
+
+add_executable(fuzevpn_diagnostics_network_test EXCLUDE_FROM_ALL
+  "../tests/diagnostics_network_test.cpp")
+apply_standard_settings(fuzevpn_diagnostics_network_test)
+target_compile_features(fuzevpn_diagnostics_network_test PRIVATE cxx_std_20)
+target_compile_definitions(fuzevpn_diagnostics_network_test PRIVATE NOMINMAX WIN32_LEAN_AND_MEAN)
+target_include_directories(fuzevpn_diagnostics_network_test PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
+target_link_libraries(fuzevpn_diagnostics_network_test PRIVATE iphlpapi ws2_32 advapi32)
+set_target_properties(fuzevpn_diagnostics_network_test PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/native-tests")
+fuzevpn_add_native_test(diagnostics_network fuzevpn_diagnostics_network_test)
+set_tests_properties(diagnostics_network PROPERTIES TIMEOUT 30)
+
+add_executable(fuzevpn_wireguard_config_storage_test EXCLUDE_FROM_ALL
+  "../tests/wireguard_config_storage_test.cpp")
+apply_standard_settings(fuzevpn_wireguard_config_storage_test)
+target_compile_features(fuzevpn_wireguard_config_storage_test PRIVATE cxx_std_20)
+target_compile_definitions(fuzevpn_wireguard_config_storage_test PRIVATE NOMINMAX WIN32_LEAN_AND_MEAN)
+target_include_directories(fuzevpn_wireguard_config_storage_test PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
+target_link_libraries(fuzevpn_wireguard_config_storage_test PRIVATE advapi32 shell32 ole32)
+set_target_properties(fuzevpn_wireguard_config_storage_test PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/native-tests")
+fuzevpn_add_native_test(wireguard_config_storage fuzevpn_wireguard_config_storage_test)
+set_tests_properties(wireguard_config_storage PROPERTIES TIMEOUT 10)
 
 add_executable(fuzevpn_diagnostics_local_test EXCLUDE_FROM_ALL
   "../tests/diagnostics_local_test.cpp")
@@ -512,7 +585,7 @@ target_include_directories(fuzevpn_diagnostics_local_test PRIVATE
 target_link_libraries(fuzevpn_diagnostics_local_test PRIVATE advapi32 shell32 ole32 version)
 set_target_properties(fuzevpn_diagnostics_local_test PROPERTIES
   RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/native-tests")
-add_test(NAME diagnostics_local COMMAND fuzevpn_diagnostics_local_test
+fuzevpn_add_native_test(diagnostics_local fuzevpn_diagnostics_local_test
   "${CMAKE_BINARY_DIR}/native-tests/local-diagnostics-fixtures")
 set_tests_properties(diagnostics_local PROPERTIES TIMEOUT 30)
 
@@ -525,7 +598,7 @@ target_include_directories(fuzevpn_diagnostics_store_test PRIVATE "${CMAKE_CURRE
 target_link_libraries(fuzevpn_diagnostics_store_test PRIVATE crypt32 advapi32 shell32 ole32 bcrypt)
 set_target_properties(fuzevpn_diagnostics_store_test PROPERTIES
   RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/native-tests")
-add_test(NAME diagnostics_store COMMAND fuzevpn_diagnostics_store_test
+fuzevpn_add_native_test(diagnostics_store fuzevpn_diagnostics_store_test
   "${CMAKE_BINARY_DIR}/native-tests/diagnostics-fixtures")
 set_tests_properties(diagnostics_store PROPERTIES TIMEOUT 60)
 
@@ -539,7 +612,7 @@ target_include_directories(fuzevpn_tls_trust_test PRIVATE
 target_link_libraries(fuzevpn_tls_trust_test PRIVATE crypt32)
 set_target_properties(fuzevpn_tls_trust_test PROPERTIES
   RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/native-tests")
-add_test(NAME tls_trust COMMAND fuzevpn_tls_trust_test
+fuzevpn_add_native_test(tls_trust fuzevpn_tls_trust_test
   "${CMAKE_CURRENT_SOURCE_DIR}/../tests/fixtures/tls-trust")
 set_tests_properties(tls_trust PROPERTIES TIMEOUT 30)
 
@@ -553,7 +626,7 @@ target_link_libraries(fuzevpn_network_filter_test PRIVATE
   advapi32 fwpuclnt iphlpapi rpcrt4 wintrust ws2_32)
 set_target_properties(fuzevpn_network_filter_test PROPERTIES
   RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/native-tests")
-add_test(NAME network_filters COMMAND fuzevpn_network_filter_test)
+fuzevpn_add_native_test(network_filters fuzevpn_network_filter_test)
 set_tests_properties(network_filters PROPERTIES TIMEOUT 30)
 
 add_executable(fuzevpn_tray_icon_test EXCLUDE_FROM_ALL
@@ -563,7 +636,7 @@ target_compile_definitions(fuzevpn_tray_icon_test PRIVATE NOMINMAX WIN32_LEAN_AN
 target_link_libraries(fuzevpn_tray_icon_test PRIVATE shell32)
 set_target_properties(fuzevpn_tray_icon_test PROPERTIES
   RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/native-tests")
-add_test(NAME tray_icon COMMAND fuzevpn_tray_icon_test)
+fuzevpn_add_native_test(tray_icon fuzevpn_tray_icon_test)
 set_tests_properties(tray_icon PROPERTIES TIMEOUT 30)
 
 add_executable(fuzevpn_window_geometry_test EXCLUDE_FROM_ALL
@@ -573,7 +646,7 @@ target_compile_definitions(fuzevpn_window_geometry_test PRIVATE NOMINMAX WIN32_L
 target_include_directories(fuzevpn_window_geometry_test PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
 set_target_properties(fuzevpn_window_geometry_test PROPERTIES
   RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/native-tests")
-add_test(NAME window_geometry COMMAND fuzevpn_window_geometry_test)
+fuzevpn_add_native_test(window_geometry fuzevpn_window_geometry_test)
 
 # Manually invoked passive Flutter bridge probe; never part of CTest/INSTALL.
 # It loads a separate diagnostic Dart AOT entrypoint, not the application.
@@ -606,7 +679,7 @@ if(FUZEVPN_ENABLE_OPENVPN3 AND TARGET fuzevpn_openvpn_core)
   target_link_libraries(fuzevpn_openvpn_safety_test PRIVATE ws2_32 iphlpapi)
   set_target_properties(fuzevpn_openvpn_safety_test PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/native-tests")
-  add_test(NAME openvpn_safety COMMAND fuzevpn_openvpn_safety_test)
+  fuzevpn_add_native_test(openvpn_safety fuzevpn_openvpn_safety_test)
   set_tests_properties(openvpn_safety PROPERTIES TIMEOUT 45)
 
   add_executable(fuzevpn_network_runtime_test EXCLUDE_FROM_ALL
@@ -625,6 +698,68 @@ if(FUZEVPN_ENABLE_OPENVPN3 AND TARGET fuzevpn_openvpn_core)
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
       "$<IF:$<CONFIG:Debug>,${FUZEVPN_OPENVPN3_VCPKG_DIR}/debug/bin/${FUZEVPN_CRYPTO_DLL_NAME},${FUZEVPN_OPENVPN3_VCPKG_DIR}/bin/${FUZEVPN_CRYPTO_DLL_NAME}>"
       "$<TARGET_FILE_DIR:fuzevpn_network_runtime_test>/${FUZEVPN_CRYPTO_DLL_NAME}")
-  add_test(NAME network_runtime COMMAND fuzevpn_network_runtime_test)
+  fuzevpn_add_native_test(network_runtime fuzevpn_network_runtime_test)
   set_tests_properties(network_runtime PROPERTIES TIMEOUT 30)
 endif()
+
+add_executable(fuzevpn_wireguard_address_validation_test EXCLUDE_FROM_ALL
+  "../tests/wireguard_address_validation_test.cpp")
+apply_standard_settings(fuzevpn_wireguard_address_validation_test)
+target_compile_features(fuzevpn_wireguard_address_validation_test PRIVATE cxx_std_20)
+target_compile_definitions(fuzevpn_wireguard_address_validation_test PRIVATE NOMINMAX WIN32_LEAN_AND_MEAN)
+target_include_directories(fuzevpn_wireguard_address_validation_test PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
+target_link_libraries(fuzevpn_wireguard_address_validation_test PRIVATE ws2_32)
+set_target_properties(fuzevpn_wireguard_address_validation_test PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/native-tests")
+fuzevpn_add_native_test(wireguard_address_validation fuzevpn_wireguard_address_validation_test)
+set_tests_properties(wireguard_address_validation PROPERTIES TIMEOUT 10)
+
+add_executable(fuzevpn_portable_service_journal_test EXCLUDE_FROM_ALL
+  "../tests/portable_service_journal_test.cpp" "update_security.cpp")
+apply_standard_settings(fuzevpn_portable_service_journal_test)
+target_compile_features(fuzevpn_portable_service_journal_test PRIVATE cxx_std_17)
+target_compile_definitions(fuzevpn_portable_service_journal_test PRIVATE
+  NOMINMAX WIN32_LEAN_AND_MEAN CERT_CHAIN_PARA_HAS_EXTRA_FIELDS)
+target_include_directories(fuzevpn_portable_service_journal_test PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
+target_link_libraries(fuzevpn_portable_service_journal_test PRIVATE
+  advapi32 bcrypt crypt32 shell32 ole32 wintrust version)
+set_target_properties(fuzevpn_portable_service_journal_test PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/native-tests")
+fuzevpn_add_native_test(portable_service_journal fuzevpn_portable_service_journal_test)
+set_tests_properties(portable_service_journal PROPERTIES TIMEOUT 10)
+
+add_executable(fuzevpn_portable_engine_job_test EXCLUDE_FROM_ALL
+  "../tests/portable_engine_job_test.cpp")
+apply_standard_settings(fuzevpn_portable_engine_job_test)
+target_compile_features(fuzevpn_portable_engine_job_test PRIVATE cxx_std_17)
+target_compile_definitions(fuzevpn_portable_engine_job_test PRIVATE NOMINMAX WIN32_LEAN_AND_MEAN)
+target_include_directories(fuzevpn_portable_engine_job_test PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
+set_target_properties(fuzevpn_portable_engine_job_test PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/native-tests")
+fuzevpn_add_native_test(portable_engine_job fuzevpn_portable_engine_job_test)
+set_tests_properties(portable_engine_job PROPERTIES TIMEOUT 10)
+
+add_executable(fuzevpn_runtime_network_recovery_test EXCLUDE_FROM_ALL
+  "../tests/runtime_network_recovery_test.cpp")
+apply_standard_settings(fuzevpn_runtime_network_recovery_test)
+target_compile_features(fuzevpn_runtime_network_recovery_test PRIVATE cxx_std_20)
+target_compile_definitions(fuzevpn_runtime_network_recovery_test PRIVATE NOMINMAX WIN32_LEAN_AND_MEAN)
+target_include_directories(fuzevpn_runtime_network_recovery_test PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
+target_link_libraries(fuzevpn_runtime_network_recovery_test PRIVATE advapi32 fwpuclnt rpcrt4)
+set_target_properties(fuzevpn_runtime_network_recovery_test PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/native-tests")
+fuzevpn_add_native_test(runtime_network_recovery fuzevpn_runtime_network_recovery_test)
+set_tests_properties(runtime_network_recovery PROPERTIES TIMEOUT 30)
+
+# These host-side contracts only compile synthetic PE fixtures or exercise
+# release metadata. They do not sign, publish, install or run the application.
+if(FUZEVPN_TARGET_ARCH STREQUAL "x64")
+  fuzevpn_add_native_script_test(release_audit
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../tools/tests/release-audit-test.ps1")
+  set_tests_properties(release_audit PROPERTIES TIMEOUT 60)
+  fuzevpn_add_native_script_test(build_provenance
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../tools/tests/build-provenance-test.ps1")
+  set_tests_properties(build_provenance PROPERTIES TIMEOUT 90)
+endif()
+
+fuzevpn_validate_native_test_registry()

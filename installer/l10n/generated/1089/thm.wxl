@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="sw-KE" Language="1089" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+  <String Id="Caption" Value="Inasakinisha [WixBundleName]" />
+  <String Id="CheckingForUpdatesLabel" Value="Inatafuta masasisho" />
+  <String Id="ConfirmCancelMessage" Value="Je, unataka kughairi?" />
+  <String Id="DesktopShortcut" Value="Unda njia ya mkato kwenye eneo-kazi" />
+  <String Id="ExecuteUpgradeRelatedBundleMessage" Value="Toleo la awali" />
+  <String Id="FailureCacheHeader" Value="Utayarishaji umeshindwa" />
+  <String Id="FailureCloseButton" Value="Funga" />
+  <String Id="FailureHeader" Value="Imeshindwa" />
+  <String Id="FailureHyperlinkLogText" Value="Operesheni imekatizwa. Angalia &lt;a href=&quot;#&quot;&gt;kumbukumbu&lt;/a&gt;, rekebisha tatizo, kisha ujaribu tena." />
+  <String Id="FailureInstallHeader" Value="Usakinishaji umekatizwa" />
+  <String Id="FailureLayoutHeader" Value="Kunakili kumeshindwa" />
+  <String Id="FailureModifyHeader" Value="Mabadiliko yamekatizwa" />
+  <String Id="FailureRepairHeader" Value="Urekebishaji umekatizwa" />
+  <String Id="FailureRestartButton" Value="Anzisha upya" />
+  <String Id="FailureRestartText" Value="Anzisha upya ili kukamilisha urejeshaji." />
+  <String Id="FailureUninstallHeader" Value="Uondoaji umekatizwa" />
+  <String Id="FailureUnsafeUninstallHeader" Value="Uondoaji umekatizwa" />
+  <String Id="FilesInUseCloseRadioButton" Value="Funga programu" />
+  <String Id="FilesInUseDontCloseRadioButton" Value="Acha programu wazi" />
+  <String Id="FilesInUseExitButton" Value="Ghairi" />
+  <String Id="FilesInUseIgnoreButton" Value="Puuza" />
+  <String Id="FilesInUseLabel" Value="Funga programu zifuatazo, kisha ujaribu tena." />
+  <String Id="FilesInUseNetfxCloseRadioButton" Value="Funga programu" />
+  <String Id="FilesInUseRetryButton" Value="Jaribu tena" />
+  <String Id="FilesInUseTitle" Value="Faili zinatumika" />
+  <String Id="HelpCloseButton" Value="Funga" />
+  <String Id="HelpHeader" Value="Msaada" />
+  <String Id="HelpText" Value="/install, /repair, /uninstall: sakinisha, rekebisha, ondoa. /quiet: hali ya kimya. /norestart: usianzishe upya. DesktopShortcut=1: njia ya mkato kwenye eneo-kazi. InstallFolder=&quot;D:\Applications\FuzeVPN&quot;: folda ya awali. Masasisho huhifadhi folda iliyosakinishwa." />
+  <String Id="InstallAcceptCheckbox" Value="Ninak&amp;ubali masharti ya leseni" />
+  <String Id="InstallCancelButton" Value="Ghairi" />
+  <String Id="InstallHeader" Value="Karibu" />
+  <String Id="InstallInstallButton" Value="Sakinisha" />
+  <String Id="InstallLicenseLinkText" Value="[WixBundleName] &lt;a href=&quot;#&quot;&gt;masharti ya leseni&lt;/a&gt;." />
+  <String Id="InstallMessage" Value="Sakinisha FuzeVPN kwenye kompyuta hii." />
+  <String Id="InstallMessageOptions" Value="Sakinisha FuzeVPN kwenye kompyuta hii." />
+  <String Id="InstallOptionsButton" Value="Chaguo" />
+  <String Id="InstallVersion" Value="Toleo [WixBundleVersion]" />
+  <String Id="InstallVersionNotice" Value="Toleo [WixBundleVersion] [BuildNotice]" />
+  <String Id="ModifyCancelButton" Value="Ghairi" />
+  <String Id="ModifyHeader" Value="Matengenezo" />
+  <String Id="ModifyRepairButton" Value="Rekebisha" />
+  <String Id="ModifyUninstallButton" Value="Ondoa" />
+  <String Id="OptionsBrowseButton" Value="Vinjari" />
+  <String Id="OptionsCancelButton" Value="Ghairi" />
+  <String Id="OptionsHeader" Value="Chaguo" />
+  <String Id="OptionsLocationLabel" Value="Folda ya usakinishaji (inalindwa na Windows)" />
+  <String Id="OptionsOkButton" Value="Sawa" />
+  <String Id="OptionsPerMachineScopeText" Value="Watumiaji wote" />
+  <String Id="OptionsPerUserScopeText" Value="Mtumiaji wa sasa" />
+  <String Id="OverallProgressPackageText" Value="Inatayarisha…" />
+  <String Id="PreserveInstallFolder" Value="Folda iliyopo huhifadhiwa wakati wa kusasisha. Ili kuhamisha kiolesura kwa uhuru, tumia kifurushi cha portable." />
+  <String Id="ProgressCancelButton" Value="Ghairi" />
+  <String Id="ProgressHeader" Value="Usakinishaji unaendelea" />
+  <String Id="ProgressLabel" Value="Maendeleo" />
+  <String Id="SuccessCacheHeader" Value="Faili ziko tayari" />
+  <String Id="SuccessCloseButton" Value="Funga" />
+  <String Id="SuccessHeader" Value="Operesheni imekamilika" />
+  <String Id="SuccessInstallHeader" Value="Usakinishaji umekamilika" />
+  <String Id="SuccessLaunchButton" Value="Fungua" />
+  <String Id="SuccessLayoutHeader" Value="Faili ziko tayari" />
+  <String Id="SuccessModifyHeader" Value="Mabadiliko yamekamilika" />
+  <String Id="SuccessOpenApp" Value="Fungua FuzeVPN kutoka menyu ya Start. Mapendeleo yako binafsi yamehifadhiwa." />
+  <String Id="SuccessRepairHeader" Value="Urekebishaji umekamilika" />
+  <String Id="SuccessRestartButton" Value="Anzisha upya" />
+  <String Id="SuccessRestartText" Value="Anzisha upya kompyuta yako ili kumaliza." />
+  <String Id="SuccessUninstallHeader" Value="Uondoaji umekamilika" />
+  <String Id="SuccessUninstallRestartText" Value="Anzisha upya ili kukamilisha uondoaji." />
+  <String Id="SuccessUnsafeUninstallHeader" Value="Uondoaji umekamilika" />
+  <String Id="Title" Value="[WixBundleName]" />
+  <String Id="UpdateButton" Value="Sasisha" />
+</WixLocalization>

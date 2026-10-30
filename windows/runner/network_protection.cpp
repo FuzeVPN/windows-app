@@ -21,21 +21,30 @@
 #include <filesystem>
 #include <memory>
 #include <map>
+#include <set>
 #include <mutex>
 #include <string>
 #include <vector>
 
 #include "installation_security.h"
+#include "network_protection_persistence.h"
 
 namespace {
+using fuzevpn_network_failure::Capture;
+using fuzevpn_network_failure::Stage;
 
 std::mutex protection_mutex;
 HANDLE engine_handle = nullptr;
+HANDLE transient_engine_handle = nullptr;
+std::set<HANDLE> transient_engines;
 std::map<HANDLE, std::vector<UINT64>> installed_filter_ids;
+std::map<HANDLE, fuzevpn_network_persistence::Intent> installing_intents;
 fuzevpn::NetworkProtectionLifecycle protection_lifecycle;
 std::uint64_t protected_tunnel_luid = 0;
 std::wstring authenticated_broker_ui_path;
 std::uint64_t protection_generation = 1;
+fuzevpn_network_persistence::Intent protection_intent;
+thread_local unsigned internal_stop_depth = 0;
 
 constexpr wchar_t kUiExecutableName[] = L"fuzevpn_windows.exe";
 constexpr wchar_t kServiceExecutableName[] = L"fuzevpn-service.exe";
@@ -55,15 +64,35 @@ void CloseEngine(HANDLE* handle) {
   if (handle != nullptr && *handle != nullptr) {
     FwpmEngineClose0(*handle);
     installed_filter_ids.erase(*handle);
+    installing_intents.erase(*handle);
+    transient_engines.erase(*handle);
     *handle = nullptr;
   }
 }
 
-void CloseEngineLocked() {
+bool CloseEngineLocked() {
   ++protection_generation;
+  // Remove ephemeral exceptions first. If persistent removal fails, only the
+  // conservative prepared baseline remains; never claim a live tunnel permit.
+  CloseEngine(&transient_engine_handle);
+  if (engine_handle) {
+    protection_lifecycle.ActivatePrepared(
+        protection_intent.wireguard ? NetworkProtectionOwner::wire_guard : NetworkProtectionOwner::open_vpn,
+        {protection_intent.kill_switch, protection_intent.dns, protection_intent.web_rtc});
+    protected_tunnel_luid = 0;
+  }
+  if (engine_handle != nullptr) {
+    if (FwpmTransactionBegin0(engine_handle, 0) != ERROR_SUCCESS) return false;
+    const DWORD removed = fuzevpn_network_persistence::RemoveInTransaction(engine_handle);
+    if (removed != ERROR_SUCCESS || FwpmTransactionCommit0(engine_handle) != ERROR_SUCCESS) {
+      FwpmTransactionAbort0(engine_handle);
+      return false;
+    }
+  }
   CloseEngine(&engine_handle);
   protected_tunnel_luid = 0;
   protection_lifecycle.Clear();
+  return true;
 }
 
 bool ExecutablePath(std::wstring* path) {
@@ -152,8 +181,22 @@ bool SystemExecutablePath(const wchar_t* executable_name,
 }
 
 bool AddFilter(HANDLE engine, const FWPM_FILTER0& filter) {
+  FWPM_FILTER0 persistent = filter;
+  persistent.providerKey = const_cast<GUID*>(&fuzevpn_network_persistence::kProvider);
+  std::vector<UINT8> bytes;
+  if (transient_engines.find(engine) == transient_engines.end()) {
+    if (!(persistent.flags & FWPM_FILTER_FLAG_BOOTTIME)) persistent.flags |= FWPM_FILTER_FLAG_PERSISTENT;
+    if (installed_filter_ids[engine].empty()) {
+      persistent.filterKey = fuzevpn_network_persistence::kIntentFilter;
+      bytes = fuzevpn_network_persistence::Encode(installing_intents.at(engine));
+      if (bytes.empty()) return false;
+      persistent.providerData = {static_cast<UINT32>(bytes.size()), bytes.data()};
+    }
+  }
+  fuzevpn_network_persistence::SecurityDescriptor security;
+  if (!security.value) return false;
   UINT64 id = 0;
-  if (FwpmFilterAdd0(engine, &filter, nullptr, &id) != ERROR_SUCCESS)
+  if (Capture(Stage::filter_add, FwpmFilterAdd0(engine, &persistent, security.value, &id)) != ERROR_SUCCESS)
     return false;
   installed_filter_ids[engine].push_back(id);
   return true;
@@ -161,13 +204,27 @@ bool AddFilter(HANDLE engine, const FWPM_FILTER0& filter) {
 
 bool VerifyFiltersLocked() {
   if (engine_handle == nullptr) return true;
+  if (!fuzevpn_network_persistence::ProviderEnforced(engine_handle)) return false;
   const auto found = installed_filter_ids.find(engine_handle);
   if (found == installed_filter_ids.end() || found->second.empty()) return false;
   for (const UINT64 id : found->second) {
     FWPM_FILTER0* filter = nullptr;
     const DWORD status = FwpmFilterGetById0(engine_handle, id, &filter);
+    const bool enforced = filter && (!(filter->flags & FWPM_FILTER_FLAG_DISABLED) ||
+                                    (filter->flags & FWPM_FILTER_FLAG_BOOTTIME));
     if (filter != nullptr) FwpmFreeMemory0(reinterpret_cast<void**>(&filter));
-    if (status != ERROR_SUCCESS) return false;
+    if (status != ERROR_SUCCESS || !enforced) return false;
+  }
+  if (transient_engine_handle) {
+    const auto transient = installed_filter_ids.find(transient_engine_handle);
+    if (transient == installed_filter_ids.end() || transient->second.empty()) return false;
+    for (const auto id : transient->second) {
+      FWPM_FILTER0* filter = nullptr;
+      const DWORD status = FwpmFilterGetById0(transient_engine_handle, id, &filter);
+      const bool enforced = filter && !(filter->flags & FWPM_FILTER_FLAG_DISABLED);
+      if (filter) FwpmFreeMemory0(reinterpret_cast<void**>(&filter));
+      if (status != ERROR_SUCCESS || !enforced) return false;
+    }
   }
   return true;
 }
@@ -337,28 +394,28 @@ bool AddControlTrafficPermits(HANDLE engine, const GUID& sublayer,
 }
 
 bool InstallFiltersLocked(bool prepared, NET_LUID interface_luid,
+                           NetworkProtectionOwner owner,
                            const NetworkProtectionOptions& options,
-                           HANDLE* installed_engine) {
+                           HANDLE* installed_engine, HANDLE* installed_transient,
+                           bool enable_transient = true, bool reset_provider = false) {
   const auto plan =
       fuzevpn::BuildNetworkProtectionFilterPlan(prepared, options);
   *installed_engine = nullptr;
+  *installed_transient = nullptr;
   FWPM_SESSION0 session{};
-  session.flags = FWPM_SESSION_FLAG_DYNAMIC;
+  // Persistent objects outlive process crashes. Their BFE/boot enforcement is
+  // an integration-test requirement (see network-protection-recovery.md). A
+  // normal session is required: dynamic sessions cannot own persistent filters.
   session.displayData.name = const_cast<wchar_t*>(L"FuzeVPN");
   HANDLE candidate_engine = nullptr;
-  if (FwpmEngineOpen0(nullptr, RPC_C_AUTHN_WINNT, nullptr, &session,
-                      &candidate_engine) != ERROR_SUCCESS) {
+  if (Capture(Stage::engine_open, FwpmEngineOpen0(nullptr, RPC_C_AUTHN_WINNT, nullptr, &session,
+                      &candidate_engine)) != ERROR_SUCCESS) {
     return false;
   }
 
-  UUID sublayer{};
-  const RPC_STATUS uuid_status = UuidCreate(&sublayer);
-  if (uuid_status != RPC_S_OK && uuid_status != RPC_S_UUID_LOCAL_ONLY) {
-    CloseEngine(&candidate_engine);
-    return false;
-  }
+  const GUID& sublayer = fuzevpn_network_persistence::kSublayer;
 
-  if (FwpmTransactionBegin0(candidate_engine, 0) != ERROR_SUCCESS) {
+  if (Capture(Stage::transaction_begin, FwpmTransactionBegin0(candidate_engine, 0)) != ERROR_SUCCESS) {
     CloseEngine(&candidate_engine);
     return false;
   }
@@ -371,13 +428,34 @@ bool InstallFiltersLocked(bool prepared, NET_LUID interface_luid,
     return false;
   };
 
+  auto intent = protection_intent;
+  intent.wireguard = owner == NetworkProtectionOwner::wire_guard;
+  intent.kill_switch = options.kill_switch;
+  intent.dns = options.dns_protection;
+  intent.web_rtc = options.web_rtc_protection;
+  // Removal and replacement are one transaction. Failure or termination before
+  // commit leaves the complete previous policy and its intent in BFE intact.
+  installing_intents[candidate_engine] = intent;
+  if (reset_provider &&
+      fuzevpn_network_persistence::RemoveInTransaction(candidate_engine) != ERROR_SUCCESS) return fail();
+  if (Capture(Stage::provider_add, fuzevpn_network_persistence::EnsureProvider(candidate_engine)) != ERROR_SUCCESS ||
+      fuzevpn_network_persistence::RemoveInTransaction(candidate_engine, true) != ERROR_SUCCESS) {
+    return fail();
+  }
+
   FWPM_SUBLAYER0 layer{};
   layer.subLayerKey = sublayer;
+  layer.flags = FWPM_SUBLAYER_FLAG_PERSISTENT;
+  layer.providerKey = const_cast<GUID*>(&fuzevpn_network_persistence::kProvider);
   layer.displayData.name = const_cast<wchar_t*>(L"FuzeVPN");
   layer.displayData.description =
       const_cast<wchar_t*>(L"Protection contre les fuites réseau");
   layer.weight = 0x100;
-  if (FwpmSubLayerAdd0(candidate_engine, &layer, nullptr) != ERROR_SUCCESS) {
+  fuzevpn_network_persistence::SecurityDescriptor security;
+  if (!security.value) return fail();
+  const DWORD layer_status = FwpmSubLayerAdd0(candidate_engine, &layer, security.value);
+  if (layer_status != ERROR_SUCCESS && layer_status != static_cast<DWORD>(FWP_E_ALREADY_EXISTS)) {
+    Capture(Stage::sublayer_add, layer_status);
     return fail();
   }
 
@@ -396,20 +474,20 @@ bool InstallFiltersLocked(bool prepared, NET_LUID interface_luid,
     return fail();
   }
   FWP_BYTE_BLOB* raw_app_id = nullptr;
-  if (FwpmGetAppIdFromFileName0(executable.c_str(), &raw_app_id) !=
+  if (Capture(Stage::app_id, FwpmGetAppIdFromFileName0(executable.c_str(), &raw_app_id)) !=
       ERROR_SUCCESS) {
     return fail();
   }
   AppId app_id(raw_app_id);
 
   AppId ui_app_id;
-  if (plan.permit_ui) {
+  if (plan.permit_ui && enable_transient) {
     std::wstring ui_executable;
     if (!PreConnectUiPath(executable, &ui_executable)) {
       return fail();
     }
     FWP_BYTE_BLOB* raw_ui_app_id = nullptr;
-    if (FwpmGetAppIdFromFileName0(ui_executable.c_str(), &raw_ui_app_id) !=
+    if (Capture(Stage::app_id, FwpmGetAppIdFromFileName0(ui_executable.c_str(), &raw_ui_app_id)) !=
         ERROR_SUCCESS) {
       return fail();
     }
@@ -423,8 +501,8 @@ bool InstallFiltersLocked(bool prepared, NET_LUID interface_luid,
       return fail();
     }
     FWP_BYTE_BLOB* raw_control_app_id = nullptr;
-    if (FwpmGetAppIdFromFileName0(control_executable.c_str(),
-                                  &raw_control_app_id) != ERROR_SUCCESS) {
+    if (Capture(Stage::app_id, FwpmGetAppIdFromFileName0(control_executable.c_str(),
+                                  &raw_control_app_id)) != ERROR_SUCCESS) {
       return fail();
     }
     control_app_id.reset(raw_control_app_id);
@@ -437,7 +515,7 @@ bool InstallFiltersLocked(bool prepared, NET_LUID interface_luid,
   match_app.conditionValue.byteBlob = app_id.get();
 
   FWPM_FILTER_CONDITION0 match_ui{};
-  if (plan.permit_ui) {
+  if (plan.permit_ui && enable_transient) {
     match_ui.fieldKey = FWPM_CONDITION_ALE_APP_ID;
     match_ui.matchType = FWP_MATCH_EQUAL;
     match_ui.conditionValue.type = FWP_BYTE_BLOB_TYPE;
@@ -465,6 +543,28 @@ bool InstallFiltersLocked(bool prepared, NET_LUID interface_luid,
     return fail();
   }
 
+  if (options.kill_switch) {
+    // Persistent ALE filters are loaded when BFE initializes. Boot-time packet
+    // blocks request coverage of the earlier TCP/IP startup interval. Windows
+    // switches these to the persistent policy; that handoff requires VM packet
+    // validation. They carry no app or
+    // tunnel exception and are removed with the same provider on disconnect.
+    for (const GUID& packet_layer :
+         {FWPM_LAYER_INBOUND_IPPACKET_V4, FWPM_LAYER_INBOUND_IPPACKET_V6,
+          FWPM_LAYER_OUTBOUND_IPPACKET_V4, FWPM_LAYER_OUTBOUND_IPPACKET_V6}) {
+      FWPM_FILTER0 boot{};
+      boot.flags = FWPM_FILTER_FLAG_BOOTTIME;
+      boot.layerKey = packet_layer;
+      boot.subLayerKey = sublayer;
+      boot.displayData.name = const_cast<wchar_t*>(L"FuzeVPN — protection au démarrage");
+      boot.action.type = FWP_ACTION_BLOCK;
+      boot.weight.type = FWP_EMPTY;
+      boot.numFilterConditions = 1;
+      boot.filterCondition = &not_loopback;
+      if (!AddFilter(candidate_engine, boot)) return fail();
+    }
+  }
+
   for (const GUID& connect_layer :
        std::array<GUID, 4>{FWPM_LAYER_ALE_AUTH_CONNECT_V4,
                           FWPM_LAYER_ALE_AUTH_CONNECT_V6,
@@ -473,16 +573,6 @@ bool InstallFiltersLocked(bool prepared, NET_LUID interface_luid,
     if (plan.permit_engine &&
         !AddPermitFilter(candidate_engine, connect_layer, sublayer, match_app,
                          L"FuzeVPN — moteur VPN")) {
-      return fail();
-    }
-    if (plan.permit_ui &&
-        !AddPermitFilter(candidate_engine, connect_layer, sublayer, match_ui,
-                         L"FuzeVPN — préparation de l’application")) {
-      return fail();
-    }
-    if (plan.permit_tunnel &&
-        !AddPermitFilter(candidate_engine, connect_layer, sublayer,
-                         match_interface, L"FuzeVPN — interface VPN")) {
       return fail();
     }
   }
@@ -502,9 +592,9 @@ bool InstallFiltersLocked(bool prepared, NET_LUID interface_luid,
         !AddDnsBlocks(candidate_engine, ipv4_layer, sublayer, not_loopback)) {
       return fail();
     }
-    // WebRTC can use STUN/TURN servers on arbitrary ports. Blocking all UDP
-    // that selects a non-tunnel interface avoids a fragile port allow/block
-    // list. The higher-priority permits preserve VPN-interface and engine UDP.
+    // The selective setting blocks UDP on arbitrary ports. TURN over TCP/TLS
+    // requires the full kill switch; its scope is stated in settings. The
+    // higher-priority permits preserve VPN-interface and engine UDP.
     if (plan.block_udp &&
         !AddWebRtcUdpBlock(candidate_engine, ipv4_layer, sublayer, not_loopback,
                           L"FuzeVPN — protection WebRTC UDP IPv4")) {
@@ -521,24 +611,52 @@ bool InstallFiltersLocked(bool prepared, NET_LUID interface_luid,
     }
   }
 
-  if (FwpmTransactionCommit0(candidate_engine) != ERROR_SUCCESS) {
+  if (Capture(Stage::transaction_commit, FwpmTransactionCommit0(candidate_engine)) != ERROR_SUCCESS) {
     return fail();
   }
   transaction_open = false;
+  protection_intent = std::move(intent);
   *installed_engine = candidate_engine;
+  if (!enable_transient) return true;
+  FWPM_SESSION0 transient_session{};
+  transient_session.flags = FWPM_SESSION_FLAG_DYNAMIC;
+  HANDLE transient = nullptr;
+  if (Capture(Stage::engine_open, FwpmEngineOpen0(nullptr, RPC_C_AUTHN_WINNT, nullptr, &transient_session,
+                     &transient)) != ERROR_SUCCESS) return false;
+  transient_engines.insert(transient);
+  if (Capture(Stage::transaction_begin, FwpmTransactionBegin0(transient, 0)) != ERROR_SUCCESS) {
+    CloseEngine(&transient);
+    return false;
+  }
+  bool success = true;
+  for (const GUID& connect_layer :
+       {FWPM_LAYER_ALE_AUTH_CONNECT_V4, FWPM_LAYER_ALE_AUTH_CONNECT_V6,
+        FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V4, FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V6}) {
+    if (plan.permit_ui) success = success && AddPermitFilter(transient, connect_layer,
+        sublayer, match_ui, L"FuzeVPN — préparation de l’application");
+    if (plan.permit_tunnel) success = success && AddPermitFilter(transient, connect_layer,
+        sublayer, match_interface, L"FuzeVPN — interface VPN");
+  }
+  if (!success || Capture(Stage::transaction_commit, FwpmTransactionCommit0(transient)) != ERROR_SUCCESS) {
+    FwpmTransactionAbort0(transient);
+    CloseEngine(&transient);
+    return false;
+  }
+  *installed_transient = transient;
   return true;
 }
 
-void SwapProtectionLocked(HANDLE candidate_engine,
+void SwapProtectionLocked(HANDLE candidate_engine, HANDLE candidate_transient,
                           NetworkProtectionOwner owner,
                           const NetworkProtectionOptions& options,
                           bool prepared,
                           std::uint64_t tunnel_luid) {
-  // A candidate becomes active only after every filter has committed. Keep the
-  // previous dynamic session open until the pointer swap is complete so a
-  // failed replacement or promotion cannot create an unfiltered interval.
+  // The WFP transaction replaced all persistent objects atomically. Publish
+  // local metadata only after commit; closing a query handle removes no rule.
   HANDLE previous_engine = engine_handle;
+  HANDLE previous_transient = transient_engine_handle;
   engine_handle = candidate_engine;
+  transient_engine_handle = candidate_transient;
   ++protection_generation;
   if (prepared) {
     protection_lifecycle.ActivatePrepared(owner, options);
@@ -547,9 +665,67 @@ void SwapProtectionLocked(HANDLE candidate_engine,
     protected_tunnel_luid = tunnel_luid;
   }
   CloseEngine(&previous_engine);
+  CloseEngine(&previous_transient);
 }
 
 }  // namespace
+
+bool SetNetworkProtectionUser(const std::string& user) {
+  if (!CanManageNetworkProtection() || !fuzevpn_network_persistence::ValidUser(user)) return false;
+  std::lock_guard<std::mutex> lock(protection_mutex);
+  if (engine_handle && !protection_intent.user.empty() && protection_intent.user != user) return false;
+  protection_intent.user = user;
+  return true;
+}
+
+bool RestoreNetworkProtection(std::string* recovered_user) {
+  if (!recovered_user || !CanManageNetworkProtection()) return false;
+  recovered_user->clear();
+  std::lock_guard<std::mutex> lock(protection_mutex);
+  if (engine_handle || transient_engine_handle) return false;
+  HANDLE query = nullptr;
+  if (FwpmEngineOpen0(nullptr, RPC_C_AUTHN_WINNT, nullptr, nullptr, &query) != ERROR_SUCCESS) return false;
+  fuzevpn_network_persistence::Intent intent;
+  bool present = false;
+  const DWORD status = fuzevpn_network_persistence::Read(query, &intent, &present);
+  CloseEngine(&query);
+  if (status != ERROR_SUCCESS) return false;
+  if (!present) return true;
+  protection_intent = intent;
+  NetworkProtectionOptions options{intent.kill_switch, intent.dns, intent.web_rtc};
+  const auto owner = intent.wireguard ? NetworkProtectionOwner::wire_guard : NetworkProtectionOwner::open_vpn;
+  HANDLE restored = nullptr;
+  NET_LUID none{};
+  // Never trust a tunnel LUID left by an earlier process or boot. Revoke its
+  // exception before stopping orphaned tunnels or accepting frontend requests.
+  HANDLE transient = nullptr;
+  if (!InstallFiltersLocked(true, none, owner, options, &restored, &transient, false, true)) return false;
+  SwapProtectionLocked(restored, transient, owner, options, true, 0);
+  protected_tunnel_luid = 0;
+  *recovered_user = intent.user;
+  return true;
+}
+
+bool PrepareNetworkProtectionForInternalStop() {
+  std::lock_guard<std::mutex> lock(protection_mutex);
+  if (!engine_handle) return true;
+  const auto retained_owner = protection_intent.wireguard ? NetworkProtectionOwner::wire_guard : NetworkProtectionOwner::open_vpn;
+  if (!transient_engine_handle &&
+      protection_lifecycle.Status(retained_owner).phase == NetworkProtectionStatus::Phase::prepared)
+    return VerifyFiltersLocked();
+  NetworkProtectionOptions options{protection_intent.kill_switch, protection_intent.dns, protection_intent.web_rtc};
+  const auto owner = protection_intent.wireguard ? NetworkProtectionOwner::wire_guard : NetworkProtectionOwner::open_vpn;
+  HANDLE prepared = nullptr;
+  NET_LUID none{};
+  HANDLE transient = nullptr;
+  if (!InstallFiltersLocked(true, none, owner, options, &prepared, &transient, false)) return false;
+  SwapProtectionLocked(prepared, transient, owner, options, true, 0);
+  protected_tunnel_luid = 0;
+  return true;
+}
+
+ScopedNetworkProtectionRetention::ScopedNetworkProtectionRetention() { ++internal_stop_depth; }
+ScopedNetworkProtectionRetention::~ScopedNetworkProtectionRetention() { --internal_stop_depth; }
 
 bool SetAuthenticatedBrokerUiPath(std::wstring path) {
   if (!CanManageNetworkProtection() || IsVpnServiceRuntime() ||
@@ -570,11 +746,12 @@ void ClearAuthenticatedBrokerUiPath() {
 
 bool PrepareNetworkProtection(NetworkProtectionOwner owner,
                               const NetworkProtectionOptions& options) {
+  fuzevpn_network_failure::Clear();
   if (!options.kill_switch) {
     return true;
   }
   // The Flutter process is never allowed to own WFP state. In production the
-  // persistent VPN service owns this dynamic session, so UI termination cannot
+  // persistent VPN service owns the policy, so UI termination cannot
   // remove the kill switch. The elevated broker is retained only for unsigned
   // local development builds.
   if (!CanManageNetworkProtection()) {
@@ -586,16 +763,19 @@ bool PrepareNetworkProtection(NetworkProtectionOwner owner,
   // replacement preserves the active policy through each reconnect attempt.
   NET_LUID no_interface{};
   HANDLE candidate_engine = nullptr;
-  if (!InstallFiltersLocked(true, no_interface, options, &candidate_engine)) {
+  HANDLE candidate_transient = nullptr;
+  if (!InstallFiltersLocked(true, no_interface, owner, options, &candidate_engine, &candidate_transient)) {
+    if (candidate_engine) SwapProtectionLocked(candidate_engine, nullptr, owner, options, true, 0);
     return false;
   }
-  SwapProtectionLocked(candidate_engine, owner, options, true, 0);
+  SwapProtectionLocked(candidate_engine, candidate_transient, owner, options, true, 0);
   return true;
 }
 
 bool PromoteNetworkProtection(NetworkProtectionOwner owner,
                               std::uint64_t tunnel_interface_luid,
                               const NetworkProtectionOptions& options) {
+  fuzevpn_network_failure::Clear();
   if (!CanManageNetworkProtection()) {
     return false;
   }
@@ -610,24 +790,28 @@ bool PromoteNetworkProtection(NetworkProtectionOwner owner,
   NET_LUID interface_luid{};
   interface_luid.Value = tunnel_interface_luid;
   HANDLE candidate_engine = nullptr;
-  if (!InstallFiltersLocked(false, interface_luid, options,
-                            &candidate_engine)) {
+  HANDLE candidate_transient = nullptr;
+  if (!InstallFiltersLocked(false, interface_luid, owner, options,
+                            &candidate_engine, &candidate_transient)) {
+    if (candidate_engine) SwapProtectionLocked(candidate_engine, nullptr, owner, options, true, 0);
     return false;
   }
 
-  SwapProtectionLocked(candidate_engine, owner, options, false,
+  SwapProtectionLocked(candidate_engine, candidate_transient, owner, options, false,
                        tunnel_interface_luid);
   return true;
 }
 
-void DisableNetworkProtection(NetworkProtectionOwner owner) {
+bool DisableNetworkProtection(NetworkProtectionOwner owner) {
   if (!CanManageNetworkProtection()) {
-    return;
+    return false;
   }
+  if (internal_stop_depth != 0) return true;
   std::lock_guard<std::mutex> lock(protection_mutex);
   if (protection_lifecycle.IsActive(owner)) {
-    CloseEngineLocked();
+    return CloseEngineLocked();
   }
+  return true;
 }
 
 bool IsNetworkProtectionActive(NetworkProtectionOwner owner) {
@@ -681,6 +865,11 @@ NetworkProtectionObservation ObserveNetworkProtection() {
     const auto found = installed_filter_ids.find(engine_handle);
     if (found == installed_filter_ids.end() || found->second.empty()) return observation;
     identifiers = found->second;
+    if (transient_engine_handle) {
+      const auto transient = installed_filter_ids.find(transient_engine_handle);
+      if (transient == installed_filter_ids.end()) return observation;
+      identifiers.insert(identifiers.end(), transient->second.begin(), transient->second.end());
+    }
     observation.wireguard = protection_lifecycle.Status(NetworkProtectionOwner::wire_guard);
     observation.openvpn = protection_lifecycle.Status(NetworkProtectionOwner::open_vpn);
   }
@@ -692,12 +881,15 @@ NetworkProtectionObservation ObserveNetworkProtection() {
   } query;
   if (FwpmEngineOpen0(nullptr, RPC_C_AUTHN_WINNT, nullptr, nullptr, &query.handle) != ERROR_SUCCESS)
     return observation;
+  if (!fuzevpn_network_persistence::ProviderEnforced(query.handle)) return observation;
   for (const UINT64 id : identifiers) {
     if (!IsNetworkProtectionObservationCurrent(observation)) return observation;
     FWPM_FILTER0* filter = nullptr;
     const DWORD status = FwpmFilterGetById0(query.handle, id, &filter);
+    const bool enforced = filter && (!(filter->flags & FWPM_FILTER_FLAG_DISABLED) ||
+                                    (filter->flags & FWPM_FILTER_FLAG_BOOTTIME));
     if (filter) FwpmFreeMemory0(reinterpret_cast<void**>(&filter));
-    if (status != ERROR_SUCCESS) return observation;
+    if (status != ERROR_SUCCESS || !enforced) return observation;
   }
   observation.known = IsNetworkProtectionObservationCurrent(observation);
   return observation;

@@ -4,7 +4,7 @@ import 'package:fuzevpn_windows/l10n/app_localizations.dart';
 import 'package:fuzevpn_windows/l10n/generated_catalogs.dart';
 
 void main() {
-  test('les textes de l’interface sont disponibles dans les 30 langues', () {
+  test('les textes de l’interface sont disponibles dans les 70 langues', () {
     const expectedKeys = [
       'Villes',
       'Serveurs',
@@ -51,7 +51,7 @@ void main() {
       'Besoin d’aide ?',
       'Actualiser le suivi',
     ];
-    expect(translationCatalogs, hasLength(30));
+    expect(translationCatalogs, hasLength(70));
     for (final key in expectedKeys) {
       expect(sourceCatalog, contains(key), reason: key);
       final parameters = _parameters(sourceCatalog[key]!);

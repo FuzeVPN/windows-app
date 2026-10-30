@@ -9,10 +9,12 @@
 #include "distribution_mode.h"
 #include "portable_runtime.h"
 #include "portable_runtime_client.h"
+#include "portable_service_lease_journal.h"
 #include "maintenance_state.h"
 #include "runtime_ownership.h"
 #include "service_idle_handoff.h"
 #include "service_handoff_mutex.h"
+#include "service_pipe_endpoint.h"
 #include "diagnostics_snapshot.h"
 
 #include "openvpn_tunnel.h"
@@ -63,13 +65,6 @@ constexpr wchar_t kVpnServiceName[] = L"FuzeVPNService";
 constexpr wchar_t kVpnServiceDisplayName[] = L"FuzeVPN — service VPN";
 constexpr wchar_t kServiceExecutableName[] = L"fuzevpn-service.exe";
 constexpr wchar_t kUiExecutableName[] = L"fuzevpn_windows.exe";
-constexpr wchar_t kServicePipeName[] = L"\\\\.\\pipe\\FuzeVPN-Service-v1";
-constexpr wchar_t kServiceReadyEventName[] =
-    L"Global\\FuzeVPN-Service-Ready-v1";
-constexpr wchar_t kServiceWireGuardStatusEventName[] =
-    L"Global\\FuzeVPN-Service-WireGuard-v1";
-constexpr wchar_t kServiceOpenVpnStatusEventName[] =
-    L"Global\\FuzeVPN-Service-OpenVPN-v1";
 constexpr uint32_t kFrameMagic = 0x31455056;  // "VPE1", little endian.
 constexpr uint32_t kFrameVersion = 1;
 constexpr uint32_t kResponseAckMagic = 0x314B4341;  // "ACK1".
@@ -131,22 +126,6 @@ std::optional<std::filesystem::path> SiblingExecutable(
   return current->parent_path() / filename;
 }
 
-std::wstring PipeName(DWORD parent_process_id) {
-  return L"\\\\.\\pipe\\FuzeVPN-PrivilegedBroker-" +
-         std::to_wstring(parent_process_id);
-}
-
-std::wstring ReadyEventName(DWORD parent_process_id) {
-  return L"Local\\FuzeVPN-PrivilegedBroker-Ready-" +
-         std::to_wstring(parent_process_id);
-}
-
-std::wstring TunnelStatusEventName(DWORD parent_process_id,
-                                   const std::string& scope) {
-  const wchar_t* suffix = scope == "wireguard" ? L"WireGuard" : L"OpenVPN";
-  return L"Local\\FuzeVPN-PrivilegedBroker-" + std::wstring(suffix) + L"-" +
-         std::to_wstring(parent_process_id);
-}
 
 LONG FileTrustStatus(const std::wstring& executable) {
   WINTRUST_FILE_INFO file{};
@@ -827,6 +806,10 @@ std::vector<uint8_t> Dispatch(const std::vector<uint8_t>& request,
           "Windows could not authorize control of the VPN runtime.");
       return result.Take();
     }
+    if (!SetNetworkProtectionUser(user)) {
+      result.Error("runtime_status_unavailable", "Windows could not bind the VPN filtering owner.");
+      return result.Take();
+    }
   }
 
   constexpr char kWireGuardPrefix[] = "wireguard.";
@@ -849,8 +832,18 @@ std::vector<uint8_t> Dispatch(const std::vector<uint8_t>& request,
     WriteSafeStage("openvpn_dispatch");
     flutter::MethodCall<flutter::EncodableValue> scoped(
         name.substr(sizeof(kOpenVpnPrefix) - 1), copy_arguments());
-    HandleOpenVpnPrivilegedCall(scoped, &result);
-    PublishTunnelStatus(wireguard_status, openvpn_status);
+    try {
+      HandleOpenVpnPrivilegedCall(scoped, &result);
+      PublishTunnelStatus(wireguard_status, openvpn_status);
+    } catch (...) {
+      // Keep the request pipe alive and retain ownership/filtering. Only an
+      // explicit, confirmed cleanup may release them after a native exception.
+      // Exception text may contain profile material and must never be returned.
+      result.Error("openvpn_connection_failed", "OpenVPN operation failed.",
+          flutter::EncodableValue(flutter::EncodableMap{
+              {flutter::EncodableValue("stage"),
+               flutter::EncodableValue("openvpn_native_exception")}}));
+    }
     WriteSafeStage("openvpn_complete");
   } else {
     result.NotImplemented();
@@ -867,6 +860,8 @@ std::vector<uint8_t> Dispatch(const std::vector<uint8_t>& request,
 }
 
 bool StopBrokerTunnels() {
+  if (!PrepareNetworkProtectionForInternalStop()) return false;
+  ScopedNetworkProtectionRetention retain;
   fuzevpn_diagnostics::InvalidateRuntimeSnapshots();
   EncodedMethodResult ignored_wireguard;
   flutter::MethodCall<flutter::EncodableValue> disconnect_wireguard(
@@ -979,7 +974,8 @@ DWORD WINAPI VpnServiceControlHandler(DWORD control, DWORD, void*, void*) {
   return NO_ERROR;
 }
 
-bool ConsumeServiceIdleHandoff() {
+bool ConsumeServiceIdleHandoff(
+    bool (*confirm_yield)(DWORD*) = fuzevpn_handoff::ConfirmInstalledServiceIdleYield) {
   // Always clear the wake first: the handler's SetEvent may arrive after the
   // preceding request was consumed, leaving a wake with no pending request.
   // A later queue remains visible in Pending() or signals its own wake.
@@ -989,6 +985,8 @@ bool ConsumeServiceIdleHandoff() {
   const auto idle = has_owner ? std::optional<bool>() : RuntimeConfirmedIdle();
   const bool accepted = service_idle_request.Consume(GetTickCount64(), has_owner, idle);
   if (accepted) {
+    DWORD journal_error = ERROR_SUCCESS;
+    if (!confirm_yield(&journal_error)) return false;
     service_accepts_yield.store(false);
     // Publish acceptance before any logging or shutdown I/O. The helper must
     // distinguish a rejected queue from a slow but committed idle handoff.
@@ -1011,11 +1009,11 @@ int RunVpnServiceLoop() {
     return ERROR_ACCESS_DENIED;
   }
   HANDLE ready_event = CreateEventW(&event_security, TRUE, TRUE,
-                                    kServiceReadyEventName);
+                                    nullptr);
   HANDLE wireguard_status = CreateEventW(
-      &event_security, TRUE, FALSE, kServiceWireGuardStatusEventName);
+      &event_security, TRUE, FALSE, nullptr);
   HANDLE openvpn_status = CreateEventW(
-      &event_security, TRUE, FALSE, kServiceOpenVpnStatusEventName);
+      &event_security, TRUE, FALSE, nullptr);
   LocalFree(event_descriptor);
   if (ready_event == nullptr || wireguard_status == nullptr ||
       openvpn_status == nullptr) {
@@ -1026,11 +1024,13 @@ int RunVpnServiceLoop() {
     return ERROR_NOT_ENOUGH_MEMORY;
   }
 
-  // A hard crash of an earlier service instance can leave WireGuard's
-  // transient tunnel service alive after its dynamic WFP session disappeared.
-  // We cannot reconstruct the missing policy without a fresh connect request,
-  // so remove every stale tunnel before publishing status.
-  if (!StopBrokerTunnels()) {
+  // The persistent baseline survived the earlier process. Rebuild it with the
+  // current executable paths, without inheriting a stale tunnel/UI exception,
+  // and recover the Windows owner before cleanup or publishing availability.
+  std::string recovered_user;
+  if (!RestoreNetworkProtection(&recovered_user) ||
+      (!recovered_user.empty() && runtime_ownership.AuthorizeMutation(recovered_user, true) !=
+          fuzevpn::RuntimeOwnership::Authorization::allowed) || !StopBrokerTunnels()) {
     CloseHandle(openvpn_status);
     CloseHandle(wireguard_status);
     CloseHandle(ready_event);
@@ -1047,14 +1047,11 @@ int RunVpnServiceLoop() {
   }
 #endif
   PublishTunnelStatus(wireguard_status, openvpn_status);
-  SetVpnServiceStatus(SERVICE_RUNNING);
-  HANDLE pipe = CreateNamedPipeW(
-      kServicePipeName, PIPE_ACCESS_DUPLEX | FILE_FLAG_OVERLAPPED |
-          FILE_FLAG_FIRST_PIPE_INSTANCE,
-      PIPE_TYPE_BYTE | PIPE_READMODE_BYTE | PIPE_WAIT |
-          PIPE_REJECT_REMOTE_CLIENTS,
-      1, kMaximumPayloadBytes, kMaximumPayloadBytes, 0, &security);
-  const DWORD pipe_error = pipe == INVALID_HANDLE_VALUE ? GetLastError() : NO_ERROR;
+  fuzevpn_ipc::ServicePipeEndpoint endpoint;
+  const bool pipe_created = endpoint.Create(kMaximumPayloadBytes, &security);
+  HANDLE pipe = endpoint.pipe();
+  const DWORD pipe_error = pipe_created ? NO_ERROR : GetLastError();
+  if (pipe_created) SetVpnServiceStatus(SERVICE_RUNNING);
   service_accepts_yield.store(pipe != INVALID_HANDLE_VALUE);
   // Keep the server instance for the entire runtime: no name-squatting window
   // exists between authenticated requests.
@@ -1095,7 +1092,7 @@ int RunVpnServiceLoop() {
     }
   }
   service_accepts_yield.store(false);
-  if (pipe != INVALID_HANDLE_VALUE) CloseHandle(pipe);
+  endpoint.Reset();
 
   // The worker accepted the handoff only after proving both protocols and
   // protections idle. No cleanup mutation is necessary for that transfer.
@@ -1389,7 +1386,10 @@ int RunBroker(DWORD parent_process_id, bool portable) {
 
   // Holding the machine lock proves that no supported broker/service owns an
   // active tunnel. Recover resources orphaned by a previous hard process exit.
-  if (!StopBrokerTunnels()) {
+  std::string recovered_user;
+  if (!RestoreNetworkProtection(&recovered_user) ||
+      (!recovered_user.empty() && runtime_ownership.AuthorizeMutation(recovered_user, true) !=
+          fuzevpn::RuntimeOwnership::Authorization::allowed) || !StopBrokerTunnels()) {
     CloseHandle(user_token);
     CloseHandle(parent);
     return EXIT_FAILURE;
@@ -1419,15 +1419,14 @@ int RunBroker(DWORD parent_process_id, bool portable) {
     CloseHandle(parent);
     return EXIT_FAILURE;
   }
-  const std::wstring pipe_name = PipeName(parent_process_id);
   HANDLE ready_event = CreateEventW(&event_security, TRUE, TRUE,
-                                    ReadyEventName(parent_process_id).c_str());
+                                    nullptr);
   HANDLE wireguard_status =
       CreateEventW(&event_security, TRUE, FALSE,
-                   TunnelStatusEventName(parent_process_id, "wireguard").c_str());
+                   nullptr);
   HANDLE openvpn_status =
       CreateEventW(&event_security, TRUE, FALSE,
-                   TunnelStatusEventName(parent_process_id, "openvpn").c_str());
+                   nullptr);
   LocalFree(event_descriptor);
   if (ready_event == nullptr || wireguard_status == nullptr ||
       openvpn_status == nullptr) {
@@ -1442,13 +1441,9 @@ int RunBroker(DWORD parent_process_id, bool portable) {
   PublishTunnelStatus(wireguard_status, openvpn_status);
   WriteSafeStage("broker_ready");
   bool shutdown_requested = false;
-  HANDLE pipe = CreateNamedPipeW(
-      pipe_name.c_str(), PIPE_ACCESS_DUPLEX | FILE_FLAG_OVERLAPPED |
-          FILE_FLAG_FIRST_PIPE_INSTANCE,
-      PIPE_TYPE_BYTE | PIPE_READMODE_BYTE | PIPE_WAIT |
-          PIPE_REJECT_REMOTE_CLIENTS,
-      1, kMaximumPayloadBytes, kMaximumPayloadBytes, 0, &security);
-  const bool pipe_created = pipe != INVALID_HANDLE_VALUE;
+  fuzevpn_ipc::ServicePipeEndpoint endpoint;
+  const bool pipe_created = endpoint.Create(kMaximumPayloadBytes, &security);
+  HANDLE pipe = endpoint.pipe();
   while (pipe_created && !shutdown_requested &&
          WaitForSingleObject(parent, 0) == WAIT_TIMEOUT) {
     const bool connected = WaitForPipeClient(pipe, parent);
@@ -1489,7 +1484,7 @@ int RunBroker(DWORD parent_process_id, bool portable) {
       DisconnectNamedPipe(pipe);
     }
   }
-  if (pipe_created) CloseHandle(pipe);
+  endpoint.Reset();
 
   DrainBrokerTunnels(ready_event, false);
   fuzevpn_diagnostics::ShutdownRuntimeSnapshots();
@@ -1505,8 +1500,26 @@ int RunBroker(DWORD parent_process_id, bool portable) {
 }
 
 HANDLE OpenAuthenticatedPipe(bool service) {
-  const std::wstring name = service ? kServicePipeName :
-                                      PipeName(GetCurrentProcessId());
+  std::wstring name;
+  if (service) {
+    bool running = false;
+    const auto pid = QueryServiceProcessId(&running);
+    if (!pid.has_value()) return INVALID_HANDLE_VALUE;
+    if (*pid == 0) { SetLastError(ERROR_FILE_NOT_FOUND); return INVALID_HANDLE_VALUE; }
+    if (!running) { SetLastError(ERROR_PIPE_NOT_CONNECTED); return INVALID_HANDLE_VALUE; }
+    if (!fuzevpn_ipc::ReadServicePipeName(*pid, &name)) return INVALID_HANDLE_VALUE;
+  } else {
+    if (launched_broker_process == nullptr) {
+      SetLastError(ERROR_FILE_NOT_FOUND); return INVALID_HANDLE_VALUE;
+    }
+    const DWORD live = WaitForSingleObject(launched_broker_process, 0);
+    if (live != WAIT_TIMEOUT) {
+      if (live != WAIT_FAILED) SetLastError(ERROR_FILE_NOT_FOUND);
+      return INVALID_HANDLE_VALUE;
+    }
+    const DWORD pid = GetProcessId(launched_broker_process);
+    if (pid == 0 || !fuzevpn_ipc::ReadServicePipeName(pid, &name)) return INVALID_HANDLE_VALUE;
+  }
   HANDLE pipe = CreateFileW(name.c_str(), fuzevpn_ipc::kPipeClientAccess, 0,
       nullptr, OPEN_EXISTING, FILE_FLAG_OVERLAPPED |
           SECURITY_SQOS_PRESENT | SECURITY_IDENTIFICATION, nullptr);
@@ -1835,7 +1848,10 @@ void CompletePrivilegedCall(
         stage = "broker_write";
         break;
       case ExchangeFailure::kResponseUnavailable:
-        code = "broker_response_timeout";
+        code = (windows_error == ERROR_BROKEN_PIPE ||
+                windows_error == ERROR_PIPE_NOT_CONNECTED ||
+                windows_error == ERROR_NO_DATA)
+            ? "broker_unavailable" : "broker_response_timeout";
         stage = "broker_response";
         break;
       case ExchangeFailure::kInstallationRequired: code = "installation_required"; break;

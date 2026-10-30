@@ -13,6 +13,7 @@
 #include "maintenance_network_state.h"
 #include "maintenance_process_wait.h"
 #include "service_handoff_mutex.h"
+#include "network_protection_persistence.h"
 
 namespace fuzevpn_maintenance {
 namespace {
@@ -211,9 +212,9 @@ bool StopConfirmed(const std::wstring& directory, bool previously_clean, DWORD* 
   // This also detects a running broker. The registry gate prevents a new
   // runtime acquiring this mutex after the check; runtime checks it again
   // after acquisition to close the startup race.
-  fuzevpn_handoff::Reservation lock;
+  fuzevpn_ipc::ExclusiveRuntimeLock lock;
   maintenance_stage = L"runtime_mutex";
-  if (!lock.Acquire(L"Global\\FuzeVPN-ExclusiveRuntime-v1")) return Fail(GetLastError(), error);
+  if (!lock.AcquireMachineRuntime()) return Fail(GetLastError(), error);
   maintenance_stage = L"network_quiescence";
   if ((historical_failure || snapshot_pid) && !ConfirmStoppedNetworkState(directory, error)) return false;
   return true;
@@ -340,7 +341,18 @@ bool EndInstallerMaintenance(const std::wstring& transaction,
         }
       }
     }
-  } else if (!clear_gate()) return false;
+  } else {
+    // Only explicit full uninstall reaches this path. Keep the persistent
+    // guard throughout Begin/rollback/upgrade; erase it only at uninstall commit.
+    fuzevpn_ipc::ExclusiveRuntimeLock lock;
+    if (!lock.AcquireMachineRuntime()) return Fail(GetLastError(), error);
+    if (!clear_gate()) return false;
+    const DWORD removed = fuzevpn_network_persistence::RemoveForMaintenance();
+    if (removed != ERROR_SUCCESS) {
+      DWORD restored_error = ERROR_SUCCESS;
+      return Fail(RestoreGate(transaction, directory, &restored_error) ? removed : restored_error, error);
+    }
+  }
   if (error) *error = ERROR_SUCCESS;
   return true;
 }

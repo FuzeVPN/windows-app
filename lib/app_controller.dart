@@ -17,6 +17,7 @@ import 'core/diagnostics_controller.dart';
 import 'core/diagnostics_models.dart';
 import 'core/diagnostics_support.dart';
 import 'core/local_diagnostic_trace.dart';
+import 'core/location_directory.dart';
 import 'core/models.dart';
 import 'core/openvpn_bridge.dart';
 import 'core/secure_store.dart';
@@ -175,6 +176,7 @@ class AppController extends ChangeNotifier {
           code: failure.code,
           stage: failure.stage,
           windowsError: failure.windowsError,
+          trustStatus: failure.trustStatus,
           httpStatus: failure.statusCode,
         ),
       );
@@ -441,9 +443,31 @@ class AppController extends ChangeNotifier {
   Timer? _runtimeVerificationTimer;
   int _runtimeVerificationRetries = 0;
   static const _runtimeVerificationDelays = [250, 1000, 2000];
+  // Windows starts the installed service with delayed auto-start. Keep passive
+  // observations alive for about five minutes instead of abandoning it before
+  // SCM has started the service. Other observation failures remain short-lived.
+  static const _serviceStartupVerificationDelays = [
+    250,
+    1000,
+    2000,
+    5000,
+    10000,
+    15000,
+    30000,
+    30000,
+    30000,
+    30000,
+    30000,
+    30000,
+    30000,
+    30000,
+    30000,
+  ];
+  bool _deferredStartupAutoConnect = false;
   static const _runtimeVerificationMessage =
       'FuzeVPN ne peut pas vérifier l’état du VPN. Réessayez la vérification.';
   bool _isSigningOut = false;
+  bool _isExpiringSession = false;
   int _sessionEpoch = 0;
   Timer? _tunnelHealthTimer;
   bool _tunnelHealthCheckInProgress = false;
@@ -470,6 +494,7 @@ class AppController extends ChangeNotifier {
       notifyListeners();
       return Future<void>.value();
     }
+    _deferredStartupAutoConnect = false;
     if (_runtimeVerificationPending) return retryRuntimeVerification();
     final running = _connectionCommand;
     if (running != null) return running;
@@ -521,6 +546,9 @@ class AppController extends ChangeNotifier {
 
   bool _acceptConnectionOperation(int? operationId) =>
       _connectionStateMachine.owns(operationId);
+
+  bool _isCurrentConnectionGeneration(int generation) =>
+      !_disposed && _connectionStateMachine.generation == generation;
 
   bool _transitionConnection(int? operationId, VpnStatus state) =>
       _connectionStateMachine.transition(operationId, state);
@@ -713,13 +741,28 @@ class AppController extends ChangeNotifier {
       _store.currentDeviceId(),
       stage: 'stored_device_binding',
     );
+    final startupSessionEpoch = _sessionEpoch;
+    bool currentStartupSession() =>
+        !_disposed && !_isSigningOut && startupSessionEpoch == _sessionEpoch;
     final token = await _readSavedSessionToken();
-    _sessionValidationPending = token != null || _sessionStorageUnavailable;
+    if (currentStartupSession()) {
+      _sessionValidationPending = token != null || _sessionStorageUnavailable;
+    }
     // Resolve native protection before making GUI API requests. A retained
     // lock may outlive this window, and only the native cache can resume it.
     final runtimeClock = Stopwatch()..start();
     _traceControllerPhase('startup', 'runtime_observation', 'begin');
     await Future.wait([_loadTunnelState(), _loadOpenVpnRuntime()]);
+    // Preserve only the launch request that was deferred by an unavailable
+    // service. A later preference change or an explicit retry is not a request
+    // to connect automatically.
+    if (currentStartupSession()) {
+      _deferredStartupAutoConnect =
+          autoConnectOnLaunch &&
+          token != null &&
+          _runtimeVerificationPending &&
+          _runtimeVerificationFailureCode == 'broker_unavailable';
+    }
     _traceControllerPhase(
       'startup',
       'runtime_observation',
@@ -729,7 +772,8 @@ class AppController extends ChangeNotifier {
     );
     if (_disposed) return;
     final retainedProtocol = _retainedProtectionProtocol;
-    if (token != null &&
+    if (currentStartupSession() &&
+        token != null &&
         automaticReconnectEnabled &&
         vpnStatus == VpnStatus.blocked &&
         retainedProtocol != null) {
@@ -743,8 +787,11 @@ class AppController extends ChangeNotifier {
     if (vpnStatus != VpnStatus.blocked &&
         !_disconnectUnconfirmed &&
         !_runtimeVerificationPending) {
-      await Future.wait([refreshLocations(savedLocation), _loadProfile(token)]);
-      if (profile != null) {
+      await Future.wait([
+        refreshLocations(savedLocation),
+        _loadProfile(token, expectedSessionEpoch: startupSessionEpoch),
+      ]);
+      if (currentStartupSession() && profile != null) {
         await refreshDevices();
         await _resumeStoredLocationMigration();
       }
@@ -770,7 +817,8 @@ class AppController extends ChangeNotifier {
     notifyListeners();
     // An unavailable update endpoint never blocks account or VPN startup.
     unawaited(updates.checkForUpdates());
-    if (autoConnectOnLaunch &&
+    if (currentStartupSession() &&
+        autoConnectOnLaunch &&
         profile != null &&
         vpnStatus == VpnStatus.disconnected &&
         !isLocationMigrationActive &&
@@ -935,13 +983,14 @@ class AppController extends ChangeNotifier {
     VpnProtocol protocol, {
     String? tracePrefix,
   }) async {
+    final generation = _connectionStateMachine.generation;
     final status = await _readNativeState<NetworkProtectionStatus>(
       protocol == VpnProtocol.wireGuard
           ? _wireguard.networkProtectionStatus()
           : _openVpn.networkProtectionStatus(),
       traceStage: tracePrefix == null ? null : '${tracePrefix}_snapshot',
     );
-    _nativeProtectionStates[protocol] = status;
+    if (!_isCurrentConnectionGeneration(generation)) return null;
     // An older/unavailable status endpoint may still expose filter presence.
     // That bit preserves a stop action, never a claim of full protection.
     final active =
@@ -952,6 +1001,8 @@ class AppController extends ChangeNotifier {
               : _openVpn.isNetworkProtectionActive(),
           traceStage: tracePrefix == null ? null : '${tracePrefix}_fallback',
         );
+    if (!_isCurrentConnectionGeneration(generation)) return null;
+    _nativeProtectionStates[protocol] = status;
     _nativeProtectionPresence[protocol] = active;
     if (active == true) _runtimeInteractionStarted = true;
     return active;
@@ -1041,6 +1092,7 @@ class AppController extends ChangeNotifier {
 
   Future<bool> _restoreRetainedNetworkProtection({
     int? operationId,
+    int? expectedGeneration,
     String? message,
   }) async {
     final endpointResolutionFailed =
@@ -1048,6 +1100,10 @@ class AppController extends ChangeNotifier {
         _nativeConnectionFailure?.operationId == operationId &&
         _nativeConnectionFailure?.code == 'endpoint_resolution_failed';
     final owner = await _networkProtectionOwner();
+    if (expectedGeneration != null &&
+        !_isCurrentConnectionGeneration(expectedGeneration)) {
+      return false;
+    }
     if (!_acceptConnectionOperation(operationId)) return false;
     _retainedProtectionProtocol = owner;
     if (owner == null) return false;
@@ -1117,7 +1173,11 @@ class AppController extends ChangeNotifier {
           selectedLocation?.id ?? savedLocation ?? _unavailableLocationId;
       locations = refreshed;
       selectedLocation = preferredId == null
-          ? locations.firstOrNull
+          ? preferredLocationForGroup(
+              locations,
+              protocolPreference: protocolPreference,
+              openVpnRuntimeAvailable: openVpnRuntimeAvailable,
+            )
           : locations.where((item) => item.id == preferredId).firstOrNull;
       _locationSelectionUnavailable =
           preferredId != null && selectedLocation == null;
@@ -1671,7 +1731,9 @@ class AppController extends ChangeNotifier {
     );
   }
 
-  Future<void> _loadProfile(String? token) async {
+  Future<void> _loadProfile(String? token, {int? expectedSessionEpoch}) async {
+    final sessionEpoch = expectedSessionEpoch ?? _sessionEpoch;
+    if (_disposed || _isSigningOut || sessionEpoch != _sessionEpoch) return;
     final clock = Stopwatch()..start();
     if (token == null) {
       _traceControllerPhase(
@@ -1683,7 +1745,6 @@ class AppController extends ChangeNotifier {
       return;
     }
     _traceControllerPhase('account', 'session_validation', 'begin');
-    final sessionEpoch = _sessionEpoch;
     try {
       final loaded = await _api.me(token);
       if (_disposed || _isSigningOut || sessionEpoch != _sessionEpoch) {
@@ -1719,7 +1780,7 @@ class AppController extends ChangeNotifier {
           error: error,
           durationMs: clock.elapsedMilliseconds,
         );
-        await _safe<void>(_store.clearToken());
+        await _clearRejectedSavedSessionToken(sessionEpoch);
       } else {
         _sessionValidationPending = true;
         _savedSessionVerificationErrorMessage =
@@ -1753,6 +1814,28 @@ class AppController extends ChangeNotifier {
           durationMs: clock.elapsedMilliseconds,
         );
       }
+    }
+  }
+
+  Future<void> _clearRejectedSavedSessionToken(int expectedEpoch) async {
+    if (_disposed ||
+        _isSigningOut ||
+        _isExpiringSession ||
+        expectedEpoch != _sessionEpoch) {
+      return;
+    }
+    // Keep the rejected credential's cleanup in the same exclusion window as
+    // account expiry. A newer login must never be erased by an older deletion.
+    _isExpiringSession = true;
+    try {
+      await _store.clearToken();
+    } catch (_) {
+      if (!_disposed && expectedEpoch == _sessionEpoch) {
+        errorMessage =
+            'La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.';
+      }
+    } finally {
+      _isExpiringSession = false;
     }
   }
 
@@ -1825,28 +1908,42 @@ class AppController extends ChangeNotifier {
   }
 
   void _scheduleSavedSessionVerificationRetry() {
+    final delays = _deferredStartupAutoConnect
+        ? _serviceStartupVerificationDelays
+        : _savedSessionVerificationDelays;
     if (_disposed ||
         _isSigningOut ||
         !isInitialized ||
-        !savedSessionVerificationPending ||
+        (!savedSessionVerificationPending &&
+            !(_deferredStartupAutoConnect && !apiReachable)) ||
         _sessionRecoveryInProgress ||
         _runtimeVerificationPending ||
         isConnectionBusy ||
         (requiresExplicitDisconnect && vpnStatus != VpnStatus.connected) ||
         runtimeOwnedByAnotherUser ||
         _savedSessionVerificationTimer != null ||
-        _savedSessionVerificationRetries >=
-            _savedSessionVerificationDelays.length) {
+        _savedSessionVerificationRetries >= delays.length) {
       return;
     }
     final epoch = _sessionEpoch;
-    final delay =
-        _savedSessionVerificationDelays[_savedSessionVerificationRetries++];
+    final delay = delays[_savedSessionVerificationRetries++];
     _savedSessionVerificationTimer = Timer(Duration(milliseconds: delay), () {
       _savedSessionVerificationTimer = null;
       if (!_disposed && epoch == _sessionEpoch) {
         _api.invalidateBootstrapCache();
-        unawaited(_recoverSavedSession(allowAutoConnect: false));
+        unawaited(() async {
+          if (savedSessionVerificationPending) {
+            await _recoverSavedSession(allowAutoConnect: false);
+          } else if (_deferredStartupAutoConnect && !apiReachable) {
+            final saved = await _safe(_store.selectedLocation());
+            if (!_disposed && epoch == _sessionEpoch) {
+              await refreshLocations(saved);
+            }
+          }
+          if (_disposed || epoch != _sessionEpoch) return;
+          await _resumeDeferredStartupAutoConnect();
+          _scheduleSavedSessionVerificationRetry();
+        }());
       }
     });
   }
@@ -1992,16 +2089,19 @@ class AppController extends ChangeNotifier {
   }
 
   void _scheduleRuntimeVerificationRetry() {
+    final delays = _runtimeVerificationFailureCode == 'broker_unavailable'
+        ? _serviceStartupVerificationDelays
+        : _runtimeVerificationDelays;
     if (_disposed ||
         _isSigningOut ||
         !isInitialized ||
         !_runtimeVerificationPending ||
         _runtimeVerificationTimer != null ||
-        _runtimeVerificationRetries >= _runtimeVerificationDelays.length) {
+        _runtimeVerificationRetries >= delays.length) {
       return;
     }
     final epoch = _sessionEpoch;
-    final delay = _runtimeVerificationDelays[_runtimeVerificationRetries++];
+    final delay = delays[_runtimeVerificationRetries++];
     _runtimeVerificationTimer = Timer(Duration(milliseconds: delay), () {
       _runtimeVerificationTimer = null;
       if (!_disposed && epoch == _sessionEpoch) {
@@ -2010,10 +2110,12 @@ class AppController extends ChangeNotifier {
     });
   }
 
-  /// Repeats passive observations only. It never connects, stops a tunnel,
-  /// prepares filters or resets an identity, even when automatic startup was
-  /// requested before the native status became unavailable.
+  /// Repeats passive observations without stopping a tunnel or releasing
+  /// filters. An automatic retry may resume a deferred launch connection only
+  /// after confirming that both tunnels and their filters are absent. Explicit
+  /// retries cancel that launch request and remain passive.
   Future<void> retryRuntimeVerification({bool automatic = false}) async {
+    if (!automatic) _deferredStartupAutoConnect = false;
     if (_disposed ||
         _isSigningOut ||
         !_runtimeVerificationPending ||
@@ -2040,12 +2142,43 @@ class AppController extends ChangeNotifier {
     if (_disposed || epoch != _sessionEpoch || _runtimeVerificationPending) {
       return;
     }
+    await _loadOpenVpnRuntime();
+    if (_disposed || epoch != _sessionEpoch) return;
     if (_sessionValidationPending) {
       await _recoverSavedSession(allowAutoConnect: false);
     } else if (!requiresExplicitDisconnect) {
       final saved = await _safe(_store.selectedLocation());
       if (!_disposed && epoch == _sessionEpoch) await refreshLocations(saved);
     }
+    if (automatic && !_disposed && epoch == _sessionEpoch) {
+      await _resumeDeferredStartupAutoConnect();
+    }
+  }
+
+  Future<void> _resumeDeferredStartupAutoConnect() async {
+    if (!_deferredStartupAutoConnect || _disposed || _isSigningOut) return;
+    if (!autoConnectOnLaunch ||
+        runtimeOwnedByAnotherUser ||
+        requiresExplicitDisconnect ||
+        vpnStatus == VpnStatus.connected ||
+        (profile == null && !savedSessionVerificationPending)) {
+      _deferredStartupAutoConnect = false;
+      return;
+    }
+    if (_runtimeVerificationPending ||
+        savedSessionVerificationPending ||
+        _isInstallingUpdate ||
+        isConnectionBusy ||
+        isLocationMigrationActive ||
+        isLoadingLocations ||
+        !apiReachable ||
+        profile == null ||
+        vpnStatus != VpnStatus.disconnected) {
+      return;
+    }
+    _deferredStartupAutoConnect = false;
+    _cancelSavedSessionVerificationRetry();
+    await quickConnect();
   }
 
   void selectSection(AppSection value) {
@@ -2144,6 +2277,7 @@ class AppController extends ChangeNotifier {
     notifyListeners();
     try {
       await _store.saveAutoConnectOnLaunch(value);
+      if (!value) _deferredStartupAutoConnect = false;
     } catch (_) {
       autoConnectOnLaunch = previous;
       experienceSettingsError =
@@ -2207,9 +2341,11 @@ class AppController extends ChangeNotifier {
       return;
     }
     _tunnelHealthCheckInProgress = true;
+    final generation = _connectionStateMachine.generation;
     try {
       final connected = await _isTunnelStillConnected(protocol);
-      if (isConnectionBusy ||
+      if (!_isCurrentConnectionGeneration(generation) ||
+          isConnectionBusy ||
           (vpnStatus != VpnStatus.connected && !_tunnelHealthUnconfirmed) ||
           activeProtocol != protocol) {
         _consecutiveDisconnectedChecks = 0;
@@ -2238,10 +2374,13 @@ class AppController extends ChangeNotifier {
         _automaticReconnectAttempts = 0;
         _ignoreConnectivityEventsUntil = _now();
       }
-      if (await _restoreRetainedNetworkProtection(
+      final retainedProtection = await _restoreRetainedNetworkProtection(
+        expectedGeneration: generation,
         message:
             'La connexion VPN s’est interrompue. Le kill switch bloque toujours le trafic réseau.',
-      )) {
+      );
+      if (!_isCurrentConnectionGeneration(generation)) return;
+      if (retainedProtection) {
         notifyListeners();
         return;
       }
@@ -2256,7 +2395,8 @@ class AppController extends ChangeNotifier {
     } catch (_) {
       // Failure to observe the tunnel does not prove it is down. Bound the
       // time for which the UI may retain its last verified connected status.
-      if (!isConnectionBusy &&
+      if (_isCurrentConnectionGeneration(generation) &&
+          !isConnectionBusy &&
           activeProtocol == protocol &&
           (vpnStatus == VpnStatus.connected || _tunnelHealthUnconfirmed)) {
         _consecutiveDisconnectedChecks = 0;
@@ -2279,7 +2419,9 @@ class AppController extends ChangeNotifier {
       }
     } finally {
       _tunnelHealthCheckInProgress = false;
-      if (vpnStatus != VpnStatus.connected && !_tunnelHealthUnconfirmed) {
+      if (_isCurrentConnectionGeneration(generation) &&
+          vpnStatus != VpnStatus.connected &&
+          !_tunnelHealthUnconfirmed) {
         _scheduleAutomaticReconnect();
       }
     }
@@ -2368,10 +2510,27 @@ class AppController extends ChangeNotifier {
   Future<void> _confirmPreparedLocationChange(int operationId) async {
     final target = pendingTargetLocation;
     if (target == null) return;
-    if (vpnProtocol == VpnProtocol.openVpn) {
+    final sourceProtocol = activeProtocol;
+    final targetProtocol = _protocolForLocation(target);
+    if (targetProtocol == null) {
+      if (sourceProtocol != null) {
+        _transitionConnection(operationId, VpnStatus.connected);
+      } else if (!await _restoreRetainedNetworkProtection(
+        operationId: operationId,
+      )) {
+        _transitionConnection(operationId, VpnStatus.disconnected);
+      }
+      errorMessage =
+          'Cet emplacement n’est pas compatible avec le protocole choisi. Sélectionnez un autre emplacement.';
+      pendingTargetLocation = null;
+      notifyListeners();
+      return;
+    }
+    if (targetProtocol == VpnProtocol.openVpn) {
       await _startPreparedLocationMigration(
         operationId: operationId,
-        reconnectProtocol: activeProtocol,
+        reconnectProtocol: sourceProtocol,
+        destinationProtocol: targetProtocol,
       );
       return;
     }
@@ -2380,24 +2539,13 @@ class AppController extends ChangeNotifier {
     // tunnel, select the destination, then reuse the existing registration
     // flow so the same logical device reconnects on the chosen node.
     try {
-      if (killSwitchEnabled) {
-        if (!await _prepareConnectionNetworkProtection(
-          VpnProtocol.wireGuard,
-          operationId: operationId,
-        )) {
-          return;
-        }
-        await _wireguard.suspendForMigration();
-      } else {
-        await _disconnectActiveTunnel();
+      if (sourceProtocol != null &&
+          !await _suspendForLocationChange(
+            sourceProtocol,
+            operationId: operationId,
+          )) {
+        return;
       }
-      if (await _wireguard.isConnected()) {
-        throw StateError('Le tunnel est toujours actif.');
-      }
-      if (!_transitionConnection(operationId, VpnStatus.disconnected)) return;
-      activeProtocol = null;
-      tunnelLocationId = null;
-      connectedAt = null;
       if (!await _selectLocation(target, operationId: operationId)) {
         throw StateError('La destination n’a pas pu être enregistrée.');
       }
@@ -2405,18 +2553,60 @@ class AppController extends ChangeNotifier {
       if (!_transitionConnection(operationId, VpnStatus.preparing)) return;
       await _startDeviceConnection(
         identityWasReset: false,
-        forcedProtocol: VpnProtocol.wireGuard,
+        forcedProtocol: targetProtocol,
         operationId: operationId,
       );
     } catch (_) {
       if (!_acceptConnectionOperation(operationId)) return;
       await _restoreNetworkStateAfterFailedDisconnect(
-        VpnProtocol.wireGuard,
+        sourceProtocol,
         operationId: operationId,
       );
       errorMessage ??= 'Le changement de serveur n’a pas pu être effectué.';
       notifyListeners();
     }
+  }
+
+  Future<bool> _suspendForLocationChange(
+    VpnProtocol protocol, {
+    int? operationId,
+  }) async {
+    if (killSwitchEnabled) {
+      // Suspend under the source owner's prepared policy. The destination
+      // prepares its own policy before enrollment, transferring it natively.
+      if (!await _prepareConnectionNetworkProtection(
+        protocol,
+        operationId: operationId,
+      )) {
+        return false;
+      }
+      if (protocol == VpnProtocol.wireGuard) {
+        await _wireguard.suspendForMigration();
+      } else {
+        await DiagnosticLog.record(
+          area: 'openvpn',
+          event: 'migration_tunnel_suspend_started',
+        );
+        await _openVpn.suspendForMigration();
+        await DiagnosticLog.record(
+          area: 'openvpn',
+          event: 'migration_tunnel_suspend_succeeded',
+        );
+      }
+    } else {
+      await _disconnectActiveTunnel();
+    }
+    if (!_acceptConnectionOperation(operationId)) return false;
+    if (await _isTunnelStillConnected(protocol)) {
+      throw StateError('Le tunnel est toujours actif.');
+    }
+    if (!_transitionConnection(operationId, VpnStatus.disconnected)) {
+      return false;
+    }
+    activeProtocol = null;
+    tunnelLocationId = null;
+    connectedAt = null;
+    return true;
   }
 
   Future<void> startPreparedLocationMigration({bool connectWhenReady = false}) {
@@ -2441,6 +2631,7 @@ class AppController extends ChangeNotifier {
     bool connectWhenReady = false,
     int? operationId,
     VpnProtocol? reconnectProtocol,
+    VpnProtocol? destinationProtocol,
   }) async {
     final target = pendingTargetLocation;
     final token = await _safe(_store.token());
@@ -2464,36 +2655,12 @@ class AppController extends ChangeNotifier {
     locationMigrationMessage = 'Changement de serveur…';
     try {
       if (reconnectProtocol != null) {
-        if (reconnectProtocol == VpnProtocol.openVpn && killSwitchEnabled) {
-          // Replace the tunnel phase with a prepared phase before stopping the
-          // old DCO interface. The migration API stays reachable through the
-          // signed GUI permit while every other application remains blocked.
-          if (!await _prepareConnectionNetworkProtection(
-            VpnProtocol.openVpn,
-            operationId: operationId,
-          )) {
-            return;
-          }
-          await DiagnosticLog.record(
-            area: 'openvpn',
-            event: 'migration_tunnel_suspend_started',
-          );
-          await _openVpn.suspendForMigration();
-          await DiagnosticLog.record(
-            area: 'openvpn',
-            event: 'migration_tunnel_suspend_succeeded',
-          );
-        } else {
-          await _disconnectActiveTunnel();
-        }
-        if (await _isTunnelStillConnected(reconnectProtocol)) {
-          throw StateError('Le tunnel est toujours actif.');
-        }
-        if (!_transitionConnection(operationId, VpnStatus.disconnected)) {
+        if (!await _suspendForLocationChange(
+          reconnectProtocol,
+          operationId: operationId,
+        )) {
           return;
         }
-        activeProtocol = null;
-        tunnelLocationId = null;
       }
       if (!_acceptConnectionOperation(operationId)) return;
       notifyListeners();
@@ -2505,7 +2672,9 @@ class AppController extends ChangeNotifier {
       );
       if (!_acceptConnectionOperation(operationId)) return;
       _migrationReconnectProtocol =
-          reconnectProtocol ?? (connectWhenReady ? VpnProtocol.openVpn : null);
+          destinationProtocol ??
+          reconnectProtocol ??
+          (connectWhenReady ? VpnProtocol.openVpn : null);
       _migrationPollingClock = Stopwatch()..start();
       var resumeMarkerSaved = true;
       try {
@@ -2845,6 +3014,13 @@ class AppController extends ChangeNotifier {
       notifyListeners();
       return;
     }
+    if (keepResumeMarker &&
+        error.statusCode == HttpStatus.notFound &&
+        error.observedHttpStatus == HttpStatus.notFound &&
+        error.errorCode == 'not_found') {
+      await _reconcileMissingLocationMigration();
+      return;
+    }
     final capacityIssue = _locationCapacityIssue(error);
     if (capacityIssue != null) {
       locationMigrationError = capacityIssue.message;
@@ -2887,6 +3063,52 @@ class AppController extends ChangeNotifier {
       pendingTargetLocation = null;
     }
     notifyListeners();
+  }
+
+  Future<void> _reconcileMissingLocationMigration() async {
+    final sessionEpoch = _sessionEpoch;
+    final userId = profile?.userId;
+    final deviceId = currentDeviceId;
+    final migrationEpoch = _migrationEpoch;
+    final migration = locationMigration;
+    final deviceRefreshEpoch = _devicesRefreshEpoch + 1;
+    final deviceMutationEpoch = _devicesMutationEpoch;
+    bool current() =>
+        _isCurrentSession(sessionEpoch, userId) &&
+        migrationEpoch == _migrationEpoch &&
+        currentDeviceId == deviceId &&
+        identical(locationMigration, migration) &&
+        deviceRefreshEpoch == _devicesRefreshEpoch &&
+        deviceMutationEpoch == _devicesMutationEpoch;
+    locationMigrationMessage = null;
+    locationMigrationError =
+        'Le changement de serveur ne peut pas être poursuivi. Actualisez les emplacements puis réessayez.';
+    if (userId == null || deviceId == null) {
+      notifyListeners();
+      return;
+    }
+    await refreshDevices();
+    if (!current()) return;
+    final confirmedLocation = _currentDevice?.location;
+    if (!devicesReachable || confirmedLocation == null) {
+      notifyListeners();
+      return;
+    }
+    try {
+      await _store.saveSelectedLocation(confirmedLocation.id);
+      if (!current()) return;
+      await _store.clearLocationMigration();
+      if (!current()) return;
+      _clearLocationMigrationState();
+      selectedLocation = confirmedLocation;
+      realDeviceLocation = confirmedLocation;
+      _locationSelectionUnavailable = false;
+      _unavailableLocationId = null;
+    } catch (_) {
+      // Keep the resume state until both the device and durable cleanup are
+      // confirmed. Reconciliation never releases protection or reconnects.
+    }
+    if (_isCurrentSession(sessionEpoch, userId)) notifyListeners();
   }
 
   void _cancelLocationMigrationPolling() {
@@ -3243,6 +3465,7 @@ class AppController extends ChangeNotifier {
   /// tunnel reconnection or a location migration. Only confirmed authentication
   /// rejection may remove the saved credential.
   Future<void> retrySavedSessionVerification() {
+    _deferredStartupAutoConnect = false;
     _cancelSavedSessionVerificationRetry();
     _api.invalidateBootstrapCache();
     return _recoverSavedSession(allowAutoConnect: false);
@@ -3453,7 +3676,11 @@ class AppController extends ChangeNotifier {
       _performSignIn(() => _api.login(email: email, password: password));
 
   Future<bool> signInWithBrowser() async {
-    if (_signInInProgress || browserSignInBusy || _isSigningOut || _disposed) {
+    if (_signInInProgress ||
+        browserSignInBusy ||
+        _isSigningOut ||
+        _isExpiringSession ||
+        _disposed) {
       return false;
     }
     browserSignInErrorMessage = null;
@@ -3513,6 +3740,14 @@ class AppController extends ChangeNotifier {
     notifyListeners();
     _browserAuthStage = 'browser_auth_listener';
     _traceControllerPhase('account', 'browser_auth_listener', 'begin');
+    final browserLanguage = language == AppLanguage.system
+        ? AppLanguageLocale.fromLocale(
+            WidgetsBinding.instance.platformDispatcher.locale,
+          )
+        : language;
+    _browserAuth.pageTexts = AppStrings.forLanguage(
+      browserLanguage,
+    ).browserAuthPageTexts;
     final creating = _browserAuth.start();
     // Binding can finish after an explicit cancellation. Close that listener
     // as well; it must never become an orphan waiting for browser traffic.
@@ -3642,7 +3877,11 @@ class AppController extends ChangeNotifier {
     Future<AuthSession> Function() authenticate, {
     bool browser = false,
   }) async {
-    if (_isSigningOut || _disposed || _signInInProgress || browserSignInBusy) {
+    if (_isSigningOut ||
+        _isExpiringSession ||
+        _disposed ||
+        _signInInProgress ||
+        browserSignInBusy) {
       return false;
     }
     if (runtimeOwnedByAnotherUser) {
@@ -3870,6 +4109,7 @@ class AppController extends ChangeNotifier {
           errorMessage = _openVpnPlatformErrorMessage(error.code);
         }
       }
+      if (_disposed || !_acceptConnectionOperation(operationId)) return;
       notifyListeners();
       return;
     }
@@ -3963,6 +4203,24 @@ class AppController extends ChangeNotifier {
           openVpnRuntimeAvailable &&
               location.supportedProtocols.contains(VpnProtocol.openVpn),
       };
+
+  VpnProtocol? _protocolForLocation(Location location) {
+    if (protocolPreference == VpnProtocolPreference.automatic) {
+      if (location.supportedProtocols.contains(VpnProtocol.wireGuard)) {
+        return VpnProtocol.wireGuard;
+      }
+      if (openVpnRuntimeAvailable &&
+          location.supportedProtocols.contains(VpnProtocol.openVpn)) {
+        return VpnProtocol.openVpn;
+      }
+      return null;
+    }
+    if (!location.supportedProtocols.contains(vpnProtocol) ||
+        (vpnProtocol == VpnProtocol.openVpn && !openVpnRuntimeAvailable)) {
+      return null;
+    }
+    return vpnProtocol;
+  }
 
   VpnProtocol? _protocolForConnection({VpnProtocol? forcedProtocol}) {
     if (forcedProtocol != null) return forcedProtocol;
@@ -4476,6 +4734,7 @@ class AppController extends ChangeNotifier {
       area: 'wireguard',
       event: 'device_enrollment_started',
     );
+    if (!_acceptConnectionOperation(operationId)) return;
     try {
       // The native bridge creates and retains the private key. Dart receives
       // the public key only, then asks the API for a short, complete tunnel
@@ -4491,15 +4750,19 @@ class AppController extends ChangeNotifier {
       final registration = await _registerDevice(
         token: token,
         publicKey: publicKey,
+        operationId: operationId,
       );
+      if (registration == null) return;
       final configuration = registration.configuration;
       if (!_acceptConnectionOperation(operationId)) return;
       await DiagnosticLog.record(
         area: 'wireguard',
         event: 'api_configuration_received',
       );
+      if (!_acceptConnectionOperation(operationId)) return;
       currentDeviceId = configuration.deviceId;
       await _store.saveCurrentDeviceId(configuration.deviceId);
+      if (!_acceptConnectionOperation(operationId)) return;
       realDeviceLocation = _requestedLocation;
       nativeConnectAttempted = true;
       if (!_transitionConnection(operationId, VpnStatus.connecting)) return;
@@ -4510,6 +4773,7 @@ class AppController extends ChangeNotifier {
       );
       // If a native attempt fails ambiguously, its cache may already contain
       // the new destination. Only a confirmed success can attest it again.
+      if (!_acceptConnectionOperation(operationId)) return;
       _knownTunnelLocationIds.remove(VpnProtocol.wireGuard);
       await _wireguard.connect(configuration);
       if (!_acceptConnectionOperation(operationId)) return;
@@ -4667,26 +4931,40 @@ class AppController extends ChangeNotifier {
     }
   }
 
-  Future<({DeviceConfiguration configuration, bool requestedDualStack})>
-  _registerDevice({required String token, required String publicKey}) async {
+  Future<({DeviceConfiguration configuration, bool requestedDualStack})?>
+  _registerDevice({
+    required String token,
+    required String publicKey,
+    int? operationId,
+  }) async {
+    final epoch = _sessionEpoch;
+    final userId = profile?.userId;
+    bool current() =>
+        _isCurrentSession(epoch, userId) &&
+        _acceptConnectionOperation(operationId);
+    if (!current()) return null;
     final target = _requestedLocation!;
     final requestDualStack =
         (currentDeviceId == null || currentDeviceId!.isEmpty) &&
         target.supportsIpv6;
     final requestedFamilies = requestDualStack ? dualStackIpFamilies : null;
+    final name = await _deviceName();
+    if (!current()) return null;
     try {
       final configuration = await _api.registerDevice(
         token: token,
-        name: await _deviceName(),
+        name: name,
         publicKey: publicKey,
         locationId: target.id,
         ipFamilies: requestedFamilies,
       );
+      if (!current()) return null;
       return (
         configuration: configuration,
         requestedDualStack: requestDualStack,
       );
     } on ApiException catch (error) {
+      if (!current()) return null;
       if (!requestDualStack ||
           error.statusCode != HttpStatus.serviceUnavailable ||
           error.errorCode != 'ipv6_unavailable') {
@@ -4697,18 +4975,20 @@ class AppController extends ChangeNotifier {
         event: 'ipv6_enrollment_fallback',
         code: 'ipv6_unavailable',
       );
+      if (!current()) return null;
       final configuration = await _api.registerDevice(
         token: token,
-        name: await _deviceName(),
+        name: name,
         publicKey: publicKey,
         locationId: target.id,
       );
+      if (!current()) return null;
       return (configuration: configuration, requestedDualStack: false);
     }
   }
 
-  Future<({String deviceId, List<IpFamily>? profileIpFamilies})>
-  _ensureLogicalDevice(String token) async {
+  Future<({String deviceId, List<IpFamily>? profileIpFamilies})?>
+  _ensureLogicalDevice(String token, {int? operationId}) async {
     final existingId = currentDeviceId;
     if (existingId != null && existingId.isNotEmpty) {
       return (deviceId: existingId, profileIpFamilies: null);
@@ -4721,13 +5001,19 @@ class AppController extends ChangeNotifier {
     final publicKey = await _wireguard.getOrCreatePublicKey(
       accountId: profile!.userId,
     );
+    if (!_acceptConnectionOperation(operationId)) return null;
     final registration = await _registerDevice(
       token: token,
       publicKey: publicKey,
+      operationId: operationId,
     );
+    if (registration == null || !_acceptConnectionOperation(operationId)) {
+      return null;
+    }
     final configuration = registration.configuration;
     currentDeviceId = configuration.deviceId;
     await _store.saveCurrentDeviceId(configuration.deviceId);
+    if (!_acceptConnectionOperation(operationId)) return null;
     realDeviceLocation = _requestedLocation;
     return (
       deviceId: configuration.deviceId,
@@ -4760,8 +5046,13 @@ class AppController extends ChangeNotifier {
       area: 'openvpn',
       event: 'profile_enrollment_started',
     );
+    if (!_acceptConnectionOperation(operationId)) return;
     try {
-      final logicalDevice = await _ensureLogicalDevice(token);
+      final logicalDevice = await _ensureLogicalDevice(
+        token,
+        operationId: operationId,
+      );
+      if (logicalDevice == null) return;
       final deviceId = logicalDevice.deviceId;
       if (!_acceptConnectionOperation(operationId)) return;
       final csrPem = await _openVpn.getOrCreateCsr(
@@ -4778,8 +5069,11 @@ class AppController extends ChangeNotifier {
         deviceId: deviceId,
         csrPem: csrPem,
         ipFamilies: logicalDevice.profileIpFamilies,
+        operationId: operationId,
       );
-      if (!_acceptConnectionOperation(operationId)) return;
+      if (activation == null || !_acceptConnectionOperation(operationId)) {
+        return;
+      }
       await DiagnosticLog.record(
         area: 'openvpn',
         event: 'api_activation_received',
@@ -4791,6 +5085,7 @@ class AppController extends ChangeNotifier {
         area: 'openvpn',
         event: 'native_connect_started',
       );
+      if (!_acceptConnectionOperation(operationId)) return;
       _knownTunnelLocationIds.remove(VpnProtocol.openVpn);
       await _openVpn.importAndConnect(activation);
       if (!_acceptConnectionOperation(operationId)) return;
@@ -4884,11 +5179,12 @@ class AppController extends ChangeNotifier {
   /// profile but has not received the target acknowledgement yet, retry the
   /// exact same CSR a bounded number of times. This is idempotent and never
   /// regenerates or exposes the native private key.
-  Future<OpenVpnActivation> _createReadyOpenVpnProfile({
+  Future<OpenVpnActivation?> _createReadyOpenVpnProfile({
     required String token,
     required String deviceId,
     required String csrPem,
     List<IpFamily>? ipFamilies,
+    int? operationId,
   }) async {
     try {
       return await _createOpenVpnProfileWithPendingRetries(
@@ -4896,8 +5192,10 @@ class AppController extends ChangeNotifier {
         deviceId: deviceId,
         csrPem: csrPem,
         ipFamilies: ipFamilies,
+        operationId: operationId,
       );
     } on ApiException catch (error) {
+      if (!_acceptConnectionOperation(operationId)) return null;
       if (ipFamilies == null ||
           error.statusCode != HttpStatus.serviceUnavailable ||
           error.errorCode != 'ipv6_unavailable') {
@@ -4912,18 +5210,21 @@ class AppController extends ChangeNotifier {
         token: token,
         deviceId: deviceId,
         csrPem: csrPem,
+        operationId: operationId,
       );
     }
   }
 
-  Future<OpenVpnActivation> _createOpenVpnProfileWithPendingRetries({
+  Future<OpenVpnActivation?> _createOpenVpnProfileWithPendingRetries({
     required String token,
     required String deviceId,
     required String csrPem,
     List<IpFamily>? ipFamilies,
+    int? operationId,
   }) async {
     const maxAttempts = 3;
     for (var attempt = 1; attempt <= maxAttempts; attempt++) {
+      if (!_acceptConnectionOperation(operationId)) return null;
       try {
         return await _api.createOpenVpnProfile(
           token: token,
@@ -5091,6 +5392,7 @@ class AppController extends ChangeNotifier {
       _knownTunnelLocationIds[protocol] = _requestedLocation!.id;
     }
     tunnelLocationId = _knownTunnelLocationIds[protocol];
+    _consecutiveDisconnectedChecks = 0;
     _consecutiveHealthFailures = 0;
     _tunnelHealthUnconfirmed = false;
     connectedAt = _now();
@@ -5201,6 +5503,7 @@ class AppController extends ChangeNotifier {
     _retainedProtectionProtocol = null;
     _disconnectUnconfirmed = false;
     _tunnelHealthUnconfirmed = false;
+    _consecutiveDisconnectedChecks = 0;
     _consecutiveHealthFailures = 0;
     tunnelLocationId = null;
     connectedAt = null;
@@ -5463,23 +5766,72 @@ class AppController extends ChangeNotifier {
   }
 
   Future<void> _expireLocalSession() async {
-    _suspendDiagnostics(purge: false);
-    _sessionEpoch++;
-    _clearSubscriptionState();
-    _sessionValidationPending = false;
-    _sessionStorageUnavailable = false;
-    _savedSessionVerificationErrorMessage = null;
-    _cancelSavedSessionVerificationRetry();
-    _cancelAutomaticReconnect();
-    _clearLocationMigrationState();
-    await _store.clearToken();
-    await _store.clearCurrentDeviceId();
-    currentDeviceId = null;
-    profile = null;
-    devices = const [];
-    deviceErrorMessage = null;
-    section = AppSection.connection;
-    _signInPromptPending = true;
+    if (_disposed || _isExpiringSession) return;
+    _isExpiringSession = true;
+    try {
+      _deferredStartupAutoConnect = false;
+      _suspendDiagnostics(purge: false);
+      _sessionEpoch++;
+      final expiringEpoch = _sessionEpoch;
+      final runningConnection = _connectionCommand;
+      if (runningConnection != null) {
+        // An expired account must not accept a configuration or activation still
+        // in flight. Native work already sent may finish, so retain uncertainty
+        // until a passive observation can confirm the tunnel and filter state.
+        _disconnectUnconfirmed = true;
+        _invalidateConnectionOperation(state: VpnStatus.error);
+        unawaited(
+          _observeConnectionAfterSessionExpiry(
+            runningConnection,
+            expiringEpoch,
+          ),
+        );
+      }
+      _clearSubscriptionState();
+      _sessionValidationPending = false;
+      _sessionStorageUnavailable = false;
+      _savedSessionVerificationErrorMessage = null;
+      _cancelSavedSessionVerificationRetry();
+      _cancelAutomaticReconnect();
+      _clearLocationMigrationState();
+      currentDeviceId = null;
+      profile = null;
+      devices = const [];
+      deviceErrorMessage = null;
+      section = AppSection.connection;
+      _signInPromptPending = true;
+      notifyListeners();
+      var cleanupFailed = false;
+      try {
+        final writing = _sessionTokenWrite;
+        if (writing != null) await _safe<void>(writing);
+        await _store.clearToken();
+      } catch (_) {
+        cleanupFailed = true;
+      }
+      try {
+        await _store.clearCurrentDeviceId();
+      } catch (_) {
+        cleanupFailed = true;
+      }
+      if (cleanupFailed && !_disposed && expiringEpoch == _sessionEpoch) {
+        errorMessage =
+            'La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.';
+        notifyListeners();
+      }
+    } finally {
+      _isExpiringSession = false;
+    }
+  }
+
+  Future<void> _observeConnectionAfterSessionExpiry(
+    Future<void> running,
+    int expectedEpoch,
+  ) async {
+    await _safe<void>(running);
+    if (_disposed || _isSigningOut || expectedEpoch != _sessionEpoch) return;
+    await _loadTunnelState(observationOnly: true);
+    if (!_disposed && expectedEpoch == _sessionEpoch) notifyListeners();
   }
 
   bool isCurrentDevice(VpnDevice device) => device.deviceId == currentDeviceId;
@@ -5607,6 +5959,7 @@ class AppController extends ChangeNotifier {
   Future<void> signOut() async {
     if (_isSigningOut || _disposed || _isInstallingUpdate) return;
     _isSigningOut = true;
+    _deferredStartupAutoConnect = false;
     cancelBrowserSignIn();
     _suspendDiagnostics(purge: true);
     _sessionEpoch++;

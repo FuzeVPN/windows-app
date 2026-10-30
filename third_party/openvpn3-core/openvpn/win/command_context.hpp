@@ -1,5 +1,6 @@
 #pragma once
 
+#include <openvpn/win/activation_network_contract.hpp>
 #include <windows.h>
 #include <atomic>
 #include <algorithm>
@@ -49,7 +50,7 @@ inline DiagnosticAction ClassifyNetworkCommand(std::string_view command) {
     else return DiagnosticAction::command_other;
     if (command.starts_with("add route ")) return DiagnosticAction::command_route_add;
     if (command.starts_with("delete route ")) return DiagnosticAction::command_route_delete;
-    if (command.starts_with("set address ")) return DiagnosticAction::command_address_set;
+    if (command.starts_with("set address ") || command.starts_with("add address ")) return DiagnosticAction::command_address_set;
     if (command.starts_with("delete address ")) return DiagnosticAction::command_address_delete;
     if (command.starts_with("set interface ")) return DiagnosticAction::command_interface;
     if (command.starts_with("set dnsserver")) return DiagnosticAction::command_dns_set;
@@ -63,6 +64,7 @@ inline DiagnosticAction ClassifyNetworkCommand(std::string_view command) {
 inline constexpr unsigned kMaximumCleanupFailureCount = 1000000;
 inline constexpr std::uint64_t kCleanupBudgetMs = 15000;
 struct CommandControl {
+    ActivationNetworkContract activation_network;
     std::atomic<bool> cancelled{false};
     std::atomic<bool> command_failed{false};
     std::atomic<DiagnosticAction> first_failed_action{DiagnosticAction::none};

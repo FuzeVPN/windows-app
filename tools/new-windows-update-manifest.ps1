@@ -12,6 +12,7 @@ $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 $projectRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 Import-Module (Join-Path $projectRoot 'installer\InstallerTools.psm1') -Force
+Import-Module (Join-Path $projectRoot 'installer\BundleVersion.psm1') -Force
 $PackageReport = Assert-ProjectPath $PackageReport $projectRoot
 $OutputPath = Assert-ProjectPath $OutputPath $projectRoot
 $report = Get-Content -LiteralPath $PackageReport -Raw | ConvertFrom-Json
@@ -78,6 +79,7 @@ if ($PackageKind -eq 'portable') {
   } finally { $archive.Dispose() }
 } else {
   [void](Assert-SignedFile $bundle $report.signed_by -TimestampRequired)
+  Assert-BundleUpdaterVersion -Path $bundle -Version $version
   $info = [Diagnostics.FileVersionInfo]::GetVersionInfo($bundle)
   if ($info.ProductName -cne 'FuzeVPN' -or ('{0}.{1}.{2}.{3}' -f $info.FileMajorPart,$info.FileMinorPart,$info.FileBuildPart,$info.FilePrivatePart) -ne "$version.0") { throw 'Bundle product/version mismatch.' }
 }

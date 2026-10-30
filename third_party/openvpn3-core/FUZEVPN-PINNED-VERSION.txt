@@ -1,6 +1,9 @@
 Source: https://github.com/OpenVPN/openvpn3.git
 Commit: 28469efe3ae770268b2b5c6aa607ed1489e101f0
 Licence: MPL-2.0 option selected for FuzeVPN distribution; see LICENSE.md.
+Licensing clarification: FUZEVPN-LICENSING-CLARIFICATION.md records upstream
+confirmation of four missed header updates and their downstream metadata-only
+correction. Original notices, patch and hashes: fuzevpn-license-provenance/.
 
 The vcpkg-built x64-windows dependencies were produced from:
 https://github.com/microsoft/vcpkg.git

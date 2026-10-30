@@ -598,5 +598,14 @@
   "Cette demande de connexion a expiré ou a déjà été utilisée. Recommencez depuis FuzeVPN.": "Αυτό το αίτημα σύνδεσης έληξε ή έχει ήδη χρησιμοποιηθεί. Ξεκινήστε ξανά από το FuzeVPN.",
   "La connexion par navigateur est momentanément indisponible. Utilisez votre adresse e-mail et votre mot de passe, ou réessayez plus tard.": "Η σύνδεση μέσω προγράμματος περιήγησης δεν είναι προσωρινά διαθέσιμη. Χρησιμοποιήστε τη διεύθυνση email και τον κωδικό πρόσβασής σας ή δοκιμάστε ξανά αργότερα.",
   "Reconnectez-vous à votre compte dans le navigateur, puis réessayez depuis FuzeVPN.": "Συνδεθείτε ξανά στον λογαριασμό σας στο πρόγραμμα περιήγησης και μετά δοκιμάστε ξανά από το FuzeVPN.",
-  "Mises à jour désactivées dans cette version de test.": "Οι ενημερώσεις είναι απενεργοποιημένες σε αυτή τη δοκιμαστική έκδοση."
+  "Mises à jour désactivées dans cette version de test.": "Οι ενημερώσεις είναι απενεργοποιημένες σε αυτή τη δοκιμαστική έκδοση.",
+  "Autorisation reçue": "Ελήφθη εξουσιοδότηση",
+  "Autorisation refusée": "Απορρίφθηκε η εξουσιοδότηση",
+  "Demande invalide": "Μη έγκυρο αίτημα",
+  "Revenez dans FuzeVPN pour terminer la connexion.": "Επιστρέψτε στο FuzeVPN για να ολοκληρώσετε τη σύνδεση.",
+  "Délai avant réessai : {seconds} s.": "Χρόνος αναμονής πριν από νέα προσπάθεια: {seconds} δευτ.",
+  "Serveurs : {count}": "Διακομιστές: {count}",
+  "Villes : {count}": "Πόλεις: {count}",
+  "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "Αποκλείει το UDP εκτός της σήραγγας VPN. Για κάλυψη και του WebRTC μέσω TCP/TLS, ενεργοποιήστε το kill switch.",
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Αποκλείει το DNS εκτός της σήραγγας στις θύρες 53 και 853. Για κάλυψη και του DNS μέσω HTTPS, ενεργοποιήστε το kill switch."
 }

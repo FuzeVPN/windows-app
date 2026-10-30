@@ -4,7 +4,7 @@ import 'package:fuzevpn_windows/l10n/app_localizations.dart';
 import 'package:fuzevpn_windows/l10n/generated_catalogs.dart';
 
 void main() {
-  test('VPN recovery notices are rendered in all 30 catalogs', () {
+  test('VPN recovery notices are rendered in all 70 catalogs', () {
     const notices = [
       'Windows n’a pas pu configurer le DNS du tunnel OpenVPN.',
       'Le nettoyage du tunnel OpenVPN n’a pas pu être confirmé. Réessayez la déconnexion.',
@@ -14,7 +14,7 @@ void main() {
       'L’arrêt du tunnel OpenVPN n’a pas pu être confirmé. La protection reste active. Réessayez la déconnexion.',
       'La mise à niveau du pilote OpenVPN nécessite un redémarrage de Windows. Redémarrez lorsque vous serez prêt.',
     ];
-    expect(translationCatalogs, hasLength(30));
+    expect(translationCatalogs, hasLength(70));
     for (final key in notices) {
       expect(sourceCatalog, contains(key), reason: key);
     }

@@ -122,7 +122,7 @@
   "Emplacement indisponible": "Location unavailable",
   "Emplacement sélectionné": "Selected location",
   "Emplacements": "Locations",
-  "Emplacements disponibles : {count}": "Available slots: {count}",
+  "Emplacements disponibles : {count}": "Available locations: {count}",
   "En cas d’échec d’envoi, le rapport reste chiffré en attente pendant 24 heures au maximum. Vous pouvez annuler les tentatives restantes.": "If sending fails, the report stays encrypted and pending for up to 24 hours. You can cancel remaining attempts.",
   "Envoi arrêté. Consultez l’assistance.": "Sending stopped. Contact support.",
   "Envoi des rapports": "Report delivery",
@@ -598,5 +598,14 @@
   "Cette demande de connexion a expiré ou a déjà été utilisée. Recommencez depuis FuzeVPN.": "This sign-in request has expired or has already been used. Start again from FuzeVPN.",
   "La connexion par navigateur est momentanément indisponible. Utilisez votre adresse e-mail et votre mot de passe, ou réessayez plus tard.": "Browser sign-in is temporarily unavailable. Use your email address and password, or try again later.",
   "Reconnectez-vous à votre compte dans le navigateur, puis réessayez depuis FuzeVPN.": "Sign in to your account again in the browser, then try again from FuzeVPN.",
-  "Mises à jour désactivées dans cette version de test.": "Updates are disabled in this test version."
+  "Mises à jour désactivées dans cette version de test.": "Updates are disabled in this test version.",
+  "Autorisation reçue": "Authorization received",
+  "Autorisation refusée": "Authorization denied",
+  "Demande invalide": "Invalid request",
+  "Revenez dans FuzeVPN pour terminer la connexion.": "Return to FuzeVPN to finish signing in.",
+  "Délai avant réessai : {seconds} s.": "Retry delay: {seconds} s.",
+  "Serveurs : {count}": "Servers: {count}",
+  "Villes : {count}": "Cities: {count}",
+  "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "Blocks UDP outside the VPN tunnel. To also cover WebRTC over TCP/TLS, enable the kill switch.",
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Blocks DNS outside the tunnel on ports 53 and 853. To also cover DNS over HTTPS, enable the kill switch."
 }

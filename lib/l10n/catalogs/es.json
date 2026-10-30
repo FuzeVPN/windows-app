@@ -598,5 +598,14 @@
   "Cette demande de connexion a expiré ou a déjà été utilisée. Recommencez depuis FuzeVPN.": "Esta solicitud de inicio de sesión ha caducado o ya se ha utilizado. Vuelve a empezar desde FuzeVPN.",
   "La connexion par navigateur est momentanément indisponible. Utilisez votre adresse e-mail et votre mot de passe, ou réessayez plus tard.": "El inicio de sesión en el navegador no está disponible temporalmente. Usa tu dirección de correo electrónico y tu contraseña, o inténtalo más tarde.",
   "Reconnectez-vous à votre compte dans le navigateur, puis réessayez depuis FuzeVPN.": "Vuelve a iniciar sesión en tu cuenta en el navegador y luego inténtalo de nuevo desde FuzeVPN.",
-  "Mises à jour désactivées dans cette version de test.": "Las actualizaciones están desactivadas en esta versión de prueba."
+  "Mises à jour désactivées dans cette version de test.": "Las actualizaciones están desactivadas en esta versión de prueba.",
+  "Autorisation reçue": "Autorización recibida",
+  "Autorisation refusée": "Autorización denegada",
+  "Demande invalide": "Solicitud no válida",
+  "Revenez dans FuzeVPN pour terminer la connexion.": "Vuelve a FuzeVPN para terminar de iniciar sesión.",
+  "Délai avant réessai : {seconds} s.": "Espera antes de reintentar: {seconds} s.",
+  "Serveurs : {count}": "Servidores: {count}",
+  "Villes : {count}": "Ciudades: {count}",
+  "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "Bloquea UDP fuera del túnel VPN. Para cubrir también WebRTC mediante TCP/TLS, activa el kill switch.",
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Bloquea el DNS fuera del túnel en los puertos 53 y 853. Para cubrir también el DNS mediante HTTPS, activa el kill switch."
 }

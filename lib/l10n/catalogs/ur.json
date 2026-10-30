@@ -598,5 +598,14 @@
   "Cette demande de connexion a expiré ou a déjà été utilisée. Recommencez depuis FuzeVPN.": "اس سائن ان درخواست کی میعاد ختم ہو گئی ہے یا اسے پہلے ہی استعمال کیا جا چکا ہے۔ FuzeVPN سے دوبارہ شروع کریں۔",
   "La connexion par navigateur est momentanément indisponible. Utilisez votre adresse e-mail et votre mot de passe, ou réessayez plus tard.": "براؤزر کے ذریعے سائن ان عارضی طور پر دستیاب نہیں ہے۔ اپنا ای میل پتہ اور پاس ورڈ استعمال کریں یا بعد میں دوبارہ کوشش کریں۔",
   "Reconnectez-vous à votre compte dans le navigateur, puis réessayez depuis FuzeVPN.": "براؤزر میں اپنے اکاؤنٹ میں دوبارہ سائن ان کریں، پھر FuzeVPN سے دوبارہ کوشش کریں۔",
-  "Mises à jour désactivées dans cette version de test.": "اس آزمائشی ورژن میں اپ ڈیٹس غیر فعال ہیں۔"
+  "Mises à jour désactivées dans cette version de test.": "اس آزمائشی ورژن میں اپ ڈیٹس غیر فعال ہیں۔",
+  "Autorisation reçue": "اجازت موصول ہو گئی",
+  "Autorisation refusée": "اجازت مسترد کر دی گئی",
+  "Demande invalide": "غلط درخواست",
+  "Revenez dans FuzeVPN pour terminer la connexion.": "سائن ان مکمل کرنے کے لیے FuzeVPN پر واپس جائیں۔",
+  "Délai avant réessai : {seconds} s.": "دوبارہ کوشش سے پہلے انتظار: {seconds} سیکنڈ۔",
+  "Serveurs : {count}": "سرورز: {count}",
+  "Villes : {count}": "شہر: {count}",
+  "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "VPN ٹنل کے باہر UDP کو روکتا ہے۔ TCP/TLS کے ذریعے WebRTC کو بھی کور کرنے کے لیے کل سوئچ فعال کریں۔",
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "ٹنل کے باہر پورٹس 53 اور 853 پر DNS کو روکتا ہے۔ HTTPS کے ذریعے DNS کو بھی کور کرنے کے لیے کل سوئچ فعال کریں۔"
 }

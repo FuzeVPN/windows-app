@@ -32,12 +32,51 @@ class DiagnosticSupport {
       _invalid();
     }
     final result = <String, Object?>{'schema_version': 1};
-    if (raw['environment'] != null) {
-      result['environment'] = _environment(raw['environment']);
+    var rejected = 0;
+    // Independently validated fragments keep a damaged log from erasing SCM
+    // status or installation evidence. Rejected content never enters exports.
+    for (final fragment in <String, Map<String, Object?> Function(Object?)>{
+      'environment': _environment,
+      'service': _service,
+      'runtime': _runtime,
+      'native_log': _nativeLog,
+    }.entries) {
+      try {
+        result[fragment.key] = fragment.value(raw[fragment.key]);
+      } on FormatException {
+        rejected++;
+        if (fragment.key == 'native_log') {
+          result['native_log'] = {
+            'status': 'rejected',
+            'truncated': false,
+            'discarded_lines': 1,
+            'events': <Object?>[],
+          };
+        }
+      }
     }
-    if (raw['service'] != null) result['service'] = _service(raw['service']);
-    if (raw['runtime'] != null) result['runtime'] = _runtime(raw['runtime']);
-    final log = _map(raw['native_log']);
+    Map<String, Object?> collectionError = const {};
+    try {
+      collectionError = _intFields(raw, {'collection_error'});
+    } on FormatException {
+      rejected++;
+    }
+    result['collection'] = {
+      'status': collectionError.isNotEmpty
+          ? 'read_failed'
+          : rejected > 0
+          ? 'rejected'
+          : 'ok',
+      'truncated': false,
+      'discarded_lines': rejected,
+      if (collectionError.isNotEmpty)
+        'win32_error': collectionError['collection_error'],
+    };
+    return result;
+  }
+
+  static Map<String, Object?> _nativeLog(Object? value) {
+    final log = _map(value);
     final events = log['events'];
     if (events is! List || events.length > 128) _invalid();
     final normalized = <Map<String, Object?>>[];
@@ -51,13 +90,12 @@ class DiagnosticSupport {
       }
     }
     final metadata = _log(log, allowEvents: true);
-    result['native_log'] = {
+    return {
       ...metadata,
       'discarded_lines': ((metadata['discarded_lines'] as int) + discarded)
           .clamp(0, 1000000),
       'events': normalized,
     };
-    return result;
   }
 
   static Map<String, Object?> validate(Object? value) {

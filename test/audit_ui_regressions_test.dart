@@ -103,9 +103,31 @@ void main() {
           ..killSwitchEnabled = killSwitch;
         await _pumpApp(tester, controller);
         expect(_dialogs, findsNothing);
-        await controller.quickConnect();
+        final expectedState = killSwitch
+            ? VpnStatus.blocked
+            : VpnStatus.disconnected;
+        await tester.runAsync(() async {
+          final observed = Completer<void>();
+          void observeExpiredConnection() {
+            if (controller.profile == null &&
+                !controller.isConnectionBusy &&
+                controller.vpnStatus == expectedState &&
+                !observed.isCompleted) {
+              observed.complete();
+            }
+          }
+
+          controller.addListener(observeExpiredConnection);
+          try {
+            await controller.quickConnect();
+            await observed.future.timeout(const Duration(seconds: 5));
+          } finally {
+            controller.removeListener(observeExpiredConnection);
+          }
+        });
         await tester.pumpAndSettle();
         expect(controller.profile, isNull);
+        expect(controller.vpnStatus, expectedState);
         if (killSwitch) {
           expect(controller.vpnStatus, VpnStatus.blocked);
           expect(_dialogs, findsNothing);

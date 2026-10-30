@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="sq-AL" Language="1052" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+  <String Id="Caption" Value="Po instalohet [WixBundleName]" />
+  <String Id="CheckingForUpdatesLabel" Value="Po kontrollohen përditësimet" />
+  <String Id="ConfirmCancelMessage" Value="Dëshironi ta anuloni?" />
+  <String Id="DesktopShortcut" Value="Krijo një shkurtore në desktop" />
+  <String Id="ExecuteUpgradeRelatedBundleMessage" Value="Versioni i mëparshëm" />
+  <String Id="FailureCacheHeader" Value="Përgatitja dështoi" />
+  <String Id="FailureCloseButton" Value="Mbyll" />
+  <String Id="FailureHeader" Value="Dështim" />
+  <String Id="FailureHyperlinkLogText" Value="Veprimi u ndërpre. Shihni &lt;a href=&quot;#&quot;&gt;regjistrin&lt;/a&gt;, zgjidhni problemin dhe provoni përsëri." />
+  <String Id="FailureInstallHeader" Value="Instalimi u ndërpre" />
+  <String Id="FailureLayoutHeader" Value="Kopjimi dështoi" />
+  <String Id="FailureModifyHeader" Value="Ndryshimi u ndërpre" />
+  <String Id="FailureRepairHeader" Value="Riparimi u ndërpre" />
+  <String Id="FailureRestartButton" Value="Rinis" />
+  <String Id="FailureRestartText" Value="Rinisni për të përfunduar rikthimin." />
+  <String Id="FailureUninstallHeader" Value="Çinstalimi u ndërpre" />
+  <String Id="FailureUnsafeUninstallHeader" Value="Çinstalimi u ndërpre" />
+  <String Id="FilesInUseCloseRadioButton" Value="Mbyll aplikacionet" />
+  <String Id="FilesInUseDontCloseRadioButton" Value="Mbaji aplikacionet të hapura" />
+  <String Id="FilesInUseExitButton" Value="Anulo" />
+  <String Id="FilesInUseIgnoreButton" Value="Shpërfill" />
+  <String Id="FilesInUseLabel" Value="Mbyllni aplikacionet e mëposhtme dhe provoni përsëri." />
+  <String Id="FilesInUseNetfxCloseRadioButton" Value="Mbyll aplikacionet" />
+  <String Id="FilesInUseRetryButton" Value="Provo përsëri" />
+  <String Id="FilesInUseTitle" Value="Skedarë në përdorim" />
+  <String Id="HelpCloseButton" Value="Mbyll" />
+  <String Id="HelpHeader" Value="Ndihmë" />
+  <String Id="HelpText" Value="/install, /repair, /uninstall: instalo, riparo, çinstalo. /quiet: mënyra e heshtur. /norestart: mos rinis. DesktopShortcut=1: shkurtore në desktop. InstallFolder=&quot;D:\Applications\FuzeVPN&quot;: dosja fillestare. Përditësimet ruajnë dosjen e instalimit." />
+  <String Id="InstallAcceptCheckbox" Value="&amp;Pranoj kushtet e licencës" />
+  <String Id="InstallCancelButton" Value="Anulo" />
+  <String Id="InstallHeader" Value="Mirë se vini" />
+  <String Id="InstallInstallButton" Value="Instalo" />
+  <String Id="InstallLicenseLinkText" Value="&lt;a href=&quot;#&quot;&gt;Kushtet e licencës&lt;/a&gt; së [WixBundleName]." />
+  <String Id="InstallMessage" Value="Instaloni FuzeVPN në këtë kompjuter." />
+  <String Id="InstallMessageOptions" Value="Instaloni FuzeVPN në këtë kompjuter." />
+  <String Id="InstallOptionsButton" Value="Opsionet" />
+  <String Id="InstallVersion" Value="Versioni [WixBundleVersion]" />
+  <String Id="InstallVersionNotice" Value="Versioni [WixBundleVersion] [BuildNotice]" />
+  <String Id="ModifyCancelButton" Value="Anulo" />
+  <String Id="ModifyHeader" Value="Mirëmbajtja" />
+  <String Id="ModifyRepairButton" Value="Riparo" />
+  <String Id="ModifyUninstallButton" Value="Çinstalo" />
+  <String Id="OptionsBrowseButton" Value="Shfleto" />
+  <String Id="OptionsCancelButton" Value="Anulo" />
+  <String Id="OptionsHeader" Value="Opsionet" />
+  <String Id="OptionsLocationLabel" Value="Dosja e instalimit (e mbrojtur nga Windows)" />
+  <String Id="OptionsOkButton" Value="OK" />
+  <String Id="OptionsPerMachineScopeText" Value="Të gjithë përdoruesit" />
+  <String Id="OptionsPerUserScopeText" Value="Përdoruesi aktual" />
+  <String Id="OverallProgressPackageText" Value="Po përgatitet…" />
+  <String Id="PreserveInstallFolder" Value="Dosja ekzistuese ruhet gjatë përditësimeve. Për ta zhvendosur lirisht ndërfaqen, përdorni arkivin portativ." />
+  <String Id="ProgressCancelButton" Value="Anulo" />
+  <String Id="ProgressHeader" Value="Instalimi në proces" />
+  <String Id="ProgressLabel" Value="Progresi" />
+  <String Id="SuccessCacheHeader" Value="Skedarët janë gati" />
+  <String Id="SuccessCloseButton" Value="Mbyll" />
+  <String Id="SuccessHeader" Value="Veprimi përfundoi" />
+  <String Id="SuccessInstallHeader" Value="Instalimi përfundoi" />
+  <String Id="SuccessLaunchButton" Value="Hap" />
+  <String Id="SuccessLayoutHeader" Value="Skedarët janë gati" />
+  <String Id="SuccessModifyHeader" Value="Ndryshimi përfundoi" />
+  <String Id="SuccessOpenApp" Value="Hapni FuzeVPN nga menyja Start. Preferencat tuaja personale janë ruajtur." />
+  <String Id="SuccessRepairHeader" Value="Riparimi përfundoi" />
+  <String Id="SuccessRestartButton" Value="Rinis" />
+  <String Id="SuccessRestartText" Value="Rinisni kompjuterin për të përfunduar." />
+  <String Id="SuccessUninstallHeader" Value="Çinstalimi përfundoi" />
+  <String Id="SuccessUninstallRestartText" Value="Rinisni për të përfunduar çinstalimin." />
+  <String Id="SuccessUnsafeUninstallHeader" Value="Çinstalimi përfundoi" />
+  <String Id="Title" Value="[WixBundleName]" />
+  <String Id="UpdateButton" Value="Përditëso" />
+</WixLocalization>

@@ -15,6 +15,10 @@ class VpnConnectionStateMachine {
   bool get isBusy => _activeOperationId != null;
   int? get activeOperationId => _activeOperationId;
 
+  /// Identifies the native lifecycle observed by a passive status query, even
+  /// after a newer command has already finished.
+  int get generation => _generation;
+
   int begin(VpnStatus initialState) {
     if (_activeOperationId != null) {
       throw StateError('A VPN operation is already active.');
@@ -55,6 +59,8 @@ class VpnConnectionStateMachine {
     final allowed = switch (_state) {
       VpnStatus.disconnected => {
         VpnStatus.preparing,
+        // Cleanup must verify native state even when the UI already says idle.
+        VpnStatus.disconnecting,
         VpnStatus.connected,
         VpnStatus.blocked,
         VpnStatus.error,
