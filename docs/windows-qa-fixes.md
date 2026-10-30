@@ -5,6 +5,92 @@ collection diagnostics and cleanup before updating from a disconnected UI.
 The precise historical filesystem cause of the supplied 1.0.8 diagnostic remains
 unverified; instrumentation improves the evidence for a new connection attempt.
 
+## 1.0.15 qualification findings (28 October 2026)
+
+These source corrections follow the 1.0.15 VM campaign (69/72 cells, three
+initial portable exits). They are not in any signed package yet: the existing
+1.0.15 and 1.0.16 builds predate them. No VM run has verified them.
+
+### Silent exits after WireGuard key generation
+
+`CreateIdentityForAccount` loaded `tunnel.dll` to call
+`WireGuardGenerateKeypair`, then unloaded it with `FreeLibrary`. That DLL is a
+Go c-shared runtime: its threads (sysmon wakes within 60 s), vectored
+exception/continue handlers and power/console callbacks stay registered, and
+Go also suppresses WER for the process. After the unload, the process dies
+silently at the next exception or Go thread wake. The cause was established
+from code and timing; no dump or exit code was captured.
+
+- Portable: the first sign-in on a fresh profile creates the identity inside
+  `fuzevpn_windows.exe`. The frontend vanished about 60 s later on 25H2, 26300
+  and Tiny11, and also in 1.0.13. The relaunch reads the stored key, so it
+  survives.
+- Installed: on Tiny11 the service generated a key for the first OpenVPN
+  connect after the upgrade. About 6 s later it died while handling that
+  connect (SCM 7031, frontend `broker_unavailable` 109).
+
+The GUI, service and portable engine now generate the key pair in-process
+(`wireguard_keypair.h`): `BCryptGenRandom`, WireGuard clamping and OpenSSL
+X25519, byte-identical to the Go export, with RFC 7748 known-answer tests.
+Stored identities are unchanged. Only the dedicated
+`--fuzevpn-wireguard-service` process still loads `tunnel.dll`; it is pinned
+and never freed. `libcrypto` is linked explicitly into the GUI, service and
+identity tests.
+
+### Device binding `storage_error` (Tiny11 portable)
+
+The failing step was the frontend's protected write of `current_device_id`
+after a successful enrollment, not the tunnel. The diagnostics-store worker
+pinned every ancestor directory with read-only sharing, so `MoveFileExW` into
+`%LOCALAPPDATA%\FuzeVPN` could fail with a sharing violation. Ancestors now
+allow write sharing but still refuse delete sharing, so they cannot be
+renamed or swapped. The leaf stays strict.
+
+Protected writes and deletes retry `ERROR_SHARING_VIOLATION`,
+`ERROR_ACCESS_DENIED` and `ERROR_LOCK_VIOLATION` for at most about 310 ms, and
+report a closed `secure_store_*` stage, the Windows error and the attempt
+count. The UI reports a protected-storage failure, keeps the server device id
+in memory, and offers a retry that keeps the kill switch armed. The exact
+historical cause remains unproven.
+
+### WireGuard handshake window
+
+The first handshake was awaited for only 8 s, about two initiations. The last
+(or only) endpoint candidate now gets 20 s; earlier candidates keep 8 s for
+fast failover. The connection and broker deadlines are unchanged. Each
+candidate writes a numeric `connection_attempt_snapshot`: stage, durations,
+tx/rx, handshake and `stats_reads`. Why the FR exit did not answer is still
+unknown: ask the API owners whether the 201 for a relocated peer can precede
+the node update.
+
+### Retry and OpenVPN pending operations
+
+With the kill switch on, the issue card's Réessayer only disconnected.
+Réessayer, including in the "Emplacement indisponible" dialog, now re-runs
+the same connection without releasing WFP. It is hidden when a retry is unsafe.
+The `openvpn_operation_pending` wait is a 45 s budget (at most 6 attempts,
+Retry-After honoured, default 3 s) instead of three attempts (about 28 s).
+The UI still offers no cancel during that wait.
+
+### Diagnostics
+
+- Sign-in traces `local_identity`.
+- The handled `device_location_locked` 409 is traced locally under its own
+  name; v1 report codes are unchanged.
+- Uppercase operation breadcrumbs such as `importAndConnect_started` are no
+  longer dropped by the broker writer.
+- API address-cache invalidation from connectivity hints is deferred while a
+  connection command runs.
+
+Retest on the VMs:
+- fresh portable sign-in, then stay idle at least 3 minutes;
+- installed EXE with the WireGuard identity deleted or the current device
+  revoked, then OpenVPN and WireGuard connects with protections ON;
+- the WireGuard FR/DE OFF cells;
+- an `openvpn_operation_pending` retry from the blocked state.
+
+`tunnel.dll` must not be mapped in `fuzevpn_windows.exe` or `FuzeVPNService`.
+
 ## Actionable storage and partial-collection diagnostics (17 October 2026)
 
 The 1.0.8 diagnostic `a83ddfb0-4059-47d3-a33c-22314f1bdd7c` isolates

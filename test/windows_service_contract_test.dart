@@ -276,4 +276,40 @@ void main() {
     expect(broker, contains('"service_configuration_mismatch"'));
     expect(broker, contains('"broker.installService="'));
   });
+
+  test('WireGuard keeps its pinned runtime and per-candidate wiring', () {
+    final tunnel = source('windows/runner/wireguard_tunnel.cpp');
+
+    // tunnel.dll stays pinned in the tunnel-service process and never maps
+    // its Go runtime elsewhere: keys come from the OpenSSL implementation.
+    expect(tunnel, contains('GET_MODULE_HANDLE_EX_FLAG_PIN'));
+    expect(tunnel, contains('fuzevpn::GenerateWireGuardKeypair('));
+    expect(tunnel, isNot(contains('WireGuardGenerateKeypair')));
+    expect(tunnel, isNot(contains('FreeLibrary(module_)')));
+    expect(tunnel, isNot(contains('FreeLibrary(loaded)')));
+    // The last or only candidate gets the long handshake window.
+    expect(
+      tunnel,
+      contains(
+        'WireGuardHandshakeWindow(candidate_index, numeric_endpoints.size())',
+      ),
+    );
+    expect(tunnel, isNot(contains('8000, connection_deadline')));
+    // A stuck adapter lookup is reported as adapter_open, not starting.
+    final adapterStage = tunnel.indexOf(
+      'snapshot.stage = Stage::adapter_open;',
+    );
+    final adapterLookup = tunnel.indexOf(
+      'TunnelRuntime::AdapterLuid(&interface_luid, attempt_deadline)',
+    );
+    expect(adapterStage, isNot(-1));
+    expect(adapterLookup, greaterThan(adapterStage));
+    // Every exit of a candidate attempt writes its snapshot.
+    final attempt = tunnel.substring(
+      tunnel.indexOf('[&](const std::string& endpoint'),
+      tunnel.indexOf('SecureErase(&private_key)', adapterLookup),
+    );
+    expect('return finish('.allMatches(attempt), hasLength(5));
+    expect(attempt, isNot(contains('return Outcome::')));
+  });
 }

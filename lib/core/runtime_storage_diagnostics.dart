@@ -27,3 +27,16 @@ final runtimeStorageStages = Set<String>.unmodifiable(<String>{
   for (final operation in ['create', 'write', 'flush', 'close', 'replace'])
     'wg_storage_config_$operation',
 });
+
+// Steps of a failed protected-store write or delete ('storage_error').
+const secureStoreStages = <String>{
+  'secure_store_impersonation',
+  'secure_store_path',
+  'secure_store_protect',
+  'secure_store_directory',
+  'secure_store_create',
+  'secure_store_write',
+  'secure_store_flush',
+  'secure_store_replace',
+  'secure_store_delete',
+};

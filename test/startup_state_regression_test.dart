@@ -684,6 +684,43 @@ void main() {
     },
   );
 
+  test(
+    'enrollment retry stays unavailable and inert during runtime verification',
+    () async {
+      final api = _StartupApi();
+      final wg = _StartupWireGuard()..statusUnavailable = true;
+      final app = _makeController(api: api, wireguard: wg);
+      addTearDown(app.dispose);
+      await app.initialize();
+      expect(app.runtimeVerificationPending, isTrue);
+      // Every other guard would allow it: signed in, idle, no tunnel and no
+      // retained protection to release.
+      app
+        ..profile = fixture.account
+        ..selectedLocation = fixture.source;
+      expect(app.isConnectionBusy, isFalse);
+      expect(app.activeProtocol, isNull);
+      expect(app.requiresExplicitDisconnect, isFalse);
+      expect(app.runtimeOwnedByAnotherUser, isFalse);
+      expect(app.canRetryConnection, isFalse);
+      final statusCalls = wg.statusCalls;
+
+      await app.retryConnection();
+
+      expect(wg.statusCalls, statusCalls);
+      expect(
+        wg.prepareCalls +
+            wg.connectCalls +
+            wg.disconnectCalls +
+            wg.reconnectCalls,
+        0,
+      );
+      expect(api.meCalls + api.locationsCalls, 0);
+      expect(api.registeredLocation, isNull);
+      expect(app.runtimeVerificationPending, isTrue);
+    },
+  );
+
   test('passive retry never stops either of two confirmed tunnels', () async {
     final api = _StartupApi();
     final wg = _StartupWireGuard()..statusUnavailable = true;

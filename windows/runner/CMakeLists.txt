@@ -217,37 +217,78 @@ target_include_directories(${BINARY_NAME} PRIVATE "${CMAKE_SOURCE_DIR}")
 set(FUZEVPN_OPENVPN3_CORE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../third_party/openvpn3-core"
     CACHE PATH "Pinned OpenVPN 3 Core source directory")
 option(FUZEVPN_ENABLE_OPENVPN3 "Compile the reviewed OpenVPN 3 Core integration" ON)
+
+# WireGuard key pairs are generated in-process with this pinned OpenSSL 3
+# (wireguard_keypair.h): the GUI, service and portable engine must never load
+# tunnel.dll's Go runtime. It is required even without OpenVPN 3 Core and
+# there is deliberately no tunnel.dll fallback.
+set(FUZEVPN_OPENVPN3_VCPKG_DIR
+    "${FUZEVPN_OPENVPN3_CORE_DIR}/vcpkg_installed/${FUZEVPN_TARGET_ARCH}-windows")
+if(NOT EXISTS "${FUZEVPN_OPENVPN3_VCPKG_DIR}/include/openssl")
+  message(FATAL_ERROR "OpenVPN 3 Core dependencies have not been built for Windows ${FUZEVPN_TARGET_ARCH}. WireGuard key generation also requires their pinned OpenSSL 3.")
+endif()
+file(GLOB FUZEVPN_SSL_DLL_CANDIDATES "${FUZEVPN_OPENVPN3_VCPKG_DIR}/bin/libssl-3*.dll")
+file(GLOB FUZEVPN_CRYPTO_DLL_CANDIDATES "${FUZEVPN_OPENVPN3_VCPKG_DIR}/bin/libcrypto-3*.dll")
+list(LENGTH FUZEVPN_SSL_DLL_CANDIDATES FUZEVPN_SSL_DLL_COUNT)
+list(LENGTH FUZEVPN_CRYPTO_DLL_CANDIDATES FUZEVPN_CRYPTO_DLL_COUNT)
+if(NOT FUZEVPN_SSL_DLL_COUNT EQUAL 1 OR NOT FUZEVPN_CRYPTO_DLL_COUNT EQUAL 1)
+  message(FATAL_ERROR "Exactly one OpenSSL 3 DLL pair is required for ${FUZEVPN_TARGET_ARCH}.")
+endif()
+list(GET FUZEVPN_SSL_DLL_CANDIDATES 0 FUZEVPN_SSL_DLL_PATH)
+list(GET FUZEVPN_CRYPTO_DLL_CANDIDATES 0 FUZEVPN_CRYPTO_DLL_PATH)
+get_filename_component(FUZEVPN_SSL_DLL_NAME "${FUZEVPN_SSL_DLL_PATH}" NAME)
+get_filename_component(FUZEVPN_CRYPTO_DLL_NAME "${FUZEVPN_CRYPTO_DLL_PATH}" NAME)
+add_compile_definitions(
+  "FUZEVPN_OPENSSL_SSL_DLL=\"${FUZEVPN_SSL_DLL_NAME}\""
+  "FUZEVPN_OPENSSL_CRYPTO_DLL=\"${FUZEVPN_CRYPTO_DLL_NAME}\"")
+set(FUZEVPN_OPENSSL_VERSION_FILE
+    "${FUZEVPN_OPENVPN3_VCPKG_DIR}/share/openssl/OpenSSLConfigVersion.cmake")
+if(NOT EXISTS "${FUZEVPN_OPENSSL_VERSION_FILE}")
+  message(FATAL_ERROR "The pinned OpenSSL version metadata is missing.")
+endif()
+file(READ "${FUZEVPN_OPENSSL_VERSION_FILE}" FUZEVPN_OPENSSL_VERSION_METADATA)
+if(NOT FUZEVPN_OPENSSL_VERSION_METADATA MATCHES
+    "set\\(PACKAGE_VERSION 3\\.6\\.5\\)")
+  message(FATAL_ERROR
+    "OpenSSL 3.6.5 is required. Rebuild the pinned vcpkg dependencies.")
+endif()
+# The OpenVPN core keeps its OpenSSL usage PRIVATE; every target compiling
+# wireguard_tunnel.cpp links this explicitly.
+add_library(fuzevpn_openssl_crypto INTERFACE)
+target_include_directories(fuzevpn_openssl_crypto INTERFACE
+  "${FUZEVPN_OPENVPN3_VCPKG_DIR}/include")
+target_link_libraries(fuzevpn_openssl_crypto INTERFACE
+  "$<IF:$<CONFIG:Debug>,${FUZEVPN_OPENVPN3_VCPKG_DIR}/debug/lib/libcrypto.lib,${FUZEVPN_OPENVPN3_VCPKG_DIR}/lib/libcrypto.lib>")
+set(FUZEVPN_CRYPTO_DLL_SOURCE
+  "$<IF:$<CONFIG:Debug>,${FUZEVPN_OPENVPN3_VCPKG_DIR}/debug/bin/${FUZEVPN_CRYPTO_DLL_NAME},${FUZEVPN_OPENVPN3_VCPKG_DIR}/bin/${FUZEVPN_CRYPTO_DLL_NAME}>")
+function(fuzevpn_copy_openssl_crypto target)
+  add_custom_command(TARGET ${target} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+      "${FUZEVPN_CRYPTO_DLL_SOURCE}"
+      "$<TARGET_FILE_DIR:${target}>/${FUZEVPN_CRYPTO_DLL_NAME}")
+endfunction()
+# Native tests share one output folder. Parallel POST_BUILD copies of the same
+# DLL there could collide on a clean build, so a single target copies it and
+# every native test loading OpenSSL depends on it. Multi-config generators
+# append the configuration to that folder, as for the test executables.
+get_property(FUZEVPN_MULTI_CONFIG GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
+if(FUZEVPN_MULTI_CONFIG)
+  set(FUZEVPN_NATIVE_TESTS_RUNTIME_DIR "${CMAKE_BINARY_DIR}/native-tests/$<CONFIG>")
+else()
+  set(FUZEVPN_NATIVE_TESTS_RUNTIME_DIR "${CMAKE_BINARY_DIR}/native-tests")
+endif()
+add_custom_target(fuzevpn_native_tests_openssl_runtime
+  COMMAND ${CMAKE_COMMAND} -E make_directory "${FUZEVPN_NATIVE_TESTS_RUNTIME_DIR}"
+  COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "${FUZEVPN_CRYPTO_DLL_SOURCE}"
+    "${FUZEVPN_NATIVE_TESTS_RUNTIME_DIR}/${FUZEVPN_CRYPTO_DLL_NAME}"
+  VERBATIM)
+target_link_libraries(${BINARY_NAME} PRIVATE fuzevpn_openssl_crypto)
+target_link_libraries(${FUZEVPN_SERVICE_TARGET} PRIVATE fuzevpn_openssl_crypto)
+# The service is built beside the GUI and loads the same copy.
+fuzevpn_copy_openssl_crypto(${BINARY_NAME})
+
 if(FUZEVPN_ENABLE_OPENVPN3 AND EXISTS "${FUZEVPN_OPENVPN3_CORE_DIR}/client/ovpncli.cpp")
-  set(FUZEVPN_OPENVPN3_VCPKG_DIR
-      "${FUZEVPN_OPENVPN3_CORE_DIR}/vcpkg_installed/${FUZEVPN_TARGET_ARCH}-windows")
-  if(NOT EXISTS "${FUZEVPN_OPENVPN3_VCPKG_DIR}/include/openssl")
-    message(FATAL_ERROR "OpenVPN 3 Core dependencies have not been built for Windows ${FUZEVPN_TARGET_ARCH}.")
-  endif()
-  file(GLOB FUZEVPN_SSL_DLL_CANDIDATES "${FUZEVPN_OPENVPN3_VCPKG_DIR}/bin/libssl-3*.dll")
-  file(GLOB FUZEVPN_CRYPTO_DLL_CANDIDATES "${FUZEVPN_OPENVPN3_VCPKG_DIR}/bin/libcrypto-3*.dll")
-  list(LENGTH FUZEVPN_SSL_DLL_CANDIDATES FUZEVPN_SSL_DLL_COUNT)
-  list(LENGTH FUZEVPN_CRYPTO_DLL_CANDIDATES FUZEVPN_CRYPTO_DLL_COUNT)
-  if(NOT FUZEVPN_SSL_DLL_COUNT EQUAL 1 OR NOT FUZEVPN_CRYPTO_DLL_COUNT EQUAL 1)
-    message(FATAL_ERROR "Exactly one OpenSSL 3 DLL pair is required for ${FUZEVPN_TARGET_ARCH}.")
-  endif()
-  list(GET FUZEVPN_SSL_DLL_CANDIDATES 0 FUZEVPN_SSL_DLL_PATH)
-  list(GET FUZEVPN_CRYPTO_DLL_CANDIDATES 0 FUZEVPN_CRYPTO_DLL_PATH)
-  get_filename_component(FUZEVPN_SSL_DLL_NAME "${FUZEVPN_SSL_DLL_PATH}" NAME)
-  get_filename_component(FUZEVPN_CRYPTO_DLL_NAME "${FUZEVPN_CRYPTO_DLL_PATH}" NAME)
-  add_compile_definitions(
-    "FUZEVPN_OPENSSL_SSL_DLL=\"${FUZEVPN_SSL_DLL_NAME}\""
-    "FUZEVPN_OPENSSL_CRYPTO_DLL=\"${FUZEVPN_CRYPTO_DLL_NAME}\"")
-  set(FUZEVPN_OPENSSL_VERSION_FILE
-      "${FUZEVPN_OPENVPN3_VCPKG_DIR}/share/openssl/OpenSSLConfigVersion.cmake")
-  if(NOT EXISTS "${FUZEVPN_OPENSSL_VERSION_FILE}")
-    message(FATAL_ERROR "The pinned OpenSSL version metadata is missing.")
-  endif()
-  file(READ "${FUZEVPN_OPENSSL_VERSION_FILE}" FUZEVPN_OPENSSL_VERSION_METADATA)
-  if(NOT FUZEVPN_OPENSSL_VERSION_METADATA MATCHES
-      "set\\(PACKAGE_VERSION 3\\.6\\.5\\)")
-    message(FATAL_ERROR
-      "OpenSSL 3.6.5 is required. Rebuild the pinned vcpkg dependencies.")
-  endif()
   set(FUZEVPN_ASIO_VERSION_FILE
       "${FUZEVPN_OPENVPN3_VCPKG_DIR}/include/asio/version.hpp")
   if(NOT EXISTS "${FUZEVPN_ASIO_VERSION_FILE}")
@@ -319,10 +360,7 @@ if(FUZEVPN_ENABLE_OPENVPN3 AND EXISTS "${FUZEVPN_OPENVPN3_CORE_DIR}/client/ovpnc
       "$<IF:$<CONFIG:Debug>,$<TARGET_FILE_DIR:${BINARY_NAME}>/lz4d.dll,$<TARGET_FILE_DIR:${BINARY_NAME}>/lz4.dll>"
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
       "$<IF:$<CONFIG:Debug>,${FUZEVPN_OPENVPN3_VCPKG_DIR}/debug/bin/${FUZEVPN_SSL_DLL_NAME},${FUZEVPN_OPENVPN3_VCPKG_DIR}/bin/${FUZEVPN_SSL_DLL_NAME}>"
-      "$<TARGET_FILE_DIR:${BINARY_NAME}>/${FUZEVPN_SSL_DLL_NAME}"
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-      "$<IF:$<CONFIG:Debug>,${FUZEVPN_OPENVPN3_VCPKG_DIR}/debug/bin/${FUZEVPN_CRYPTO_DLL_NAME},${FUZEVPN_OPENVPN3_VCPKG_DIR}/bin/${FUZEVPN_CRYPTO_DLL_NAME}>"
-      "$<TARGET_FILE_DIR:${BINARY_NAME}>/${FUZEVPN_CRYPTO_DLL_NAME}")
+      "$<TARGET_FILE_DIR:${BINARY_NAME}>/${FUZEVPN_SSL_DLL_NAME}")
   if(FUZEVPN_TARGET_ARCH STREQUAL "x64")
     set(FUZEVPN_DRIVER_ARCH "amd64")
   else()
@@ -519,11 +557,26 @@ target_include_directories(fuzevpn_wireguard_local_identity_test PRIVATE
   "${CMAKE_CURRENT_SOURCE_DIR}" "${FLUTTER_MANAGED_DIR}/ephemeral"
   "${FUZEVPN_FLUTTER_WRAPPER_DIR}/include")
 target_link_libraries(fuzevpn_wireguard_local_identity_test PRIVATE
-  crypt32 advapi32 shell32 ole32 ws2_32 iphlpapi wintrust fwpuclnt rpcrt4 bcrypt user32 version msi)
+  crypt32 advapi32 shell32 ole32 ws2_32 iphlpapi wintrust fwpuclnt rpcrt4 bcrypt user32 version msi
+  fuzevpn_openssl_crypto)
 set_target_properties(fuzevpn_wireguard_local_identity_test PROPERTIES
   RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/native-tests")
+add_dependencies(fuzevpn_wireguard_local_identity_test fuzevpn_native_tests_openssl_runtime)
 fuzevpn_add_native_test(wireguard_local_identity fuzevpn_wireguard_local_identity_test)
 set_tests_properties(wireguard_local_identity PROPERTIES TIMEOUT 10)
+
+add_executable(fuzevpn_wireguard_keypair_test EXCLUDE_FROM_ALL
+  "../tests/wireguard_keypair_test.cpp")
+apply_standard_settings(fuzevpn_wireguard_keypair_test)
+target_compile_features(fuzevpn_wireguard_keypair_test PRIVATE cxx_std_20)
+target_compile_definitions(fuzevpn_wireguard_keypair_test PRIVATE NOMINMAX WIN32_LEAN_AND_MEAN)
+target_include_directories(fuzevpn_wireguard_keypair_test PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
+target_link_libraries(fuzevpn_wireguard_keypair_test PRIVATE bcrypt fuzevpn_openssl_crypto)
+set_target_properties(fuzevpn_wireguard_keypair_test PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/native-tests")
+add_dependencies(fuzevpn_wireguard_keypair_test fuzevpn_native_tests_openssl_runtime)
+fuzevpn_add_native_test(wireguard_keypair fuzevpn_wireguard_keypair_test)
+set_tests_properties(wireguard_keypair PROPERTIES TIMEOUT 10)
 
 add_executable(fuzevpn_api_resolver_adapter_test EXCLUDE_FROM_ALL
   "../tests/api_resolver_adapter_test.cpp")
@@ -694,10 +747,7 @@ if(FUZEVPN_ENABLE_OPENVPN3 AND TARGET fuzevpn_openvpn_core)
     optimized "${FUZEVPN_OPENVPN3_VCPKG_DIR}/lib/libcrypto.lib")
   set_target_properties(fuzevpn_network_runtime_test PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/native-tests")
-  add_custom_command(TARGET fuzevpn_network_runtime_test POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-      "$<IF:$<CONFIG:Debug>,${FUZEVPN_OPENVPN3_VCPKG_DIR}/debug/bin/${FUZEVPN_CRYPTO_DLL_NAME},${FUZEVPN_OPENVPN3_VCPKG_DIR}/bin/${FUZEVPN_CRYPTO_DLL_NAME}>"
-      "$<TARGET_FILE_DIR:fuzevpn_network_runtime_test>/${FUZEVPN_CRYPTO_DLL_NAME}")
+  add_dependencies(fuzevpn_network_runtime_test fuzevpn_native_tests_openssl_runtime)
   fuzevpn_add_native_test(network_runtime fuzevpn_network_runtime_test)
   set_tests_properties(network_runtime PROPERTIES TIMEOUT 30)
 endif()

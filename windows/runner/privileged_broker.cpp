@@ -577,10 +577,14 @@ class EncodedMethodResult final
   std::optional<bool> owned_by_another_user_;
 };
 
+// Fixed identifiers only. Uppercase is accepted because allow-listed
+// operations such as importAndConnect_started are camelCase, exactly as the
+// local diagnostics reader expects them; separators still cannot forge fields.
 bool IsSafeDiagnosticIdentifier(const std::string& value) {
   if (value.empty() || value.size() > 80) return false;
   for (const char character : value) {
     if (!((character >= 'a' && character <= 'z') ||
+          (character >= 'A' && character <= 'Z') ||
           (character >= '0' && character <= '9') || character == '_' ||
           character == '.' || character == '-')) {
       return false;
@@ -599,12 +603,7 @@ void AppendNativeDiagnostic(const std::string& area,
   }
   SYSTEMTIME now{};
   GetSystemTime(&now);
-  char timestamp[32]{};
-  std::snprintf(timestamp, sizeof(timestamp),
-                "%04u-%02u-%02uT%02u:%02u:%02u.%03uZ", now.wYear,
-                now.wMonth, now.wDay, now.wHour, now.wMinute, now.wSecond,
-                now.wMilliseconds);
-  std::string text = std::string(timestamp) + " area=" + area + " event=" + event;
+  std::string text = FormatNativeDiagnosticTimestamp(now) + " area=" + area + " event=" + event;
   if (!code.empty()) text += " code=" + code;
   text += "\r\n";
   WriteUserDiagnostic("native_diagnostic.log", text, true);

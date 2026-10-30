@@ -2,6 +2,7 @@
 #ifndef RUNNER_PRIVILEGED_BROKER_H_
 #define RUNNER_PRIVILEGED_BROKER_H_
 
+#include <cstdio>
 #include <memory>
 #include <optional>
 #include <string>
@@ -26,6 +27,16 @@ void ForwardPrivilegedCall(
     const flutter::MethodCall<flutter::EncodableValue>& call,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result,
     bool start_if_missing);
+
+// Every native_diagnostic.log writer uses this UTC stamp: the local reader
+// drops any line whose first 24 characters do not have exactly this shape.
+inline std::string FormatNativeDiagnosticTimestamp(const SYSTEMTIME& utc) {
+  char timestamp[32]{};
+  std::snprintf(timestamp, sizeof(timestamp), "%04u-%02u-%02uT%02u:%02u:%02u.%03uZ",
+                utc.wYear, utc.wMonth, utc.wDay, utc.wHour, utc.wMinute,
+                utc.wSecond, utc.wMilliseconds);
+  return timestamp;
+}
 
 bool IsPrivilegedBrokerRunning();
 // false only for confirmed absence; nullopt preserves SCM/process-query errors.

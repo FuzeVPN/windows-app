@@ -1,4 +1,6 @@
 // SPDX-License-Identifier: MPL-2.0
+import 'dart:async';
+
 import 'native_protection_status_fixture.dart';
 
 import 'package:flutter/services.dart';
@@ -575,6 +577,52 @@ void main() {
     expect(controller.requiresExplicitDisconnect, isTrue);
   });
 
+  testWidgets(
+    'reporte l’actualisation des adresses API jusqu’à la fin de la connexion',
+    (tester) async {
+      final clock = _Clock();
+      final window = _ConnectivityWindow();
+      final api = _RecoveryApi();
+      final gate = Completer<void>();
+      final wireGuard = _RecoveryWireGuard()..connectGate = gate;
+      final controller = AppController(
+        api: api,
+        store: _RecoveryStore(protocol: 'wireguard'),
+        wireguard: wireGuard,
+        openVpn: _RecoveryOpenVpn(),
+        window: window,
+        now: clock.call,
+      );
+      await controller.initialize();
+      expect(controller.isConnectionBusy, isFalse);
+
+      // Idle: a connectivity hint still refreshes the cache at once.
+      var expected = api.bootstrapInvalidations + 1;
+      await window.emit(WindowsConnectivityEvent.networkAvailable);
+      expect(api.bootstrapInvalidations, expected);
+
+      final connecting = controller.toggleConnection();
+      for (var turn = 0; turn < 20 && wireGuard.connectCalls == 0; turn++) {
+        await tester.pump();
+      }
+      expect(wireGuard.connectCalls, 1);
+      expect(controller.isConnectionBusy, isTrue);
+
+      // The adapter coming up fires hints while the native connect still
+      // holds the privileged worker: a forced resolution would queue there.
+      await window.emit(WindowsConnectivityEvent.networkAvailable);
+      await window.emit(WindowsConnectivityEvent.networkAvailable);
+      expect(api.bootstrapInvalidations, expected);
+
+      gate.complete();
+      await connecting;
+      expect(controller.vpnStatus, VpnStatus.connected);
+      expect(controller.isConnectionBusy, isFalse);
+      expect(api.bootstrapInvalidations, ++expected);
+      controller.dispose();
+    },
+  );
+
   testWidgets('confirme deux fois une interruption avant de changer l’état', (
     tester,
   ) async {
@@ -703,7 +751,14 @@ class _RecoveryApi extends ApiClient {
 
   final List<String>? trace;
   int registerCalls = 0;
+  int bootstrapInvalidations = 0;
   bool failRenew = false;
+
+  @override
+  void invalidateBootstrapCache() {
+    bootstrapInvalidations++;
+    super.invalidateBootstrapCache();
+  }
 
   @override
   Future<List<Location>> locations() async => const [location];
@@ -804,6 +859,7 @@ class _RecoveryWireGuard extends WireGuardBridge
   int prepareCalls = 0;
   int connectCalls = 0;
   int disconnectCalls = 0;
+  Completer<void>? connectGate;
 
   @override
   Future<void> prepareNetworkProtection() async {
@@ -838,6 +894,7 @@ class _RecoveryWireGuard extends WireGuardBridge
   Future<void> connect(DeviceConfiguration configuration) async {
     connectCalls++;
     trace?.add('wireguard.connect');
+    await connectGate?.future;
     if (failConnect) {
       connected = false;
       throw PlatformException(code: 'wireguard_start_failed');

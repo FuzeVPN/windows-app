@@ -330,6 +330,8 @@ class AppController extends ChangeNotifier {
   );
   static const _otherSessionMessage =
       'Le VPN est utilisé par une autre session Windows. Fermez-le depuis cette session pour continuer.';
+  static const _openVpnPreparationProgressMessage =
+      'La préparation OpenVPN continue. Le kill switch bloque le trafic jusqu’à la connexion ou une déconnexion explicite.';
   bool get requiresExplicitDisconnect =>
       vpnStatus == VpnStatus.connected ||
       vpnStatus == VpnStatus.blocked ||
@@ -357,9 +359,13 @@ class AppController extends ChangeNotifier {
   List<VpnDevice> devices = const [];
   int deviceLimit = 2;
   String? _currentDeviceId;
+  // A server binding kept in memory after the protected store refused it.
+  String? _unsavedDeviceId;
   String? get currentDeviceId => _currentDeviceId;
   set currentDeviceId(String? value) {
     _invalidateDeviceSnapshots();
+    // A forgotten or replaced binding no longer owes a protected-store write.
+    if (value != _unsavedDeviceId) _unsavedDeviceId = null;
     _currentDeviceId = value;
   }
 
@@ -424,6 +430,7 @@ class AppController extends ChangeNotifier {
   String? get savedSessionVerificationErrorMessage =>
       _savedSessionVerificationErrorMessage;
   bool _windowListenerStarted = false;
+  bool _bootstrapInvalidationDeferred = false;
   Future<String>? _deviceNameFuture;
   VpnProtocol? _automaticReconnectIntent;
   DateTime _ignoreConnectivityEventsUntil = DateTime.fromMillisecondsSinceEpoch(
@@ -539,6 +546,10 @@ class AppController extends ChangeNotifier {
       if (identical(_connectionCommand, completion.future)) {
         _connectionCommand = null;
         _connectionTargetLocation = null;
+        if (_bootstrapInvalidationDeferred) {
+          _bootstrapInvalidationDeferred = false;
+          if (!_disposed) _api.invalidateBootstrapCache();
+        }
       }
       if (!_disposed) notifyListeners();
     }
@@ -3474,7 +3485,14 @@ class AppController extends ChangeNotifier {
   Future<void> _handleWindowsConnectivityEvent(
     WindowsConnectivityEvent event,
   ) async {
-    _api.invalidateBootstrapCache();
+    if (_connectionCommand != null) {
+      // The adapter being started fires these hints. A fresh API resolution
+      // would queue behind that connect on the single privileged worker and
+      // outlive its own timeout, so the refresh waits for the command.
+      _bootstrapInvalidationDeferred = true;
+    } else {
+      _api.invalidateBootstrapCache();
+    }
     unawaited(_resumeDiagnostics());
     if (_isInstallingUpdate) return;
     await _recoverSavedSession();
@@ -3927,7 +3945,15 @@ class AppController extends ChangeNotifier {
       // native runner compares its protected account binding, removes any
       // older identity (and active tunnel), then creates a fresh pair when
       // another account signs in. No key material enters Dart here.
+      final identityClock = Stopwatch()..start();
+      _traceControllerPhase('account', 'local_identity', 'begin');
       await _wireguard.prepareIdentityForAccount(nextProfile.userId);
+      _traceControllerPhase(
+        'account',
+        'local_identity',
+        'completed',
+        durationMs: identityClock.elapsedMilliseconds,
+      );
       if (!current()) return false;
       _clearSubscriptionState();
       signInStage = 'saved_session_storage';
@@ -4455,6 +4481,52 @@ class AppController extends ChangeNotifier {
     return true;
   }
 
+  /// A retry is offered only when it cannot hide a state that needs an
+  /// explicit Disconnect: an unconfirmed or foreign runtime, partial or
+  /// unknown protection, a live tunnel or a server migration in progress.
+  bool get canRetryConnection =>
+      profile != null &&
+      !isConnectionBusy &&
+      activeProtocol == null &&
+      vpnStatus != VpnStatus.connected &&
+      !_disconnectUnconfirmed &&
+      !_runtimeVerificationPending &&
+      !runtimeOwnedByAnotherUser &&
+      !isLocationMigrationActive &&
+      (_retainedProtectionProtocol == null || _retainedProtectionBlocksTraffic);
+
+  /// Re-runs the same connection. Unlike [toggleConnection], it never
+  /// releases a retained kill switch: the native prepare rebuilds the same
+  /// policy candidate-first, so traffic stays blocked until the tunnel is up.
+  Future<void> retryConnection() {
+    if (!canRetryConnection) return Future<void>.value();
+    return _runConnectionCommand(
+      _retryConnection,
+      initialState: VpnStatus.preparing,
+    );
+  }
+
+  Future<void> _retryConnection(int operationId) async {
+    _cancelAutomaticReconnect();
+    _ignoreConnectivityEvents(const Duration(seconds: 12));
+    await _startDeviceConnection(
+      identityWasReset: false,
+      operationId: operationId,
+    );
+    // Some early exits of a connection attempt assume they started idle. From
+    // a retained kill switch, never leave an idle state over blocked traffic.
+    // Their own text (e.g. a migration in progress) would promise a resumption
+    // that nothing schedules, so the plain kill-switch notice replaces it. A
+    // failure that ended in error has already restored the retained state.
+    if (_acceptConnectionOperation(operationId) &&
+        activeProtocol == null &&
+        (vpnStatus == VpnStatus.disconnected ||
+            vpnStatus == VpnStatus.preparing) &&
+        _retainedProtectionProtocol != null) {
+      await _restoreRetainedNetworkProtection(operationId: operationId);
+    }
+  }
+
   Future<void> retryAfterIdentityReset() => _runConnectionCommand(
     _retryAfterIdentityReset,
     initialState: VpnStatus.preparing,
@@ -4624,7 +4696,7 @@ class AppController extends ChangeNotifier {
             message:
                 locationMigrationError ??
                 errorMessage ??
-                'La préparation OpenVPN continue. Le kill switch bloque le trafic jusqu’à la connexion ou une déconnexion explicite.',
+                _openVpnPreparationProgressMessage,
           ) &&
           (vpnStatus == VpnStatus.preparing ||
               vpnStatus == VpnStatus.disconnecting)) {
@@ -4761,7 +4833,15 @@ class AppController extends ChangeNotifier {
       );
       if (!_acceptConnectionOperation(operationId)) return;
       currentDeviceId = configuration.deviceId;
-      await _store.saveCurrentDeviceId(configuration.deviceId);
+      if (!await _saveDeviceBinding(
+        configuration.deviceId,
+        protocol: VpnProtocol.wireGuard,
+        operationId: operationId,
+      )) {
+        // A local storage failure is not a WireGuard startup failure.
+        _automaticWireGuardFallbackAllowed = false;
+        return;
+      }
       if (!_acceptConnectionOperation(operationId)) return;
       realDeviceLocation = _requestedLocation;
       nativeConnectAttempted = true;
@@ -4788,6 +4868,28 @@ class AppController extends ChangeNotifier {
       );
     } on ApiException catch (error) {
       if (!_acceptConnectionOperation(operationId)) return;
+      if (allowOpenVpnProfileRelease &&
+          error.statusCode == HttpStatus.conflict &&
+          error.errorCode == 'device_location_locked') {
+        // OpenVPN still holds this device's location: the expected first
+        // step of a protocol switch, so neither a failure nor an incident.
+        await DiagnosticLog.record(
+          area: 'wireguard',
+          event: 'openvpn_profile_release_required',
+          code: error.diagnosticFailureCode,
+          httpStatus: error.diagnosticHttpStatus,
+        );
+        if (await _releaseOpenVpnProfileForWireGuard(token)) {
+          await _enrollAndConnect(
+            token,
+            identityWasReset: identityWasReset,
+            allowOpenVpnProfileRelease: false,
+            operationId: operationId,
+          );
+          return;
+        }
+        if (!_acceptConnectionOperation(operationId)) return;
+      }
       await DiagnosticLog.recordFailure(
         area: 'wireguard',
         event: 'api_enrollment_failed',
@@ -4803,18 +4905,6 @@ class AppController extends ChangeNotifier {
         await _enrollAndConnect(
           token,
           identityWasReset: true,
-          operationId: operationId,
-        );
-        return;
-      }
-      if (allowOpenVpnProfileRelease &&
-          error.statusCode == HttpStatus.conflict &&
-          error.errorCode == 'device_location_locked' &&
-          await _releaseOpenVpnProfileForWireGuard(token)) {
-        await _enrollAndConnect(
-          token,
-          identityWasReset: identityWasReset,
-          allowOpenVpnProfileRelease: false,
           operationId: operationId,
         );
         return;
@@ -4916,17 +5006,39 @@ class AppController extends ChangeNotifier {
   Future<bool> _releaseOpenVpnProfileForWireGuard(String token) async {
     final deviceId = currentDeviceId;
     if (deviceId == null || deviceId.isEmpty) return false;
+    final clock = Stopwatch()..start();
+    await DiagnosticLog.record(
+      area: 'wireguard',
+      event: 'openvpn_profile_release_started',
+    );
     try {
       await _disconnectProtocol(VpnProtocol.openVpn);
       await _api.revokeOpenVpnProfile(token: token, deviceId: deviceId);
       await _openVpn.deleteProfile();
+      await DiagnosticLog.record(
+        area: 'wireguard',
+        event: 'openvpn_profile_release_completed',
+        durationMs: clock.elapsedMilliseconds,
+      );
       return true;
     } on ApiException catch (error) {
+      await DiagnosticLog.recordFailure(
+        area: 'wireguard',
+        event: 'openvpn_profile_release_failed',
+        error: error,
+        durationMs: clock.elapsedMilliseconds,
+      );
       if (error.isUnauthorized) {
         await _expireLocalSession();
       }
       return false;
-    } catch (_) {
+    } catch (error) {
+      await DiagnosticLog.recordFailure(
+        area: 'wireguard',
+        event: 'openvpn_profile_release_failed',
+        error: error,
+        durationMs: clock.elapsedMilliseconds,
+      );
       return false;
     }
   }
@@ -4987,10 +5099,78 @@ class AppController extends ChangeNotifier {
     }
   }
 
+  /// The API has already bound [deviceId] to this computer, so memory keeps
+  /// the server's value for the next attempt. Fail closed: no tunnel starts
+  /// while the protected store cannot persist that binding.
+  Future<bool> _saveDeviceBinding(
+    String deviceId, {
+    required VpnProtocol protocol,
+    int? operationId,
+  }) async {
+    try {
+      await _store.saveCurrentDeviceId(deviceId);
+      if (_unsavedDeviceId == deviceId) _unsavedDeviceId = null;
+      return true;
+    } on PlatformException catch (error) {
+      _unsavedDeviceId = deviceId;
+      if (!_acceptConnectionOperation(operationId)) return false;
+      await DiagnosticLog.recordFailure(
+        area: protocol == VpnProtocol.wireGuard ? 'wireguard' : 'openvpn',
+        event: 'device_binding_failed',
+        stage: 'device_binding_storage',
+        error: error,
+      );
+      if (!_acceptConnectionOperation(operationId)) return false;
+      // The tunnel observer cannot tell this local write from an engine
+      // failure; the incident must name the protected store instead.
+      final details = error.details;
+      final native = details is Map ? details['win32_error'] : null;
+      final windowsError = native is int && native >= 0 && native <= 0xffffffff
+          ? native
+          : null;
+      _diagnosticCandidate = DiagnosticError(
+        code: 'storage_error',
+        domain: 'storage',
+        operation: _diagnosticOperation,
+        stage: 'storage',
+        // SHGetKnownFolderPath and DPAPI failures arrive as HRESULTs.
+        nativeDomain: windowsError == null
+            ? null
+            : windowsError >= 0x80000000
+            ? 'hresult'
+            : 'win32',
+        nativeCode: windowsError,
+      );
+      _transitionConnection(operationId, VpnStatus.error);
+      final message = protocol == VpnProtocol.wireGuard
+          ? _wireGuardPlatformErrorMessage('storage_error')
+          : _openVpnPlatformErrorMessage('storage_error');
+      errorMessage = message;
+      // A retained kill switch replaces errorMessage with its own notice. The
+      // card keeps naming the store and offers a retry that keeps WFP armed.
+      deviceEnrollmentIssue = DeviceEnrollmentIssue(
+        kind: DeviceEnrollmentIssueKind.unknown,
+        title: 'Connexion impossible',
+        message: message,
+      );
+      return false;
+    }
+  }
+
   Future<({String deviceId, List<IpFamily>? profileIpFamilies})?>
   _ensureLogicalDevice(String token, {int? operationId}) async {
     final existingId = currentDeviceId;
     if (existingId != null && existingId.isNotEmpty) {
+      // OpenVPN reuses the device without a new registration, so persist a
+      // binding that an earlier attempt could not store before using it.
+      if (existingId == _unsavedDeviceId &&
+          !await _saveDeviceBinding(
+            existingId,
+            protocol: VpnProtocol.openVpn,
+            operationId: operationId,
+          )) {
+        return null;
+      }
       return (deviceId: existingId, profileIpFamilies: null);
     }
 
@@ -5012,7 +5192,13 @@ class AppController extends ChangeNotifier {
     }
     final configuration = registration.configuration;
     currentDeviceId = configuration.deviceId;
-    await _store.saveCurrentDeviceId(configuration.deviceId);
+    if (!await _saveDeviceBinding(
+      configuration.deviceId,
+      protocol: VpnProtocol.openVpn,
+      operationId: operationId,
+    )) {
+      return null;
+    }
     if (!_acceptConnectionOperation(operationId)) return null;
     realDeviceLocation = _requestedLocation;
     return (
@@ -5222,30 +5408,73 @@ class AppController extends ChangeNotifier {
     List<IpFamily>? ipFamilies,
     int? operationId,
   }) async {
-    const maxAttempts = 3;
-    for (var attempt = 1; attempt <= maxAttempts; attempt++) {
-      if (!_acceptConnectionOperation(operationId)) return null;
-      try {
-        return await _api.createOpenVpnProfile(
-          token: token,
-          deviceId: deviceId,
-          csrPem: csrPem,
-          ipFamilies: ipFamilies,
-        );
-      } on ApiException catch (error) {
-        if (error.statusCode != HttpStatus.conflict ||
-            error.errorCode != 'openvpn_operation_pending' ||
-            attempt == maxAttempts) {
-          rethrow;
+    // The server holds each request for several seconds while it waits for
+    // the agent, so the bound is elapsed time rather than an attempt count.
+    // The attempt cap still ends the wait if the injected clock stands still.
+    const pendingBudget = Duration(seconds: 45);
+    const maxAttempts = 6;
+    final started = _now();
+    final deadline = started.add(pendingBudget);
+    var progressShown = false;
+    try {
+      for (var attempt = 1; ; attempt++) {
+        if (!_acceptConnectionOperation(operationId)) return null;
+        try {
+          return await _api.createOpenVpnProfile(
+            token: token,
+            deviceId: deviceId,
+            csrPem: csrPem,
+            ipFamilies: ipFamilies,
+          );
+        } on ApiException catch (error) {
+          if (error.statusCode != HttpStatus.conflict ||
+              error.errorCode != 'openvpn_operation_pending') {
+            rethrow;
+          }
+          if (!_acceptConnectionOperation(operationId)) return null;
+          final delay = Duration(
+            seconds: (error.retryAfterSeconds ?? 3).clamp(0, 10),
+          );
+          final now = _now();
+          final elapsedMs = now.difference(started).inMilliseconds;
+          if (attempt >= maxAttempts || now.add(delay).isAfter(deadline)) {
+            await DiagnosticLog.record(
+              area: 'openvpn',
+              event: 'profile_pending_exhausted',
+              attempt: attempt,
+              durationMs: elapsedMs,
+            );
+            rethrow;
+          }
+          await DiagnosticLog.record(
+            area: 'openvpn',
+            event: 'profile_pending_wait',
+            attempt: attempt,
+            // The server's hint itself, absent without Retry-After. The
+            // applied delay follows from consecutive wait timestamps.
+            count: error.retryAfterSeconds,
+            durationMs: elapsedMs,
+          );
+          if (!progressShown &&
+              killSwitchEnabled &&
+              _retainedProtectionProtocol == VpnProtocol.openVpn) {
+            // Traffic is already blocked and the hero is disabled while busy:
+            // say that the preparation continues instead of appearing stuck.
+            progressShown = true;
+            errorMessage = _openVpnPreparationProgressMessage;
+            notifyListeners();
+          }
+          await Future<void>.delayed(delay);
         }
-        final seconds = (error.retryAfterSeconds ?? 2).clamp(0, 10);
-        await Future<void>.delayed(Duration(seconds: seconds));
+      }
+    } finally {
+      // The activation, the failure or the restored kill switch states the
+      // outcome. No other command can own this notice while this one runs,
+      // and an interruption (sign-out, expiry) must not leave it behind.
+      if (progressShown && errorMessage == _openVpnPreparationProgressMessage) {
+        errorMessage = null;
       }
     }
-    throw const ApiException(
-      statusCode: 409,
-      errorCode: 'openvpn_operation_pending',
-    );
   }
 
   Future<void> renewOpenVpnProfile() {
@@ -5411,6 +5640,8 @@ class AppController extends ChangeNotifier {
       'L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.',
     'storage_failure' =>
       'Windows n’a pas pu ouvrir le stockage protégé de WireGuard.',
+    'storage_error' =>
+      'Le stockage protégé de FuzeVPN ne peut pas être utilisé. Réessayez.',
     'permission_denied' =>
       'Windows n’a pas autorisé l’opération WireGuard demandée.',
     'broker_unavailable' =>
@@ -5477,6 +5708,8 @@ class AppController extends ChangeNotifier {
       'L’identité OpenVPN locale n’a pas pu être lue.',
     'openvpn_signer_unavailable' =>
       'Le composant OpenVPN sécurisé n’est pas disponible.',
+    'storage_error' =>
+      'Le stockage protégé de FuzeVPN ne peut pas être utilisé. Réessayez.',
     'network_protection_failed' =>
       'Windows n’a pas pu préparer ou finaliser la protection réseau OpenVPN.',
     'permission_denied' =>

@@ -194,6 +194,11 @@ void main() {
       await controller.toggleConnection();
       expect(api.openVpnCalls, 1);
       expect(controller.profile, audit.account);
+      // A user retry is one more request, never an automatic replay.
+      expect(controller.canRetryConnection, isTrue);
+      await controller.retryConnection();
+      expect(api.openVpnCalls, 2);
+      expect(controller.profile, audit.account);
     },
   );
 

@@ -54,8 +54,8 @@ bool Event(std::string_view area, std::string_view value) {
       "response_unavailable", "response_ack_failed"});
   if (area == "runtime") return Is(value, {"runtime_detection_failed", "runtime_status_unavailable"});
   if (area != "wireguard" && area != "openvpn") return false;
-  if (value == "native_error" || (area == "openvpn" && Is(value,
-      {"connection_attempt_snapshot", "cleanup_snapshot"}))) return true;
+  if (value == "native_error" || value == "connection_attempt_snapshot" ||
+      (area == "openvpn" && value == "cleanup_snapshot")) return true;
   for (const char* operation : {"connect", "prepareConnection", "disconnect",
       "prepareIdentityForAccount", "recreateIdentityForAccount", "resetIdentity",
       "importAndConnect", "suspendForMigration"}) {
@@ -117,7 +117,9 @@ std::optional<Map> ParseLine(std::string_view line) {
         "reconnects", "command_failed", "success", "engine_connect_ms", "setup_commands_ms",
         "setup_validation_ms", "first_failed_code", "postcondition_failures", "address_expected",
         "address_matched", "address_tentative", "address_duplicate", "complete", "last_code",
-        "failure_count", "pending_groups", "elapsed_ms", "budget_ms"})) {
+        "failure_count", "pending_groups", "elapsed_ms", "budget_ms", "candidates",
+        "candidate_index", "handshake", "service_start_ms", "handshake_wait_ms", "stop_ms",
+        "tx_bytes", "rx_bytes", "stats_reads"})) {
       if (const auto number = Number(value)) result[Value(std::string(key))] = Value(*number);
     } else if (key == "stage") {
       if (Is(value, {"starting", "adapter_open", "peer_ready", "packet_received", "tls_active",

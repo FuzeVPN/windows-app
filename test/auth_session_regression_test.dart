@@ -521,4 +521,23 @@ void main() {
       expect(store.tokenDeletes, 0);
     },
   );
+
+  test('sign-in traces the local identity step with its duration', () async {
+    final app = make(Api(), Store());
+    addTearDown(app.dispose);
+    final start = DiagnosticLog.recentLines.length;
+    expect(
+      await app.signIn(email: 'b@example.invalid', password: 'synthetic'),
+      true,
+    );
+    final lines = DiagnosticLog.recentLines.skip(start).toList();
+    int indexOf(String fields) =>
+        lines.indexWhere((line) => line.contains(fields));
+    final begin = indexOf('area=account event=begin stage=local_identity');
+    final completed = indexOf(
+      'area=account event=completed stage=local_identity duration_ms=',
+    );
+    expect(begin, isNonNegative);
+    expect(completed, greaterThan(begin));
+  });
 }

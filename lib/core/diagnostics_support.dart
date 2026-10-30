@@ -198,6 +198,16 @@ class DiagnosticSupport {
         'pending_groups',
         'elapsed_ms',
         'budget_ms',
+        // WireGuard per-candidate attempt snapshot.
+        'candidates',
+        'candidate_index',
+        'handshake',
+        'service_start_ms',
+        'handshake_wait_ms',
+        'stop_ms',
+        'tx_bytes',
+        'rx_bytes',
+        'stats_reads',
       }.contains(key)) {
         if (value is int && value >= 0 && value <= 0xffffffff) {
           result[key as String] = value;
@@ -329,12 +339,10 @@ class DiagnosticSupport {
       }.contains(event);
     }
     if (area != 'wireguard' && area != 'openvpn') return false;
+    // Both engines write a per-attempt snapshot, as the native reader accepts.
     if (event == 'native_error' ||
-        area == 'openvpn' &&
-            const {
-              'connection_attempt_snapshot',
-              'cleanup_snapshot',
-            }.contains(event)) {
+        event == 'connection_attempt_snapshot' ||
+        area == 'openvpn' && event == 'cleanup_snapshot') {
       return true;
     }
     for (final operation in const {

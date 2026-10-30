@@ -1166,7 +1166,12 @@ class _DeviceEnrollmentIssueCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final action = switch (issue.kind) {
+    // Toggling from a retained kill switch would only disconnect. Hide the
+    // retry instead when the controller cannot honour it.
+    final VoidCallback? retry = controller.canRetryConnection
+        ? controller.retryConnection
+        : null;
+    final (String, VoidCallback?) action = switch (issue.kind) {
       DeviceEnrollmentIssueKind.sessionExpired => (
         'Se connecter',
         () => _showSignInDialog(context, controller),
@@ -1191,18 +1196,12 @@ class _DeviceEnrollmentIssueCard extends StatelessWidget {
         'Créer une nouvelle identité',
         () => _confirmIdentityReset(context, controller),
       ),
-      DeviceEnrollmentIssueKind.openVpnProfileExists => (
-        'Réessayer',
-        controller.toggleConnection,
-      ),
+      DeviceEnrollmentIssueKind.openVpnProfileExists => ('Réessayer', retry),
       DeviceEnrollmentIssueKind.openVpnProfileRevoked => (
         'Renouveler le profil',
         controller.renewOpenVpnProfile,
       ),
-      DeviceEnrollmentIssueKind.openVpnOperationPending => (
-        'Réessayer',
-        controller.toggleConnection,
-      ),
+      DeviceEnrollmentIssueKind.openVpnOperationPending => ('Réessayer', retry),
       DeviceEnrollmentIssueKind.openVpnSignerUnavailable => (
         'Voir les réglages',
         () => controller.selectSection(AppSection.settings),
@@ -1216,14 +1215,8 @@ class _DeviceEnrollmentIssueCard extends StatelessWidget {
         'Choisir un emplacement',
         () => controller.selectSection(AppSection.locations),
       ),
-      DeviceEnrollmentIssueKind.rateLimited => (
-        'Réessayer',
-        controller.toggleConnection,
-      ),
-      DeviceEnrollmentIssueKind.unknown => (
-        'Réessayer',
-        controller.toggleConnection,
-      ),
+      DeviceEnrollmentIssueKind.rateLimited => ('Réessayer', retry),
+      DeviceEnrollmentIssueKind.unknown => ('Réessayer', retry),
     };
     return _NoticeCard(
       icon: Icons.info_outline,
@@ -2080,6 +2073,9 @@ Future<void> _showNodeUnavailableDialog(
   BuildContext context,
   AppController controller,
 ) async {
+  // From a retained kill switch a toggle would only disconnect: offer the
+  // retry only when the same connection can run again with WFP in place.
+  final canRetry = controller.canRetryConnection;
   final action = await showDialog<String>(
     context: context,
     builder: (dialogContext) => AlertDialog(
@@ -2097,10 +2093,11 @@ Future<void> _showNodeUnavailableDialog(
           onPressed: () => Navigator.of(dialogContext).pop('location'),
           child: Text(context.tr('Choisir un emplacement')),
         ),
-        FilledButton(
-          onPressed: () => Navigator.of(dialogContext).pop('retry'),
-          child: Text(context.tr('Réessayer')),
-        ),
+        if (canRetry)
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop('retry'),
+            child: Text(context.tr('Réessayer')),
+          ),
       ],
     ),
   );
@@ -2108,7 +2105,7 @@ Future<void> _showNodeUnavailableDialog(
   if (action == 'location') {
     controller.selectSection(AppSection.locations);
   } else if (action == 'retry') {
-    await controller.toggleConnection();
+    await controller.retryConnection();
   }
 }
 

@@ -362,6 +362,7 @@ void HandleOpenVpnPrivilegedCall(
 bool TestProtectedStoreTokenRouting();
 bool TestProtectedDiagnosticRouting();
 bool TestProtectedStoreReadFailures();
+bool TestProtectedStoreWriteFailures();
 bool TestMaintenanceRecovery();
 bool TestMaintenanceNetworkRecovery();
 bool TestPortableServiceLease();
@@ -565,7 +566,8 @@ void TestWireGuardCandidates() {
   std::uint64_t now = 0;
   unsigned attempts = 0;
   Check(TryWireGuardEndpoints(endpoints, 70000, [&] { return now; },
-      [&](const std::string&, std::uint64_t deadline) {
+      [&](const std::string&, std::uint64_t deadline, size_t index) {
+        Check(index == attempts, "each attempt receives its candidate index");
         ++attempts;
         if (attempts == 1) { Check(deadline == 35000, "first address gets a bounded share"); now = deadline; return WireGuardAttemptResult::retry; }
         Check(deadline == 70000, "remaining address retains the rest of the shared budget");
@@ -574,8 +576,159 @@ void TestWireGuardCandidates() {
   attempts = 0;
   now = 70000;
   Check(!TryWireGuardEndpoints(endpoints, 70000, [&] { return now; },
-      [&](const std::string&, std::uint64_t) { ++attempts; return WireGuardAttemptResult::connected; }) &&
+      [&](const std::string&, std::uint64_t, size_t) { ++attempts; return WireGuardAttemptResult::connected; }) &&
       attempts == 0, "expired overall deadline never starts another tunnel attempt");
+}
+
+// Simulated clock: the real loop, with a scripted driver handshake and SCM.
+struct HandshakeWait {
+  std::uint64_t now = 0;
+  std::uint64_t handshake_at = UINT64_MAX;
+  std::uint64_t stopped_at = UINT64_MAX;
+  std::vector<std::uint64_t> probes;
+  bool Run(std::uint64_t window, std::uint64_t attempt_deadline) {
+    return fuzevpn::WaitForWireGuardHandshake(window, attempt_deadline, [&] { return now; },
+        [&] { probes.push_back(now); }, [&] { return now >= handshake_at; },
+        [&] { return now < stopped_at; }, [&](std::uint64_t milliseconds) {
+          Check(milliseconds >= 1 && milliseconds <= 100, "handshake polling stays bounded");
+          now += milliseconds;
+        });
+  }
+};
+
+void TestWireGuardHandshakeWait() {
+  using namespace fuzevpn;
+  // Four initiations, each up to REKEY_TIMEOUT plus jitter apart, must fit.
+  Check(kWireGuardFinalHandshakeWaitMs >= 3 * 5333 + 1000 &&
+        kWireGuardFailoverHandshakeWaitMs >= 5333 + 1000 &&
+        kWireGuardFailoverHandshakeWaitMs < kWireGuardFinalHandshakeWaitMs,
+        "handshake windows cover the intended WireGuard initiations");
+  Check(WireGuardHandshakeWindow(0, 1) == kWireGuardFinalHandshakeWaitMs &&
+        WireGuardHandshakeWindow(0, 2) == kWireGuardFailoverHandshakeWaitMs &&
+        WireGuardHandshakeWindow(1, 2) == kWireGuardFinalHandshakeWaitMs &&
+        WireGuardHandshakeWindow(6, 8) == kWireGuardFailoverHandshakeWaitMs &&
+        WireGuardHandshakeWindow(7, 8) == kWireGuardFinalHandshakeWaitMs,
+        "only the last or only candidate gets the long handshake window");
+  HandshakeWait late;
+  late.handshake_at = 15400;  // Third retransmission after a relocated peer.
+  Check(late.Run(WireGuardHandshakeWindow(0, 1), 70000) && late.now == 15400,
+        "the only candidate tolerates two unanswered initiations");
+  Check(!late.probes.empty() && late.probes.front() == 0 && late.probes.size() == 16,
+        "tunneled traffic is solicited once per second while waiting");
+  HandshakeWait failover;
+  failover.handshake_at = 15400;
+  Check(!failover.Run(WireGuardHandshakeWindow(0, 2), 35000) && failover.now == 8000,
+        "an earlier address still fails over after the short window");
+  HandshakeWait silent;
+  Check(!silent.Run(kWireGuardFinalHandshakeWaitMs, 70000) &&
+        silent.now == kWireGuardFinalHandshakeWaitMs,
+        "an unanswered last candidate gives up exactly at its window");
+  HandshakeWait bounded;
+  bounded.now = 61250;
+  Check(!bounded.Run(kWireGuardFinalHandshakeWaitMs, 70000) && bounded.now == 70000,
+        "the long window never exceeds the attempt deadline");
+  HandshakeWait expired;
+  expired.now = 70000;
+  Check(!expired.Run(kWireGuardFinalHandshakeWaitMs, 70000) && expired.probes.empty(),
+        "an expired attempt neither solicits nor waits");
+  HandshakeWait stopped;
+  stopped.stopped_at = 3000;
+  Check(!stopped.Run(kWireGuardFinalHandshakeWaitMs, 70000) && stopped.now == 3000,
+        "a stopped tunnel service ends the wait at once");
+  HandshakeWait immediate;
+  immediate.handshake_at = 0;
+  Check(immediate.Run(kWireGuardFinalHandshakeWaitMs, 70000) && immediate.now == 0 &&
+        immediate.probes.size() == 1, "an existing handshake succeeds without waiting");
+
+  WireGuardAttemptSnapshot snapshot;
+  snapshot.candidates = 2;
+  snapshot.candidate_index = 1;
+  snapshot.stage = WireGuardAttemptStage::peer_ready;
+  snapshot.elapsed_ms = 21543;
+  snapshot.budget_ms = 61200;
+  snapshot.service_start_ms = 402;
+  snapshot.handshake_wait_ms = 20000;
+  snapshot.stop_ms = 1100;
+  snapshot.tx_bytes = 592;
+  snapshot.stats_reads = 197;
+  Check(FormatWireGuardAttemptSnapshot(snapshot) ==
+        "candidates=2 candidate_index=1 stage=peer_ready handshake=0 success=0 elapsed_ms=21543 "
+        "budget_ms=61200 service_start_ms=402 handshake_wait_ms=20000 stop_ms=1100 "
+        "tx_bytes=592 rx_bytes=0 stats_reads=197", "attempt snapshot is numeric with a closed stage");
+  snapshot.stage = WireGuardAttemptStage::adapter_open;
+  Check(FormatWireGuardAttemptSnapshot(snapshot).find("stage=adapter_open ") != std::string::npos,
+        "adapter-open failure is distinguishable from the handshake wait");
+  Check(FormatWireGuardAttemptSnapshot(WireGuardAttemptSnapshot{}).ends_with(
+            " tx_bytes=0 rx_bytes=0 stats_reads=0"),
+        "an attempt without a driver reading says so instead of claiming nothing was sent");
+
+  // Only a successful driver reading replaces the counters and is counted.
+  WireGuardPeerStats observed;
+  std::uint64_t reads = 0;
+  const auto unreadable = [](WireGuardPeerStats* stats) { stats->tx = 999; return false; };
+  Check(!ObserveWireGuardPeer(unreadable, &observed, &reads) && reads == 0 && observed.tx == 0,
+        "a failed driver reading is neither counted nor recorded");
+  Check(!ObserveWireGuardPeer([](WireGuardPeerStats* stats) { stats->tx = 592; return true; },
+                              &observed, &reads) && reads == 1 && observed.tx == 592,
+        "an unanswered driver reading is counted with its counters");
+  Check(!ObserveWireGuardPeer(unreadable, &observed, &reads) && reads == 1 && observed.tx == 592,
+        "a later failed reading keeps the last driver counters");
+  Check(ObserveWireGuardPeer([](WireGuardPeerStats* stats) {
+          stats->tx = 740; stats->rx = 92; stats->handshake = 1; return true;
+        }, &observed, &reads) && reads == 2 && observed.rx == 92,
+        "an authenticated driver reading ends the wait");
+  // Polled every 100 ms until the handshake at 15.4 s: 155 readings, of which
+  // the 15 at x.5 s are refused by the driver and must not be counted.
+  std::uint64_t wait_now = 0;
+  std::uint64_t counted_reads = 0;
+  WireGuardPeerStats last;
+  Check(WaitForWireGuardHandshake(kWireGuardFinalHandshakeWaitMs, 70000,
+            [&] { return wait_now; }, [] {},
+            [&] {
+              return ObserveWireGuardPeer([&](WireGuardPeerStats* stats) {
+                if (wait_now % 1000 == 500) return false;
+                stats->tx = wait_now / 100;
+                stats->handshake = wait_now >= 15400 ? 1u : 0u;
+                return true;
+              }, &last, &counted_reads);
+            },
+            [] { return true; }, [&](std::uint64_t milliseconds) { wait_now += milliseconds; }) &&
+        wait_now == 15400 && counted_reads == 140 && last.handshake == 1 && last.tx == 154,
+        "the wait counts exactly its successful driver readings");
+
+  // service_start_ms covers the SCM start alone, not the configuration write.
+  std::uint64_t fake_ticks = 700;
+  std::uint64_t service_start_ms = 0;
+  Check(TimeWireGuardServiceStart([&] { return fake_ticks; }, [&] { fake_ticks += 402; return true; },
+                                  &service_start_ms) && service_start_ms == 402,
+        "service start time excludes configuration generation and write");
+  Check(!TimeWireGuardServiceStart([&] { return fake_ticks; }, [&] { fake_ticks += 35; return false; },
+                                   &service_start_ms) && service_start_ms == 35,
+        "a failed service start still reports its own duration");
+}
+
+// Breadcrumb operations are fixed camelCase identifiers; the writer must
+// persist them for the local reader and still reject field separators.
+void TestNativeDiagnosticIdentifiers() {
+  test_written_diagnostic.clear();
+  WriteSafeOperation("openvpn.importAndConnect", "started");
+  Check(test_written_diagnostic.find(" area=openvpn event=importAndConnect_started\r\n") !=
+        std::string::npos, "OpenVPN connect breadcrumb reaches the native log");
+  WriteSafeOperation("openvpn.prepareConnection", "succeeded");
+  Check(test_written_diagnostic.find(" area=openvpn event=prepareConnection_succeeded\r\n") !=
+        std::string::npos, "OpenVPN preparation breadcrumb reaches the native log");
+  WriteSafeOperation("wireguard.prepareIdentityForAccount", "failed");
+  Check(test_written_diagnostic.find(" area=wireguard event=prepareIdentityForAccount_failed\r\n") !=
+        std::string::npos, "WireGuard identity breadcrumb reaches the native log");
+  for (const char* forged : {"importAndConnect_started code=other", "importAndConnect\r\nx",
+                             "event=connect_started", "", "import/connect"}) {
+    test_written_diagnostic.clear();
+    AppendNativeDiagnostic("openvpn", forged);
+    Check(test_written_diagnostic.empty(), "diagnostic identifiers cannot forge fields or lines");
+  }
+  test_written_diagnostic.clear();
+  AppendNativeDiagnostic("openvpn", std::string(81, 'A'));
+  Check(test_written_diagnostic.empty(), "diagnostic identifiers stay bounded");
 }
 
 std::vector<uint8_t> EncodedCall(const std::string& method,
@@ -1348,6 +1501,8 @@ int main() {
   Check(TestMaintenanceNetworkRecovery(), "historical service errors require independent read-only network proof");
   Check(TestPortableServiceLease(), "portable service lease preserves active and unknown runtime state");
   Check(TestProtectedStoreReadFailures(), "missing values remain distinct from storage failures without real store I/O");
+  Check(TestProtectedStoreWriteFailures(),
+        "protected-store writes report a fixed stage and Win32 error and retry only transient replace/delete locks");
   TestExclusiveRuntime();
   Check(fuzevpn_runtime_namespace_test::TestRuntimeNamespace(),
         "private runtime namespace resists public-name squatting and preserves exclusion");
@@ -1357,6 +1512,8 @@ int main() {
         "legitimate legacy runtime detection never acquires an attacker-controlled public mutex");
   TestServiceRepair();
   TestWireGuardCandidates();
+  TestWireGuardHandshakeWait();
+  TestNativeDiagnosticIdentifiers();
   Check(TestProtectedStoreTokenRouting(),
         "protected storage explicitly routes and restores the user's folder token");
   Check(TestProtectedDiagnosticRouting(),

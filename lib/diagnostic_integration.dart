@@ -979,8 +979,10 @@ extension AppDiagnostics on AppController {
         ? 'enrollment'
         : event.contains('renew')
         ? 'certificate_renewal'
-        : event.contains('identity')
+        : event.contains('identity') || event.contains('binding')
         ? 'storage'
+        : event.contains('release')
+        ? 'profile_revoke'
         : event.contains('profile')
         ? 'profile_create'
         : 'tunnel_start';
@@ -991,21 +993,30 @@ extension AppDiagnostics on AppController {
       'runtime_owned_by_another_user',
       'maintenance_in_progress',
     }.contains(code);
+    final outcome = cancelled
+        ? 'cancelled'
+        : failed
+        ? 'error'
+        : event.endsWith('_started')
+        ? 'begin'
+        : event.contains('cancel')
+        ? 'cancelled'
+        : event.contains('pending')
+        ? 'waiting'
+        : 'end';
     diagnostics.recordEvent(
       DiagnosticEvent(
         stage: stage,
-        event: cancelled
-            ? 'cancelled'
-            : failed
-            ? 'error'
-            : event.endsWith('_started')
-            ? 'begin'
-            : event.contains('cancel')
-            ? 'cancelled'
-            : event.contains('pending')
-            ? 'waiting'
-            : 'end',
-        code: code,
+        event: outcome,
+        // A handled step such as openvpn_profile_release_required keeps its
+        // code in the local trace only; v1 would report it as unknown_error.
+        // Recovered native errors keep their catalogued v1 code.
+        code:
+            outcome == 'error' ||
+                outcome == 'cancelled' ||
+                diagnosticCodes.contains(code)
+            ? code
+            : null,
       ),
     );
     if (failed && !cancelled && code != null && _connectionCommand != null) {

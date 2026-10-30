@@ -47,7 +47,8 @@ class ApiException implements Exception, DiagnosticFailureDetails {
   @override
   String get diagnosticFailureCode =>
       localErrorCode ??
-      (browserAuthTraceCodes.contains(errorCode)
+      (browserAuthTraceCodes.contains(errorCode) ||
+              deviceEnrollmentTraceCodes.contains(errorCode)
           ? errorCode
           : diagnosticCode(errorCode));
   @override

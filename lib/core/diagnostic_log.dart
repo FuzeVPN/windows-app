@@ -260,6 +260,16 @@ class DiagnosticLog {
           runtimeStorageStages.contains(nativeStage)) {
         stage = nativeStage as String;
       }
+      if (error.code == 'storage_error') {
+        // Only the binding write delegates its step to the native store; any
+        // other caller's stage (e.g. a sign-in step) is the precise one.
+        if ((stage == null || stage == 'device_binding_storage') &&
+            secureStoreStages.contains(nativeStage)) {
+          stage = nativeStage as String;
+        }
+        final attempts = details is Map ? details['attempts'] : null;
+        if (attempts is int) attempt ??= attempts;
+      }
       if (const {
             'broker_unavailable',
             'broker_write_failed',
@@ -307,6 +317,7 @@ class DiagnosticLog {
   static bool _knownFailureCode(String value) =>
       diagnosticCodes.contains(value) ||
       browserAuthTraceCodes.contains(value) ||
+      deviceEnrollmentTraceCodes.contains(value) ||
       const {
         'api_resolver_invalid_response',
         'runtime_detection_failed',

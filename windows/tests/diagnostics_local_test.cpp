@@ -5,6 +5,7 @@
 #include "diagnostics_local.h"
 #include "distribution_mode.h"
 #include "privileged_broker.h"
+#include "wireguard_endpoint.h"
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -120,6 +121,68 @@ void ParserChecks() {
       "\n" + Line("area=broker event=connection_failed code=50"));
   Check(Flag(oversized, "truncated") && Events(oversized).size() == 1, "64KB tail cap and partial prefix enforced");
 }
+void WireGuardSnapshotChecks() {
+  fuzevpn::WireGuardAttemptSnapshot written;
+  written.candidates = 1;
+  written.stage = fuzevpn::WireGuardAttemptStage::peer_ready;
+  written.elapsed_ms = 21543;
+  written.budget_ms = 69870;
+  written.service_start_ms = 402;
+  written.handshake_wait_ms = 20000;
+  written.stop_ms = 1100;
+  written.tx_bytes = 592;
+  written.stats_reads = 197;
+  const auto parsed = SanitizeNativeDiagnosticTail(
+      Line("area=wireguard event=connection_attempt_snapshot " +
+           fuzevpn::FormatWireGuardAttemptSnapshot(written)) +
+      Line("area=wireguard event=connection_attempt_snapshot candidates=2 candidate_index=1 "
+           "stage=handshake_wait endpoint=192.0.2.1:51820 public_key=secret tx_bytes=4294967296 "
+           "stats_reads=4294967296 handshake=1 success=1"));
+  Check(Events(parsed).size() == 2, "WireGuard attempt snapshots are retained");
+  const auto& snapshot = std::get<Map>(Events(parsed)[0]);
+  Check(Text(snapshot, "stage") == "peer_ready" && Integer(snapshot, "candidates") == 1 &&
+      Integer(snapshot, "candidate_index") == 0 && Integer(snapshot, "handshake") == 0 &&
+      Integer(snapshot, "success") == 0 && Integer(snapshot, "elapsed_ms") == 21543 &&
+      Integer(snapshot, "budget_ms") == 69870 && Integer(snapshot, "service_start_ms") == 402 &&
+      Integer(snapshot, "handshake_wait_ms") == 20000 && Integer(snapshot, "stop_ms") == 1100 &&
+      Integer(snapshot, "tx_bytes") == 592 && Integer(snapshot, "rx_bytes") == 0 &&
+      Integer(snapshot, "stats_reads") == 197 &&
+      snapshot.size() == 16, "every numeric handshake field survives the reader");
+  const auto& hostile = std::get<Map>(Events(parsed)[1]);
+  Check(!hostile.contains(Value("stage")) && !hostile.contains(Value("endpoint")) &&
+      !hostile.contains(Value("public_key")) && !hostile.contains(Value("tx_bytes")) &&
+      !hostile.contains(Value("stats_reads")) &&
+      Integer(hostile, "handshake") == 1, "unknown stages, endpoints, keys and overflow are dropped");
+  // The writers' shared timestamp is exactly the shape the reader accepts.
+  SYSTEMTIME written_at{};
+  written_at.wYear = 2026; written_at.wMonth = 1; written_at.wDay = 2; written_at.wHour = 3;
+  written_at.wMinute = 4; written_at.wSecond = 5; written_at.wMilliseconds = 7;
+  const auto stamp = FormatNativeDiagnosticTimestamp(written_at);
+  const auto stamped = SanitizeNativeDiagnosticTail(stamp +
+      " area=wireguard event=connection_attempt_snapshot " +
+      fuzevpn::FormatWireGuardAttemptSnapshot(written) + "\r\n");
+  Check(stamp == "2026-01-02T03:04:05.007Z" && Events(stamped).size() == 1 &&
+      Text(std::get<Map>(Events(stamped)[0]), "timestamp") == stamp,
+      "native writers' timestamp is accepted by the local reader");
+  const auto adapter = SanitizeNativeDiagnosticTail(Line(
+      "area=wireguard event=connection_attempt_snapshot stage=adapter_open handshake=0 success=0"));
+  Check(Events(adapter).size() == 1 &&
+      Text(std::get<Map>(Events(adapter)[0]), "stage") == "adapter_open",
+      "adapter-open failure stays distinct from the handshake wait");
+  const auto operations = SanitizeNativeDiagnosticTail(
+      Line("area=openvpn event=importAndConnect_started") +
+      Line("area=openvpn event=prepareConnection_succeeded") +
+      Line("area=wireguard event=prepareIdentityForAccount_failed") +
+      Line("area=wireguard event=recreateIdentityForAccount_started") +
+      Line("area=openvpn event=ImportAndConnect_started") +
+      Line("area=openvpn event=importAndConnect_Started") +
+      Line("area=wireguard event=cleanup_snapshot") +
+      Line("area=broker event=connection_attempt_snapshot"));
+  Check(Events(operations).size() == 4 && Integer(operations, "discarded_lines") == 4 &&
+      Text(std::get<Map>(Events(operations)[0]), "event") == "importAndConnect_started" &&
+      Text(std::get<Map>(Events(operations)[2]), "event") == "prepareIdentityForAccount_failed",
+      "camelCase operation breadcrumbs are read; unknown spellings and areas are not");
+}
 void ServiceChecks() {
   scenario = Scenario::manager_denied;
   auto service = ObserveService({});
@@ -187,7 +250,8 @@ void FileChecks(const std::filesystem::path& directory) {
 int wmain(int argc, wchar_t** argv) {
   try {
     Check(argc == 2, "isolated fixture directory required");
-    ParserChecks(); ServiceChecks(); PartialCollectionChecks(); FileChecks(argv[1]);
+    ParserChecks(); WireGuardSnapshotChecks(); ServiceChecks(); PartialCollectionChecks();
+    FileChecks(argv[1]);
     std::cout << "native local diagnostics: parser, privacy, bounds, automatic SCM evidence passed\n";
     return 0;
   } catch (const std::exception& error) {

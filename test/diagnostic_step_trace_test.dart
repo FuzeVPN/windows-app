@@ -7,6 +7,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fuzevpn_windows/core/api_client.dart';
 import 'package:fuzevpn_windows/core/diagnostic_log.dart';
 import 'package:fuzevpn_windows/core/diagnostics_models.dart';
+import 'package:fuzevpn_windows/core/local_diagnostic_trace.dart';
+import 'package:fuzevpn_windows/core/runtime_storage_diagnostics.dart';
 
 const _fixture = 'test/fixtures/api-bootstrap';
 
@@ -20,6 +22,16 @@ Future<HttpServer> _server() => HttpServer.bindSecure(
 
 List<String> _since(int position) =>
     DiagnosticLog.recentLines.skip(position).toList();
+
+/// Validates in-memory lines only; the shared diagnostic.log is not read.
+Future<Map<String, Object?>> _collect(List<String> lines) async {
+  final directory = await Directory.systemTemp.createTemp('fuzevpn-trace-');
+  addTearDown(() => directory.delete(recursive: true));
+  return LocalDiagnosticTrace.collect(
+    path: '${directory.path}${Platform.pathSeparator}diagnostic.log',
+    currentLines: lines,
+  );
+}
 
 void main() {
   test('OpenVPN native exceptions preserve only their fixed stage', () async {
@@ -70,6 +82,172 @@ void main() {
       expect(lines.join('\n'), isNot(contains('private')));
     },
   );
+
+  test(
+    'protected-store write failures keep only fixed secure_store stages',
+    () async {
+      final position = DiagnosticLog.recentLines.length;
+      for (final stage in [...secureStoreStages, 'private-native-stage']) {
+        await DiagnosticLog.recordFailure(
+          area: 'wireguard',
+          event: 'device_binding_failed',
+          stage: 'device_binding_storage',
+          error: PlatformException(
+            code: 'storage_error',
+            message: 'private native message',
+            details: {
+              'stage': stage,
+              'win32_error': 32,
+              'attempts': 3,
+              'path': r'C:\private\current_device_id.bin',
+            },
+          ),
+        );
+      }
+      // Only storage_error may carry these stages; another code keeps its own.
+      await DiagnosticLog.recordFailure(
+        area: 'wireguard',
+        event: 'native_connect_failed',
+        error: PlatformException(
+          code: 'storage_failure',
+          details: {'stage': 'secure_store_replace', 'win32_error': 5},
+        ),
+      );
+      final lines = _since(position);
+      expect(lines, hasLength(secureStoreStages.length + 2));
+      for (final (index, stage) in secureStoreStages.indexed) {
+        expect(lines[index], contains('code=storage_error stage=$stage '));
+        expect(lines[index], contains('windows_error=32'));
+        expect(lines[index], contains('attempt=3'));
+      }
+      expect(
+        lines[secureStoreStages.length],
+        contains('code=storage_error stage=device_binding_storage '),
+      );
+      expect(lines.last, isNot(contains('stage=')));
+      expect(lines.join('\n'), isNot(contains('private')));
+      final collected = await _collect(lines);
+      expect(collected['discarded_lines'], 0);
+      final stages = (collected['events'] as List)
+          .map((event) => (event as Map)['stage'])
+          .toSet();
+      expect(stages, containsAll(secureStoreStages));
+      expect(stages, contains('device_binding_storage'));
+    },
+  );
+
+  test(
+    'a caller stage other than the binding write keeps its own step',
+    () async {
+      PlatformException failure() => PlatformException(
+        code: 'storage_error',
+        details: {'stage': 'secure_store_replace', 'win32_error': 5},
+      );
+      final position = DiagnosticLog.recentLines.length;
+      for (final stage in [
+        'saved_session_storage',
+        'device_binding_storage',
+        null,
+      ]) {
+        await DiagnosticLog.recordFailure(
+          area: 'account',
+          event: 'failed',
+          stage: stage,
+          error: failure(),
+        );
+      }
+      final lines = _since(position);
+      expect(lines, hasLength(3));
+      expect(
+        lines[0],
+        contains('code=storage_error stage=saved_session_storage '),
+      );
+      expect(
+        lines[1],
+        contains('code=storage_error stage=secure_store_replace '),
+      );
+      expect(
+        lines[2],
+        contains('code=storage_error stage=secure_store_replace '),
+      );
+      expect(lines, everyElement(contains('windows_error=5')));
+    },
+  );
+
+  test(
+    'device_location_locked is traced locally without a new v1 report code',
+    () async {
+      final error = ApiException.fromResponse(
+        statusCode: 409,
+        body: '{"error":"device_location_locked","detail":"private"}',
+      );
+      expect(error.diagnosticFailureCode, 'device_location_locked');
+      expect(diagnosticCodes, isNot(contains('device_location_locked')));
+      expect(diagnosticCode('device_location_locked'), 'unknown_error');
+      expect(diagnosticCodes.length, 206);
+      expect(
+        DiagnosticError(
+          code: 'device_location_locked',
+          stage: 'enrollment',
+        ).code,
+        'unknown_error',
+      );
+      final position = DiagnosticLog.recentLines.length;
+      await DiagnosticLog.recordFailure(
+        area: 'api_request',
+        event: 'failed',
+        stage: 'request',
+        error: error,
+      );
+      await DiagnosticLog.record(
+        area: 'wireguard',
+        event: 'openvpn_profile_release_required',
+        code: error.diagnosticFailureCode,
+        httpStatus: error.diagnosticHttpStatus,
+      );
+      for (final event in [
+        'openvpn_profile_release_started',
+        'openvpn_profile_release_completed',
+      ]) {
+        await DiagnosticLog.record(area: 'wireguard', event: event);
+      }
+      final lines = _since(position);
+      expect(lines.first, contains('code=device_location_locked '));
+      expect(lines.first, contains('http_status=409'));
+      expect(lines.join('\n'), isNot(contains('private')));
+      final collected = await _collect(lines);
+      expect(collected['discarded_lines'], 0);
+      final events = (collected['events'] as List).cast<Map>();
+      expect(events, hasLength(4));
+      expect(
+        events.where((event) => event['code'] == 'device_location_locked'),
+        hasLength(2),
+      );
+    },
+  );
+
+  test('OpenVPN pending waits are accepted by the local trace', () async {
+    final position = DiagnosticLog.recentLines.length;
+    await DiagnosticLog.record(
+      area: 'openvpn',
+      event: 'profile_pending_wait',
+      attempt: 2,
+      count: 3,
+      durationMs: 18000,
+    );
+    await DiagnosticLog.record(
+      area: 'openvpn',
+      event: 'profile_pending_exhausted',
+      attempt: 5,
+      durationMs: 52000,
+    );
+    final collected = await _collect(_since(position));
+    expect(collected['discarded_lines'], 0);
+    expect(
+      (collected['events'] as List).map((event) => (event as Map)['event']),
+      unorderedEquals(['profile_pending_wait', 'profile_pending_exhausted']),
+    );
+  });
 
   test(
     'socket and TLS traces retain numeric cause without exception text',

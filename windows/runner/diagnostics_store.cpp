@@ -176,8 +176,12 @@ class Directory final {
       // Create only the FuzeVPN parent if missing, never a profile hierarchy.
       if (create && *it == directory.parent_path() && GetFileAttributesW(it->c_str()) == INVALID_FILE_ATTRIBUTES &&
           !CreateDirectoryW(it->c_str(), &attributes) && GetLastError() != ERROR_ALREADY_EXISTS) return false;
+      // Ancestors share write so other writers, such as the secure store's
+      // absolute-name replacements in FuzeVPN, can still publish beside the
+      // queue during a job. Withholding delete sharing alone keeps each held
+      // ancestor from being renamed, deleted or swapped; only the leaf is strict.
       HANDLE handle = CreateFileW(it->c_str(), FILE_LIST_DIRECTORY | FILE_READ_ATTRIBUTES,
-          FILE_SHARE_READ, nullptr, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OPEN_REPARSE_POINT, nullptr);
+          FILE_SHARE_READ | FILE_SHARE_WRITE, nullptr, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OPEN_REPARSE_POINT, nullptr);
       if (handle == INVALID_HANDLE_VALUE) return false;
       BY_HANDLE_FILE_INFORMATION info{};
       if (!GetFileInformationByHandle(handle, &info) || (info.dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT) ||

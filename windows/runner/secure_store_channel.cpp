@@ -25,12 +25,20 @@ constexpr wchar_t kStoreName[] = L"FuzeVPN";
 thread_local HANDLE protected_store_user_token = nullptr;
 constexpr DWORD kMaximumStoreBytes = 1024 * 1024;
 std::atomic<unsigned long> temporary_sequence{0};
+// A replacement or deletion can meet a transient holder: another FuzeVPN
+// process reading the value, an antivirus or indexer scan. The total backoff
+// stays near 300 ms because callers include the Flutter platform thread and
+// the broker's tunnel mutex.
+constexpr DWORD kStoreRetryDelaysMs[] = {10, 20, 40, 80, 160};
+constexpr int kMaximumStoreAttempts =
+    1 + static_cast<int>(std::size(kStoreRetryDelaysMs));
 
 class ScopedStoreImpersonation final {
  public:
   ScopedStoreImpersonation() {
     if (protected_store_user_token != nullptr) {
       active_ = ImpersonateLoggedOnUser(protected_store_user_token) != FALSE;
+      if (!active_) error_ = GetLastError();
     }
   }
   ~ScopedStoreImpersonation() {
@@ -41,10 +49,46 @@ class ScopedStoreImpersonation final {
   bool valid() const {
     return protected_store_user_token == nullptr || active_;
   }
+  DWORD error() const { return error_; }
 
  private:
   bool active_ = false;
+  DWORD error_ = ERROR_SUCCESS;
 };
+
+bool StoreFailed(ProtectedStoreFailure* failure, const char* stage,
+                 DWORD error, int attempts = 1) {
+  if (failure != nullptr) *failure = {stage, error, attempts};
+  return false;
+}
+
+// std::filesystem reports Win32 codes in the system category. Any other
+// category (an errno value) has no Win32 meaning and is reported as a
+// missing path rather than as an unrelated Windows error.
+DWORD FilesystemWin32Error(const std::error_code& error) {
+  return error.category() == std::system_category()
+      ? static_cast<DWORD>(error.value()) : static_cast<DWORD>(ERROR_PATH_NOT_FOUND);
+}
+
+bool IsTransientStoreError(DWORD error) {
+  return error == ERROR_SHARING_VIOLATION || error == ERROR_ACCESS_DENIED ||
+         error == ERROR_LOCK_VIOLATION;
+}
+
+template <typename Operation>
+bool RetryTransient(const Operation& operation, DWORD* error, int* attempts) {
+  for (int attempt = 1;; ++attempt) {
+    *attempts = attempt;
+    if (operation()) {
+      *error = ERROR_SUCCESS;
+      return true;
+    }
+    *error = GetLastError();
+    if (attempt == kMaximumStoreAttempts || !IsTransientStoreError(*error))
+      return false;
+    Sleep(kStoreRetryDelaysMs[attempt - 1]);
+  }
+}
 
 bool IsAllowedKey(const std::string& key) {
   return key == "access_token" || key == "selected_location" ||
@@ -65,10 +109,17 @@ bool IsAllowedKey(const std::string& key) {
 
 std::filesystem::path UserStoreDirectory() {
   PWSTR data = nullptr;
-  if (FAILED(SHGetKnownFolderPath(FOLDERID_LocalAppData, 0,
-                                  protected_store_user_token, &data))) return {};
-  std::filesystem::path path(data);
+  const HRESULT folder = SHGetKnownFolderPath(FOLDERID_LocalAppData, 0,
+                                              protected_store_user_token, &data);
+  // The buffer is freed whether the lookup succeeded or not. A failure keeps
+  // its raw HRESULT, as the protect stage keeps DPAPI's NTE_* codes.
+  std::filesystem::path path;
+  if (SUCCEEDED(folder)) path = data;
   CoTaskMemFree(data);
+  if (FAILED(folder)) {
+    SetLastError(static_cast<DWORD>(folder));
+    return {};
+  }
   return path / kStoreName;
 }
 
@@ -81,10 +132,14 @@ std::filesystem::path DiagnosticPathFor(const std::string& filename) {
 }
 
 std::filesystem::path PathFor(const std::string& key) {
-  if (key.empty() || key.size() > 80) return {};
+  const auto invalid = [] {
+    SetLastError(ERROR_INVALID_NAME);
+    return std::filesystem::path();
+  };
+  if (key.empty() || key.size() > 80) return invalid();
   for (const char character : key) {
     if (!((character >= 'a' && character <= 'z') ||
-          (character >= '0' && character <= '9') || character == '_')) return {};
+          (character >= '0' && character <= '9') || character == '_')) return invalid();
   }
   auto path = UserStoreDirectory();
   if (path.empty()) return {};
@@ -97,45 +152,87 @@ const std::string* StringArgument(const flutter::EncodableMap& args, const char*
   return it == args.end() ? nullptr : std::get_if<std::string>(&it->second);
 }
 
-bool WriteSecret(const std::string& key, const std::string& value) {
-  if (value.size() > kMaximumStoreBytes / 2) return false;
+// Each failure reports its step and the Win32 error read before any cleanup.
+bool WriteSecret(const std::string& key, const std::string& value,
+                 ProtectedStoreFailure* failure) {
+  if (failure != nullptr) *failure = {};
+  if (value.size() > kMaximumStoreBytes / 2)
+    return StoreFailed(failure, "secure_store_protect", ERROR_FILE_TOO_LARGE);
   ScopedStoreImpersonation impersonation;
-  if (!impersonation.valid()) return false;
+  if (!impersonation.valid())
+    return StoreFailed(failure, "secure_store_impersonation", impersonation.error());
   const auto path = PathFor(key);
-  if (path.empty()) return false;
+  if (path.empty()) return StoreFailed(failure, "secure_store_path", GetLastError());
   DATA_BLOB input{static_cast<DWORD>(value.size()), reinterpret_cast<BYTE*>(const_cast<char*>(value.data()))};
   DATA_BLOB encrypted{};
-  if (!CryptProtectData(&input, L"FuzeVPN", nullptr, nullptr, nullptr, CRYPTPROTECT_UI_FORBIDDEN, &encrypted)) return false;
+  if (!CryptProtectData(&input, L"FuzeVPN", nullptr, nullptr, nullptr, CRYPTPROTECT_UI_FORBIDDEN, &encrypted))
+    return StoreFailed(failure, "secure_store_protect", GetLastError());
   std::error_code error;
   std::filesystem::create_directories(path.parent_path(), error);
   if (error) {
     LocalFree(encrypted.pbData);
-    return false;
+    return StoreFailed(failure, "secure_store_directory", FilesystemWin32Error(error));
   }
   auto temporary_path = path;
   temporary_path += L".tmp." + std::to_wstring(GetCurrentProcessId()) + L"." +
                     std::to_wstring(GetCurrentThreadId()) + L"." +
                     std::to_wstring(GetTickCount64()) + L"." +
                     std::to_wstring(temporary_sequence.fetch_add(1));
-  bool ok = false;
+  const char* stage = nullptr;
+  DWORD stage_error = ERROR_SUCCESS;
   HANDLE file = CreateFileW(temporary_path.c_str(), GENERIC_WRITE, 0, nullptr,
                             CREATE_NEW, FILE_ATTRIBUTE_NORMAL, nullptr);
-  if (file != INVALID_HANDLE_VALUE) {
+  if (file == INVALID_HANDLE_VALUE) {
+    stage = "secure_store_create";
+    stage_error = GetLastError();
+  } else {
     DWORD written = 0;
-    ok = WriteFile(file, encrypted.pbData, encrypted.cbData, &written, nullptr) &&
-         written == encrypted.cbData && FlushFileBuffers(file);
+    if (!WriteFile(file, encrypted.pbData, encrypted.cbData, &written, nullptr)) {
+      stage = "secure_store_write";
+      stage_error = GetLastError();
+    } else if (written != encrypted.cbData) {
+      stage = "secure_store_write";
+      stage_error = ERROR_WRITE_FAULT;
+    } else if (!FlushFileBuffers(file)) {
+      stage = "secure_store_flush";
+      stage_error = GetLastError();
+    }
     CloseHandle(file);
   }
   LocalFree(encrypted.pbData);
-  if (!ok) {
-    std::filesystem::remove(temporary_path, error);
-    return false;
+  if (stage != nullptr) {
+    if (file != INVALID_HANDLE_VALUE) DeleteFileW(temporary_path.c_str());
+    return StoreFailed(failure, stage, stage_error);
   }
-  if (!MoveFileExW(temporary_path.c_str(), path.c_str(),
-                   MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH)) {
-    std::filesystem::remove(temporary_path, error);
-    return false;
+  // The encrypted temporary stays in place across retries, so a late success
+  // still publishes the complete value atomically.
+  DWORD replace_error = ERROR_SUCCESS;
+  int attempts = 0;
+  if (!RetryTransient([&] {
+        return MoveFileExW(temporary_path.c_str(), path.c_str(),
+                           MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH) != FALSE;
+      }, &replace_error, &attempts)) {
+    DeleteFileW(temporary_path.c_str());
+    return StoreFailed(failure, "secure_store_replace", replace_error, attempts);
   }
+  if (failure != nullptr) failure->attempts = attempts;
+  return true;
+}
+
+bool DeleteSecret(const std::string& key, ProtectedStoreFailure* failure) {
+  if (failure != nullptr) *failure = {};
+  ScopedStoreImpersonation impersonation;
+  if (!impersonation.valid())
+    return StoreFailed(failure, "secure_store_impersonation", impersonation.error());
+  const auto path = PathFor(key);
+  if (path.empty()) return StoreFailed(failure, "secure_store_path", GetLastError());
+  DWORD error = ERROR_SUCCESS;
+  int attempts = 0;
+  if (!RetryTransient([&] { return DeleteFileW(path.c_str()) != FALSE; },
+                      &error, &attempts) &&
+      error != ERROR_FILE_NOT_FOUND && error != ERROR_PATH_NOT_FOUND)
+    return StoreFailed(failure, "secure_store_delete", error, attempts);
+  if (failure != nullptr) failure->attempts = attempts;
   return true;
 }
 
@@ -148,7 +245,12 @@ ProtectedValueReadStatus ReadSecret(const std::string& key, std::string* value) 
   if (!impersonation.valid()) return Status::access_denied;
   const auto path = PathFor(key);
   if (path.empty()) return Status::io_error;
-  HANDLE file = CreateFileW(path.c_str(), GENERIC_READ, FILE_SHARE_READ,
+  // Delete sharing lets a concurrent deletion proceed while this handle keeps
+  // reading the complete previous ciphertext. It does not help a replacement:
+  // MoveFileExW still fails with ERROR_ACCESS_DENIED while this handle is
+  // open, and the writer relies on its bounded retry. Writers stay excluded.
+  HANDLE file = CreateFileW(path.c_str(), GENERIC_READ,
+                            FILE_SHARE_READ | FILE_SHARE_DELETE,
                             nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL,
                             nullptr);
   if (file == INVALID_HANDLE_VALUE) {
@@ -183,6 +285,18 @@ ProtectedValueReadStatus ReadSecret(const std::string& key, std::string* value) 
   LocalFree(decrypted.pbData);
   return Status::found;
 }
+
+// Only the fixed stage, the numeric Windows error and the attempt count leave
+// the process: never a path, a value or a system message.
+flutter::EncodableValue StoreFailureDetails(const ProtectedStoreFailure& failure) {
+  return flutter::EncodableValue(flutter::EncodableMap{
+      {flutter::EncodableValue("stage"),
+       flutter::EncodableValue(failure.stage != nullptr ? failure.stage : "")},
+      {flutter::EncodableValue("win32_error"),
+       flutter::EncodableValue(static_cast<int64_t>(failure.win32_error))},
+      {flutter::EncodableValue("attempts"),
+       flutter::EncodableValue(static_cast<int32_t>(failure.attempts))}});
+}
 }  // namespace
 
 ScopedProtectedStoreUser::ScopedProtectedStoreUser(
@@ -205,17 +319,22 @@ ProtectedValueReadStatus ReadProtectedValueStatus(const std::string& key,
 }
 
 bool WriteProtectedValue(const std::string& key, const std::string& value) {
-  return WriteSecret(key, value);
+  return WriteSecret(key, value, nullptr);
+}
+
+bool WriteProtectedValueDetailed(const std::string& key,
+                                 const std::string& value,
+                                 ProtectedStoreFailure* failure) {
+  return WriteSecret(key, value, failure);
 }
 
 bool DeleteProtectedValue(const std::string& key) {
-  ScopedStoreImpersonation impersonation;
-  if (!impersonation.valid()) return false;
-  const auto path = PathFor(key);
-  if (path.empty()) return false;
-  if (DeleteFileW(path.c_str())) return true;
-  const DWORD error = GetLastError();
-  return error == ERROR_FILE_NOT_FOUND || error == ERROR_PATH_NOT_FOUND;
+  return DeleteSecret(key, nullptr);
+}
+
+bool DeleteProtectedValueDetailed(const std::string& key,
+                                  ProtectedStoreFailure* failure) {
+  return DeleteSecret(key, failure);
 }
 
 std::string ProtectedStoreUserId() {
@@ -299,12 +418,19 @@ void RegisterSecureStoreChannel(flutter::FlutterEngine* engine) {
     }
     if (call.method_name() == "write") {
       const auto* value = StringArgument(*args, "value");
-      if (!value || !WriteSecret(*key, *value)) { result->Error("storage_error", "Unable to protect the value."); return; }
+      if (!value) { result->Error("storage_error", "Unable to protect the value."); return; }
+      ProtectedStoreFailure failure;
+      if (!WriteSecret(*key, *value, &failure)) {
+        result->Error("storage_error", "Unable to protect the value.", StoreFailureDetails(failure));
+        return;
+      }
       result->Success(); return;
     }
     if (call.method_name() == "delete") {
-      if (!DeleteProtectedValue(*key)) {
-        result->Error("storage_error", "Unable to remove the protected value.");
+      ProtectedStoreFailure failure;
+      if (!DeleteSecret(*key, &failure)) {
+        result->Error("storage_error", "Unable to remove the protected value.",
+                      StoreFailureDetails(failure));
       } else {
         result->Success();
       }
