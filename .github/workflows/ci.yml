@@ -119,7 +119,10 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          .\tools\bootstrap-windows.ps1 -Architecture '${{ matrix.architecture }}'
+          # Flutter's configuration pass targets the x64 host, so an ARM64
+          # build also needs the x64 native dependencies.
+          $architecture = if ('${{ matrix.architecture }}' -eq 'arm64') { 'both' } else { 'x64' }
+          .\tools\bootstrap-windows.ps1 -Architecture $architecture
 
       - name: Build development application and every native test offline
         shell: pwsh

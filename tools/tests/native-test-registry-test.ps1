@@ -51,8 +51,18 @@ add_executable(orphan EXCLUDE_FROM_ALL test.cpp)
 add_test(NAME orphan_case COMMAND orphan)
 fuzevpn_validate_native_test_registry()
 '@)
-$rejected = @(& $tools.CMake -S $bad -B (Join-Path $bad 'build') -G 'Visual Studio 18 2026' -A x64 2>&1)
-if ($LASTEXITCODE -eq 0 -or ($rejected -join "`n") -notmatch 'Register native CTest orphan_case through fuzevpn_add_native_test') {
+# The rejection is expected: its stderr must not stop the script, and its exit
+# code must not leak to a caller that checks $LASTEXITCODE afterwards.
+$previousPreference = $ErrorActionPreference
+$ErrorActionPreference = 'Continue'
+try {
+  $rejected = @(& $tools.CMake -S $bad -B (Join-Path $bad 'build') -G 'Visual Studio 18 2026' -A x64 2>&1)
+  $rejectedExitCode = $LASTEXITCODE
+} finally {
+  $ErrorActionPreference = $previousPreference
+}
+if ($rejectedExitCode -eq 0 -or ($rejected -join "`n") -notmatch 'Register native CTest orphan_case through fuzevpn_add_native_test') {
   throw 'An unregistered CTest executable must fail configuration with an actionable error.'
 }
+$global:LASTEXITCODE = 0
 Write-Host 'Native test registry passed: a fresh aggregate builds every executable fixture, preserves arguments, runs script contracts, excludes manual probes and rejects orphan CTests.'
