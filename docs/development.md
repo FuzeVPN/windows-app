@@ -30,8 +30,9 @@ The last command stages a complete unsigned development portable package under
 the packaging step supplies the explicit development runtime metadata and
 portable marker. Building the raw Release directory alone does not supply them.
 
-For ARM64, replace `x64` with `arm64`. To prepare both dependency sets in one
-run, use `-Architecture both` with the bootstrap. Add `-IncludeInstaller` to
+For ARM64, replace `x64` with `arm64` in the build commands and bootstrap with
+`-Architecture both`: Flutter's configuration pass targets the x64 host, so an
+ARM64 build also needs the x64 native dependencies. Add `-IncludeInstaller` to
 prepare WiX source-build dependencies when an installer build is needed.
 
 `-DevTest` creates a local unsigned development build with explicit development
