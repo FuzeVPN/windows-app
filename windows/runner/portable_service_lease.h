@@ -8,6 +8,7 @@
 #include "installation_security.h"
 #include "update_security.h"
 #include "service_handoff_mutex.h"
+#include "portable_service_lease_journal.h"
 
 namespace fuzevpn_handoff {
 using ValidateService = bool (*)(SC_HANDLE, const fuzevpn_update::PinnedFile&,
@@ -22,7 +23,8 @@ bool ValidateInstalledService(SC_HANDLE service, const fuzevpn_update::PinnedFil
 // same service stop. Destruction restores only a service this helper yielded.
 class InstalledServiceLease final {
  public:
-  explicit InstalledServiceLease(ValidateService validate = ValidateInstalledService) : validate_(validate) {}
+  explicit InstalledServiceLease(ValidateService validate = ValidateInstalledService,
+      LeaseJournal* journal = nullptr) : validate_(validate), journal_(journal ? journal : &protected_journal_) {}
   ~InstalledServiceLease();
   InstalledServiceLease(const InstalledServiceLease&) = delete;
   InstalledServiceLease& operator=(const InstalledServiceLease&) = delete;
@@ -32,7 +34,13 @@ class InstalledServiceLease final {
  private:
   bool Query(SERVICE_STATUS_PROCESS* state, DWORD* error);
   bool SameConfiguration(DWORD* error);
+  bool Recover(DWORD* error);
+  bool ClearRecord(DWORD* error);
+  bool StartAndComplete(DWORD* error);
   ValidateService validate_;
+  ProtectedLeaseJournal protected_journal_;
+  LeaseJournal* journal_;
+  std::optional<LeaseRecord> record_;
   Reservation reservation_;
   fuzevpn_update::PinnedFile installed_;
   fuzevpn_installation::ProtectedInstallation tree_;

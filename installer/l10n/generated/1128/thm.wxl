@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="ha-Latn-NG" Language="1128" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+  <String Id="Caption" Value="Ana shigar da [WixBundleName]" />
+  <String Id="CheckingForUpdatesLabel" Value="Ana neman sabuntawa" />
+  <String Id="ConfirmCancelMessage" Value="Kuna son sokewa?" />
+  <String Id="DesktopShortcut" Value="Ƙirƙiri gajeriyar hanya a tebur" />
+  <String Id="ExecuteUpgradeRelatedBundleMessage" Value="Sigar da ta gabata" />
+  <String Id="FailureCacheHeader" Value="An kasa shiryawa" />
+  <String Id="FailureCloseButton" Value="Rufe" />
+  <String Id="FailureHeader" Value="An kasa" />
+  <String Id="FailureHyperlinkLogText" Value="An katse aikin. Duba &lt;a href=&quot;#&quot;&gt;kundin bayanai&lt;/a&gt;, gyara matsalar, sannan a sake gwadawa." />
+  <String Id="FailureInstallHeader" Value="An katse shigarwa" />
+  <String Id="FailureLayoutHeader" Value="An kasa kwafa" />
+  <String Id="FailureModifyHeader" Value="An katse canji" />
+  <String Id="FailureRepairHeader" Value="An katse gyara" />
+  <String Id="FailureRestartButton" Value="Sake kunnawa" />
+  <String Id="FailureRestartText" Value="Sake kunnawa don kammala mayarwa." />
+  <String Id="FailureUninstallHeader" Value="An katse cire shigarwa" />
+  <String Id="FailureUnsafeUninstallHeader" Value="An katse cire shigarwa" />
+  <String Id="FilesInUseCloseRadioButton" Value="Rufe manhajoji" />
+  <String Id="FilesInUseDontCloseRadioButton" Value="Bar manhajoji a buɗe" />
+  <String Id="FilesInUseExitButton" Value="Soke" />
+  <String Id="FilesInUseIgnoreButton" Value="Yi watsi" />
+  <String Id="FilesInUseLabel" Value="Rufe waɗannan manhajoji, sannan a sake gwadawa." />
+  <String Id="FilesInUseNetfxCloseRadioButton" Value="Rufe manhajoji" />
+  <String Id="FilesInUseRetryButton" Value="Sake gwadawa" />
+  <String Id="FilesInUseTitle" Value="Fayilolin da ake amfani da su" />
+  <String Id="HelpCloseButton" Value="Rufe" />
+  <String Id="HelpHeader" Value="Taimako" />
+  <String Id="HelpText" Value="/install, /repair, /uninstall: shigarwa, gyarawa, cirewa. /quiet: yanayin shiru. /norestart: kar a sake kunnawa. DesktopShortcut=1: gajeriyar hanya a tebur. InstallFolder=&quot;D:\Applications\FuzeVPN&quot;: babban fayil na farko. Sabuntawa na riƙe babban fayil ɗin da aka shigar." />
+  <String Id="InstallAcceptCheckbox" Value="Na &amp;yarda da sharuɗɗan lasisi" />
+  <String Id="InstallCancelButton" Value="Soke" />
+  <String Id="InstallHeader" Value="Barka da zuwa" />
+  <String Id="InstallInstallButton" Value="Shigar" />
+  <String Id="InstallLicenseLinkText" Value="[WixBundleName] &lt;a href=&quot;#&quot;&gt;sharuɗɗan lasisi&lt;/a&gt;." />
+  <String Id="InstallMessage" Value="Shigar da FuzeVPN a wannan kwamfuta." />
+  <String Id="InstallMessageOptions" Value="Shigar da FuzeVPN a wannan kwamfuta." />
+  <String Id="InstallOptionsButton" Value="Zaɓuɓɓuka" />
+  <String Id="InstallVersion" Value="Sigar [WixBundleVersion]" />
+  <String Id="InstallVersionNotice" Value="Sigar [WixBundleVersion] [BuildNotice]" />
+  <String Id="ModifyCancelButton" Value="Soke" />
+  <String Id="ModifyHeader" Value="Kulawa" />
+  <String Id="ModifyRepairButton" Value="Gyara" />
+  <String Id="ModifyUninstallButton" Value="Cire shigarwa" />
+  <String Id="OptionsBrowseButton" Value="Bincika" />
+  <String Id="OptionsCancelButton" Value="Soke" />
+  <String Id="OptionsHeader" Value="Zaɓuɓɓuka" />
+  <String Id="OptionsLocationLabel" Value="Babban fayil na shigarwa (Windows na kare shi)" />
+  <String Id="OptionsOkButton" Value="To" />
+  <String Id="OptionsPerMachineScopeText" Value="Duk masu amfani" />
+  <String Id="OptionsPerUserScopeText" Value="Mai amfani na yanzu" />
+  <String Id="OverallProgressPackageText" Value="Ana shiryawa…" />
+  <String Id="PreserveInstallFolder" Value="Ana riƙe babban fayil ɗin da yake akwai yayin sabuntawa. Don matsar da manhajar yadda kuke so, yi amfani da ma&apos;ajiyar da ake iya ɗauka." />
+  <String Id="ProgressCancelButton" Value="Soke" />
+  <String Id="ProgressHeader" Value="Ana shigarwa" />
+  <String Id="ProgressLabel" Value="Ci gaba" />
+  <String Id="SuccessCacheHeader" Value="Fayiloli sun shirya" />
+  <String Id="SuccessCloseButton" Value="Rufe" />
+  <String Id="SuccessHeader" Value="An kammala aikin" />
+  <String Id="SuccessInstallHeader" Value="An kammala shigarwa" />
+  <String Id="SuccessLaunchButton" Value="Buɗe" />
+  <String Id="SuccessLayoutHeader" Value="Fayiloli sun shirya" />
+  <String Id="SuccessModifyHeader" Value="An kammala canji" />
+  <String Id="SuccessOpenApp" Value="Buɗe FuzeVPN daga menu na Fara. An riƙe zaɓuɓɓukanka na kanka." />
+  <String Id="SuccessRepairHeader" Value="An kammala gyara" />
+  <String Id="SuccessRestartButton" Value="Sake kunnawa" />
+  <String Id="SuccessRestartText" Value="Sake kunna kwamfutarka don kammalawa." />
+  <String Id="SuccessUninstallHeader" Value="An kammala cire shigarwa" />
+  <String Id="SuccessUninstallRestartText" Value="Sake kunnawa don kammala cire shigarwa." />
+  <String Id="SuccessUnsafeUninstallHeader" Value="An kammala cire shigarwa" />
+  <String Id="Title" Value="[WixBundleName]" />
+  <String Id="UpdateButton" Value="Sabunta" />
+</WixLocalization>

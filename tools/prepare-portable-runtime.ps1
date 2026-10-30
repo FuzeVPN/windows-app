@@ -18,6 +18,7 @@ $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 $projectRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 Import-Module (Join-Path $projectRoot 'installer\InstallerTools.psm1') -Force
+Import-Module (Join-Path $projectRoot 'tools\BuildProvenance.psm1') -Force
 
 function Assert-PortableBuildMode {
   param([Parameter(Mandatory)][string]$Directory, [string]$Cache, [switch]$Development,
@@ -33,6 +34,7 @@ function Assert-PortableBuildMode {
   if (-not $flag.Success -or $flag.Groups[1].Value -cne $expectedFlag) { throw "Compile with FUZEVPN_ALLOW_PORTABLE_DEV=$expectedFlag for this packaging mode." }
   $target = [regex]::Match([IO.File]::ReadAllText($Cache), '(?m)^CMAKE_GENERATOR_PLATFORM:INTERNAL=([^\r\n]+)\s*$')
   if (-not $target.Success -or $target.Groups[1].Value.Trim() -ine $TargetArchitecture) { throw 'The source CMake cache architecture must match the requested package.' }
+  [void](Assert-FuzeBuildReceipt -ReleaseDirectory $release -ReceiptPath (Join-Path ([IO.Path]::GetDirectoryName($Cache)) 'build-provenance.json') -Architecture $TargetArchitecture -Development:$Development)
   return $Cache
 }
 
@@ -66,21 +68,37 @@ function Get-PortableRuntimePaths {
 }
 
 function ConvertTo-PortableManifest {
-  param([Parameter(Mandatory)][string]$Version, [Parameter(Mandatory)][object[]]$Files)
+  param([Parameter(Mandatory)][string]$Version, [Parameter(Mandatory)][object[]]$Files,
+    [switch]$CompleteDistribution)
   $versionText = ConvertTo-PublicVersion $Version
-  if ($Files.Count -lt 1 -or $Files.Count -gt 128) { throw 'Portable manifest supports 1 to 128 files.' }
+  $maximumFiles = if ($CompleteDistribution) { 1024 } else { 128 }
+  $maximumDepth = if ($CompleteDistribution) { 16 } else { 8 }
+  $maximumPathLength = if ($CompleteDistribution) { 232 } else { 240 }
+  [uint64]$maximumBytes = if ($CompleteDistribution) { 1GB } else { 512MB }
+  $maximumManifestBytes = if ($CompleteDistribution) { 512KB } else { 65536 }
+  if ($Files.Count -lt 1 -or $Files.Count -gt $maximumFiles) { throw 'Portable manifest file count is out of bounds.' }
   $lines = [Collections.Generic.List[string]]::new()
-  $lines.Add('FUZEVPN_RUNTIME_V1'); $lines.Add("version=$versionText"); $lines.Add('ipc=1')
+  $lines.Add($(if ($CompleteDistribution) { 'FUZEVPN_PORTABLE_V1' } else { 'FUZEVPN_RUNTIME_V1' }))
+  $lines.Add("version=$versionText")
+  if ($CompleteDistribution) {
+    # Frozen V1 exclusions: carrier signature, resource-300 sidecar hash, fixed
+    # portable marker, and display-only README. No frontend/code path is exempt.
+    $lines.Add('exclude=fuzevpn-runtime.exe;portable-runtime.manifest;fuzevpn.portable;README-PORTABLE.txt')
+  } else { $lines.Add('ipc=1') }
   $seen = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
   [uint64]$total = 0
   foreach ($file in $Files) {
     $name = [string]$file.Path
-    if ($name.Length -gt 240 -or $name -notmatch '^[A-Za-z0-9._-]+(?:/[A-Za-z0-9._-]+){0,7}$' -or -not $seen.Add($name)) { throw "Invalid portable relative path: $name" }
+    if ($name.Length -gt $maximumPathLength -or $name -notmatch '^[A-Za-z0-9._-]+(?:/[A-Za-z0-9._-]+)*$' -or
+        $name.Split('/').Count -gt $maximumDepth -or -not $seen.Add($name)) { throw "Invalid portable relative path: $name" }
+    if ($CompleteDistribution -and $name -in @('fuzevpn-runtime.exe','portable-runtime.manifest','fuzevpn.portable','README-PORTABLE.txt')) {
+      throw 'The signed inventory carrier and independently checked metadata cannot hash themselves.'
+    }
     foreach ($part in $name.Split('/')) {
       if ($part -in @('.','..') -or $part.EndsWith('.') -or $part.Split('.')[0] -match '^(CON|PRN|AUX|NUL|COM[0-9]|LPT[0-9])$') { throw "Invalid portable path component: $part" }
     }
     [uint64]$size = $file.Length
-    if ($size -eq 0 -or $size -gt 512MB -or $total -gt 512MB - $size -or $file.Sha256 -notmatch '^[a-fA-F0-9]{64}$') { throw "Invalid portable payload size/hash: $name" }
+    if ($size -eq 0 -or $size -gt 512MB -or $total -gt $maximumBytes - $size -or $file.Sha256 -notmatch '^[a-fA-F0-9]{64}$') { throw "Invalid portable payload size/hash: $name" }
     $total += $size
     $lines.Add(('file={0}' -f $size) + "`t" + $file.Sha256.ToLowerInvariant() + "`t" + $name)
   }
@@ -92,8 +110,31 @@ function ConvertTo-PortableManifest {
     }
   }
   $bytes = [Text.Encoding]::ASCII.GetBytes(($lines -join "`n") + "`n")
-  if ($bytes.Length -gt 65536) { throw 'Portable manifest exceeds 64 KiB.' }
+  if ($bytes.Length -gt $maximumManifestBytes) { throw 'Portable manifest text exceeds its size bound.' }
   return ,$bytes
+}
+
+function Get-PortableInventoryPaths {
+  param([Parameter(Mandatory)][object[]]$Inventory)
+  $entries = @{}
+  foreach ($entry in $Inventory) {
+    $name = $entry.Path.Replace('\','/')
+    if ($entries.ContainsKey($name)) { throw "Duplicate release path: $name" }
+    $entries[$name] = $entry
+  }
+  $selected = @($entries.Keys | Where-Object {
+    $_ -notin @('fuzevpn-runtime.exe','portable-runtime.manifest','fuzevpn.portable','README-PORTABLE.txt')
+  })
+  [Array]::Sort($selected, [StringComparer]::OrdinalIgnoreCase)
+  foreach ($name in $selected) {
+    $entry = $entries[$name]
+    [pscustomobject]@{ Path=$name; Length=$entry.Length; Sha256=$entry.Sha256 }
+  }
+}
+
+function ConvertTo-PortableInventory {
+  param([Parameter(Mandatory)][string]$Version, [Parameter(Mandatory)][object[]]$Files)
+  return ,(ConvertTo-PortableManifest $Version $Files -CompleteDistribution)
 }
 
 function Initialize-PortableResourceApi {
@@ -112,25 +153,27 @@ public static class FuzeVpnPortableResource {
   [DllImport("kernel32.dll", SetLastError=true)] static extern IntPtr LoadResource(IntPtr module, IntPtr resource);
   [DllImport("kernel32.dll")] static extern IntPtr LockResource(IntPtr resource);
   [DllImport("kernel32.dll")] static extern bool FreeLibrary(IntPtr module);
-  public static void Write(string path, byte[] bytes) {
+  public static void Write(string path, byte[] bytes, int resourceId = 300) {
+    if (resourceId != 300 && resourceId != 301) throw new ArgumentOutOfRangeException("resourceId");
     IntPtr update = BeginUpdateResourceW(path, false);
     if (update == IntPtr.Zero) throw new Win32Exception();
     bool complete = false;
     try {
-      if (!UpdateResourceW(update, new IntPtr(10), new IntPtr(300), 0, bytes, (uint)bytes.Length)) throw new Win32Exception();
+      if (!UpdateResourceW(update, new IntPtr(10), new IntPtr(resourceId), 0, bytes, (uint)bytes.Length)) throw new Win32Exception();
       complete = true;
     } finally {
       if (!EndUpdateResourceW(update, !complete) && complete) throw new Win32Exception();
     }
   }
-  public static byte[] Read(string path) {
+  public static byte[] Read(string path, int resourceId = 300) {
+    if (resourceId != 300 && resourceId != 301) throw new ArgumentOutOfRangeException("resourceId");
     // Datafile only: no entry point, imports or application code is executed.
     IntPtr module = LoadLibraryExW(path, IntPtr.Zero, 0x60);
     if (module == IntPtr.Zero) throw new Win32Exception();
     try {
-      IntPtr resource = FindResourceExW(module, new IntPtr(10), new IntPtr(300), 0);
+      IntPtr resource = FindResourceExW(module, new IntPtr(10), new IntPtr(resourceId), 0);
       uint length = SizeofResource(module, resource);
-      if (resource == IntPtr.Zero || length == 0 || length > 65536) throw new InvalidOperationException("Missing or oversized portable manifest.");
+      if (resource == IntPtr.Zero || length == 0 || length > (resourceId == 300 ? 65536 : 524288)) throw new InvalidOperationException("Missing or oversized portable manifest.");
       IntPtr data = LockResource(LoadResource(module, resource));
       if (data == IntPtr.Zero) throw new Win32Exception();
       byte[] bytes = new byte[length]; Marshal.Copy(data, bytes, 0, (int)length); return bytes;
@@ -176,6 +219,7 @@ if ($CertificateThumbprint) { $verification['Thumbprint']=$CertificateThumbprint
 if ($ExpectedPublisherSubject) { $verification['ExpectedPublisherSubject']=$ExpectedPublisherSubject }
 if (-not $ReleaseDirectory) { $ReleaseDirectory = Join-Path $projectRoot "build\windows\$Architecture\runner\Release" }
 $ReleaseDirectory = Assert-ProjectPath $ReleaseDirectory $projectRoot
+[void](Assert-FuzeCompiledBuildPolicy -ReleaseDirectory $ReleaseDirectory -Architecture $Architecture -Development:$DevTest)
 [void](Assert-ReleasePeArchitecture $ReleaseDirectory $projectRoot $Architecture)
 if (-not $ManifestPath) { $ManifestPath = Join-Path $ReleaseDirectory 'portable-runtime.manifest' }
 $ManifestPath = Assert-ProjectPath $ManifestPath $projectRoot
@@ -199,6 +243,8 @@ foreach ($name in @('fuzevpn_windows.exe','fuzevpn-service.exe','fuzevpn-update.
 $inventory = @(Get-ReleaseInventory $ReleaseDirectory $projectRoot)
 $payload = @(Get-PortableRuntimePaths $inventory $Architecture)
 $manifest = ConvertTo-PortableManifest $publicVersion $payload
+$completePayload = @(Get-PortableInventoryPaths $inventory)
+$completeManifest = ConvertTo-PortableInventory $publicVersion $completePayload
 if (-not $VerifyOnly -and -not $DevTest -and (Get-AuthenticodeSignature -LiteralPath $helper).Status -eq 'Valid') {
   # UpdateResource removes the certificate bytes but leaves the old security
   # directory in a signed PE. Strip that signature with the official SDK first.
@@ -214,8 +260,12 @@ try {
   if (-not $VerifyOnly) {
     [IO.File]::WriteAllBytes($ManifestPath, $manifest)
     [FuzeVpnPortableResource]::Write($helper, $manifest)
+    [FuzeVpnPortableResource]::Write($helper, $completeManifest, 301)
   }
   $embedded = [FuzeVpnPortableResource]::Read($helper)
   if ([Convert]::ToBase64String($embedded) -cne [Convert]::ToBase64String($manifest)) { throw 'The embedded portable manifest differs from the current payload.' }
+  $embeddedInventory = [FuzeVpnPortableResource]::Read($helper, 301)
+  if ([Convert]::ToBase64String($embeddedInventory) -cne [Convert]::ToBase64String($completeManifest)) { throw 'The signed complete portable inventory differs from the current distribution.' }
 } finally { $env:TEMP = $previousTemp; $env:TMP = $previousTmp }
-[pscustomobject]@{ Helper = $helper; Manifest = $ManifestPath; Version = $publicVersion; Files = $payload.Count; Bytes = $manifest.Length; Verified = [bool]$VerifyOnly }
+[pscustomobject]@{ Helper = $helper; Manifest = $ManifestPath; Version = $publicVersion; Files = $payload.Count; Bytes = $manifest.Length;
+  InventoryFiles=$completePayload.Count; InventoryBytes=$completeManifest.Length; Verified = [bool]$VerifyOnly }

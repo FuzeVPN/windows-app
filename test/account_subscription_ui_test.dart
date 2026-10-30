@@ -178,7 +178,7 @@ void main() {
   });
 
   testWidgets(
-    'subscription dates render in all 30 supported language locales',
+    'subscription dates render in all 70 supported language locales',
     (tester) async {
       for (final language in AppLanguage.values.where(
         (language) => language != AppLanguage.system,
@@ -186,9 +186,16 @@ void main() {
         final app = _SubscriptionUiController()..language = language;
         await _openAccount(tester, app);
         final locale = language.locale!.toString();
-        final expiry = DateFormat.yMMMMd(
-          locale,
-        ).add_Hm().format(app.response!.expiresAt!.toLocal());
+        final dataLocale = DateFormat.localeExists(locale)
+            ? locale
+            : DateFormat.localeExists(language.locale!.languageCode)
+            ? language.locale!.languageCode
+            : null;
+        final expiry =
+            (dataLocale == null
+                    ? DateFormat('yyyy-MM-dd HH:mm', 'en_US')
+                    : DateFormat.yMMMMd(dataLocale).add_Hm())
+                .format(app.response!.expiresAt!.toLocal());
         expect(find.text(expiry), findsNWidgets(2), reason: language.name);
         expect(tester.takeException(), isNull, reason: language.name);
         await _closeApp(tester, app);

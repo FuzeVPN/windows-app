@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="ta-IN" Language="2121" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+  <String Id="Caption" Value="[WixBundleName] நிறுவப்படுகிறது" />
+  <String Id="CheckingForUpdatesLabel" Value="புதுப்பிப்புகள் சரிபார்க்கப்படுகின்றன" />
+  <String Id="ConfirmCancelMessage" Value="ரத்துசெய்ய விரும்புகிறீர்களா?" />
+  <String Id="DesktopShortcut" Value="பணிமேடை குறுக்குவழியை உருவாக்கு" />
+  <String Id="ExecuteUpgradeRelatedBundleMessage" Value="முந்தைய பதிப்பு" />
+  <String Id="FailureCacheHeader" Value="தயாரிப்பு தோல்வியடைந்தது" />
+  <String Id="FailureCloseButton" Value="மூடு" />
+  <String Id="FailureHeader" Value="தோல்வி" />
+  <String Id="FailureHyperlinkLogText" Value="செயல்பாடு தடைபட்டது. &lt;a href=&quot;#&quot;&gt;பதிவைப்&lt;/a&gt; பார்த்து, சிக்கலைச் சரிசெய்து மீண்டும் முயற்சிக்கவும்." />
+  <String Id="FailureInstallHeader" Value="நிறுவல் தடைபட்டது" />
+  <String Id="FailureLayoutHeader" Value="நகலெடுத்தல் தோல்வியடைந்தது" />
+  <String Id="FailureModifyHeader" Value="மாற்றம் தடைபட்டது" />
+  <String Id="FailureRepairHeader" Value="பழுதுநீக்கம் தடைபட்டது" />
+  <String Id="FailureRestartButton" Value="மறுதொடக்கம்" />
+  <String Id="FailureRestartText" Value="மீட்டமைப்பை முடிக்க மறுதொடக்கம் செய்யவும்." />
+  <String Id="FailureUninstallHeader" Value="நிறுவல் நீக்கம் தடைபட்டது" />
+  <String Id="FailureUnsafeUninstallHeader" Value="நிறுவல் நீக்கம் தடைபட்டது" />
+  <String Id="FilesInUseCloseRadioButton" Value="பயன்பாடுகளை மூடு" />
+  <String Id="FilesInUseDontCloseRadioButton" Value="பயன்பாடுகளைத் திறந்தே வை" />
+  <String Id="FilesInUseExitButton" Value="ரத்துசெய்" />
+  <String Id="FilesInUseIgnoreButton" Value="புறக்கணி" />
+  <String Id="FilesInUseLabel" Value="பின்வரும் பயன்பாடுகளை மூடிவிட்டு மீண்டும் முயற்சிக்கவும்." />
+  <String Id="FilesInUseNetfxCloseRadioButton" Value="பயன்பாடுகளை மூடு" />
+  <String Id="FilesInUseRetryButton" Value="மீண்டும் முயற்சி" />
+  <String Id="FilesInUseTitle" Value="பயன்பாட்டில் உள்ள கோப்புகள்" />
+  <String Id="HelpCloseButton" Value="மூடு" />
+  <String Id="HelpHeader" Value="உதவி" />
+  <String Id="HelpText" Value="/install, /repair, /uninstall: நிறுவுதல், பழுதுநீக்குதல், நிறுவலை நீக்குதல். /quiet: அமைதியான முறை. /norestart: மறுதொடக்கம் செய்ய வேண்டாம். DesktopShortcut=1: பணிமேடை குறுக்குவழி. InstallFolder=&quot;D:\Applications\FuzeVPN&quot;: ஆரம்பக் கோப்புறை. புதுப்பிப்புகள் நிறுவப்பட்ட கோப்புறையைப் பாதுகாக்கும்." />
+  <String Id="InstallAcceptCheckbox" Value="உரிம விதிமுறைகளையும் நிபந்தனைகளையும் &amp;ஏற்கிறேன்" />
+  <String Id="InstallCancelButton" Value="ரத்துசெய்" />
+  <String Id="InstallHeader" Value="வரவேற்கிறோம்" />
+  <String Id="InstallInstallButton" Value="நிறுவு" />
+  <String Id="InstallLicenseLinkText" Value="[WixBundleName] &lt;a href=&quot;#&quot;&gt;உரிம விதிமுறைகள்&lt;/a&gt;." />
+  <String Id="InstallMessage" Value="இந்தக் கணினியில் FuzeVPN ஐ நிறுவவும்." />
+  <String Id="InstallMessageOptions" Value="இந்தக் கணினியில் FuzeVPN ஐ நிறுவவும்." />
+  <String Id="InstallOptionsButton" Value="விருப்பங்கள்" />
+  <String Id="InstallVersion" Value="பதிப்பு [WixBundleVersion]" />
+  <String Id="InstallVersionNotice" Value="பதிப்பு [WixBundleVersion] [BuildNotice]" />
+  <String Id="ModifyCancelButton" Value="ரத்துசெய்" />
+  <String Id="ModifyHeader" Value="பராமரிப்பு" />
+  <String Id="ModifyRepairButton" Value="பழுதுநீக்கு" />
+  <String Id="ModifyUninstallButton" Value="நிறுவலை நீக்கு" />
+  <String Id="OptionsBrowseButton" Value="உலாவு" />
+  <String Id="OptionsCancelButton" Value="ரத்துசெய்" />
+  <String Id="OptionsHeader" Value="விருப்பங்கள்" />
+  <String Id="OptionsLocationLabel" Value="நிறுவல் கோப்புறை (Windows ஆல் பாதுகாக்கப்படுகிறது)" />
+  <String Id="OptionsOkButton" Value="சரி" />
+  <String Id="OptionsPerMachineScopeText" Value="அனைத்து பயனர்களும்" />
+  <String Id="OptionsPerUserScopeText" Value="தற்போதைய பயனர்" />
+  <String Id="OverallProgressPackageText" Value="தயாராகிறது…" />
+  <String Id="PreserveInstallFolder" Value="புதுப்பிப்புகளின்போது இருக்கும் கோப்புறை பாதுகாக்கப்படும். இடைமுகத்தைத் தேவைக்கேற்ப நகர்த்த, எடுத்துச் செல்லக்கூடிய தொகுப்பைப் பயன்படுத்தவும்." />
+  <String Id="ProgressCancelButton" Value="ரத்துசெய்" />
+  <String Id="ProgressHeader" Value="நிறுவல் நடைபெறுகிறது" />
+  <String Id="ProgressLabel" Value="முன்னேற்றம்" />
+  <String Id="SuccessCacheHeader" Value="கோப்புகள் தயார்" />
+  <String Id="SuccessCloseButton" Value="மூடு" />
+  <String Id="SuccessHeader" Value="செயல்பாடு முடிந்தது" />
+  <String Id="SuccessInstallHeader" Value="நிறுவல் முடிந்தது" />
+  <String Id="SuccessLaunchButton" Value="திற" />
+  <String Id="SuccessLayoutHeader" Value="கோப்புகள் தயார்" />
+  <String Id="SuccessModifyHeader" Value="மாற்றம் முடிந்தது" />
+  <String Id="SuccessOpenApp" Value="தொடக்க மெனுவிலிருந்து FuzeVPN ஐத் திறக்கவும். உங்கள் தனிப்பட்ட விருப்பத்தேர்வுகள் பாதுகாக்கப்பட்டுள்ளன." />
+  <String Id="SuccessRepairHeader" Value="பழுதுநீக்கம் முடிந்தது" />
+  <String Id="SuccessRestartButton" Value="மறுதொடக்கம்" />
+  <String Id="SuccessRestartText" Value="முடிக்க உங்கள் கணினியை மறுதொடக்கம் செய்யவும்." />
+  <String Id="SuccessUninstallHeader" Value="நிறுவல் நீக்கம் முடிந்தது" />
+  <String Id="SuccessUninstallRestartText" Value="நிறுவல் நீக்கத்தை முடிக்க மறுதொடக்கம் செய்யவும்." />
+  <String Id="SuccessUnsafeUninstallHeader" Value="நிறுவல் நீக்கம் முடிந்தது" />
+  <String Id="Title" Value="[WixBundleName]" />
+  <String Id="UpdateButton" Value="புதுப்பி" />
+</WixLocalization>

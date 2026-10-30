@@ -598,5 +598,14 @@
   "Cette demande de connexion a expiré ou a déjà été utilisée. Recommencez depuis FuzeVPN.": "Dit aanmeldverzoek is verlopen of is al gebruikt. Begin opnieuw vanuit FuzeVPN.",
   "La connexion par navigateur est momentanément indisponible. Utilisez votre adresse e-mail et votre mot de passe, ou réessayez plus tard.": "Aanmelden via de browser is tijdelijk niet beschikbaar. Gebruik je e-mailadres en wachtwoord of probeer het later opnieuw.",
   "Reconnectez-vous à votre compte dans le navigateur, puis réessayez depuis FuzeVPN.": "Meld je opnieuw aan bij je account in de browser en probeer het daarna opnieuw vanuit FuzeVPN.",
-  "Mises à jour désactivées dans cette version de test.": "Updates zijn uitgeschakeld in deze testversie."
+  "Mises à jour désactivées dans cette version de test.": "Updates zijn uitgeschakeld in deze testversie.",
+  "Autorisation reçue": "Autorisatie ontvangen",
+  "Autorisation refusée": "Autorisatie geweigerd",
+  "Demande invalide": "Ongeldig verzoek",
+  "Revenez dans FuzeVPN pour terminer la connexion.": "Ga terug naar FuzeVPN om het aanmelden te voltooien.",
+  "Délai avant réessai : {seconds} s.": "Wachttijd voor nieuwe poging: {seconds} s.",
+  "Serveurs : {count}": "Servers: {count}",
+  "Villes : {count}": "Steden: {count}",
+  "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "Blokkeert UDP buiten de VPN-tunnel. Schakel de kill switch in om ook WebRTC via TCP/TLS af te dekken.",
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Blokkeert DNS buiten de tunnel op poorten 53 en 853. Schakel de kill switch in om ook DNS via HTTPS af te dekken."
 }

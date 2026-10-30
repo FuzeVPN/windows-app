@@ -159,6 +159,19 @@ bool TestMaintenanceNetworkRecovery() {
   if (!VerifyProof(!proof() && error == ERROR_ACCESS_DENIED, "inaccessible WFP engine is blocking")) return false;
   ResetProof(); filter_error = ERROR_ACCESS_DENIED;
   if (!VerifyProof(!proof() && error == ERROR_ACCESS_DENIED, "inaccessible WFP enumeration is blocking")) return false;
+  ResetProof(); filter_present = true; filter_name = L"FuzeVPN — retained baseline";
+  fixture_filter.providerKey = const_cast<GUID*>(&fuzevpn_network_persistence::kProvider);
+  fixture_filter.flags = FWPM_FILTER_FLAG_PERSISTENT;
+  if (!VerifyProof(proof(), "owned persistent crash guard does not prevent authorized repair")) return false;
+  fixture_filter.flags = FWPM_FILTER_FLAG_BOOTTIME;
+  if (!VerifyProof(proof(), "owned boot-time crash guard also permits authorized repair")) return false;
+  fixture_filter.flags = 0;
+  if (!VerifyProof(!proof() && error == ERROR_BUSY, "surviving dynamic runtime exception still prevents repair")) return false;
+  ResetProof(); layer_present = true; layer_name = L"FuzeVPN";
+  fixture_layer.providerKey = const_cast<GUID*>(&fuzevpn_network_persistence::kProvider);
+  fixture_layer.subLayerKey = fuzevpn_network_persistence::kSublayer;
+  fixture_layer.flags = FWPM_SUBLAYER_FLAG_PERSISTENT;
+  if (!VerifyProof(proof(), "stable persistent provider sublayer survives repair")) return false;
   for (const auto* name : {L"FuzeVPN — DNS", L"OpenVPN"}) {
     ResetProof(); filter_present = true; filter_name = name;
     if (!VerifyProof(!proof() && error == ERROR_BUSY, "Fuze and legacy OpenVPN block-only filters are blocking")) return false;

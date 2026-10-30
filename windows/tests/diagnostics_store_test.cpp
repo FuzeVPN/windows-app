@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: MPL-2.0
 #include "../runner/diagnostics_store.h"
+#include <winioctl.h>
 #include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
+#include <thread>
 
 namespace {
 using namespace fuzevpn_diagnostics;
@@ -125,6 +127,68 @@ void TestManualPriority() {
       "manual admission never evicts another manual report");
   Wipe(&state);
 }
+void WriteProbe(const std::filesystem::path& path) {
+  std::ofstream output(path, std::ios::binary | std::ios::trunc); output << "probe";
+  Check(output.good(), "write ancestor probe fixture");
+}
+bool DeleteShareRefused(const std::filesystem::path& path) {
+  HANDLE remove = CreateFileW(path.c_str(), DELETE,
+      FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, nullptr, OPEN_EXISTING,
+      FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OPEN_REPARSE_POINT, nullptr);
+  const bool refused = remove == INVALID_HANDLE_VALUE && GetLastError() == ERROR_SHARING_VIOLATION;
+  if (remove != INVALID_HANDLE_VALUE) CloseHandle(remove);
+  return refused;
+}
+// The secure store replaces its values in the queue's parent by absolute name,
+// which reopens that parent for write. A batch oplock on the published queue
+// holds Load inside its own open of it, after the directory pins are taken,
+// until the probe closes the oplock handle. The queue was just written, so a
+// scanner or indexer may still hold it and refuse the oplock; a break caused
+// by another opener is inconclusive (the ancestor is not pinned yet). Both
+// repeat the round after a growing pause, about 2 s in all.
+void ProbeAncestorDuringLoad(FileStore& store, const std::filesystem::path& directory, const Report& expected) {
+  const auto ancestor = directory.parent_path(), file = directory / L"pending.bin";
+  const auto source = ancestor / L"load-probe.tmp", target = ancestor / L"load-probe.bin";
+  bool ever_granted = false, pinned = false, replaced = false;
+  std::string loaded; State restored;
+  for (unsigned round = 0; round != 10 && !pinned; ++round) {
+    if (round != 0) Sleep(40 * round);
+    WriteProbe(source); WriteProbe(target);
+    HANDLE broken = CreateEventW(nullptr, TRUE, FALSE, nullptr);
+    Check(broken != nullptr, "create queue oplock event");
+    HANDLE oplock = CreateFileW(file.c_str(), GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
+        nullptr, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, nullptr);
+    OVERLAPPED overlapped{}; overlapped.hEvent = broken;
+    const bool granted = oplock != INVALID_HANDLE_VALUE &&
+        !DeviceIoControl(oplock, FSCTL_REQUEST_BATCH_OPLOCK, nullptr, 0, nullptr, 0, nullptr, &overlapped) &&
+        GetLastError() == ERROR_IO_PENDING;
+    ever_granted = ever_granted || granted;
+    loaded = "load_not_started"; Wipe(&restored);
+    std::thread loader;
+    if (granted) {
+      loader = std::thread([&] { loaded = store.Load(&restored); });
+      if (WaitForSingleObject(broken, 5000) == WAIT_OBJECT_0 && DeleteShareRefused(ancestor)) {
+        pinned = true;
+        replaced = MoveFileExW(source.c_str(), target.c_str(), MOVEFILE_REPLACE_EXISTING) != FALSE;
+      }
+    }
+    // Closing acknowledges the break; the pending request completes before the
+    // stack OVERLAPPED is released.
+    if (oplock != INVALID_HANDLE_VALUE) CloseHandle(oplock);
+    if (granted) WaitForSingleObject(broken, 5000);
+    if (loader.joinable()) loader.join();
+    CloseHandle(broken);
+    DeleteFileW(source.c_str());
+    Check(DeleteFileW(target.c_str()) != FALSE, "remove ancestor probe fixture");
+  }
+  // An oplock that was never granted says nothing about the store's pins.
+  Check(ever_granted, "queue oplock never granted (file held by another process)");
+  Check(pinned, "ancestor not pinned during load");
+  Check(replaced, "held ancestors accept atomic replacements during load");
+  Check(loaded.empty() && restored.reports.size() == 1 && restored.reports[0].body == expected.body,
+      "load released by the probe still returns the committed queue");
+  Wipe(&restored);
+}
 void TestFiles(std::filesystem::path base) {
   // CTest uses forward separators in its absolute argv. Only the synthetic
   // fixture adapter normalizes them; production keeps its strict path policy.
@@ -145,8 +209,27 @@ void TestFiles(std::filesystem::path base) {
   }
   Check(store.Load(&restored).empty() && restored.reports[0].body == report.body && restored.account == state.account,
       "CurrentUser DPAPI round trip preserves exact body");
+  const auto ancestor = directory.parent_path();
+  {
+    // Reverse direction: another process writing into an ancestor (such as a
+    // rename into FuzeVPN) no longer fails a store job with
+    // storage_access_denied, because the ancestor pins share write.
+    HANDLE writer = CreateFileW(ancestor.c_str(), FILE_ADD_FILE, FILE_SHARE_READ | FILE_SHARE_WRITE,
+        nullptr, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, nullptr);
+    Check(writer != INVALID_HANDLE_VALUE, "open ancestor writer fixture");
+    Wipe(&restored);
+    const auto loaded = store.Load(&restored);
+    const auto saved = store.Save(state, [] { return true; });
+    CloseHandle(writer);
+    Check(loaded.empty() && restored.reports.size() == 1 && restored.reports[0].body == report.body,
+        "load succeeds while another handle holds an ancestor open for write");
+    Check(saved.empty(), "save succeeds while another handle holds an ancestor open for write");
+  }
   unsigned publish_checks = 0;
   bool parent_write_blocked = false, parent_delete_blocked = false;
+  bool ancestor_replaced = false, ancestor_delete_blocked = false;
+  const auto probe_source = ancestor / L"save-probe.tmp", probe_target = ancestor / L"save-probe.bin";
+  WriteProbe(probe_source); WriteProbe(probe_target);
   Check(store.Save(state, [&] {
     if (++publish_checks == 2) {
       HANDLE write = CreateFileW(directory.c_str(), GENERIC_WRITE,
@@ -159,10 +242,16 @@ void TestFiles(std::filesystem::path base) {
           FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OPEN_REPARSE_POINT, nullptr);
       parent_delete_blocked = remove == INVALID_HANDLE_VALUE && GetLastError() == ERROR_SHARING_VIOLATION;
       if (remove != INVALID_HANDLE_VALUE) CloseHandle(remove);
+      ancestor_delete_blocked = DeleteShareRefused(ancestor);
+      ancestor_replaced = MoveFileExW(probe_source.c_str(), probe_target.c_str(), MOVEFILE_REPLACE_EXISTING) != FALSE;
     }
     return true;
   }).empty() && parent_write_blocked && parent_delete_blocked,
       "atomic replacement preserves parent write and replacement pins");
+  Check(ancestor_replaced && ancestor_delete_blocked,
+      "held ancestors accept atomic replacements during save but cannot be renamed or deleted");
+  Check(DeleteFileW(probe_target.c_str()) != FALSE, "remove ancestor probe fixture");
+  ProbeAncestorDuringLoad(store, directory, report);
   auto changed = state; changed.reports[0].body.back() = 'b'; unsigned checks = 0;
   Check(store.Save(changed, [&] { return ++checks == 1; }) == "operation_cancelled", "generation invalidation before publish cancels encrypted temp");
   Check(store.Load(&restored).empty() && restored.reports[0].body == report.body, "cancelled write preserves previous committed state");
@@ -185,11 +274,35 @@ void TestFiles(std::filesystem::path base) {
   Check(RemoveDirectoryW(unprotected.c_str()) != FALSE, "remove empty unprotected fixture");
   Wipe(&state); Wipe(&changed); Wipe(&restored);
 }
+void TestFileClockObservations(std::filesystem::path base) {
+  base.make_preferred();
+  Check(base.is_absolute() && base.filename() == L"diagnostics-fixtures", "isolated clock fixture root required");
+  std::filesystem::create_directories(base);
+  const auto directory = base / (L"clock-" + std::to_wstring(GetCurrentProcessId()) + L"-" + std::to_wstring(GetTickCount64()));
+  FileStore store(directory);
+  auto state = MakeState(); state.automatic_consent = true;
+  Check(Enqueue(&state, MakeReport(1, false), now).empty() && store.Save(state, [] { return true; }).empty(),
+      "save isolated clock observation fixture");
+  const auto later = now + 12 * kHourMs;
+  Check(store.PurgeExpired(later).empty(), "maintenance observes twelve hours without expiring payload");
+  State restored;
+  Check(store.Load(&restored).empty() && restored.last_seen == later && restored.reports.size() == 1 && restored.automatic_consent,
+      "maintenance persists newer clock even when no report or retry metadata expires");
+  Check(!Purge(&restored, later), "same clock does not require another encrypted rewrite");
+  Check(store.PurgeExpired(later - kClockToleranceMs).empty() && store.Load(&restored).empty() &&
+      restored.last_seen == later && restored.reports.size() == 1 && restored.automatic_consent,
+      "allowed clock tolerance preserves payload without lowering persisted observation");
+  Check(store.PurgeExpired(now + kHourMs).empty() && store.Load(&restored).empty() &&
+      restored.last_seen == later && restored.reports.empty() && !restored.automatic_consent,
+      "eleven-hour rollback after maintenance purges payload and revokes consent across reloads");
+  Check(store.Erase().empty() && RemoveDirectoryW(directory.c_str()) != FALSE, "remove only isolated clock fixture");
+  Wipe(&state); Wipe(&restored);
+}
 }  // namespace
 int wmain(int argc, wchar_t** argv) {
   try {
     Check(argc == 2, "pass only a workspace diagnostics-fixtures directory");
-    TestPolicy(); TestCodec(); TestManualPriority(); TestFiles(argv[1]);
+    TestPolicy(); TestCodec(); TestManualPriority(); TestFiles(argv[1]); TestFileClockObservations(argv[1]);
     std::cout << "Diagnostics DPAPI store, immutable queue, account fence, expiry and retry tests passed\n";
     return 0;
   } catch (const std::exception& error) {

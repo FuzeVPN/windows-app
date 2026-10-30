@@ -8,7 +8,14 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 
+#include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <string>
+#include <vector>
+
 #include "api_bootstrap_dns.h"
+#include "wireguard_runtime_state.h"
 
 namespace fuzevpn {
 struct WireGuardEndpoint {
@@ -123,6 +130,7 @@ enum class WireGuardAttemptResult { connected, retry, failed };
 
 // All candidates share one deadline. A dead first address cannot consume the
 // entire handshake budget and prevent a reachable later address being tried.
+// The attempt also receives its candidate index to choose its handshake window.
 template <typename Now, typename Attempt>
 bool TryWireGuardEndpoints(const std::vector<std::string>& endpoints,
                           std::uint64_t deadline, Now now, Attempt attempt) {
@@ -131,11 +139,116 @@ bool TryWireGuardEndpoints(const std::vector<std::string>& endpoints,
     if (started >= deadline) return false;
     const auto budget = (deadline - started) / (endpoints.size() - index);
     if (budget == 0) return false;
-    const auto outcome = attempt(endpoints[index], started + budget);
+    const auto outcome = attempt(endpoints[index], started + budget, index);
     if (outcome == WireGuardAttemptResult::connected) return true;
     if (outcome == WireGuardAttemptResult::failed) return false;
   }
   return false;
+}
+
+// WireGuard retransmits an unanswered initiation every REKEY_TIMEOUT (5 s plus
+// up to 333 ms of jitter). Earlier addresses of a multi-address hostname keep
+// two initiations so failover stays fast. The last or only candidate has no
+// alternative: four initiations tolerate lost or early ones, e.g. while a peer
+// relocated by POST /v1/devices is still being applied on the exit node.
+inline constexpr std::uint64_t kWireGuardFailoverHandshakeWaitMs = 8000;
+inline constexpr std::uint64_t kWireGuardFinalHandshakeWaitMs = 20000;
+
+inline std::uint64_t WireGuardHandshakeWindow(std::size_t candidate_index,
+                                              std::size_t candidates) {
+  return candidate_index + 1 >= candidates ? kWireGuardFinalHandshakeWaitMs
+                                           : kWireGuardFailoverHandshakeWaitMs;
+}
+
+// The handshake wait used by ConnectTunnel. The tunnel service keeps running
+// for the whole window; restarting it would reset the retransmission timer.
+// Success is only an authenticated driver handshake reported by `read`.
+template <typename Now, typename Solicit, typename ReadHandshake, typename Running,
+          typename SleepFor>
+bool WaitForWireGuardHandshake(std::uint64_t window_ms, std::uint64_t attempt_deadline,
+                               Now now, Solicit solicit, ReadHandshake read,
+                               Running running, SleepFor sleep) {
+  const auto deadline = WireGuardWaitDeadline(now(), window_ms, attempt_deadline);
+  std::uint64_t next_probe = 0;
+  do {
+    const auto current = now();
+    if (current >= deadline) return false;
+    if (current >= next_probe) {
+      solicit();
+      next_probe = current + 1000;
+    }
+    if (read()) return true;
+    if (!running()) return false;
+    const auto after_read = now();
+    if (after_read >= deadline) return false;
+    sleep(std::min<std::uint64_t>(100, deadline - after_read));
+  } while (now() < deadline);
+  return false;
+}
+
+// One driver reading during the handshake wait. Only a successful reading
+// replaces the observed counters and is counted, so tx = rx = 0 with no
+// counted reading means "no driver reading", not "nothing sent".
+template <typename ReadStats>
+bool ObserveWireGuardPeer(ReadStats read, WireGuardPeerStats* observed,
+                          std::uint64_t* successful_reads) {
+  WireGuardPeerStats stats;
+  if (!read(&stats)) return false;
+  *observed = stats;
+  ++*successful_reads;
+  return stats.handshake != 0;
+}
+
+// Times only the SCM start of the already written configuration, so a slow
+// configuration generation or protected write is never blamed on SCM.
+template <typename Now, typename Start>
+bool TimeWireGuardServiceStart(Now now, Start start, std::uint64_t* elapsed_ms) {
+  const auto began = now();
+  const bool started = start();
+  *elapsed_ms = now() - began;
+  return started;
+}
+
+// Step in which a candidate attempt ended, reusing the native log's closed
+// stage vocabulary: service start, adapter lookup, handshake wait, committed.
+enum class WireGuardAttemptStage { starting, adapter_open, peer_ready, connected };
+
+struct WireGuardAttemptSnapshot {
+  std::size_t candidates = 0;
+  std::size_t candidate_index = 0;
+  WireGuardAttemptStage stage = WireGuardAttemptStage::starting;
+  bool handshake = false;
+  bool success = false;
+  std::uint64_t elapsed_ms = 0;
+  std::uint64_t budget_ms = 0;
+  std::uint64_t service_start_ms = 0;
+  std::uint64_t handshake_wait_ms = 0;
+  std::uint64_t stop_ms = 0;
+  std::uint64_t tx_bytes = 0;
+  std::uint64_t rx_bytes = 0;
+  // Successful PeerStats readings during the wait: with none, zero tx/rx
+  // bytes mean the driver was never read, not that nothing was sent.
+  std::uint64_t stats_reads = 0;
+};
+
+// Numeric and closed-set fields only: endpoints, addresses and keys never
+// reach native_diagnostic.log.
+inline std::string FormatWireGuardAttemptSnapshot(const WireGuardAttemptSnapshot& value) {
+  constexpr const char* stages[] = {"starting", "adapter_open", "peer_ready", "connected"};
+  const auto stage = static_cast<std::size_t>(value.stage);
+  return "candidates=" + std::to_string(value.candidates) +
+      " candidate_index=" + std::to_string(value.candidate_index) +
+      " stage=" + stages[stage < 4 ? stage : 0] +
+      " handshake=" + std::to_string(value.handshake ? 1 : 0) +
+      " success=" + std::to_string(value.success ? 1 : 0) +
+      " elapsed_ms=" + std::to_string(value.elapsed_ms) +
+      " budget_ms=" + std::to_string(value.budget_ms) +
+      " service_start_ms=" + std::to_string(value.service_start_ms) +
+      " handshake_wait_ms=" + std::to_string(value.handshake_wait_ms) +
+      " stop_ms=" + std::to_string(value.stop_ms) +
+      " tx_bytes=" + std::to_string(value.tx_bytes) +
+      " rx_bytes=" + std::to_string(value.rx_bytes) +
+      " stats_reads=" + std::to_string(value.stats_reads);
 }
 }  // namespace fuzevpn
 #endif

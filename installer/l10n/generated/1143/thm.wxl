@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="so-SO" Language="1143" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+  <String Id="Caption" Value="[WixBundleName] ayaa la rakibayaa" />
+  <String Id="CheckingForUpdatesLabel" Value="Cusboonaysiinta ayaa la hubinayaa" />
+  <String Id="ConfirmCancelMessage" Value="Ma doonaysaa inaad joojiso?" />
+  <String Id="DesktopShortcut" Value="Samee jid-gaab desktop" />
+  <String Id="ExecuteUpgradeRelatedBundleMessage" Value="Noocii hore" />
+  <String Id="FailureCacheHeader" Value="Diyaarintu way fashilantay" />
+  <String Id="FailureCloseButton" Value="Xir" />
+  <String Id="FailureHeader" Value="Fashil" />
+  <String Id="FailureHyperlinkLogText" Value="Hawsha waa la hakiyay. Eeg &lt;a href=&quot;#&quot;&gt;diiwaanka&lt;/a&gt;, hagaaji dhibaatada oo mar kale isku day." />
+  <String Id="FailureInstallHeader" Value="Rakibidda waa la hakiyay" />
+  <String Id="FailureLayoutHeader" Value="Koobiyeyntu way fashilantay" />
+  <String Id="FailureModifyHeader" Value="Wax ka beddelka waa la hakiyay" />
+  <String Id="FailureRepairHeader" Value="Hagaajinta waa la hakiyay" />
+  <String Id="FailureRestartButton" Value="Dib u bilow" />
+  <String Id="FailureRestartText" Value="Dib u bilow si aad u dhammaystirto soo celinta." />
+  <String Id="FailureUninstallHeader" Value="Ka saarista waa la hakiyay" />
+  <String Id="FailureUnsafeUninstallHeader" Value="Ka saarista waa la hakiyay" />
+  <String Id="FilesInUseCloseRadioButton" Value="Xir app-yada" />
+  <String Id="FilesInUseDontCloseRadioButton" Value="App-yada furnee" />
+  <String Id="FilesInUseExitButton" Value="Jooji" />
+  <String Id="FilesInUseIgnoreButton" Value="Iska dhaaf" />
+  <String Id="FilesInUseLabel" Value="Xir app-yada soo socda, dabadeed mar kale isku day." />
+  <String Id="FilesInUseNetfxCloseRadioButton" Value="Xir app-yada" />
+  <String Id="FilesInUseRetryButton" Value="Mar kale isku day" />
+  <String Id="FilesInUseTitle" Value="Faylasha waa la isticmaalayaa" />
+  <String Id="HelpCloseButton" Value="Xir" />
+  <String Id="HelpHeader" Value="Caawin" />
+  <String Id="HelpText" Value="/install, /repair, /uninstall: rakib, hagaaji, ka saar. /quiet: hab aamusan. /norestart: dib ha u bilaabin. DesktopShortcut=1: jid-gaab desktop. InstallFolder=&quot;D:\Applications\FuzeVPN&quot;: galka bilowga ah. Cusboonaysiintu waxay ilaalisaa galka rakiban." />
+  <String Id="InstallAcceptCheckbox" Value="Waxaan &amp;aqbalayaa shuruudaha shatiga" />
+  <String Id="InstallCancelButton" Value="Jooji" />
+  <String Id="InstallHeader" Value="Soo dhowow" />
+  <String Id="InstallInstallButton" Value="Rakib" />
+  <String Id="InstallLicenseLinkText" Value="[WixBundleName] &lt;a href=&quot;#&quot;&gt;shuruudaha shatiga&lt;/a&gt;." />
+  <String Id="InstallMessage" Value="Ku rakib FuzeVPN kombiyuutarkan." />
+  <String Id="InstallMessageOptions" Value="Ku rakib FuzeVPN kombiyuutarkan." />
+  <String Id="InstallOptionsButton" Value="Doorashooyinka" />
+  <String Id="InstallVersion" Value="Nooca [WixBundleVersion]" />
+  <String Id="InstallVersionNotice" Value="Nooca [WixBundleVersion] [BuildNotice]" />
+  <String Id="ModifyCancelButton" Value="Jooji" />
+  <String Id="ModifyHeader" Value="Dayactir" />
+  <String Id="ModifyRepairButton" Value="Hagaaji" />
+  <String Id="ModifyUninstallButton" Value="Ka saar" />
+  <String Id="OptionsBrowseButton" Value="Baadh" />
+  <String Id="OptionsCancelButton" Value="Jooji" />
+  <String Id="OptionsHeader" Value="Doorashooyinka" />
+  <String Id="OptionsLocationLabel" Value="Galka rakibidda (Windows ayaa ilaaliya)" />
+  <String Id="OptionsOkButton" Value="Hagaag" />
+  <String Id="OptionsPerMachineScopeText" Value="Dhammaan isticmaalayaasha" />
+  <String Id="OptionsPerUserScopeText" Value="Isticmaalaha hadda" />
+  <String Id="OverallProgressPackageText" Value="Waa la diyaarinayaa…" />
+  <String Id="PreserveInstallFolder" Value="Galka jira waa la ilaaliyaa inta la cusboonaysiinayo. Si aad si xor ah u rarto daaqadda, isticmaal kaydka la qaadan karo." />
+  <String Id="ProgressCancelButton" Value="Jooji" />
+  <String Id="ProgressHeader" Value="Rakibiddu way socotaa" />
+  <String Id="ProgressLabel" Value="Horumarka" />
+  <String Id="SuccessCacheHeader" Value="Faylasha waa diyaar" />
+  <String Id="SuccessCloseButton" Value="Xir" />
+  <String Id="SuccessHeader" Value="Hawshu way dhammaatay" />
+  <String Id="SuccessInstallHeader" Value="Rakibiddu way dhammaatay" />
+  <String Id="SuccessLaunchButton" Value="Fur" />
+  <String Id="SuccessLayoutHeader" Value="Faylasha waa diyaar" />
+  <String Id="SuccessModifyHeader" Value="Wax ka beddelku wuu dhammaaday" />
+  <String Id="SuccessOpenApp" Value="Fur FuzeVPN adigoo ka furaya menu-ga Start. Dookhyadaada gaarka ah waa la ilaaliyay." />
+  <String Id="SuccessRepairHeader" Value="Hagaajintu way dhammaatay" />
+  <String Id="SuccessRestartButton" Value="Dib u bilow" />
+  <String Id="SuccessRestartText" Value="Dib u bilow kombiyuutarkaaga si aad u dhammaystirto." />
+  <String Id="SuccessUninstallHeader" Value="Ka saaristu way dhammaatay" />
+  <String Id="SuccessUninstallRestartText" Value="Dib u bilow si aad u dhammaystirto ka saarista." />
+  <String Id="SuccessUnsafeUninstallHeader" Value="Ka saaristu way dhammaatay" />
+  <String Id="Title" Value="[WixBundleName]" />
+  <String Id="UpdateButton" Value="Cusboonaysii" />
+</WixLocalization>

@@ -273,6 +273,12 @@ class _DiagnosticsPanelState extends State<_DiagnosticsPanel> {
                         child: Wrap(
                           spacing: 12,
                           children: [
+                            if (item.retryable)
+                              TextButton(
+                                onPressed: () =>
+                                    controller.retryDiagnostic(item.id),
+                                child: Text(context.tr('Réessayer')),
+                              ),
                             TextButton(
                               onPressed: () =>
                                   controller.cancelDiagnostic(item.id),

@@ -11,7 +11,8 @@ $ErrorActionPreference = 'Stop'
 $taskRoot = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'))
 $sourceRoot = Join-Path $taskRoot '.toolchain\wix-source'
 $runtime = Join-Path $taskRoot '.toolchain\installer-runtime'
-$dotnetRoot = Join-Path $taskRoot '.toolchain\dotnet-sdk'
+$dependencyPins = Get-Content -LiteralPath (Join-Path $taskRoot 'tools/dependency-pins.json') -Raw | ConvertFrom-Json
+$dotnetRoot = Join-Path $taskRoot ('.toolchain/dotnet-sdk-' + $dependencyPins.dotnet.version)
 $dotnet = Join-Path $dotnetRoot 'dotnet.exe'
 if (-not (Test-Path -LiteralPath $dotnet -PathType Leaf)) { throw "Local .NET SDK missing: $dotnet" }
 if (-not (Test-Path -LiteralPath $sourceRoot -PathType Container)) { throw "WiX source directory missing: $sourceRoot" }

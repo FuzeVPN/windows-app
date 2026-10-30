@@ -343,8 +343,16 @@ void main() {
     tester.state<ScrollableState>(menu).position.jumpTo(0);
     await tester.pumpAndSettle();
     for (final language in AppLanguage.sortedValues.skip(1)) {
-      final flag = find.descendant(
+      final item = find.descendant(
         of: menu,
+        matching: find.byWidgetPredicate(
+          (widget) =>
+              widget is DropdownMenuItem<AppLanguage> &&
+              widget.value == language,
+        ),
+      );
+      final flag = find.descendant(
+        of: item,
         matching: find.byKey(
           ValueKey('country-flag-${language.flagCountryCode}'),
         ),
@@ -548,7 +556,13 @@ void main() {
       );
 
       expect(find.text('FuzeVPN'), findsOneWidget);
-      expect(find.bySemanticsLabel('État VPN : Non protégé'), findsOneWidget);
+      expect(
+        find.bySemanticsLabel(
+          'État VPN : Non protégé\n'
+          'Votre trafic utilise actuellement votre connexion Internet normale.',
+        ),
+        findsOneWidget,
+      );
       expect(find.bySemanticsLabel('Connexion rapide'), findsOneWidget);
       expect(tester.takeException(), isNull);
       semantics.dispose();

@@ -9,6 +9,7 @@ import 'api_client.dart';
 import 'diagnostic_log.dart';
 import 'windows_update_bridge.dart';
 import 'windows_update_models.dart';
+import 'windows_update_trace_codes.dart';
 
 export 'windows_update_models.dart';
 
@@ -89,6 +90,7 @@ class WindowsUpdateController extends ChangeNotifier {
         stage: failure?.stage ?? stage,
         durationMs: durationMs,
         windowsError: failure?.windowsError,
+        trustStatus: failure?.trustStatus,
         httpStatus: failure?.statusCode,
         reason: failure?.tlsReason,
         errorKind: failure?.code == 'tls_handshake_failed' ? 'tls' : null,
@@ -170,7 +172,7 @@ class WindowsUpdateController extends ChangeNotifier {
     final timer = Stopwatch()..start();
     _trace(
       'operation_started',
-      code: kind.name,
+      code: WindowsUpdateTraceCodes.operation(kind.name),
       stage: stage,
       requestId: requestId,
     );
@@ -205,7 +207,7 @@ class WindowsUpdateController extends ChangeNotifier {
       } finally {
         final completionCode = _disposed
             ? 'disposed'
-            : _status.name.toLowerCase();
+            : WindowsUpdateTraceCodes.status(_status.name);
         _operation = null;
         _operationKind = null;
         if (_disposed) {
@@ -239,7 +241,9 @@ class WindowsUpdateController extends ChangeNotifier {
         final value = await _bridge.getEnvironment();
         _trace(
           'environment_distribution',
-          code: value.installationMode.name,
+          code: WindowsUpdateTraceCodes.installationMode(
+            value.installationMode.name,
+          ),
           stage: 'environment',
         );
         _trace(
@@ -278,7 +282,9 @@ class WindowsUpdateController extends ChangeNotifier {
       case WindowsInstallationMode.portable:
         _trace(
           'distribution_completed',
-          code: _environment!.installationMode.name,
+          code: WindowsUpdateTraceCodes.installationMode(
+            _environment!.installationMode.name,
+          ),
           stage: 'environment',
           durationMs: timer.elapsedMilliseconds,
         );

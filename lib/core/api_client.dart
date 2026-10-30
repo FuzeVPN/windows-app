@@ -47,7 +47,8 @@ class ApiException implements Exception, DiagnosticFailureDetails {
   @override
   String get diagnosticFailureCode =>
       localErrorCode ??
-      (browserAuthTraceCodes.contains(errorCode)
+      (browserAuthTraceCodes.contains(errorCode) ||
+              deviceEnrollmentTraceCodes.contains(errorCode)
           ? errorCode
           : diagnosticCode(errorCode));
   @override
@@ -140,8 +141,8 @@ class ApiException implements Exception, DiagnosticFailureDetails {
 
   static int? _retryAfter(String? value, {DateTime? now}) {
     if (value == null) return null;
-    final numeric = int.tryParse(value.trim());
-    if (numeric != null) return _retryAfterValue(numeric);
+    final numeric = _retryAfterValue(value);
+    if (numeric != null) return numeric;
     try {
       final clock = (now ?? DateTime.now()).toUtc();
       final text = value.trim();
@@ -194,13 +195,24 @@ class ApiException implements Exception, DiagnosticFailureDetails {
   }
 
   static int? _retryAfterValue(Object? value) {
-    final seconds = switch (value) {
-      int value => value,
-      num value => value.toInt(),
-      String value => int.tryParse(value),
-      _ => null,
-    };
-    return seconds != null && seconds >= 0 && seconds <= 86400 ? seconds : null;
+    if (value is String) {
+      final text = value.trim();
+      if (!RegExp(r'^[0-9]+$').hasMatch(text)) return null;
+      final seconds = int.tryParse(text);
+      // An overflowing positive delay still suspends reports through their
+      // complete lifetime; it must not turn into the short fallback delay.
+      return seconds == null || seconds > 86400 ? 86400 : seconds;
+    }
+    if (value is int) {
+      return value < 0 ? null : (value > 86400 ? 86400 : value);
+    }
+    if (value is! num ||
+        !value.isFinite ||
+        value < 0 ||
+        value != value.truncateToDouble()) {
+      return null;
+    }
+    return value >= 86400 ? 86400 : value.toInt();
   }
 
   @override
@@ -429,7 +441,9 @@ class ApiClient {
         if (previous == null ||
             previousEtag == null ||
             body.isNotEmpty ||
-            (etag != null && etag != previousEtag)) {
+            (etag != null &&
+                etag.replaceFirst(RegExp(r'^W/'), '') !=
+                    previousEtag.replaceFirst(RegExp(r'^W/'), ''))) {
           throw const FormatException(
             'Unexpected update revalidation response.',
           );
@@ -722,16 +736,13 @@ class ApiClient {
     }
     try {
       final body = await _readJsonObject(response);
-      final token = body['access_token'];
       final expiresAt = body['expires_at'];
-      if (token is! String ||
-          RegExp(r'^[\x21-\x7e]{1,8192}$').stringMatch(token) != token ||
-          expiresAt is! String ||
+      if (expiresAt is! String ||
           expiresAt.length > 64 ||
           DateTime.tryParse(expiresAt) == null) {
         throw const FormatException('Invalid browser session response.');
       }
-      return AuthSession(accessToken: token);
+      return AuthSession.fromJson(body);
     } on FormatException {
       throw ApiException(
         statusCode: 502,
@@ -1214,15 +1225,11 @@ class ApiClient {
         activeRequest.contentLength = bodyBytes.length;
         activeRequest.add(bodyBytes);
       }
-    } on DiagnosticsFailure {
-      openingExpired = true;
-      request?.abort();
-      rethrow;
     } on TimeoutException {
       openingExpired = true;
       request?.abort();
       throw _timeoutException();
-    } on ApiException {
+    } catch (_) {
       openingExpired = true;
       request?.abort();
       rethrow;
@@ -1239,13 +1246,10 @@ class ApiClient {
     try {
       final closing = activeRequest.close().timeout(remaining());
       response = await (cancellation?.wait(closing) ?? closing);
-    } on DiagnosticsFailure {
-      activeRequest.abort();
-      rethrow;
     } on TimeoutException {
       activeRequest.abort();
       throw _timeoutException();
-    } on ApiException {
+    } catch (_) {
       activeRequest.abort();
       rethrow;
     }

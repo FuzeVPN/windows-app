@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="ps-AF" Language="1123" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+  <String Id="Caption" Value="[WixBundleName] نصبېږي" />
+  <String Id="CheckingForUpdatesLabel" Value="د تازه معلوماتو لټون روان دی" />
+  <String Id="ConfirmCancelMessage" Value="ایا غواړئ لغوه یې کړئ؟" />
+  <String Id="DesktopShortcut" Value="د ډیسټاپ لنډلار جوړه کړئ" />
+  <String Id="ExecuteUpgradeRelatedBundleMessage" Value="مخکینۍ نسخه" />
+  <String Id="FailureCacheHeader" Value="چمتووالی ناکام شو" />
+  <String Id="FailureCloseButton" Value="وتړئ" />
+  <String Id="FailureHeader" Value="ناکامي" />
+  <String Id="FailureHyperlinkLogText" Value="عملیات پرې شول. &lt;a href=&quot;#&quot;&gt;ثبت&lt;/a&gt; وګورئ، ستونزه حل کړئ او بیا هڅه وکړئ." />
+  <String Id="FailureInstallHeader" Value="نصب پرې شو" />
+  <String Id="FailureLayoutHeader" Value="کاپي کول ناکام شول" />
+  <String Id="FailureModifyHeader" Value="بدلون پرې شو" />
+  <String Id="FailureRepairHeader" Value="ترمیم پرې شو" />
+  <String Id="FailureRestartButton" Value="بیا پیل کړئ" />
+  <String Id="FailureRestartText" Value="د بېرته راګرځولو د بشپړولو لپاره بیا پیل کړئ." />
+  <String Id="FailureUninstallHeader" Value="لیرې کول پرې شول" />
+  <String Id="FailureUnsafeUninstallHeader" Value="لیرې کول پرې شول" />
+  <String Id="FilesInUseCloseRadioButton" Value="اپونه وتړئ" />
+  <String Id="FilesInUseDontCloseRadioButton" Value="اپونه پرانیستي وساتئ" />
+  <String Id="FilesInUseExitButton" Value="لغوه کړئ" />
+  <String Id="FilesInUseIgnoreButton" Value="له پامه وغورځوئ" />
+  <String Id="FilesInUseLabel" Value="لاندې اپونه وتړئ، بیا هڅه وکړئ." />
+  <String Id="FilesInUseNetfxCloseRadioButton" Value="اپونه وتړئ" />
+  <String Id="FilesInUseRetryButton" Value="بیا هڅه وکړئ" />
+  <String Id="FilesInUseTitle" Value="کارېدونکې دوتنې" />
+  <String Id="HelpCloseButton" Value="وتړئ" />
+  <String Id="HelpHeader" Value="مرسته" />
+  <String Id="HelpText" Value="/install، /repair، /uninstall: نصب، ترمیم، لرې کول. /quiet: خاموش حالت. /norestart: بیا پیل مه کوئ. DesktopShortcut=1: د ډیسټاپ لنډلار. InstallFolder=&quot;D:\Applications\FuzeVPN&quot;: لومړنی فولډر. تازه کول نصب شوی فولډر ساتي." />
+  <String Id="InstallAcceptCheckbox" Value="د جواز له شرایطو سره &amp;موافق یم" />
+  <String Id="InstallCancelButton" Value="لغوه کړئ" />
+  <String Id="InstallHeader" Value="ښه راغلاست" />
+  <String Id="InstallInstallButton" Value="نصب کړئ" />
+  <String Id="InstallLicenseLinkText" Value="د [WixBundleName] &lt;a href=&quot;#&quot;&gt;جواز شرایط&lt;/a&gt;." />
+  <String Id="InstallMessage" Value="FuzeVPN په دې کمپیوټر کې نصب کړئ." />
+  <String Id="InstallMessageOptions" Value="FuzeVPN په دې کمپیوټر کې نصب کړئ." />
+  <String Id="InstallOptionsButton" Value="اختیارونه" />
+  <String Id="InstallVersion" Value="نسخه [WixBundleVersion]" />
+  <String Id="InstallVersionNotice" Value="نسخه [WixBundleVersion] [BuildNotice]" />
+  <String Id="ModifyCancelButton" Value="لغوه کړئ" />
+  <String Id="ModifyHeader" Value="ساتنه" />
+  <String Id="ModifyRepairButton" Value="ترمیم کړئ" />
+  <String Id="ModifyUninstallButton" Value="لیرې کړئ" />
+  <String Id="OptionsBrowseButton" Value="وپلټئ" />
+  <String Id="OptionsCancelButton" Value="لغوه کړئ" />
+  <String Id="OptionsHeader" Value="اختیارونه" />
+  <String Id="OptionsLocationLabel" Value="د نصب فولډر (د Windows له خوا خوندي شوی)" />
+  <String Id="OptionsOkButton" Value="سمه ده" />
+  <String Id="OptionsPerMachineScopeText" Value="ټول کاروونکي" />
+  <String Id="OptionsPerUserScopeText" Value="اوسنی کاروونکی" />
+  <String Id="OverallProgressPackageText" Value="چمتو کېږي…" />
+  <String Id="PreserveInstallFolder" Value="د تازه کولو پر مهال موجود فولډر ساتل کېږي. د انټرفېس په ازاده توګه د لېږدولو لپاره پورټبل آرشیف وکاروئ." />
+  <String Id="ProgressCancelButton" Value="لغوه کړئ" />
+  <String Id="ProgressHeader" Value="نصب روان دی" />
+  <String Id="ProgressLabel" Value="پرمختګ" />
+  <String Id="SuccessCacheHeader" Value="دوتنې چمتو دي" />
+  <String Id="SuccessCloseButton" Value="وتړئ" />
+  <String Id="SuccessHeader" Value="عملیات بشپړ شول" />
+  <String Id="SuccessInstallHeader" Value="نصب بشپړ شو" />
+  <String Id="SuccessLaunchButton" Value="پرانیزئ" />
+  <String Id="SuccessLayoutHeader" Value="دوتنې چمتو دي" />
+  <String Id="SuccessModifyHeader" Value="بدلون بشپړ شو" />
+  <String Id="SuccessOpenApp" Value="FuzeVPN د پیل له مېنو څخه پرانیزئ. ستاسو شخصي غوره توبونه ساتل شوي دي." />
+  <String Id="SuccessRepairHeader" Value="ترمیم بشپړ شو" />
+  <String Id="SuccessRestartButton" Value="بیا پیل کړئ" />
+  <String Id="SuccessRestartText" Value="د بشپړولو لپاره خپل کمپیوټر بیا پیل کړئ." />
+  <String Id="SuccessUninstallHeader" Value="لیرې کول بشپړ شول" />
+  <String Id="SuccessUninstallRestartText" Value="د لیرې کولو بشپړولو لپاره بیا پیل کړئ." />
+  <String Id="SuccessUnsafeUninstallHeader" Value="لیرې کول بشپړ شول" />
+  <String Id="Title" Value="[WixBundleName]" />
+  <String Id="UpdateButton" Value="تازه کړئ" />
+</WixLocalization>

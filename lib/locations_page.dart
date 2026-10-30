@@ -67,10 +67,6 @@ class _LocationsPageState extends State<_LocationsPage> {
       ? null
       : () => _requestLocationChange(context, widget.controller, location);
 
-  String _count(int count, String singular, String plural) => count == 1
-      ? context.tr(singular)
-      : context.tr(plural).replaceAll('{count}', '$count');
-
   Widget _server(Location location, {String? cityTitle, Key? key}) {
     final controller = widget.controller;
     final candidate = _candidate([location]);
@@ -182,11 +178,9 @@ class _LocationsPageState extends State<_LocationsPage> {
               name: group.city,
               countryCode: country.countryCode,
               locations: group.locations,
-              count: _count(
-                group.locations.length,
-                '1 serveur',
-                '{count} serveurs',
-              ),
+              count: AppLocalizations.of(
+                context,
+              ).strings.serverCount(group.locations.length),
               openLabel: 'Serveurs',
               openTooltip: context
                   .tr('Serveurs à {name}')
@@ -205,7 +199,7 @@ class _LocationsPageState extends State<_LocationsPage> {
               countryCode: group.countryCode,
               locations: group.locations,
               count:
-                  '${_count(group.cities.length, '1 ville', '{count} villes')} · ${_count(group.locations.length, '1 serveur', '{count} serveurs')}',
+                  '${AppLocalizations.of(context).strings.cityCount(group.cities.length)} · ${AppLocalizations.of(context).strings.serverCount(group.locations.length)}',
               openLabel: 'Villes',
               openTooltip: context
                   .tr('Villes de {name}')
@@ -392,11 +386,9 @@ class _LocationsPageState extends State<_LocationsPage> {
                         ),
                       ),
                       Text(
-                        _count(
-                          visibleLocations.length,
-                          '1 serveur',
-                          '{count} serveurs',
-                        ),
+                        AppLocalizations.of(
+                          context,
+                        ).strings.serverCount(visibleLocations.length),
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: scheme.onSurfaceVariant,
                         ),

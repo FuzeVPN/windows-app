@@ -189,7 +189,7 @@ class _SettingsPageState extends State<_SettingsPage> {
                 title: Text(context.tr('Protection DNS')),
                 subtitle: Text(
                   context.tr(
-                    'Force les requêtes DNS à passer par l’interface VPN.',
+                    'Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.',
                   ),
                 ),
                 value: controller.dnsProtectionEnabled,
@@ -203,7 +203,7 @@ class _SettingsPageState extends State<_SettingsPage> {
                 title: Text(context.tr('Protection WebRTC')),
                 subtitle: Text(
                   context.tr(
-                    'Bloque les communications WebRTC qui tentent de sortir en dehors du tunnel VPN.',
+                    'Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.',
                   ),
                 ),
                 value: controller.webRtcProtectionEnabled,

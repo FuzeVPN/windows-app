@@ -6,6 +6,8 @@ import 'dart:math' as math;
 import 'diagnostic_log.dart';
 import 'diagnostics_models.dart';
 import 'windows_update_models.dart';
+import 'windows_update_trace_codes.dart';
+import 'runtime_storage_diagnostics.dart';
 
 /// Reads the two fixed application trace files for a local diagnostic export.
 /// File contents are untrusted: only the application's closed trace vocabulary
@@ -274,6 +276,7 @@ class LocalDiagnosticTrace {
       'connection_failed',
       'connection_started',
       'deferred',
+      'device_binding_failed',
       'device_enrollment_started',
       'disconnect_acknowledged',
       'disconnect_failed',
@@ -306,7 +309,13 @@ class LocalDiagnosticTrace {
       'network_protection_prepare_succeeded',
       'open_completed',
       'open_started',
+      'openvpn_profile_release_completed',
+      'openvpn_profile_release_failed',
+      'openvpn_profile_release_required',
+      'openvpn_profile_release_started',
       'profile_enrollment_started',
+      'profile_pending_exhausted',
+      'profile_pending_wait',
       'rejected',
       'resolution_completed',
       'resolver_cache_hit',
@@ -362,6 +371,8 @@ class LocalDiagnosticTrace {
       for (final stage in _runtimeStages) '${stage}_failed',
     },
     'stage': {
+      ...runtimeStorageStages,
+      ...secureStoreStages,
       'browser_auth_listener',
       'browser_auth_open',
       'browser_auth_callback',
@@ -381,6 +392,7 @@ class LocalDiagnosticTrace {
       'catalogue_refresh',
       'connectivity_listener',
       'decode_response',
+      'device_binding_storage',
       'device_catalogue_refresh',
       'device_catalogue_session_storage',
       'enrollment',
@@ -425,9 +437,10 @@ class LocalDiagnosticTrace {
     'code': {
       ...diagnosticCodes,
       ...browserAuthTraceCodes,
+      ...deviceEnrollmentTraceCodes,
       'browser_auth_token',
       'operation_cancelled',
-      ..._localUpdateCodes,
+      ...WindowsUpdateTraceCodes.values,
       'manual_installation',
       'ready',
       'api_resolver_invalid_response',
@@ -516,41 +529,6 @@ class LocalDiagnosticTrace {
     'download_prepare',
     'preinstall',
     'install_launch',
-  };
-  static const _localUpdateCodes = {
-    'update_application_architecture_mismatch',
-    'update_application_open_failed',
-    'update_application_signature_invalid',
-    'update_archive_extract_failed',
-    'update_archive_invalid',
-    'update_archive_too_large',
-    'update_archive_unsafe',
-    'update_busy',
-    'update_cancelled',
-    'update_changed',
-    'update_download_empty',
-    'update_download_http_error',
-    'update_download_network_error',
-    'update_download_redirect_rejected',
-    'update_download_timeout',
-    'update_download_too_large',
-    'update_download_url_invalid',
-    'update_hash_mismatch',
-    'update_installer_manual',
-    'update_network_timeout',
-    'update_package_architecture_mismatch',
-    'update_package_mode_mismatch',
-    'update_package_version_mismatch',
-    'update_portable_manifest_invalid',
-    'update_portable_manual',
-    'update_portable_replace_failed',
-    'update_portable_target_invalid',
-    'update_prepare_failed',
-    'update_publisher_mismatch',
-    'update_signature_invalid',
-    'update_uac_cancelled',
-    'update_untrusted_publisher',
-    'update_version_mismatch',
   };
   static const _runtimeStages = {
     'startup_wireguard_connected',

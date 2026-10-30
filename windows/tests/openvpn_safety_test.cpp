@@ -2,9 +2,11 @@
 #include "openvpn_ip_validation.h"
 #include "openvpn_driver_version.h"
 #include "openvpn_diagnostic_state.h"
+#include "openvpn_worker_completion.h"
 #include "openvpn_failure_classification_test.h"
 #include "openvpn_address_configuration_test.h"
 #include "openvpn_cleanup_diagnostic_test.h"
+#include "openvpn_network_contract_test.h"
 #include <openvpn/win/bounded_process.hpp>
 #include <openvpn/win/command_context.hpp>
 #include <openvpn/win/nrpt_session.hpp>
@@ -87,6 +89,36 @@ void SanitizedDiagnostics() {
   }
   fuzevpn::RecordOpenVpnDcoDiagnostic(fuzevpn::OpenVpnDcoDiagnostic::send_failed);
   Check(state.Snapshot().send_failed == 1, "diagnostic hook is scoped to the connection worker");
+}
+
+void WorkerExceptions() {
+  std::condition_variable ready;
+  for (const unsigned scenario : {0u, 1u, 2u, 3u}) {
+    fuzevpn::OpenVpnWorkerCompletion completion;
+    unsigned callbacks = 0;
+    std::mutex mutex;
+    std::thread worker([&] {
+      completion.Run(mutex, ready, [&] {
+        if (scenario == 1) throw std::runtime_error("private-core-detail");
+        if (scenario == 2) throw 19;
+        return 7;
+      }, [&](int result) {
+        ++callbacks;
+        Check(result == 7, "worker result reaches completion unchanged");
+        if (scenario == 3) throw std::runtime_error("private-completion-detail");
+      });
+    });
+    {
+      std::unique_lock<std::mutex> lock(mutex);
+      Check(ready.wait_for(lock, std::chrono::seconds(2),
+          [&] { return completion.finished(); }),
+          "worker completion and wakeup survive Core and callback exceptions");
+    }
+    worker.join();
+    Check(completion.failed() == (scenario != 0) &&
+        callbacks == (scenario == 1 || scenario == 2 ? 0u : 1u),
+        "exceptions are contained on their own thread and remain distinguishable from success");
+  }
 }
 void NrptRecovery() {
   using namespace openvpn::Win;
@@ -307,7 +339,7 @@ void ChildProcesses(const std::wstring& executable) {
 }
 }
 
-int wmain(int argc, wchar_t** argv) {
+int wmain(int argc, wchar_t** argv) try {
   if (argc == 2 && std::wstring_view(argv[1]) == L"--fixture-hang") { Sleep(INFINITE); return 0; }
   if (argc == 2 && std::wstring_view(argv[1]) == L"--fixture-output") {
     const std::string output(16384, 'x');
@@ -319,6 +351,9 @@ int wmain(int argc, wchar_t** argv) {
   OpenVpnFailureClassificationTests();
   OpenVpnAddressConfigurationTests();
   OpenVpnCleanupDiagnosticTests();
+  OpenVpnNetworkContractTests();
+  WorkerExceptions();
+  OpenVpnDcoAdapterReuseTests();
   std::wstring executable(32768, L'\0');
   const DWORD length = GetModuleFileNameW(nullptr, executable.data(), static_cast<DWORD>(executable.size()));
   Check(length && length < executable.size(), "test executable path available");
@@ -326,4 +361,7 @@ int wmain(int argc, wchar_t** argv) {
   AddressValidation(); DriverVersions(); SanitizedDiagnostics(); NrptRecovery(); NetworkPostconditions(); AdapterDnsCommands(); CommandDiagnostics(); CleanupRetries(); OwnedRoutes(); ActionFailures(); ChildProcesses(executable);
   std::cout << "OpenVPN safety tests passed (no VPN, service, registry writes or network).\n";
   return EXIT_SUCCESS;
+} catch (const std::exception& failure) {
+  std::cerr << failure.what() << '\n';
+  return EXIT_FAILURE;
 }

@@ -13,6 +13,9 @@ $ErrorActionPreference='Stop'
 Set-StrictMode -Version Latest
 $taskProject=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 Import-Module (Join-Path $taskProject 'installer/InstallerTools.psm1') -Force
+Import-Module (Join-Path $taskProject 'installer/BundleVersion.psm1') -Force
+Import-Module (Join-Path $taskProject 'tools/ReleaseAudit.psm1') -Force
+Import-Module (Join-Path $taskProject 'tools/BuildProvenance.psm1') -Force
 $Version=ConvertTo-PublicVersion $Version
 if (-not $BaselineDirectory) {$BaselineDirectory=Join-Path $taskProject "build/release-$Version/signing/unsigned-baseline-$Architecture"}
 $BaselineDirectory=Assert-ProjectPath $BaselineDirectory $taskProject
@@ -42,6 +45,9 @@ foreach ($report in @($portableReport,$installerReport)) {
 }
 Require (-not $portableReport.portable_development -and -not $portableReport.executed_or_installed -and -not $installerReport.installed_on_this_machine) 'No developer bypass or product execution may be reported.'
 & (Join-Path $taskProject 'tools/prepare-portable-runtime.ps1') -Architecture $Architecture -ReleaseDirectory $taskSource -CheckBuildModeOnly | Out-Null
+$sourceBuildReceipt=Assert-FuzeBuildReceipt -ReleaseDirectory $taskSource -ReceiptPath (Join-Path $taskProject "build/windows/$Architecture/build-provenance.json") -Architecture $Architecture
+$portableBuildReceipt=Assert-FuzeBuildReceipt -ReleaseDirectory $taskStaging -ReceiptPath (Join-Path $taskPortable 'build-provenance.json') -Architecture $Architecture
+Require ($sourceBuildReceipt.phase -ceq 'signed' -and $portableBuildReceipt.phase -ceq 'signed') 'The successful compiled receipts must be finalized against signed release bytes.'
 $artifacts=@([pscustomobject]@{Kind='EXE';Path=$installerReport.bundle;Expected=$installerReport.bundle_sha256},
  [pscustomobject]@{Kind='MSI';Path=$installerReport.msi;Expected=$installerReport.msi_sha256},
  [pscustomobject]@{Kind='PortableZIP';Path=$portableReport.zip;Expected=$portableReport.zip_sha256})
@@ -59,6 +65,9 @@ foreach ($directory in @($taskStaging,$taskSource)) {
  $expectedManifest=ConvertTo-PortableManifest $Version $payload
  $embeddedManifest=[FuzeVpnPortableResource]::Read((Join-Path $directory 'fuzevpn-runtime.exe'))
  Require ([Convert]::ToBase64String($embeddedManifest) -ceq [Convert]::ToBase64String($expectedManifest)) 'The signed runtime helper manifest does not describe the final payload.'
+ $expectedInventory=ConvertTo-PortableInventory $Version @(Get-PortableInventoryPaths @(Get-ReleaseInventory $directory $taskProject))
+ $embeddedInventory=[FuzeVpnPortableResource]::Read((Join-Path $directory 'fuzevpn-runtime.exe'),301)
+ Require ([Convert]::ToBase64String($embeddedInventory) -ceq [Convert]::ToBase64String($expectedInventory)) 'The signed complete portable inventory does not describe the final frontend and AOT payload.'
  Require ([Convert]::ToBase64String([IO.File]::ReadAllBytes((Join-Path $directory 'portable-runtime.manifest'))) -ceq [Convert]::ToBase64String($expectedManifest)) 'The standalone runtime manifest does not describe the final payload.'
  foreach ($name in @('fuzevpn_windows.exe','fuzevpn-service.exe','fuzevpn-update.exe','fuzevpn-runtime.exe')) {
   $file=Join-Path $directory $name
@@ -90,6 +99,7 @@ try {
 Require ([IO.File]::ReadAllText((Join-Path $taskStaging 'fuzevpn.portable')) -ceq "FuzeVPN portable v1`n") 'Portable marker contract mismatch.'
 Require (-not (Test-Path -LiteralPath (Join-Path $taskSource 'fuzevpn.portable'))) 'Installer source contains a portable marker.'
 $payloadProvenance=@()
+Assert-ReleaseAssetBaseline -Baseline @($baseline) -FinalInventory @($installerReport.files)
 foreach ($entry in @($installerReport.files | Where-Object {[IO.Path]::GetExtension($_.Path) -notin @('.exe','.dll','.sys') -and $_.Path -cne 'portable-runtime.manifest'})) {
  $relative=$entry.Path
  $before=@($baseline | Where-Object Path -CEQ $relative); $hash=Hash (Join-Path $taskSource $relative)
@@ -111,7 +121,8 @@ $working=Assert-ProjectPath (Join-Path $deepRoot 'intermediate') $taskProject
 [void][IO.Directory]::CreateDirectory($working)
 # WiX reads cabinets and PE resources as data. No setup, MSI custom action,
 # application, VPN service or ARM64 executable is ever launched.
-$dotnet=if($DotNetPath){Assert-ProjectPath $DotNetPath $taskProject}else{Join-Path $taskProject '.toolchain/dotnet-sdk/dotnet.exe'}
+$dependencyPins=Get-Content -LiteralPath (Join-Path $taskProject 'tools/dependency-pins.json') -Raw | ConvertFrom-Json
+$dotnet=if($DotNetPath){Assert-ProjectPath $DotNetPath $taskProject}else{Join-Path $taskProject ('.toolchain/dotnet-sdk-'+$dependencyPins.dotnet.version+'/dotnet.exe')}
 $wix=if($WixPath){Assert-ProjectPath $WixPath $taskProject}else{Assert-ProjectPath $installerReport.wix_path $taskProject}
 Require ((Hash $wix) -ceq $installerReport.wix_sha256) 'The data extraction tool does not match the packaging report.'
 & $dotnet $wix burn extract $installerReport.bundle -o $burnContents -oba $baContents -intermediateFolder $working *> (Join-Path $deepRoot 'burn-extract.log')
@@ -138,6 +149,7 @@ foreach ($ownFile in @($installerReport.bundle,(Join-Path $taskInstaller 'burn-e
  [void](Assert-SignedFile $ownFile -ExpectedPublisherSubject $taskPolicy.ExpectedPublisherSubject -TimestampRequired)
 }
 $bundleInfo=[Diagnostics.FileVersionInfo]::GetVersionInfo($installerReport.bundle)
+Assert-BundleUpdaterVersion -Path $installerReport.bundle -Version $Version
 Require ($bundleInfo.ProductName -ceq 'FuzeVPN' -and ('{0}.{1}.{2}.{3}' -f $bundleInfo.FileMajorPart,$bundleInfo.FileMinorPart,$bundleInfo.FileBuildPart,$bundleInfo.FilePrivatePart) -ceq "$Version.0") 'The setup version/product resources differ from the release contract.'
 $signatures=@(Get-ReleasePeSigningEvidence $taskPolicy (@(Get-ReleasePeFiles $taskStaging $taskProject)+@(Get-ReleasePeFiles $taskSource $taskProject)+@($installerReport.bundle,(Join-Path $taskInstaller 'burn-engine.exe'),$customAction)) $Architecture)
 $embeddedPe=@(Get-ReleasePeSigningEvidence $taskPolicy (@(Get-ReleasePeFiles $baContents $taskProject)+@(Get-ReleasePeFiles $msiContents $taskProject)) $Architecture)
@@ -161,9 +173,10 @@ foreach ($recorded in @($portableReport.signing.pe_signatures)+@($installerRepor
  Require ($actual.Count -eq 1 -and $actual[0].Sha256 -ceq $recorded.Sha256 -and $actual[0].Thumbprint -ceq $recorded.Thumbprint) 'Recorded PE signing evidence does not match final bytes.'
 }
 $result=[ordered]@{Status='PASS';Version=$Version;Architecture=$Architecture;VerifiedUtc=[DateTime]::UtcNow.ToString('o');Artifacts=$artifacts;
+ LegacyUpdaterMetadataCompatible=$true;
  PortableFiles=$portableReport.files.Count;InstallerSourceFiles=$installerReport.files.Count;ZIPFiles=$zipFiles.Count;MSITemplate=$inspection.SummaryTemplate;MSIFileRows=$inspection.File.Count;
  MSICompressedPayloadHashes=$msiHashes;EmbeddedCustomActionHashMatches=$true;EmbeddedMSIHashMatches=$true;EmbeddedBootstrapperHashesMatch=$true;
  DistributedPESignatures=$signatures;ExtractedPESignatures=$embeddedPe;MSISignature=$msiSignature;VendorBytesUnchanged=$vendorUnchanged;AOTAndAssetProvenance=$payloadProvenance;
- DeepDataExtractionDirectory=$deepRoot;PortableRuntimeDevelopment=$false;FlutterAotMachine=$elfMachine;SignedRuntimeManifestVerified=$true;ProductExecuted=$false;InstallerExecuted=$false;CustomActionsExecuted=$false;Arm64ExecutableRun=$false}
+ DeepDataExtractionDirectory=$deepRoot;PortableRuntimeDevelopment=$false;CompiledBuildPolicyVerified=$true;BuildReceiptHashesVerified=$true;FlutterAotMachine=$elfMachine;SignedRuntimeManifestVerified=$true;SignedCompletePortableInventoryVerified=$true;ProductExecuted=$false;InstallerExecuted=$false;CustomActionsExecuted=$false;Arm64ExecutableRun=$false}
 $result | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath (Join-Path $deepRoot 'verification.json') -Encoding UTF8
 [pscustomobject]@{Status='PASS';Architecture=$Architecture;PortableFiles=$portableReport.files.Count;InstallerFiles=$installerReport.files.Count;MSIFileRows=$inspection.File.Count;DistributedPEChecks=$signatures.Count;ExtractedPEChecks=$embeddedPe.Count;VendorsPreserved=$vendorUnchanged.Count;Artifacts=$artifacts} | ConvertTo-Json -Depth 5

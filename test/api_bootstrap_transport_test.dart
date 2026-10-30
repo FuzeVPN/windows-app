@@ -219,7 +219,8 @@ void main() {
       final server = await _server();
       addTearDown(() => server.close(force: true));
       final password = List.filled(256 * 1024, 'x').join();
-      final token = List.filled(384 * 1024, 't').join();
+      final token = List.filled(8192, 't').join();
+      final padding = List.filled(384 * 1024, 'x').join();
       final requestRead = Completer<int>();
       server.listen((request) async {
         await Future<void>.delayed(const Duration(milliseconds: 50));
@@ -227,7 +228,9 @@ void main() {
             jsonDecode(await utf8.decoder.bind(request).join())
                 as Map<String, dynamic>;
         requestRead.complete((body['password'] as String).length);
-        request.response.write(jsonEncode({'access_token': token}));
+        request.response.write(
+          jsonEncode({'access_token': token, 'padding': padding}),
+        );
         await request.response.close();
       });
       final api = ApiClient(

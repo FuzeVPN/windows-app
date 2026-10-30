@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 
 import 'diagnostics_models.dart';
+import 'runtime_storage_diagnostics.dart';
 
 /// Structured failure metadata only; implementations must never expose bodies,
 /// credentials, addresses or arbitrary exception text through these fields.
@@ -31,6 +32,21 @@ class DiagnosticLog {
   static int _nextRequestId = 0;
   static Future<void>? _writer;
   static final _observers = <void Function(String, String, String?)>{};
+  static const _networkProtectionStages = {
+    'wfp_engine_open',
+    'wfp_transaction_begin',
+    'wfp_provider_add',
+    'wfp_filter_enum_create',
+    'wfp_filter_enum',
+    'wfp_filter_enum_destroy',
+    'wfp_filter_delete',
+    'wfp_sublayer_delete',
+    'wfp_provider_delete',
+    'wfp_sublayer_add',
+    'wfp_app_id',
+    'wfp_filter_add',
+    'wfp_transaction_commit',
+  };
 
   static List<String> get recentLines => List.unmodifiable(_recent);
 
@@ -232,6 +248,28 @@ class DiagnosticLog {
       final value = details is Map ? details['win32_error'] : null;
       if (value is int) windowsError = value;
       final nativeStage = details is Map ? details['stage'] : null;
+      if (error.code == 'openvpn_connection_failed' &&
+          nativeStage == 'openvpn_native_exception') {
+        stage = 'openvpn_native_exception';
+      }
+      if (error.code == 'network_protection_failed' &&
+          _networkProtectionStages.contains(nativeStage)) {
+        stage = nativeStage as String;
+      }
+      if (error.code == 'storage_failure' &&
+          runtimeStorageStages.contains(nativeStage)) {
+        stage = nativeStage as String;
+      }
+      if (error.code == 'storage_error') {
+        // Only the binding write delegates its step to the native store; any
+        // other caller's stage (e.g. a sign-in step) is the precise one.
+        if ((stage == null || stage == 'device_binding_storage') &&
+            secureStoreStages.contains(nativeStage)) {
+          stage = nativeStage as String;
+        }
+        final attempts = details is Map ? details['attempts'] : null;
+        if (attempts is int) attempt ??= attempts;
+      }
       if (const {
             'broker_unavailable',
             'broker_write_failed',
@@ -279,6 +317,7 @@ class DiagnosticLog {
   static bool _knownFailureCode(String value) =>
       diagnosticCodes.contains(value) ||
       browserAuthTraceCodes.contains(value) ||
+      deviceEnrollmentTraceCodes.contains(value) ||
       const {
         'api_resolver_invalid_response',
         'runtime_detection_failed',

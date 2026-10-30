@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="lv-LV" Language="1062" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+  <String Id="Caption" Value="[WixBundleName] instalēšana" />
+  <String Id="CheckingForUpdatesLabel" Value="Atjauninājumu pārbaude" />
+  <String Id="ConfirmCancelMessage" Value="Vai vēlaties atcelt?" />
+  <String Id="DesktopShortcut" Value="Izveidot darbvirsmas saīsni" />
+  <String Id="ExecuteUpgradeRelatedBundleMessage" Value="Iepriekšējā versija" />
+  <String Id="FailureCacheHeader" Value="Sagatavošana neizdevās" />
+  <String Id="FailureCloseButton" Value="Aizvērt" />
+  <String Id="FailureHeader" Value="Kļūme" />
+  <String Id="FailureHyperlinkLogText" Value="Darbība pārtraukta. Skatiet &lt;a href=&quot;#&quot;&gt;žurnālu&lt;/a&gt;, novērsiet problēmu un mēģiniet vēlreiz." />
+  <String Id="FailureInstallHeader" Value="Instalēšana pārtraukta" />
+  <String Id="FailureLayoutHeader" Value="Kopēšana neizdevās" />
+  <String Id="FailureModifyHeader" Value="Modifikācija pārtraukta" />
+  <String Id="FailureRepairHeader" Value="Labošana pārtraukta" />
+  <String Id="FailureRestartButton" Value="Restartēt" />
+  <String Id="FailureRestartText" Value="Restartējiet, lai pabeigtu atjaunošanu." />
+  <String Id="FailureUninstallHeader" Value="Atinstalēšana pārtraukta" />
+  <String Id="FailureUnsafeUninstallHeader" Value="Atinstalēšana pārtraukta" />
+  <String Id="FilesInUseCloseRadioButton" Value="Aizvērt lietotnes" />
+  <String Id="FilesInUseDontCloseRadioButton" Value="Atstāt lietotnes atvērtas" />
+  <String Id="FilesInUseExitButton" Value="Atcelt" />
+  <String Id="FilesInUseIgnoreButton" Value="Ignorēt" />
+  <String Id="FilesInUseLabel" Value="Aizveriet tālāk norādītās lietotnes un mēģiniet vēlreiz." />
+  <String Id="FilesInUseNetfxCloseRadioButton" Value="Aizvērt lietotnes" />
+  <String Id="FilesInUseRetryButton" Value="Mēģināt vēlreiz" />
+  <String Id="FilesInUseTitle" Value="Faili tiek izmantoti" />
+  <String Id="HelpCloseButton" Value="Aizvērt" />
+  <String Id="HelpHeader" Value="Palīdzība" />
+  <String Id="HelpText" Value="/install, /repair, /uninstall: instalēt, labot, atinstalēt. /quiet: klusais režīms. /norestart: nerestartēt. DesktopShortcut=1: darbvirsmas saīsne. InstallFolder=&quot;D:\Applications\FuzeVPN&quot;: sākotnējā mape. Atjauninot instalācijas mape tiek saglabāta." />
+  <String Id="InstallAcceptCheckbox" Value="Es &amp;piekrītu licences noteikumiem" />
+  <String Id="InstallCancelButton" Value="Atcelt" />
+  <String Id="InstallHeader" Value="Laipni lūdzam" />
+  <String Id="InstallInstallButton" Value="Instalēt" />
+  <String Id="InstallLicenseLinkText" Value="[WixBundleName] &lt;a href=&quot;#&quot;&gt;licences noteikumi&lt;/a&gt;." />
+  <String Id="InstallMessage" Value="Instalējiet FuzeVPN šajā datorā." />
+  <String Id="InstallMessageOptions" Value="Instalējiet FuzeVPN šajā datorā." />
+  <String Id="InstallOptionsButton" Value="Opcijas" />
+  <String Id="InstallVersion" Value="Versija [WixBundleVersion]" />
+  <String Id="InstallVersionNotice" Value="Versija [WixBundleVersion] [BuildNotice]" />
+  <String Id="ModifyCancelButton" Value="Atcelt" />
+  <String Id="ModifyHeader" Value="Uzturēšana" />
+  <String Id="ModifyRepairButton" Value="Labot" />
+  <String Id="ModifyUninstallButton" Value="Atinstalēt" />
+  <String Id="OptionsBrowseButton" Value="Pārlūkot" />
+  <String Id="OptionsCancelButton" Value="Atcelt" />
+  <String Id="OptionsHeader" Value="Opcijas" />
+  <String Id="OptionsLocationLabel" Value="Instalācijas mape (Windows aizsargāta)" />
+  <String Id="OptionsOkButton" Value="Labi" />
+  <String Id="OptionsPerMachineScopeText" Value="Visi lietotāji" />
+  <String Id="OptionsPerUserScopeText" Value="Pašreizējais lietotājs" />
+  <String Id="OverallProgressPackageText" Value="Notiek sagatavošana…" />
+  <String Id="PreserveInstallFolder" Value="Atjaunināšanas laikā esošā mape tiek saglabāta. Lai brīvi pārvietotu saskarni, izmantojiet portatīvo arhīvu." />
+  <String Id="ProgressCancelButton" Value="Atcelt" />
+  <String Id="ProgressHeader" Value="Notiek instalēšana" />
+  <String Id="ProgressLabel" Value="Norise" />
+  <String Id="SuccessCacheHeader" Value="Faili gatavi" />
+  <String Id="SuccessCloseButton" Value="Aizvērt" />
+  <String Id="SuccessHeader" Value="Darbība pabeigta" />
+  <String Id="SuccessInstallHeader" Value="Instalēšana pabeigta" />
+  <String Id="SuccessLaunchButton" Value="Atvērt" />
+  <String Id="SuccessLayoutHeader" Value="Faili gatavi" />
+  <String Id="SuccessModifyHeader" Value="Modifikācija pabeigta" />
+  <String Id="SuccessOpenApp" Value="Atveriet FuzeVPN izvēlnē Sākt. Jūsu personiskie iestatījumi ir saglabāti." />
+  <String Id="SuccessRepairHeader" Value="Labošana pabeigta" />
+  <String Id="SuccessRestartButton" Value="Restartēt" />
+  <String Id="SuccessRestartText" Value="Restartējiet datoru, lai pabeigtu." />
+  <String Id="SuccessUninstallHeader" Value="Atinstalēšana pabeigta" />
+  <String Id="SuccessUninstallRestartText" Value="Restartējiet, lai pabeigtu atinstalēšanu." />
+  <String Id="SuccessUnsafeUninstallHeader" Value="Atinstalēšana pabeigta" />
+  <String Id="Title" Value="[WixBundleName]" />
+  <String Id="UpdateButton" Value="Atjaunināt" />
+</WixLocalization>

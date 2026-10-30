@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="si-LK" Language="1115" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+  <String Id="Caption" Value="[WixBundleName] ස්ථාපනය කරමින්" />
+  <String Id="CheckingForUpdatesLabel" Value="යාවත්කාලීන කිරීම් පරීක්ෂා කරමින්" />
+  <String Id="ConfirmCancelMessage" Value="ඔබට අවලංගු කිරීමට අවශ්‍යද?" />
+  <String Id="DesktopShortcut" Value="වැඩතල කෙටිමඟක් සාදන්න" />
+  <String Id="ExecuteUpgradeRelatedBundleMessage" Value="පෙර අනුවාදය" />
+  <String Id="FailureCacheHeader" Value="සූදානම් කිරීම අසාර්ථකයි" />
+  <String Id="FailureCloseButton" Value="වසන්න" />
+  <String Id="FailureHeader" Value="අසාර්ථකයි" />
+  <String Id="FailureHyperlinkLogText" Value="මෙහෙයුමට බාධා විය. &lt;a href=&quot;#&quot;&gt;ලොගය&lt;/a&gt; බලන්න, ගැටලුව විසඳා නැවත උත්සාහ කරන්න." />
+  <String Id="FailureInstallHeader" Value="ස්ථාපනය බාධා විය" />
+  <String Id="FailureLayoutHeader" Value="පිටපත් කිරීම අසාර්ථකයි" />
+  <String Id="FailureModifyHeader" Value="වෙනස් කිරීම බාධා විය" />
+  <String Id="FailureRepairHeader" Value="අලුත්වැඩියාව බාධා විය" />
+  <String Id="FailureRestartButton" Value="යළි අරඹන්න" />
+  <String Id="FailureRestartText" Value="ප්‍රතිසාධනය අවසන් කිරීමට නැවත ආරම්භ කරන්න." />
+  <String Id="FailureUninstallHeader" Value="අස්ථාපනය බාධා විය" />
+  <String Id="FailureUnsafeUninstallHeader" Value="අස්ථාපනය බාධා විය" />
+  <String Id="FilesInUseCloseRadioButton" Value="යෙදුම් වසන්න" />
+  <String Id="FilesInUseDontCloseRadioButton" Value="යෙදුම් විවෘතව තබන්න" />
+  <String Id="FilesInUseExitButton" Value="අවලංගු කරන්න" />
+  <String Id="FilesInUseIgnoreButton" Value="නොසලකා හරින්න" />
+  <String Id="FilesInUseLabel" Value="පහත යෙදුම් වසා නැවත උත්සාහ කරන්න." />
+  <String Id="FilesInUseNetfxCloseRadioButton" Value="යෙදුම් වසන්න" />
+  <String Id="FilesInUseRetryButton" Value="නැවත උත්සාහ කරන්න" />
+  <String Id="FilesInUseTitle" Value="භාවිතයේ ඇති ගොනු" />
+  <String Id="HelpCloseButton" Value="වසන්න" />
+  <String Id="HelpHeader" Value="උදවු" />
+  <String Id="HelpText" Value="/install, /repair, /uninstall: ස්ථාපනය, අලුත්වැඩියාව, අස්ථාපනය. /quiet: නිහඬ ආකාරය. /norestart: නැවත ආරම්භ නොකරන්න. DesktopShortcut=1: වැඩතල කෙටිමඟ. InstallFolder=&quot;D:\Applications\FuzeVPN&quot;: ආරම්භක ෆෝල්ඩරය. යාවත්කාලීන කිරීම් වලදී ස්ථාපිත ෆෝල්ඩරය රැකේ." />
+  <String Id="InstallAcceptCheckbox" Value="බලපත්‍ර නියමයන් හා කොන්දේසිවලට මම &amp;එකඟ වෙමි" />
+  <String Id="InstallCancelButton" Value="අවලංගු කරන්න" />
+  <String Id="InstallHeader" Value="ආයුබෝවන්" />
+  <String Id="InstallInstallButton" Value="ස්ථාපනය කරන්න" />
+  <String Id="InstallLicenseLinkText" Value="[WixBundleName] &lt;a href=&quot;#&quot;&gt;බලපත්‍ර කොන්දේසි&lt;/a&gt;." />
+  <String Id="InstallMessage" Value="මෙම පරිගණකයේ FuzeVPN ස්ථාපනය කරන්න." />
+  <String Id="InstallMessageOptions" Value="මෙම පරිගණකයේ FuzeVPN ස්ථාපනය කරන්න." />
+  <String Id="InstallOptionsButton" Value="විකල්ප" />
+  <String Id="InstallVersion" Value="අනුවාදය [WixBundleVersion]" />
+  <String Id="InstallVersionNotice" Value="අනුවාදය [WixBundleVersion] [BuildNotice]" />
+  <String Id="ModifyCancelButton" Value="අවලංගු කරන්න" />
+  <String Id="ModifyHeader" Value="නඩත්තුව" />
+  <String Id="ModifyRepairButton" Value="අලුත්වැඩියා කරන්න" />
+  <String Id="ModifyUninstallButton" Value="අස්ථාපනය කරන්න" />
+  <String Id="OptionsBrowseButton" Value="තෝරන්න" />
+  <String Id="OptionsCancelButton" Value="අවලංගු කරන්න" />
+  <String Id="OptionsHeader" Value="විකල්ප" />
+  <String Id="OptionsLocationLabel" Value="ස්ථාපන ෆෝල්ඩරය (Windows මඟින් ආරක්ෂිතයි)" />
+  <String Id="OptionsOkButton" Value="හරි" />
+  <String Id="OptionsPerMachineScopeText" Value="සියලුම පරිශීලකයන්" />
+  <String Id="OptionsPerUserScopeText" Value="වත්මන් පරිශීලකයා" />
+  <String Id="OverallProgressPackageText" Value="සූදානම් කරමින්…" />
+  <String Id="PreserveInstallFolder" Value="යාවත්කාලීන කිරීම්වලදී පවතින ෆෝල්ඩරය රැකේ. අතුරු මුහුණත නිදහසේ ගෙන යාමට අතේ ගෙන යා හැකි සංරක්ෂිතය භාවිත කරන්න." />
+  <String Id="ProgressCancelButton" Value="අවලංගු කරන්න" />
+  <String Id="ProgressHeader" Value="ස්ථාපනය සිදු වෙමින් පවතී" />
+  <String Id="ProgressLabel" Value="ප්‍රගතිය" />
+  <String Id="SuccessCacheHeader" Value="ගොනු සූදානම්" />
+  <String Id="SuccessCloseButton" Value="වසන්න" />
+  <String Id="SuccessHeader" Value="මෙහෙයුම සම්පූර්ණයි" />
+  <String Id="SuccessInstallHeader" Value="ස්ථාපනය සම්පූර්ණයි" />
+  <String Id="SuccessLaunchButton" Value="විවෘත කරන්න" />
+  <String Id="SuccessLayoutHeader" Value="ගොනු සූදානම්" />
+  <String Id="SuccessModifyHeader" Value="වෙනස් කිරීම සම්පූර්ණයි" />
+  <String Id="SuccessOpenApp" Value="ආරම්භක මෙනුවෙන් FuzeVPN විවෘත කරන්න. ඔබේ පෞද්ගලික මනාප රැකී ඇත." />
+  <String Id="SuccessRepairHeader" Value="අලුත්වැඩියාව සම්පූර්ණයි" />
+  <String Id="SuccessRestartButton" Value="යළි අරඹන්න" />
+  <String Id="SuccessRestartText" Value="අවසන් කිරීමට පරිගණකය නැවත ආරම්භ කරන්න." />
+  <String Id="SuccessUninstallHeader" Value="අස්ථාපනය සම්පූර්ණයි" />
+  <String Id="SuccessUninstallRestartText" Value="අස්ථාපනය අවසන් කිරීමට නැවත ආරම්භ කරන්න." />
+  <String Id="SuccessUnsafeUninstallHeader" Value="අස්ථාපනය සම්පූර්ණයි" />
+  <String Id="Title" Value="[WixBundleName]" />
+  <String Id="UpdateButton" Value="යාවත්කාලීන කරන්න" />
+</WixLocalization>

@@ -1,0 +1,55 @@
+{
+  "Version": "2.8.13",
+  "SourceCommit": "62a5db13f93a4b38ac193ee9cdfde1dbe2ab2b03",
+  "Release": "https://github.com/OpenVPN/ovpn-dco-win/releases/tag/2.8.13",
+  "Files": [
+    {
+      "Path": "amd64/win10/ovpn-dco.cat",
+      "Sha256": "ff4c60fcdfe78b101948116c3d7f18333891ba374f7d42fd73c8382aa9cb0288"
+    },
+    {
+      "Path": "amd64/win10/ovpn-dco.inf",
+      "Sha256": "fb3670af03a8fe0d441ae9d9e80e7b5b28fb013ba43a938b658d34004e08124d"
+    },
+    {
+      "Path": "amd64/win10/ovpn-dco.sys",
+      "Sha256": "30f39d2be5aa30237214de1de69fe27b0fe7eb624ea594768691ec1e98a25e2f"
+    },
+    {
+      "Path": "amd64/win11/ovpn-dco.cat",
+      "Sha256": "554f8602ac82ec65ef4642972a43b95f5d1532203f9df4e790005da9d1640f2c"
+    },
+    {
+      "Path": "amd64/win11/ovpn-dco.inf",
+      "Sha256": "fb3670af03a8fe0d441ae9d9e80e7b5b28fb013ba43a938b658d34004e08124d"
+    },
+    {
+      "Path": "amd64/win11/ovpn-dco.sys",
+      "Sha256": "b6d0f68a763495344b29d8b357985a963edcf2833a7d99c7c77434b3f0c1030d"
+    },
+    {
+      "Path": "arm64/win10/ovpn-dco.cat",
+      "Sha256": "3f1c1dccc066f8a37c5ee71c775b1765c2f0c52cd71df40e95f5114a95bcce23"
+    },
+    {
+      "Path": "arm64/win10/ovpn-dco.inf",
+      "Sha256": "1b3e0f4863a8382d6e0a20c3640bd85525480845228336dce1bcf93f3dc277e9"
+    },
+    {
+      "Path": "arm64/win10/ovpn-dco.sys",
+      "Sha256": "4893802191b6662b571c0cc5a6aae619f37ccd15efcc52590d56fb8a24498ffc"
+    },
+    {
+      "Path": "arm64/win11/ovpn-dco.cat",
+      "Sha256": "040826da1897cdbc08c7511dd99077901626dad62627690b4f63e0dce0497ef5"
+    },
+    {
+      "Path": "arm64/win11/ovpn-dco.inf",
+      "Sha256": "1b3e0f4863a8382d6e0a20c3640bd85525480845228336dce1bcf93f3dc277e9"
+    },
+    {
+      "Path": "arm64/win11/ovpn-dco.sys",
+      "Sha256": "9f50db4ccde935fc83da5be628da48ffd086314f2655cc7c988edc7893483287"
+    }
+  ]
+}

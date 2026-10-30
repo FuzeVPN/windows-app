@@ -228,11 +228,11 @@ String _subscriptionDate(
   bool accessible = false,
 }) {
   if (date == null) return context.tr('Indisponible');
-  final locale = Localizations.localeOf(context).toString();
-  final format = accessible
-      ? DateFormat.yMMMMEEEEd(locale).add_Hm()
-      : DateFormat.yMMMMd(locale).add_Hm();
-  return format.format(date.toLocal());
+  return formatAppDateTime(
+    date,
+    Localizations.localeOf(context),
+    accessible: accessible,
+  );
 }
 
 class _SubscriptionStatusBadge extends StatelessWidget {

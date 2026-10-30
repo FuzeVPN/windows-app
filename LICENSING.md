@@ -19,7 +19,7 @@ Read the [full licence](LICENSE) and the
 | Material | Licence / location |
 | --- | --- |
 | OpenVPN 3 Core | The MPL-2.0 option is selected for FuzeVPN. Keep `third_party/openvpn3-core/LICENSE.md`, `LICENSES/` and source notices. The upstream alternative AGPL option is not the option selected by this distribution. |
-| OpenVPN DCO for Windows | MIT; `third_party/openvpn-dco/2.8.7/LICENSE.txt` and `NOTICE.md` |
+| OpenVPN DCO for Windows | MIT; `third_party/openvpn-dco/2.8.13/LICENSE.txt` and `NOTICE.md` |
 | WireGuard Windows embeddable service | MIT with Go, module and LLVM notices; `third_party/wireguard/1.1/NOTICE.md` and the accompanying licence files |
 | WireGuardNT original prebuilt DLL | WireGuardNT Prebuilt Binaries License; `third_party/wireguard/1.1/LICENSE-WireGuardNT.txt`. It is not MPL-covered and must not be modified or relicensed. |
 | WiX source and local modifications to WiX | Microsoft Reciprocal License (MS-RL); `installer/WiX-MS-RL.txt` and the corresponding-source archive |
@@ -30,6 +30,16 @@ Read the [full licence](LICENSE) and the
 | Flutter, Dart and packages resolved by `pubspec.lock` | Their respective licences; Flutter generates the runtime `NOTICES.Z` |
 | OpenSSL, Asio, fmt, LZ4, JsonCpp, xxHash and TAP headers | Their respective licences, copied by `tools/package-native-notices.cmake` into binary distributions |
 | Microsoft Visual C++ runtime | Microsoft redistribution terms; not covered by MPL-2.0 |
+
+Four inherited OpenVPN-owned headers had old GPLv3 notices that the upstream
+maintainers confirmed were missed during relicensing. Their clarification and
+the exact affected files are recorded in
+`third_party/openvpn3-core/FUZEVPN-LICENSING-CLARIFICATION.md`, included with the
+corresponding Core source. FuzeVPN corrected those four downstream metadata
+headers to the repository's canonical dual-license expression, preserving author
+and copyright lines. The original notices and patch provenance are archived in
+`third_party/openvpn3-core/fuzevpn-license-provenance/`; no unpublished upstream
+commit is claimed.
 
 The Flutter-derived template exception includes the Windows runner's
 `flutter_window.*`, `win32_window.*`, `utils.*`, `main.cpp`, `resource.h`,

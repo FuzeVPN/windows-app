@@ -149,6 +149,69 @@ class Fixture {
 }
 
 void main() {
+  for (final mode in [
+    WindowsInstallationMode.installed,
+    WindowsInstallationMode.portable,
+  ]) {
+    for (final retainedTunnel in [false, true]) {
+      test(
+        '${mode.name} update verifies native cleanup while UI is disconnected '
+        '(retained tunnel: $retainedTunnel)',
+        () async {
+          final f = Fixture();
+          addTearDown(f.dispose);
+          f.bridge.installationMode = mode;
+          if (mode == WindowsInstallationMode.portable) {
+            f.api.candidate = portableRelease;
+          }
+          f.app
+            ..vpnStatus = VpnStatus.disconnected
+            ..activeProtocol = null;
+          f.wg
+            ..connected = retainedTunnel
+            ..protectionActive = retainedTunnel;
+          await f.prepare();
+
+          await f.app.installPreparedUpdate();
+
+          expect(f.updates.error, isNull);
+          expect(f.bridge.installs, 1);
+          expect(f.wg.connected, isFalse);
+          expect(f.wg.protectionActive, isFalse);
+          expect(f.app.vpnStatus, VpnStatus.disconnected);
+          expect(f.window.quits, 1);
+          expect(f.updates.status, WindowsUpdateStatus.launched);
+        },
+      );
+    }
+
+    test(
+      '${mode.name} update cannot bypass failed cleanup from disconnected UI',
+      () async {
+        final f = Fixture();
+        addTearDown(f.dispose);
+        f.bridge.installationMode = mode;
+        if (mode == WindowsInstallationMode.portable) {
+          f.api.candidate = portableRelease;
+        }
+        f.app
+          ..vpnStatus = VpnStatus.disconnected
+          ..activeProtocol = null;
+        f.wg.cleanupFails = true;
+        await f.prepare();
+
+        await f.app.installPreparedUpdate();
+
+        expect(f.bridge.installs, 0);
+        expect(f.window.quits, 0);
+        expect(f.wg.connected, isTrue);
+        expect(f.wg.protectionActive, isTrue);
+        expect(f.updates.error?.code, 'update_vpn_cleanup_failed');
+        expect(f.app.isInstallingUpdate, isFalse);
+      },
+    );
+  }
+
   testWidgets('disabled test updates show a neutral notice without actions', (
     tester,
   ) async {
@@ -612,7 +675,7 @@ void main() {
       'Cette mise à jour nécessite une installation manuelle depuis le site FuzeVPN.',
       'Ouvrir le site FuzeVPN',
     ];
-    expect(translationCatalogs, hasLength(30));
+    expect(translationCatalogs, hasLength(70));
     for (final key in messages) {
       expect(sourceCatalog, contains(key), reason: key);
       for (final language in AppLanguage.values.where(

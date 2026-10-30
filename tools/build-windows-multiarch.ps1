@@ -10,6 +10,7 @@ param(
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 Import-Module (Join-Path $PSScriptRoot 'BuildSupport.psm1') -Force
+Import-Module (Join-Path $PSScriptRoot 'BuildProvenance.psm1') -Force
 $projectRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $flutter = Join-Path $projectRoot '.toolchain\flutter\bin\flutter.bat'
 $tools = Get-FuzeVisualStudioTools -Architecture $Architecture
@@ -28,6 +29,7 @@ if ($Architecture -eq 'arm64') {
 $cmake = Join-Path $visualStudio 'Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe'
 if (-not (Test-Path -LiteralPath $cmake)) { throw 'Visual Studio CMake is required.' }
 $buildRoot = Join-Path $projectRoot ('build\windows\' + $Architecture)
+Suspend-FuzeBuildReceipt -SourceBuildCache (Join-Path $buildRoot 'CMakeCache.txt')
 $targetPlatform = 'windows-' + $Architecture
 $generatorPlatform = if ($Architecture -eq 'arm64') { 'ARM64' } else { 'x64' }
 $runtimeRoot = Join-Path $projectRoot '.toolchain\build-runtime'
@@ -64,6 +66,10 @@ try {
     "-DFUZEVPN_ALLOW_PORTABLE_DEV=$developmentFlag")
   Invoke-TaskChecked $cmake @('--build', $buildRoot, '--config', 'Release',
     '--target', 'INSTALL', '--parallel', "$Parallel")
+  # This receipt is created only after INSTALL succeeds. Compiled resource 302
+  # independently binds the policy to each executable; a changed cache alone
+  # cannot qualify a retained DevTest executable for a production release.
+  [void](New-FuzeBuildReceipt -ReleaseDirectory (Join-Path $buildRoot 'runner/Release') -SourceBuildCache (Join-Path $buildRoot 'CMakeCache.txt') -Architecture $Architecture -Development:$DevTest)
   $policy = if ($DevTest) { 'Development test' } else { 'Unsigned production-policy' }
   Write-Output "$policy $Architecture build ready: $(Join-Path $buildRoot 'runner\Release')"
 } finally {

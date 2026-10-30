@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="gu-IN" Language="1095" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+  <String Id="Caption" Value="[WixBundleName] ઇન્સ્ટોલેશન" />
+  <String Id="CheckingForUpdatesLabel" Value="અપડેટ તપાસી રહ્યાં છીએ" />
+  <String Id="ConfirmCancelMessage" Value="શું તમે રદ કરવા માંગો છો?" />
+  <String Id="DesktopShortcut" Value="ડેસ્કટોપ શોર્ટકટ બનાવો" />
+  <String Id="ExecuteUpgradeRelatedBundleMessage" Value="પહેલાનું સંસ્કરણ" />
+  <String Id="FailureCacheHeader" Value="તૈયારી નિષ્ફળ ગઈ" />
+  <String Id="FailureCloseButton" Value="બંધ કરો" />
+  <String Id="FailureHeader" Value="નિષ્ફળતા" />
+  <String Id="FailureHyperlinkLogText" Value="કાર્ય અટકી ગયું. &lt;a href=&quot;#&quot;&gt;લોગ&lt;/a&gt; જુઓ, સમસ્યા સુધારો અને ફરી પ્રયાસ કરો." />
+  <String Id="FailureInstallHeader" Value="ઇન્સ્ટોલેશન અટકી ગયું" />
+  <String Id="FailureLayoutHeader" Value="નકલ નિષ્ફળ ગઈ" />
+  <String Id="FailureModifyHeader" Value="ફેરફાર અટકી ગયો" />
+  <String Id="FailureRepairHeader" Value="સમારકામ અટકી ગયું" />
+  <String Id="FailureRestartButton" Value="ફરી શરૂ કરો" />
+  <String Id="FailureRestartText" Value="પુનઃસ્થાપન પૂર્ણ કરવા ફરી શરૂ કરો." />
+  <String Id="FailureUninstallHeader" Value="અનઇન્સ્ટોલેશન અટકી ગયું" />
+  <String Id="FailureUnsafeUninstallHeader" Value="અનઇન્સ્ટોલેશન અટકી ગયું" />
+  <String Id="FilesInUseCloseRadioButton" Value="એપ્લિકેશનો બંધ કરો" />
+  <String Id="FilesInUseDontCloseRadioButton" Value="એપ્લિકેશનો ખુલ્લી રાખો" />
+  <String Id="FilesInUseExitButton" Value="રદ કરો" />
+  <String Id="FilesInUseIgnoreButton" Value="અવગણો" />
+  <String Id="FilesInUseLabel" Value="નીચેની એપ્લિકેશનો બંધ કરો અને ફરી પ્રયાસ કરો." />
+  <String Id="FilesInUseNetfxCloseRadioButton" Value="એપ્લિકેશનો બંધ કરો" />
+  <String Id="FilesInUseRetryButton" Value="ફરી પ્રયાસ કરો" />
+  <String Id="FilesInUseTitle" Value="ઉપયોગમાં રહેલી ફાઇલો" />
+  <String Id="HelpCloseButton" Value="બંધ કરો" />
+  <String Id="HelpHeader" Value="મદદ" />
+  <String Id="HelpText" Value="/install, /repair, /uninstall: ઇન્સ્ટોલ કરો, સમારકામ કરો, અનઇન્સ્ટોલ કરો. /quiet: શાંત મોડ. /norestart: ફરી શરૂ ન કરો. DesktopShortcut=1: ડેસ્કટોપ શોર્ટકટ. InstallFolder=&quot;D:\Applications\FuzeVPN&quot;: પ્રારંભિક ફોલ્ડર. અપડેટ દરમિયાન ઇન્સ્ટોલ કરેલું ફોલ્ડર જળવાય છે." />
+  <String Id="InstallAcceptCheckbox" Value="હું લાઇસન્સની શરતો સાથે &amp;સંમત છું" />
+  <String Id="InstallCancelButton" Value="રદ કરો" />
+  <String Id="InstallHeader" Value="સ્વાગત છે" />
+  <String Id="InstallInstallButton" Value="ઇન્સ્ટોલ કરો" />
+  <String Id="InstallLicenseLinkText" Value="[WixBundleName] &lt;a href=&quot;#&quot;&gt;લાઇસન્સની શરતો&lt;/a&gt;." />
+  <String Id="InstallMessage" Value="આ કમ્પ્યુટર પર FuzeVPN ઇન્સ્ટોલ કરો." />
+  <String Id="InstallMessageOptions" Value="આ કમ્પ્યુટર પર FuzeVPN ઇન્સ્ટોલ કરો." />
+  <String Id="InstallOptionsButton" Value="વિકલ્પો" />
+  <String Id="InstallVersion" Value="સંસ્કરણ [WixBundleVersion]" />
+  <String Id="InstallVersionNotice" Value="સંસ્કરણ [WixBundleVersion] [BuildNotice]" />
+  <String Id="ModifyCancelButton" Value="રદ કરો" />
+  <String Id="ModifyHeader" Value="જાળવણી" />
+  <String Id="ModifyRepairButton" Value="સમારકામ કરો" />
+  <String Id="ModifyUninstallButton" Value="અનઇન્સ્ટોલ કરો" />
+  <String Id="OptionsBrowseButton" Value="બ્રાઉઝ કરો" />
+  <String Id="OptionsCancelButton" Value="રદ કરો" />
+  <String Id="OptionsHeader" Value="વિકલ્પો" />
+  <String Id="OptionsLocationLabel" Value="ઇન્સ્ટોલેશન ફોલ્ડર (Windows દ્વારા સુરક્ષિત)" />
+  <String Id="OptionsOkButton" Value="બરાબર" />
+  <String Id="OptionsPerMachineScopeText" Value="બધા વપરાશકર્તાઓ" />
+  <String Id="OptionsPerUserScopeText" Value="વર્તમાન વપરાશકર્તા" />
+  <String Id="OverallProgressPackageText" Value="તૈયારી થઈ રહી છે…" />
+  <String Id="PreserveInstallFolder" Value="અપડેટ દરમિયાન હાલનું ફોલ્ડર જળવાય છે. ઇન્ટરફેસને મુક્તપણે ખસેડવા પોર્ટેબલ આર્કાઇવ વાપરો." />
+  <String Id="ProgressCancelButton" Value="રદ કરો" />
+  <String Id="ProgressHeader" Value="ઇન્સ્ટોલેશન ચાલુ છે" />
+  <String Id="ProgressLabel" Value="પ્રગતિ" />
+  <String Id="SuccessCacheHeader" Value="ફાઇલો તૈયાર છે" />
+  <String Id="SuccessCloseButton" Value="બંધ કરો" />
+  <String Id="SuccessHeader" Value="કાર્ય પૂર્ણ થયું" />
+  <String Id="SuccessInstallHeader" Value="ઇન્સ્ટોલેશન પૂર્ણ થયું" />
+  <String Id="SuccessLaunchButton" Value="ખોલો" />
+  <String Id="SuccessLayoutHeader" Value="ફાઇલો તૈયાર છે" />
+  <String Id="SuccessModifyHeader" Value="ફેરફાર પૂર્ણ થયો" />
+  <String Id="SuccessOpenApp" Value="Start મેનુમાંથી FuzeVPN ખોલો. તમારી વ્યક્તિગત પસંદગીઓ જાળવવામાં આવી છે." />
+  <String Id="SuccessRepairHeader" Value="સમારકામ પૂર્ણ થયું" />
+  <String Id="SuccessRestartButton" Value="ફરી શરૂ કરો" />
+  <String Id="SuccessRestartText" Value="પૂર્ણ કરવા માટે કમ્પ્યુટર ફરી શરૂ કરો." />
+  <String Id="SuccessUninstallHeader" Value="અનઇન્સ્ટોલેશન પૂર્ણ થયું" />
+  <String Id="SuccessUninstallRestartText" Value="અનઇન્સ્ટોલેશન પૂર્ણ કરવા ફરી શરૂ કરો." />
+  <String Id="SuccessUnsafeUninstallHeader" Value="અનઇન્સ્ટોલેશન પૂર્ણ થયું" />
+  <String Id="Title" Value="[WixBundleName]" />
+  <String Id="UpdateButton" Value="અપડેટ કરો" />
+</WixLocalization>

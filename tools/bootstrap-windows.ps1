@@ -15,6 +15,7 @@ Set-StrictMode -Version Latest
 Import-Module (Join-Path $PSScriptRoot 'BuildSupport.psm1') -Force
 $root = Get-FuzeProjectRoot
 $pins = Get-FuzeDependencyPins
+Assert-FuzeDcoDependency
 if ($env:PROCESSOR_ARCHITECTURE -ne 'AMD64' -and $env:PROCESSOR_ARCHITEW6432 -ne 'AMD64') { throw 'The public build tools require a Windows x64 host; ARM64 is a cross-compilation target.' }
 $architectures = if ($Architecture -eq 'both') {@('x64','arm64')} else {@($Architecture)}
 foreach ($arch in $architectures) { [void](Get-FuzeVisualStudioTools -Architecture $arch) }
@@ -94,7 +95,7 @@ try {
   }
   if ($IncludeInstaller) {
     $dotnetArchive = Get-FuzePinnedDownload -Pin $pins.dotnet -Offline:$Offline -DownloadSeeds $DownloadSeeds
-    $dotnetRoot = Join-Path $toolchain 'dotnet-sdk'
+    $dotnetRoot = Join-Path $toolchain ('dotnet-sdk-' + $pins.dotnet.version)
     if (-not (Test-Path -LiteralPath (Join-Path $dotnetRoot ('sdk/' + $pins.dotnet.version)))) { Expand-FuzeZip -Archive $dotnetArchive -Destination $dotnetRoot }
     $dotnet = Join-Path $dotnetRoot 'dotnet.exe'
     $env:DOTNET_CLI_HOME = Join-Path $toolchain 'installer-runtime/dotnet'

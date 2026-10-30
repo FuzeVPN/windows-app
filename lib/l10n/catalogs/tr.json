@@ -598,5 +598,14 @@
   "Cette demande de connexion a expiré ou a déjà été utilisée. Recommencez depuis FuzeVPN.": "Bu oturum açma isteğinin süresi doldu veya istek daha önce kullanıldı. FuzeVPN üzerinden yeniden başlayın.",
   "La connexion par navigateur est momentanément indisponible. Utilisez votre adresse e-mail et votre mot de passe, ou réessayez plus tard.": "Tarayıcı üzerinden oturum açma geçici olarak kullanılamıyor. E-posta adresinizi ve parolanızı kullanın veya daha sonra yeniden deneyin.",
   "Reconnectez-vous à votre compte dans le navigateur, puis réessayez depuis FuzeVPN.": "Tarayıcıda hesabınızda yeniden oturum açın, ardından FuzeVPN üzerinden yeniden deneyin.",
-  "Mises à jour désactivées dans cette version de test.": "Bu test sürümünde güncellemeler devre dışı."
+  "Mises à jour désactivées dans cette version de test.": "Bu test sürümünde güncellemeler devre dışı.",
+  "Autorisation reçue": "Yetkilendirme alındı",
+  "Autorisation refusée": "Yetkilendirme reddedildi",
+  "Demande invalide": "Geçersiz istek",
+  "Revenez dans FuzeVPN pour terminer la connexion.": "Oturum açmayı tamamlamak için FuzeVPN uygulamasına dönün.",
+  "Délai avant réessai : {seconds} s.": "Yeniden deneme bekleme süresi: {seconds} sn.",
+  "Serveurs : {count}": "Sunucular: {count}",
+  "Villes : {count}": "Şehirler: {count}",
+  "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "VPN tüneli dışındaki UDP trafiğini engeller. TCP/TLS üzerinden WebRTC trafiğini de kapsamak için kill switch özelliğini etkinleştirin.",
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Tünel dışında 53 ve 853 bağlantı noktalarındaki DNS trafiğini engeller. HTTPS üzerinden DNS trafiğini de kapsamak için kill switch özelliğini etkinleştirin."
 }

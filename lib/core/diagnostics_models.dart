@@ -19,6 +19,10 @@ const browserAuthTraceCodes = <String>{
   'account_login_required',
 };
 
+/// Local trace references for API conflicts the client resolves itself. Like
+/// [browserAuthTraceCodes], they do not expand the version-1 catalogue.
+const deviceEnrollmentTraceCodes = <String>{'device_location_locked'};
+
 /// Version 1 of client-diagnostics-20260916. Never expand this from error text.
 const diagnosticCodes = <String>{
   'api_bootstrap_unavailable',

@@ -1,0 +1,18 @@
+[
+  {
+    "Name": "ovpn-dco-win-2.8.13-amd64.zip",
+    "Source": "https://github.com/OpenVPN/ovpn-dco-win/releases/download/2.8.13/ovpn-dco-win-2.8.13-amd64.zip",
+    "Sha256": "7e3bfa83b55771e352c3aa65281a93948674833502302fc02dcb546b957ca9d4",
+    "VendorDigestVerified": true,
+    "DigestSource": "https://api.github.com/repos/OpenVPN/ovpn-dco-win/releases/402576444",
+    "Bytes": 167889
+  },
+  {
+    "Name": "ovpn-dco-win-2.8.13-arm64.zip",
+    "Source": "https://github.com/OpenVPN/ovpn-dco-win/releases/download/2.8.13/ovpn-dco-win-2.8.13-arm64.zip",
+    "Sha256": "e2df6e488681b1fdef2f75bf4636bc1c58c925d6a342df2c22ced0146c284dd0",
+    "VendorDigestVerified": true,
+    "DigestSource": "https://api.github.com/repos/OpenVPN/ovpn-dco-win/releases/402576444",
+    "Bytes": 151726
+  }
+]

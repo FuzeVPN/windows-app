@@ -59,11 +59,39 @@ $cacheRelease=Join-Path $cacheDirectory 'runner/Release'
 [void][IO.Directory]::CreateDirectory($cacheRelease)
 $cacheFile=Join-Path $cacheDirectory 'CMakeCache.txt'
 [IO.File]::WriteAllText($cacheFile,"FUZEVPN_ALLOW_PORTABLE_DEV:BOOL=OFF`nCMAKE_GENERATOR_PLATFORM:INTERNAL=x64`n")
-Check ((Assert-PortableBuildMode $cacheRelease $cacheFile -TargetArchitecture x64) -ceq $cacheFile) 'Production cache x64 must be accepted.'
-Reject { Assert-PortableBuildMode $cacheRelease $cacheFile -TargetArchitecture arm64 } 'An x64 cache cannot prove an ARM64 source build.'
-Reject { Assert-PortableBuildMode $cacheRelease $cacheFile -Development -TargetArchitecture x64 } 'Production and developer runtime modes must remain distinct.'
-[IO.File]::WriteAllText($cacheFile,"FUZEVPN_ALLOW_PORTABLE_DEV:BOOL=OFF`nCMAKE_GENERATOR_PLATFORM:INTERNAL=ARM64`n")
-Check ((Assert-PortableBuildMode $cacheRelease $cacheFile -TargetArchitecture arm64) -ceq $cacheFile) 'Production cache ARM64 must be accepted.'
+$receiptFailure=''
+try { Assert-PortableBuildMode $cacheRelease $cacheFile -TargetArchitecture x64 | Out-Null } catch { $receiptFailure=$_.Exception.Message }
+Check ($receiptFailure -ceq 'A successful build receipt is required; rebuild before packaging.') 'A CMake cache alone must not authorize packaging.'
+# Exercise the architecture/mode routing here without compiling a PE fixture in
+# every installer test. The separate provenance suite checks real resource-302
+# DLL fixtures and receipt contents; this double verifies the exact call boundary.
+$originalReceiptAssertion=(Get-Command Assert-FuzeBuildReceipt).ScriptBlock
+$script:receiptCalls=0
+function Assert-FuzeBuildReceipt {
+  param([string]$ReleaseDirectory,[string]$ReceiptPath,[string]$Architecture,[switch]$Development)
+  Check ($ReleaseDirectory -ceq $cacheRelease) 'Build receipt must inspect the selected release.'
+  Check ($ReceiptPath -ceq (Join-Path $cacheDirectory 'build-provenance.json')) 'Build receipt must remain beside the source cache.'
+  Check ($Architecture -ceq $script:receiptArchitecture -and [bool]$Development -eq $script:receiptDevelopment) 'Build receipt must receive the exact architecture and mode.'
+  $script:receiptCalls++
+}
+try {
+  foreach ($architecture in @('x64','arm64')) {
+    foreach ($development in @($false,$true)) {
+      $script:receiptArchitecture=$architecture
+      $script:receiptDevelopment=$development
+      $cacheFlag=if ($development) {'ON'} else {'OFF'}
+      $cachePlatform=if ($architecture -ceq 'arm64') {'ARM64'} else {'x64'}
+      [IO.File]::WriteAllText($cacheFile,"FUZEVPN_ALLOW_PORTABLE_DEV:BOOL=$cacheFlag`nCMAKE_GENERATOR_PLATFORM:INTERNAL=$cachePlatform`n")
+      Check ((Assert-PortableBuildMode $cacheRelease $cacheFile -Development:$development -TargetArchitecture $architecture) -ceq $cacheFile) 'Matching cache must be checked against its build receipt.'
+      $otherArchitecture=if ($architecture -ceq 'x64') {'arm64'} else {'x64'}
+      Reject { Assert-PortableBuildMode $cacheRelease $cacheFile -Development:$development -TargetArchitecture $otherArchitecture } 'A source cache cannot authorize the other architecture.'
+      Reject { Assert-PortableBuildMode $cacheRelease $cacheFile -Development:(-not $development) -TargetArchitecture $architecture } 'Production and developer runtime modes must remain distinct.'
+    }
+  }
+  Check ($script:receiptCalls -eq 4) 'Only matching architecture/mode pairs may reach the receipt check.'
+} finally {
+  Set-Item -Path Function:Assert-FuzeBuildReceipt -Value $originalReceiptAssertion
+}
 $runtimeCommon=@('fuzevpn-service.exe','lz4.dll','tunnel.dll','wireguard.dll','concrt140.dll','msvcp140.dll','msvcp140_1.dll','msvcp140_2.dll','msvcp140_atomic_wait.dll','msvcp140_codecvt_ids.dll','vcruntime140.dll',
  'openvpn-dco/NOTICE.md','openvpn-dco/win10/ovpn-dco.inf','openvpn-dco/win10/ovpn-dco.cat','openvpn-dco/win10/ovpn-dco.sys','openvpn-dco/win11/ovpn-dco.inf','openvpn-dco/win11/ovpn-dco.cat','openvpn-dco/win11/ovpn-dco.sys','THIRD_PARTY_NOTICES.md','WIREGUARD_NOTICE.md','licenses/OpenVPN3-corresponding-source.zip')
 function Runtime-Fixture([string]$Arch) {

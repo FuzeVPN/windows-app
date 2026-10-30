@@ -1,6 +1,6 @@
 # Localization
 
-The Flutter interface contains 30 translation catalogs, including simplified
+The Flutter interface contains 70 translation catalogs, including simplified
 and traditional Chinese. Catalogs are stored in `lib/l10n/catalogs/`.
 `source.json` defines the message keys and the source wording; each locale
 contains the same keys and preserves their placeholders.
@@ -26,3 +26,13 @@ Flutter catalogs do not update installer text automatically.
 
 Translation contributions follow the licensing and review rules in
 [CONTRIBUTING.md](../CONTRIBUTING.md).
+
+Punjabi uses Gurmukhi, Azerbaijani and Uzbek use Latin, and Serbian uses
+Cyrillic. Hebrew and Pashto use right-to-left layout alongside Arabic, Persian
+and Urdu. Script-sensitive Windows font fallbacks and untracked spacing keep
+joined scripts readable.
+
+Windows has no fixed LANGID for Malagasy. Its installer catalog is available
+by the explicit MSI property `FUZEVPN_LANGUAGE=mg`; it is not assigned a fake
+LANGID or the shared custom-locale ID 4096. Automatic Burn theme selection
+continues to use Windows UI language IDs for the other supported catalogs.

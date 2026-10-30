@@ -4,7 +4,7 @@ $root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 function Assert([bool]$condition, [string]$message) { if (-not $condition) { throw $message } }
 & (Join-Path $root 'l10n\generate.ps1') -Check
 $locales = @(Get-Content (Join-Path $root 'l10n\locales.json') -Raw -Encoding UTF8 | ConvertFrom-Json)
-Assert ($locales.Count -eq 30) 'Installer must expose all 30 languages.'
+Assert ($locales.Count -eq 70) 'Installer must expose all 70 languages.'
 [xml]$theme = Get-Content (Join-Path $root 'FuzeVpnTheme.xml') -Raw -Encoding UTF8
 # Measure authored button text at the theme's 96-DPI, 12-pixel font size.
 # This creates only an in-memory bitmap; it never opens a window.
@@ -16,6 +16,8 @@ $font = [Drawing.Font]::new('Segoe UI', 12, [Drawing.FontStyle]::Regular, [Drawi
 try {
   foreach ($locale in $locales) {
     $catalog = Get-Content (Join-Path $root "l10n\catalogs\$($locale.code).json") -Raw -Encoding UTF8 | ConvertFrom-Json
+    $example = [regex]::Match($catalog.'theme.HelpText', 'InstallFolder="([^"]+)"')
+    Assert ($example.Success -and $example.Groups[1].Value -ceq 'D:\Applications\FuzeVPN') "Installer help must preserve its absolute Windows path example: $($locale.code)"
     foreach ($button in $theme.SelectNodes('//*[local-name()="Button"]')) {
       foreach ($match in [regex]::Matches($button.InnerText, '#\(loc\.([A-Za-z0-9_]+)\)')) {
         $key = 'theme.' + $match.Groups[1].Value
@@ -43,6 +45,8 @@ foreach ($locale in $locales) {
   foreach ($lcid in $locale.lcids) {
     [xml]$localized = Get-Content (Join-Path $root "l10n\generated\$lcid\thm.xml") -Raw -Encoding UTF8
     [xml]$strings = Get-Content (Join-Path $root "l10n\generated\$lcid\thm.wxl") -Raw -Encoding UTF8
+    $help = $strings.SelectSingleNode('//*[local-name()="String" and @Id="HelpText"]')
+    Assert ($null -ne $help -and $help.Value.Contains('InstallFolder="D:\Applications\FuzeVPN"')) "Generated installer help lost its absolute Windows path example: $lcid"
     Assert ($strings.DocumentElement.Language -eq [string]$lcid) "Wrong language identifier: $lcid"
     $window = $localized.SelectSingleNode('//*[local-name()="Window"]')
     $windowWidth = [int]$window.Width

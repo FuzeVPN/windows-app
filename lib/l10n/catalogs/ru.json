@@ -598,5 +598,14 @@
   "Cette demande de connexion a expiré ou a déjà été utilisée. Recommencez depuis FuzeVPN.": "Срок действия этого запроса на вход истёк или он уже был использован. Начните заново из FuzeVPN.",
   "La connexion par navigateur est momentanément indisponible. Utilisez votre adresse e-mail et votre mot de passe, ou réessayez plus tard.": "Вход через браузер временно недоступен. Используйте адрес электронной почты и пароль или повторите попытку позже.",
   "Reconnectez-vous à votre compte dans le navigateur, puis réessayez depuis FuzeVPN.": "Снова войдите в свой аккаунт в браузере, затем повторите попытку из FuzeVPN.",
-  "Mises à jour désactivées dans cette version de test.": "Обновления отключены в этой тестовой версии."
+  "Mises à jour désactivées dans cette version de test.": "Обновления отключены в этой тестовой версии.",
+  "Autorisation reçue": "Авторизация получена",
+  "Autorisation refusée": "В авторизации отказано",
+  "Demande invalide": "Недопустимый запрос",
+  "Revenez dans FuzeVPN pour terminer la connexion.": "Вернитесь в FuzeVPN, чтобы завершить вход.",
+  "Délai avant réessai : {seconds} s.": "Задержка перед повторной попыткой: {seconds} с.",
+  "Serveurs : {count}": "Серверы: {count}",
+  "Villes : {count}": "Города: {count}",
+  "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "Блокирует UDP вне VPN-туннеля. Чтобы также охватить WebRTC через TCP/TLS, включите аварийную блокировку.",
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Блокирует DNS вне туннеля на портах 53 и 853. Чтобы также охватить DNS через HTTPS, включите аварийную блокировку."
 }

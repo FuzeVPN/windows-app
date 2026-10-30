@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "maintenance_network_policy.h"
+#include "network_protection_persistence.h"
 
 namespace fuzevpn_maintenance {
 namespace {
@@ -82,6 +83,8 @@ bool FiltersStopped(DWORD* error) {
     if (count == 0) break;
     for (UINT32 i = 0; i < count && clear; ++i) {
       const auto& filter = *filters[i];
+      if (filter.providerKey && IsEqualGUID(*filter.providerKey, fuzevpn_network_persistence::kProvider) &&
+          (filter.flags & (FWPM_FILTER_FLAG_PERSISTENT | FWPM_FILTER_FLAG_BOOTTIME))) continue;
       if (filter.displayData.name && fuzevpn_maintenance_policy::VpnFilterName(filter.displayData.name))
         clear = Reject(ERROR_BUSY, error);
       for (UINT32 j = 0; j < filter.numFilterConditions && clear; ++j)
@@ -102,7 +105,10 @@ bool FiltersStopped(DWORD* error) {
     if (status != ERROR_SUCCESS) { clear = Reject(status, error); break; }
     if (count == 0) break;
     for (UINT32 i = 0; i < count && clear; ++i)
-      if (layers[i]->displayData.name && fuzevpn_maintenance_policy::VpnFilterName(layers[i]->displayData.name))
+      if (!(layers[i]->providerKey && IsEqualGUID(*layers[i]->providerKey, fuzevpn_network_persistence::kProvider) &&
+            IsEqualGUID(layers[i]->subLayerKey, fuzevpn_network_persistence::kSublayer) &&
+            (layers[i]->flags & FWPM_SUBLAYER_FLAG_PERSISTENT)) &&
+          layers[i]->displayData.name && fuzevpn_maintenance_policy::VpnFilterName(layers[i]->displayData.name))
         clear = Reject(ERROR_BUSY, error);
     if (!clear) break;
   }

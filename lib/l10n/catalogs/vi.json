@@ -598,5 +598,14 @@
   "Cette demande de connexion a expiré ou a déjà été utilisée. Recommencez depuis FuzeVPN.": "Yêu cầu đăng nhập này đã hết hạn hoặc đã được sử dụng. Hãy bắt đầu lại từ FuzeVPN.",
   "La connexion par navigateur est momentanément indisponible. Utilisez votre adresse e-mail et votre mot de passe, ou réessayez plus tard.": "Đăng nhập qua trình duyệt tạm thời không khả dụng. Hãy sử dụng địa chỉ email và mật khẩu của bạn hoặc thử lại sau.",
   "Reconnectez-vous à votre compte dans le navigateur, puis réessayez depuis FuzeVPN.": "Đăng nhập lại vào tài khoản của bạn trong trình duyệt, rồi thử lại từ FuzeVPN.",
-  "Mises à jour désactivées dans cette version de test.": "Các bản cập nhật bị tắt trong phiên bản thử nghiệm này."
+  "Mises à jour désactivées dans cette version de test.": "Các bản cập nhật bị tắt trong phiên bản thử nghiệm này.",
+  "Autorisation reçue": "Đã nhận ủy quyền",
+  "Autorisation refusée": "Ủy quyền bị từ chối",
+  "Demande invalide": "Yêu cầu không hợp lệ",
+  "Revenez dans FuzeVPN pour terminer la connexion.": "Quay lại FuzeVPN để hoàn tất đăng nhập.",
+  "Délai avant réessai : {seconds} s.": "Thời gian chờ thử lại: {seconds} giây.",
+  "Serveurs : {count}": "Máy chủ: {count}",
+  "Villes : {count}": "Thành phố: {count}",
+  "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "Chặn UDP bên ngoài đường hầm VPN. Để bảo vệ cả WebRTC qua TCP/TLS, hãy bật kill switch.",
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Chặn DNS bên ngoài đường hầm trên cổng 53 và 853. Để bảo vệ cả DNS qua HTTPS, hãy bật kill switch."
 }

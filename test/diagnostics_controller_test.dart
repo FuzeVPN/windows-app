@@ -261,6 +261,39 @@ void main() {
     await fixture.controller.resumePending();
     expect(fixture.api.calls.single.reportId, report.reportId);
   });
+  test(
+    'manual resume after five attempts keeps frozen bytes and quotas',
+    () async {
+      final fixture = _Fixture();
+      addTearDown(fixture.dispose);
+      await fixture.bind('a');
+      final report = fixture.controller.prepareManualReport()!;
+      fixture.store.entries.add(
+        QueuedDiagnosticReport(
+          report: report,
+          expiresAt: report.createdAt.add(const Duration(hours: 24)),
+          attempts: 6,
+          automaticAttempts: 5,
+        ),
+      );
+      fixture.store.rates.addAll(
+        List.generate(
+          20,
+          (_) => DiagnosticRateAttempt(at: fixture.now, automatic: false),
+        ),
+      );
+      await fixture.controller.resumePending();
+      expect(fixture.api.calls, isEmpty);
+      expect(await fixture.controller.retry(report.reportId), false);
+      expect(fixture.api.calls, isEmpty);
+      fixture.now = fixture.now.add(const Duration(hours: 1, seconds: 1));
+      await fixture.controller.resumePending();
+      expect(fixture.api.calls.single.reportId, report.reportId);
+      expect(fixture.api.calls.single.bytes, report.bytes);
+      expect(fixture.api.tokens, ['token-a']);
+      expect(fixture.controller.pendingReports, isEmpty);
+    },
+  );
   testWidgets('expiry refreshes the queue while authentication stays paused', (
     tester,
   ) async {

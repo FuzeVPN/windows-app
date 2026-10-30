@@ -27,7 +27,7 @@
   <String Id="FilesInUseTitle" Value="Αρχεία σε χρήση" />
   <String Id="HelpCloseButton" Value="Κλείσιμο" />
   <String Id="HelpHeader" Value="Βοήθεια" />
-  <String Id="HelpText" Value="/install, /repair, /uninstall: εγκατάσταση, επιδιόρθωση, απεγκατάσταση. /quiet: αθόρυβη λειτουργία. /norestart: χωρίς επανεκκίνηση. DesktopShortcut=1: συντόμευση επιφάνειας εργασίας. InstallFolder=&quot;D:ApplicationsFuzeVPN&quot;: αρχικός φάκελος. Οι ενημερώσεις διατηρούν τον εγκατεστημένο φάκελο." />
+  <String Id="HelpText" Value="/install, /repair, /uninstall: εγκατάσταση, επιδιόρθωση, απεγκατάσταση. /quiet: αθόρυβη λειτουργία. /norestart: χωρίς επανεκκίνηση. DesktopShortcut=1: συντόμευση επιφάνειας εργασίας. InstallFolder=&quot;D:\Applications\FuzeVPN&quot;: αρχικός φάκελος. Οι ενημερώσεις διατηρούν τον εγκατεστημένο φάκελο." />
   <String Id="InstallAcceptCheckbox" Value="Συμφωνώ με τους όρους και τις προϋποθέσεις της άδειας χρήσης" />
   <String Id="InstallCancelButton" Value="Ακύρωση" />
   <String Id="InstallHeader" Value="Καλώς ορίσατε" />

@@ -284,12 +284,17 @@ struct UpdateChannel::Impl {
     if (!MatchesHash(prepared->file->get(), prepared->hash))
       return Failed("update_hash_mismatch", "portable_hash");
     const auto copied_helper = prepared->directory->path() / L"fuzevpn-update.exe";
-    {
-      FileHandle output{CreateFileW(copied_helper.c_str(), GENERIC_WRITE, 0, nullptr,
-          CREATE_NEW, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_OPEN_REPARSE_POINT, nullptr)};
-      if (output.value == INVALID_HANDLE_VALUE || !CopyFileContents(helper.get(), output.value))
-        return Failed("update_storage_failed", "portable_helper_copy", GetLastError());
-    }
+    // Declared before the verification pin, so failed attempts release every
+    // handle before cleanup. A still-running helper keeps its image locked;
+    // the next attempt reports busy until that helper exits, then copies afresh.
+    struct AttemptHelper {
+      std::filesystem::path path;
+      bool keep = false;
+      ~AttemptHelper() { if (!keep) DeleteFileW(path.c_str()); }
+    } attempt{copied_helper};
+    Failure copy_failure;
+    if (!fuzevpn_portable_update::CopyHelperForAttempt(helper, copied_helper, &copy_failure))
+      return copy_failure;
     PinnedFile pinned_helper;
     std::vector<BYTE> helper_publisher;
     LONG trust_status = ERROR_SUCCESS;
@@ -348,6 +353,7 @@ struct UpdateChannel::Impl {
       return Failed("update_install_failed", "portable_ready", result);
     // The helper waits for this process to exit; keeping its random private
     // directory lets it continue after the prepared object is released.
+    attempt.keep = true;
     prepared->directory->Keep();
     prepared.reset();
     return {};

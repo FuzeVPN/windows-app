@@ -10,9 +10,12 @@ void main() {
 
   test('the VPN service exposes only a local authenticated pipe', () {
     final broker = source('windows/runner/privileged_broker.cpp');
+    final endpoint = source('windows/runner/service_pipe_endpoint.h');
 
     expect(broker, contains(r'--fuzevpn-vpn-service'));
-    expect(broker, contains('PIPE_REJECT_REMOTE_CLIENTS'));
+    expect(broker, contains('fuzevpn_ipc::ServicePipeEndpoint endpoint'));
+    expect(endpoint, contains('PIPE_REJECT_REMOTE_CLIENTS'));
+    expect(endpoint, contains('FILE_FLAG_FIRST_PIPE_INSTANCE'));
     expect(broker, contains('GetNamedPipeClientProcessId'));
     expect(broker, contains('IsTrustedUiProcess'));
     expect(broker, contains('ScopedProtectedStoreUser'));
@@ -44,7 +47,12 @@ void main() {
 
     expect(singleInstance, contains(r'Local\\FuzeVPN.Windows.SingleInstance'));
     expect(main, contains('CreateMutexW'));
-    expect(main, contains('ERROR_ALREADY_EXISTS'));
+    expect(main, contains('FuzeVpnDecideSingleInstanceStartup('));
+    expect(singleInstance, contains('ERROR_ALREADY_EXISTS'));
+    expect(
+      main,
+      contains('instance_decision != FuzeVpnSingleInstanceDecision::primary'),
+    );
     expect(main, contains('ActivateExistingInstance'));
     expect(main, contains('FindWindowExW'));
     expect(main, contains('QueryFullProcessImageNameW'));
@@ -232,18 +240,32 @@ void main() {
     );
   });
 
-  test('service recovery removes an unprotected stale tunnel', () {
-    final broker = source('windows/runner/privileged_broker.cpp');
+  test(
+    'runtime recovery restores protection before cleanup and availability',
+    () {
+      final broker = source('windows/runner/privileged_broker.cpp');
 
-    expect(broker, contains('SERVICE_CONFIG_FAILURE_ACTIONS'));
-    final cleanup = broker.indexOf('if (!StopBrokerTunnels())');
-    final status = broker.indexOf('PublishTunnelStatus', cleanup);
-    expect(cleanup, greaterThanOrEqualTo(0));
-    expect(status, greaterThan(cleanup));
-    expect(broker, contains('RemoveWireGuardTunnelService();'));
-    expect(broker, contains('runtime_lock.AcquireMachineRuntime()'));
-    expect(broker, contains('OpenVpnCoreRecoverNetworkState()'));
-  });
+      expect(broker, contains('SERVICE_CONFIG_FAILURE_ACTIONS'));
+      final recoveryPaths = RegExp(
+        r'if \(!RestoreNetworkProtection\(&recovered_user\)',
+      ).allMatches(broker);
+      expect(recoveryPaths, hasLength(2));
+      for (final recovery in recoveryPaths) {
+        final ownership = broker.indexOf(
+          'runtime_ownership.AuthorizeMutation(recovered_user, true)',
+          recovery.start,
+        );
+        final cleanup = broker.indexOf('!StopBrokerTunnels()', recovery.start);
+        final status = broker.indexOf('PublishTunnelStatus', cleanup);
+        expect(ownership, greaterThan(recovery.start));
+        expect(cleanup, greaterThan(ownership));
+        expect(status, greaterThan(cleanup));
+      }
+      expect(broker, contains('RemoveWireGuardTunnelService();'));
+      expect(broker, contains('runtime_lock.AcquireMachineRuntime()'));
+      expect(broker, contains('OpenVpnCoreRecoverNetworkState()'));
+    },
+  );
 
   test('a service configuration mismatch is diagnosed by the parent', () {
     final broker = source('windows/runner/privileged_broker.cpp');
@@ -253,5 +275,41 @@ void main() {
     expect(broker, contains('RecordServiceInstallerResult(installer)'));
     expect(broker, contains('"service_configuration_mismatch"'));
     expect(broker, contains('"broker.installService="'));
+  });
+
+  test('WireGuard keeps its pinned runtime and per-candidate wiring', () {
+    final tunnel = source('windows/runner/wireguard_tunnel.cpp');
+
+    // tunnel.dll stays pinned in the tunnel-service process and never maps
+    // its Go runtime elsewhere: keys come from the OpenSSL implementation.
+    expect(tunnel, contains('GET_MODULE_HANDLE_EX_FLAG_PIN'));
+    expect(tunnel, contains('fuzevpn::GenerateWireGuardKeypair('));
+    expect(tunnel, isNot(contains('WireGuardGenerateKeypair')));
+    expect(tunnel, isNot(contains('FreeLibrary(module_)')));
+    expect(tunnel, isNot(contains('FreeLibrary(loaded)')));
+    // The last or only candidate gets the long handshake window.
+    expect(
+      tunnel,
+      contains(
+        'WireGuardHandshakeWindow(candidate_index, numeric_endpoints.size())',
+      ),
+    );
+    expect(tunnel, isNot(contains('8000, connection_deadline')));
+    // A stuck adapter lookup is reported as adapter_open, not starting.
+    final adapterStage = tunnel.indexOf(
+      'snapshot.stage = Stage::adapter_open;',
+    );
+    final adapterLookup = tunnel.indexOf(
+      'TunnelRuntime::AdapterLuid(&interface_luid, attempt_deadline)',
+    );
+    expect(adapterStage, isNot(-1));
+    expect(adapterLookup, greaterThan(adapterStage));
+    // Every exit of a candidate attempt writes its snapshot.
+    final attempt = tunnel.substring(
+      tunnel.indexOf('[&](const std::string& endpoint'),
+      tunnel.indexOf('SecureErase(&private_key)', adapterLookup),
+    );
+    expect('return finish('.allMatches(attempt), hasLength(5));
+    expect(attempt, isNot(contains('return Outcome::')));
   });
 }

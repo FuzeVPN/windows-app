@@ -68,7 +68,7 @@ int main() {
       Require(!fixture.Run() && GetLastError() == ERROR_ACCESS_DENIED, "configuration failure propagates");
       Require(fixture.changes.size() == i + 1 && fixture.description == L"Existing service description", "failure stops further changes");
     }
-    std::cout << "Service operational settings preserve all 30 localized descriptions; no real service was accessed.\n";
+    std::cout << "Service operational settings preserve all 70 localized descriptions; no real service was accessed.\n";
     return 0;
   } catch (const std::exception& error) {
     std::cerr << error.what() << '\n'; return 1;

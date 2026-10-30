@@ -11,6 +11,7 @@ import 'package:fuzevpn_windows/core/diagnostics_controller.dart';
 import 'package:fuzevpn_windows/core/diagnostics_models.dart';
 import 'package:fuzevpn_windows/core/diagnostics_support.dart';
 import 'package:fuzevpn_windows/core/models.dart';
+import 'package:fuzevpn_windows/core/runtime_storage_diagnostics.dart';
 
 import 'support/audit_fixtures.dart' as fixtures;
 
@@ -49,6 +50,8 @@ Map<String, Object?> nativeEvidence() => {
 class _Bridge extends DiagnosticsBridge {
   int nativeCalls = 0;
   bool fail = false;
+  Object? failure;
+  Map<String, Object?>? evidence;
   Completer<void>? gate;
   @override
   Future<Map<String, Object?>> collectSnapshot() async => {
@@ -62,7 +65,8 @@ class _Bridge extends DiagnosticsBridge {
     nativeCalls++;
     await gate?.future;
     if (fail) throw PlatformException(code: 'native_bridge_unavailable');
-    return nativeEvidence();
+    if (failure != null) throw failure!;
+    return evidence ?? nativeEvidence();
   }
 }
 
@@ -128,6 +132,93 @@ void main() {
   }
 
   test(
+    'precise storage steps and Windows errors survive the complete report',
+    () async {
+      for (final stage in runtimeStorageStages) {
+        await DiagnosticLog.recordFailure(
+          area: 'wireguard',
+          event: 'native_connect_failed',
+          error: PlatformException(
+            code: 'storage_failure',
+            message: 'private message',
+            details: {
+              'stage': stage,
+              'win32_error': 32,
+              'path': r'C:\private\FuzeVPN.conf',
+              'private_key': 'private-key-test',
+            },
+          ),
+        );
+      }
+      await DiagnosticLog.recordFailure(
+        area: 'wireguard',
+        event: 'native_connect_failed',
+        error: PlatformException(
+          code: 'storage_failure',
+          details: {'stage': r'C:\private\FuzeVPN.conf', 'win32_error': 5},
+        ),
+      );
+      final controller = app(_Bridge());
+      await controller.runCompleteDiagnostic();
+      final report = controller.preparedDiagnosticReport!;
+      final timeline = supportOf(report)['timeline'] as List;
+      for (final stage in runtimeStorageStages) {
+        expect(timeline, contains(containsPair('stage', stage)));
+      }
+      expect(
+        timeline,
+        contains(
+          allOf(
+            containsPair('code', 'storage_failure'),
+            containsPair('windows_error', 32),
+          ),
+        ),
+      );
+      final encoded = jsonEncode(report.json);
+      for (final secret in [
+        'private message',
+        r'C:\private',
+        'private-key-test',
+        'private_key',
+      ]) {
+        expect(encoded, isNot(contains(secret)));
+      }
+    },
+  );
+
+  test(
+    'bad native log preserves service evidence and reports partial rejection',
+    () async {
+      final observation = DiagnosticSupport.nativeObservation({
+        ...nativeEvidence(),
+        'native_log': {'events': 'private malformed log'},
+      });
+      final controller = app(_Bridge()..evidence = observation);
+      await controller.runCompleteDiagnostic();
+      final support = supportOf(controller.preparedDiagnosticReport!);
+      expect((support['service'] as Map)['win32_exit_code'], 50);
+      expect((support['environment'] as Map)['installation_mode'], 'installed');
+      final collection = support['collection'] as Map;
+      expect((collection['native'] as Map)['status'], 'rejected');
+      expect((collection['native_log'] as Map)['status'], 'rejected');
+      expect(jsonEncode(support), isNot(contains('private malformed log')));
+    },
+  );
+
+  test(
+    'invalid native envelope is distinguished from unavailable bridge',
+    () async {
+      final controller = app(
+        _Bridge()..failure = const FormatException('private'),
+      );
+      await controller.runCompleteDiagnostic();
+      final collection =
+          supportOf(controller.preparedDiagnosticReport!)['collection'] as Map;
+      expect((collection['native'] as Map)['status'], 'rejected');
+    },
+  );
+
+  test(
     'one action sends checks, app stages, native Windows50 and SCM state together',
     () async {
       final bridge = _Bridge(), delivery = _Delivery();
@@ -140,7 +231,7 @@ void main() {
       await controller.runCompleteDiagnostic();
       expect(delivery.sent, hasLength(1));
       final report = delivery.sent.single;
-      expect(report.json['app_version'], '1.0.8');
+      expect(report.json['app_version'], '1.0.17');
       expect((report.json['checks'] as List).single['result'], 'passed');
       final support = supportOf(report);
       expect((support['service'] as Map)['state'], 'stopped');

@@ -144,7 +144,7 @@ void HandleOpenVpnPrivilegedCall(
     if (!PrepareNetworkProtection(NetworkProtectionOwner::open_vpn,
                                   protection)) {
       result->Error("network_protection_failed",
-                    "OpenVPN operation failed.");
+                    "OpenVPN operation failed.", NetworkProtectionFailureDetails());
       return;
     }
     result->Success();
@@ -172,7 +172,10 @@ void HandleOpenVpnPrivilegedCall(
     bool cache_available = false;
     const bool connected = OpenVpnCoreReconnect(&cache_available);
     if (cache_available && !connected) {
-      result->Error(OpenVpnCoreFailureCode(), "OpenVPN operation failed.");
+      const auto code = OpenVpnCoreFailureCode();
+      if (code == "network_protection_failed")
+        result->Error(code, "OpenVPN operation failed.", NetworkProtectionFailureDetails());
+      else result->Error(code, "OpenVPN operation failed.");
     } else {
       result->Success(flutter::EncodableValue(connected));
     }
@@ -243,7 +246,9 @@ void HandleOpenVpnPrivilegedCall(
     WipeActivation(&input);
     if (!connected) {
       const std::string code = OpenVpnCoreFailureCode();
-      result->Error(code, "OpenVPN operation failed.");
+      if (code == "network_protection_failed")
+        result->Error(code, "OpenVPN operation failed.", NetworkProtectionFailureDetails());
+      else result->Error(code, "OpenVPN operation failed.");
       return;
     }
     result->Success();

@@ -27,7 +27,7 @@
   <String Id="FilesInUseTitle" Value="Filer i bruk" />
   <String Id="HelpCloseButton" Value="Lukk" />
   <String Id="HelpHeader" Value="Hjelp" />
-  <String Id="HelpText" Value="/install, /repair, /uninstall: installer, reparer, avinstaller. /quiet: stillemodus. /norestart: ikke start på nytt. DesktopShortcut=1: snarvei på skrivebordet. InstallFolder=&quot;D:ApplicationsFuzeVPN&quot;: opprinnelig mappe. Oppdateringer beholder den installerte mappen." />
+  <String Id="HelpText" Value="/install, /repair, /uninstall: installer, reparer, avinstaller. /quiet: stillemodus. /norestart: ikke start på nytt. DesktopShortcut=1: snarvei på skrivebordet. InstallFolder=&quot;D:\Applications\FuzeVPN&quot;: opprinnelig mappe. Oppdateringer beholder den installerte mappen." />
   <String Id="InstallAcceptCheckbox" Value="Jeg godtar lisensvilkårene" />
   <String Id="InstallCancelButton" Value="Avbryt" />
   <String Id="InstallHeader" Value="Velkommen" />

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="yo-NG" Language="1130" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+  <String Id="Caption" Value="A ń fi [WixBundleName] sílẹ̀" />
+  <String Id="CheckingForUpdatesLabel" Value="A ń ṣàyẹ̀wò àwọn ìmúdójúìwọ̀n" />
+  <String Id="ConfirmCancelMessage" Value="Ṣé o fẹ́ fagilé?" />
+  <String Id="DesktopShortcut" Value="Ṣẹ̀dá ọ̀nà abuja lórí ojú-iṣẹ́" />
+  <String Id="ExecuteUpgradeRelatedBundleMessage" Value="Ẹ̀dà àtijọ́" />
+  <String Id="FailureCacheHeader" Value="Ìmúrasílẹ̀ kùnà" />
+  <String Id="FailureCloseButton" Value="Tì í" />
+  <String Id="FailureHeader" Value="Ìkùnà" />
+  <String Id="FailureHyperlinkLogText" Value="Iṣẹ́ dáwọ́ dúró. Wo &lt;a href=&quot;#&quot;&gt;àkọsílẹ̀&lt;/a&gt;, ṣàtúnṣe ìṣòro náà, kí o sì gbìyànjú lẹ́ẹ̀kan sí i." />
+  <String Id="FailureInstallHeader" Value="Fífi sílẹ̀ dáwọ́ dúró" />
+  <String Id="FailureLayoutHeader" Value="Dídàkọ kùnà" />
+  <String Id="FailureModifyHeader" Value="Ìyípadà dáwọ́ dúró" />
+  <String Id="FailureRepairHeader" Value="Àtúnṣe dáwọ́ dúró" />
+  <String Id="FailureRestartButton" Value="Tún bẹ̀rẹ̀" />
+  <String Id="FailureRestartText" Value="Tún bẹ̀rẹ̀ láti parí ìmúpadàbọ̀sípò." />
+  <String Id="FailureUninstallHeader" Value="Yíyọ kúrò dáwọ́ dúró" />
+  <String Id="FailureUnsafeUninstallHeader" Value="Yíyọ kúrò dáwọ́ dúró" />
+  <String Id="FilesInUseCloseRadioButton" Value="Ti àwọn ohun èlò" />
+  <String Id="FilesInUseDontCloseRadioButton" Value="Fi àwọn ohun èlò sílẹ̀ ní ṣíṣí" />
+  <String Id="FilesInUseExitButton" Value="Fagilé" />
+  <String Id="FilesInUseIgnoreButton" Value="Má kọbi ara sí i" />
+  <String Id="FilesInUseLabel" Value="Ti àwọn ohun èlò wọ̀nyí, lẹ́yìn náà gbìyànjú lẹ́ẹ̀kan sí i." />
+  <String Id="FilesInUseNetfxCloseRadioButton" Value="Ti àwọn ohun èlò" />
+  <String Id="FilesInUseRetryButton" Value="Tún gbìyànjú" />
+  <String Id="FilesInUseTitle" Value="Àwọn fáìlì ń ṣiṣẹ́ lọ́wọ́" />
+  <String Id="HelpCloseButton" Value="Tì í" />
+  <String Id="HelpHeader" Value="Ìrànlọ́wọ́" />
+  <String Id="HelpText" Value="/install, /repair, /uninstall: fi sílẹ̀, tún ṣe, yọ kúrò. /quiet: ipò ìdákẹ́jẹ́. /norestart: má tún bẹ̀rẹ̀. DesktopShortcut=1: ọ̀nà abuja ojú-iṣẹ́. InstallFolder=&quot;D:\Applications\FuzeVPN&quot;: fódà ìbẹ̀rẹ̀. Àwọn ìmúdójúìwọ̀n máa ń pa fódà tí a fi sílẹ̀ mọ́." />
+  <String Id="InstallAcceptCheckbox" Value="Mo &amp;gbà àwọn òfin àti ipò ìwé àṣẹ" />
+  <String Id="InstallCancelButton" Value="Fagilé" />
+  <String Id="InstallHeader" Value="Ẹ káàbọ̀" />
+  <String Id="InstallInstallButton" Value="Fi sílẹ̀" />
+  <String Id="InstallLicenseLinkText" Value="Àwọn &lt;a href=&quot;#&quot;&gt;òfin ìwé àṣẹ&lt;/a&gt; [WixBundleName]." />
+  <String Id="InstallMessage" Value="Fi FuzeVPN sílẹ̀ sórí kọ̀ǹpútà yìí." />
+  <String Id="InstallMessageOptions" Value="Fi FuzeVPN sílẹ̀ sórí kọ̀ǹpútà yìí." />
+  <String Id="InstallOptionsButton" Value="Àwọn àṣàyàn" />
+  <String Id="InstallVersion" Value="Ẹ̀dà [WixBundleVersion]" />
+  <String Id="InstallVersionNotice" Value="Ẹ̀dà [WixBundleVersion] [BuildNotice]" />
+  <String Id="ModifyCancelButton" Value="Fagilé" />
+  <String Id="ModifyHeader" Value="Ìtọ́jú" />
+  <String Id="ModifyRepairButton" Value="Tún ṣe" />
+  <String Id="ModifyUninstallButton" Value="Yọ kúrò" />
+  <String Id="OptionsBrowseButton" Value="Ṣàwárí" />
+  <String Id="OptionsCancelButton" Value="Fagilé" />
+  <String Id="OptionsHeader" Value="Àwọn àṣàyàn" />
+  <String Id="OptionsLocationLabel" Value="Fódà fífi sílẹ̀ (Windows dáàbò bò ó)" />
+  <String Id="OptionsOkButton" Value="Ó dáa" />
+  <String Id="OptionsPerMachineScopeText" Value="Gbogbo àwọn olùmúlò" />
+  <String Id="OptionsPerUserScopeText" Value="Olùmúlò lọ́wọ́lọ́wọ́" />
+  <String Id="OverallProgressPackageText" Value="A ń múra sílẹ̀…" />
+  <String Id="PreserveInstallFolder" Value="A ń pa fódà tó wà tẹ́lẹ̀ mọ́ nígbà àwọn ìmúdójúìwọ̀n. Láti gbé ojú ohun èlò náà lọ ní ọ̀fẹ́, lo àkójọpọ̀ amúlòkà." />
+  <String Id="ProgressCancelButton" Value="Fagilé" />
+  <String Id="ProgressHeader" Value="Fífi sílẹ̀ ń lọ lọ́wọ́" />
+  <String Id="ProgressLabel" Value="Ìlọsíwájú" />
+  <String Id="SuccessCacheHeader" Value="Àwọn fáìlì ti ṣetán" />
+  <String Id="SuccessCloseButton" Value="Tì í" />
+  <String Id="SuccessHeader" Value="Iṣẹ́ ti parí" />
+  <String Id="SuccessInstallHeader" Value="Fífi sílẹ̀ ti parí" />
+  <String Id="SuccessLaunchButton" Value="Ṣí i" />
+  <String Id="SuccessLayoutHeader" Value="Àwọn fáìlì ti ṣetán" />
+  <String Id="SuccessModifyHeader" Value="Ìyípadà ti parí" />
+  <String Id="SuccessOpenApp" Value="Ṣí FuzeVPN láti inú àkójọ Bẹ̀rẹ̀. A ti pa àwọn ààyò ara ẹni rẹ mọ́." />
+  <String Id="SuccessRepairHeader" Value="Àtúnṣe ti parí" />
+  <String Id="SuccessRestartButton" Value="Tún bẹ̀rẹ̀" />
+  <String Id="SuccessRestartText" Value="Tún kọ̀ǹpútà rẹ bẹ̀rẹ̀ láti parí." />
+  <String Id="SuccessUninstallHeader" Value="Yíyọ kúrò ti parí" />
+  <String Id="SuccessUninstallRestartText" Value="Tún bẹ̀rẹ̀ láti parí yíyọ kúrò." />
+  <String Id="SuccessUnsafeUninstallHeader" Value="Yíyọ kúrò ti parí" />
+  <String Id="Title" Value="[WixBundleName]" />
+  <String Id="UpdateButton" Value="Ṣe ìmúdójúìwọ̀n" />
+</WixLocalization>

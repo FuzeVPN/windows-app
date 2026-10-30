@@ -12,6 +12,7 @@
 #include "../maintenance_network_policy.h"
 #include "../installation_security.h"
 #include "../service_handoff_mutex.h"
+#include "../network_protection_persistence.h"
 
 namespace {
 const std::wstring fixture_token = L"01234567-89ab-cdef-0123-456789abcdef";
@@ -28,6 +29,8 @@ bool config_denied = false;
 bool replace_gate_during_start = false;
 bool protected_creation = false;
 DWORD fixture_start_error = ERROR_SUCCESS;
+DWORD fixture_filter_cleanup_error = ERROR_SUCCESS;
+unsigned filter_cleanup_calls = 0;
 DWORD start_type = SERVICE_DISABLED;
 DWORD clean_stop = 1;
 unsigned start_calls = 0;
@@ -229,7 +232,10 @@ bool VerifyMaintenance(bool condition, const char* message) {
 namespace fuzevpn_ipc_maintenance_test {
 class ExclusiveRuntimeLock {
  public:
-  bool AcquireMachineRuntime() { return fixture_lock_available; }
+  bool AcquireMachineRuntime() {
+    if (!fixture_lock_available) SetLastError(ERROR_BUSY);
+    return fixture_lock_available;
+  }
 };
 }
 namespace fuzevpn_handoff_maintenance_test {
@@ -253,6 +259,10 @@ bool ConfirmStoppedNetworkState(const std::wstring&, DWORD* error) {
   if (error) *error = fixture_network_error;
   return fixture_network_error == ERROR_SUCCESS;
 }
+}
+
+namespace fuzevpn_network_persistence {
+DWORD MaintenanceRemoveNetwork() { ++filter_cleanup_calls; return fixture_filter_cleanup_error; }
 }
 
 #define fuzevpn_maintenance fuzevpn_maintenance_test
@@ -286,13 +296,17 @@ bool ConfirmStoppedNetworkState(const std::wstring&, DWORD* error) {
 #define GetCurrentProcessId MaintenanceSelfPid
 #define GetTickCount64 MaintenanceTick
 #define Sleep MaintenanceSleep
+#define RemoveForMaintenance MaintenanceRemoveNetwork
 #include "../maintenance_state.cpp"
+#undef RemoveForMaintenance
 #undef ValidateInstallationTarget
 #undef fuzevpn_maintenance
 #undef fuzevpn_ipc
 #undef fuzevpn_handoff
 
 bool TestMaintenanceRecovery() {
+  fixture_filter_cleanup_error = ERROR_SUCCESS;
+  filter_cleanup_calls = 0;
   fixture_directory = L"D:\\Applications prot\u00e9g\u00e9es\\FuzeVPN";
   fixture_command = L"\"" + fixture_directory + L"\\fuzevpn-service.exe\" --fuzevpn-vpn-service";
   DWORD error = ERROR_SUCCESS; bool attempted = false;
@@ -422,6 +436,17 @@ bool TestMaintenanceRecovery() {
   ResetMaintenance();
   if (!VerifyMaintenance(stop() && network_checks == 0,
       "normal clean stop retains its established cleanup contract")) return false;
+  ResetMaintenance();
+  const auto uninstall = [&]() { return fuzevpn_maintenance_test::EndInstallerMaintenance(fixture_token, false, &error); };
+  if (!VerifyMaintenance(uninstall() && !gate_exists && filter_cleanup_calls == 1,
+      "explicit uninstall removes only owned persistent filters after clearing gate")) return false;
+  ResetMaintenance(); clear_denied = true;
+  if (!VerifyMaintenance(!uninstall() && gate_exists && filter_cleanup_calls == 1,
+      "failed gate clear never removes persistent protection")) return false;
+  ResetMaintenance(); fixture_filter_cleanup_error = ERROR_ACCESS_DENIED;
+  if (!VerifyMaintenance(!uninstall() && gate_exists && error == ERROR_ACCESS_DENIED && filter_cleanup_calls == 2,
+      "failed persistent removal restores protected gate for rollback")) return false;
+  fixture_filter_cleanup_error = ERROR_SUCCESS;
   using namespace fuzevpn_maintenance_policy;
   if (!VerifyMaintenance(
       !ActiveVpnAdapter(L"OpenVPN Data Channel Offload", L"ovpn-dco", false, true, true) &&

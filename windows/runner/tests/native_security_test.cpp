@@ -7,6 +7,7 @@
 #include <wintrust.h>
 #include <softpub.h>
 #include "../distribution_mode.h"
+#include "../service_pipe_endpoint.h"
 
 namespace fuzevpn_distribution {
 Mode test_distribution_mode = Mode::installed;
@@ -22,6 +23,15 @@ enum class ScmScenario {
 ScmScenario scm_scenario = ScmScenario::real;
 unsigned scm_manager_queries = 0;
 bool inspect_pipe_connections = false;
+bool inspect_service_status = false;
+unsigned inspected_service_status_updates = 0;
+DWORD inspected_service_state = SERVICE_RUNNING;
+BOOL WINAPI ObserveSetServiceStatus(SERVICE_STATUS_HANDLE handle, LPSERVICE_STATUS status) {
+  if (!inspect_service_status) return SetServiceStatus(handle, status);
+  ++inspected_service_status_updates;
+  inspected_service_state = status->dwCurrentState;
+  return TRUE;
+}
 DWORD transport_open_error = ERROR_PIPE_BUSY;
 unsigned transport_open_attempts = 0;
 unsigned transport_trust_queries = 0;
@@ -211,11 +221,23 @@ BOOL WINAPI ObserveCloseService(SC_HANDLE handle) {
   return scm_scenario == ScmScenario::real ? CloseServiceHandle(handle) : TRUE;
 }
 }
+namespace fuzevpn_ipc {
+bool ObserveReadServicePipeName(DWORD expected_process, std::wstring* name) {
+  if (expected_process == 0) { SetLastError(ERROR_FILE_NOT_FOUND); return false; }
+  endpoint_detail::Record record;
+  record.process_id = expected_process;
+  record.nonce.fill(7);
+  *name = endpoint_detail::PipeName(record);
+  return true;
+}
+}
+#define ReadServicePipeName ObserveReadServicePipeName
 #define OpenSCManagerW ObserveOpenManager
 #define OpenServiceW ObserveOpenService
 #define QueryServiceStatusEx ObserveQueryService
 #define QueryServiceConfigW ObserveQueryServiceConfig
 #define StartServiceW ObserveStartService
+#define SetServiceStatus ObserveSetServiceStatus
 #define CloseServiceHandle ObserveCloseService
 #define GetSecurityInfo ObserveGetSecurityInfo
 #define SetSecurityInfo ObserveSetSecurityInfo
@@ -236,6 +258,7 @@ BOOL WINAPI ObserveCloseService(SC_HANDLE handle) {
 #undef QueryServiceStatusEx
 #undef QueryServiceConfigW
 #undef StartServiceW
+#undef SetServiceStatus
 #undef CloseServiceHandle
 #undef GetSecurityInfo
 #undef SetSecurityInfo
@@ -250,12 +273,16 @@ BOOL WINAPI ObserveCloseService(SC_HANDLE handle) {
 #undef GetTickCount64
 #undef WaitForSingleObject
 #undef WinVerifyTrust
+#undef ReadServicePipeName
 
 #include <iostream>
 #include <stdexcept>
 #include "../wireguard_endpoint.h"
 #include "installation_security_path_test.h"
 #include "broker_passive_connect_test.h"
+#include "runtime_namespace_test.h"
+#include "service_pipe_endpoint_test.h"
+#include "legacy_runtime_guard_test.h"
 
 bool IsWireGuardTunnelConnected() { return false; }
 bool IsOpenVpnTunnelConnected() { return false; }
@@ -265,6 +292,7 @@ bool test_openvpn_stopped = true;
 bool test_wireguard_protection = false;
 bool test_openvpn_protection = false;
 bool test_protection_known = true;
+unsigned test_openvpn_exception = 0;
 unsigned test_native_mutations = 0;
 unsigned test_snapshot_queries = 0;
 std::string TestProtectedStoreUserId() { return test_runtime_user; }
@@ -281,6 +309,13 @@ bool IsNetworkProtectionActive(NetworkProtectionOwner owner) {
                                                      test_openvpn_protection;
 }
 bool IsNetworkProtectionStateKnown() { return test_protection_known; }
+// Persistent filtering is exercised by network_filter_test's mocked WFP engine.
+// The broker boundary test must never read or write the machine policy store.
+bool SetNetworkProtectionUser(const std::string&) { return true; }
+bool RestoreNetworkProtection(std::string* user) { user->clear(); return true; }
+bool PrepareNetworkProtectionForInternalStop() { return true; }
+ScopedNetworkProtectionRetention::ScopedNetworkProtectionRetention() = default;
+ScopedNetworkProtectionRetention::~ScopedNetworkProtectionRetention() = default;
 namespace fuzevpn_diagnostics {
 // Keep this IPC test independent of live network/driver observations. The
 // snapshot encoder and redaction rules have their own synthetic test suite.
@@ -320,11 +355,14 @@ void HandleOpenVpnPrivilegedCall(
     const flutter::MethodCall<flutter::EncodableValue>&,
     flutter::MethodResult<flutter::EncodableValue>* result) {
   ++test_native_mutations;
+  if (test_openvpn_exception == 1) throw std::runtime_error("private-openvpn-profile-detail");
+  if (test_openvpn_exception == 2) throw 17;
   result->Success(flutter::EncodableValue(false));
 }
 bool TestProtectedStoreTokenRouting();
 bool TestProtectedDiagnosticRouting();
 bool TestProtectedStoreReadFailures();
+bool TestProtectedStoreWriteFailures();
 bool TestMaintenanceRecovery();
 bool TestMaintenanceNetworkRecovery();
 bool TestPortableServiceLease();
@@ -528,7 +566,8 @@ void TestWireGuardCandidates() {
   std::uint64_t now = 0;
   unsigned attempts = 0;
   Check(TryWireGuardEndpoints(endpoints, 70000, [&] { return now; },
-      [&](const std::string&, std::uint64_t deadline) {
+      [&](const std::string&, std::uint64_t deadline, size_t index) {
+        Check(index == attempts, "each attempt receives its candidate index");
         ++attempts;
         if (attempts == 1) { Check(deadline == 35000, "first address gets a bounded share"); now = deadline; return WireGuardAttemptResult::retry; }
         Check(deadline == 70000, "remaining address retains the rest of the shared budget");
@@ -537,8 +576,159 @@ void TestWireGuardCandidates() {
   attempts = 0;
   now = 70000;
   Check(!TryWireGuardEndpoints(endpoints, 70000, [&] { return now; },
-      [&](const std::string&, std::uint64_t) { ++attempts; return WireGuardAttemptResult::connected; }) &&
+      [&](const std::string&, std::uint64_t, size_t) { ++attempts; return WireGuardAttemptResult::connected; }) &&
       attempts == 0, "expired overall deadline never starts another tunnel attempt");
+}
+
+// Simulated clock: the real loop, with a scripted driver handshake and SCM.
+struct HandshakeWait {
+  std::uint64_t now = 0;
+  std::uint64_t handshake_at = UINT64_MAX;
+  std::uint64_t stopped_at = UINT64_MAX;
+  std::vector<std::uint64_t> probes;
+  bool Run(std::uint64_t window, std::uint64_t attempt_deadline) {
+    return fuzevpn::WaitForWireGuardHandshake(window, attempt_deadline, [&] { return now; },
+        [&] { probes.push_back(now); }, [&] { return now >= handshake_at; },
+        [&] { return now < stopped_at; }, [&](std::uint64_t milliseconds) {
+          Check(milliseconds >= 1 && milliseconds <= 100, "handshake polling stays bounded");
+          now += milliseconds;
+        });
+  }
+};
+
+void TestWireGuardHandshakeWait() {
+  using namespace fuzevpn;
+  // Four initiations, each up to REKEY_TIMEOUT plus jitter apart, must fit.
+  Check(kWireGuardFinalHandshakeWaitMs >= 3 * 5333 + 1000 &&
+        kWireGuardFailoverHandshakeWaitMs >= 5333 + 1000 &&
+        kWireGuardFailoverHandshakeWaitMs < kWireGuardFinalHandshakeWaitMs,
+        "handshake windows cover the intended WireGuard initiations");
+  Check(WireGuardHandshakeWindow(0, 1) == kWireGuardFinalHandshakeWaitMs &&
+        WireGuardHandshakeWindow(0, 2) == kWireGuardFailoverHandshakeWaitMs &&
+        WireGuardHandshakeWindow(1, 2) == kWireGuardFinalHandshakeWaitMs &&
+        WireGuardHandshakeWindow(6, 8) == kWireGuardFailoverHandshakeWaitMs &&
+        WireGuardHandshakeWindow(7, 8) == kWireGuardFinalHandshakeWaitMs,
+        "only the last or only candidate gets the long handshake window");
+  HandshakeWait late;
+  late.handshake_at = 15400;  // Third retransmission after a relocated peer.
+  Check(late.Run(WireGuardHandshakeWindow(0, 1), 70000) && late.now == 15400,
+        "the only candidate tolerates two unanswered initiations");
+  Check(!late.probes.empty() && late.probes.front() == 0 && late.probes.size() == 16,
+        "tunneled traffic is solicited once per second while waiting");
+  HandshakeWait failover;
+  failover.handshake_at = 15400;
+  Check(!failover.Run(WireGuardHandshakeWindow(0, 2), 35000) && failover.now == 8000,
+        "an earlier address still fails over after the short window");
+  HandshakeWait silent;
+  Check(!silent.Run(kWireGuardFinalHandshakeWaitMs, 70000) &&
+        silent.now == kWireGuardFinalHandshakeWaitMs,
+        "an unanswered last candidate gives up exactly at its window");
+  HandshakeWait bounded;
+  bounded.now = 61250;
+  Check(!bounded.Run(kWireGuardFinalHandshakeWaitMs, 70000) && bounded.now == 70000,
+        "the long window never exceeds the attempt deadline");
+  HandshakeWait expired;
+  expired.now = 70000;
+  Check(!expired.Run(kWireGuardFinalHandshakeWaitMs, 70000) && expired.probes.empty(),
+        "an expired attempt neither solicits nor waits");
+  HandshakeWait stopped;
+  stopped.stopped_at = 3000;
+  Check(!stopped.Run(kWireGuardFinalHandshakeWaitMs, 70000) && stopped.now == 3000,
+        "a stopped tunnel service ends the wait at once");
+  HandshakeWait immediate;
+  immediate.handshake_at = 0;
+  Check(immediate.Run(kWireGuardFinalHandshakeWaitMs, 70000) && immediate.now == 0 &&
+        immediate.probes.size() == 1, "an existing handshake succeeds without waiting");
+
+  WireGuardAttemptSnapshot snapshot;
+  snapshot.candidates = 2;
+  snapshot.candidate_index = 1;
+  snapshot.stage = WireGuardAttemptStage::peer_ready;
+  snapshot.elapsed_ms = 21543;
+  snapshot.budget_ms = 61200;
+  snapshot.service_start_ms = 402;
+  snapshot.handshake_wait_ms = 20000;
+  snapshot.stop_ms = 1100;
+  snapshot.tx_bytes = 592;
+  snapshot.stats_reads = 197;
+  Check(FormatWireGuardAttemptSnapshot(snapshot) ==
+        "candidates=2 candidate_index=1 stage=peer_ready handshake=0 success=0 elapsed_ms=21543 "
+        "budget_ms=61200 service_start_ms=402 handshake_wait_ms=20000 stop_ms=1100 "
+        "tx_bytes=592 rx_bytes=0 stats_reads=197", "attempt snapshot is numeric with a closed stage");
+  snapshot.stage = WireGuardAttemptStage::adapter_open;
+  Check(FormatWireGuardAttemptSnapshot(snapshot).find("stage=adapter_open ") != std::string::npos,
+        "adapter-open failure is distinguishable from the handshake wait");
+  Check(FormatWireGuardAttemptSnapshot(WireGuardAttemptSnapshot{}).ends_with(
+            " tx_bytes=0 rx_bytes=0 stats_reads=0"),
+        "an attempt without a driver reading says so instead of claiming nothing was sent");
+
+  // Only a successful driver reading replaces the counters and is counted.
+  WireGuardPeerStats observed;
+  std::uint64_t reads = 0;
+  const auto unreadable = [](WireGuardPeerStats* stats) { stats->tx = 999; return false; };
+  Check(!ObserveWireGuardPeer(unreadable, &observed, &reads) && reads == 0 && observed.tx == 0,
+        "a failed driver reading is neither counted nor recorded");
+  Check(!ObserveWireGuardPeer([](WireGuardPeerStats* stats) { stats->tx = 592; return true; },
+                              &observed, &reads) && reads == 1 && observed.tx == 592,
+        "an unanswered driver reading is counted with its counters");
+  Check(!ObserveWireGuardPeer(unreadable, &observed, &reads) && reads == 1 && observed.tx == 592,
+        "a later failed reading keeps the last driver counters");
+  Check(ObserveWireGuardPeer([](WireGuardPeerStats* stats) {
+          stats->tx = 740; stats->rx = 92; stats->handshake = 1; return true;
+        }, &observed, &reads) && reads == 2 && observed.rx == 92,
+        "an authenticated driver reading ends the wait");
+  // Polled every 100 ms until the handshake at 15.4 s: 155 readings, of which
+  // the 15 at x.5 s are refused by the driver and must not be counted.
+  std::uint64_t wait_now = 0;
+  std::uint64_t counted_reads = 0;
+  WireGuardPeerStats last;
+  Check(WaitForWireGuardHandshake(kWireGuardFinalHandshakeWaitMs, 70000,
+            [&] { return wait_now; }, [] {},
+            [&] {
+              return ObserveWireGuardPeer([&](WireGuardPeerStats* stats) {
+                if (wait_now % 1000 == 500) return false;
+                stats->tx = wait_now / 100;
+                stats->handshake = wait_now >= 15400 ? 1u : 0u;
+                return true;
+              }, &last, &counted_reads);
+            },
+            [] { return true; }, [&](std::uint64_t milliseconds) { wait_now += milliseconds; }) &&
+        wait_now == 15400 && counted_reads == 140 && last.handshake == 1 && last.tx == 154,
+        "the wait counts exactly its successful driver readings");
+
+  // service_start_ms covers the SCM start alone, not the configuration write.
+  std::uint64_t fake_ticks = 700;
+  std::uint64_t service_start_ms = 0;
+  Check(TimeWireGuardServiceStart([&] { return fake_ticks; }, [&] { fake_ticks += 402; return true; },
+                                  &service_start_ms) && service_start_ms == 402,
+        "service start time excludes configuration generation and write");
+  Check(!TimeWireGuardServiceStart([&] { return fake_ticks; }, [&] { fake_ticks += 35; return false; },
+                                   &service_start_ms) && service_start_ms == 35,
+        "a failed service start still reports its own duration");
+}
+
+// Breadcrumb operations are fixed camelCase identifiers; the writer must
+// persist them for the local reader and still reject field separators.
+void TestNativeDiagnosticIdentifiers() {
+  test_written_diagnostic.clear();
+  WriteSafeOperation("openvpn.importAndConnect", "started");
+  Check(test_written_diagnostic.find(" area=openvpn event=importAndConnect_started\r\n") !=
+        std::string::npos, "OpenVPN connect breadcrumb reaches the native log");
+  WriteSafeOperation("openvpn.prepareConnection", "succeeded");
+  Check(test_written_diagnostic.find(" area=openvpn event=prepareConnection_succeeded\r\n") !=
+        std::string::npos, "OpenVPN preparation breadcrumb reaches the native log");
+  WriteSafeOperation("wireguard.prepareIdentityForAccount", "failed");
+  Check(test_written_diagnostic.find(" area=wireguard event=prepareIdentityForAccount_failed\r\n") !=
+        std::string::npos, "WireGuard identity breadcrumb reaches the native log");
+  for (const char* forged : {"importAndConnect_started code=other", "importAndConnect\r\nx",
+                             "event=connect_started", "", "import/connect"}) {
+    test_written_diagnostic.clear();
+    AppendNativeDiagnostic("openvpn", forged);
+    Check(test_written_diagnostic.empty(), "diagnostic identifiers cannot forge fields or lines");
+  }
+  test_written_diagnostic.clear();
+  AppendNativeDiagnostic("openvpn", std::string(81, 'A'));
+  Check(test_written_diagnostic.empty(), "diagnostic identifiers stay bounded");
 }
 
 std::vector<uint8_t> EncodedCall(const std::string& method,
@@ -827,6 +1017,19 @@ void TestBrokerFailureDetails() {
       CheckBrokerFailureDetails(decoded, item.code, item.stage, original_error);
     }
   }
+  for (const DWORD closed_pipe : {DWORD{ERROR_BROKEN_PIPE},
+                                  DWORD{ERROR_PIPE_NOT_CONNECTED}, DWORD{ERROR_NO_DATA}}) {
+    ReplyState reply;
+    std::vector<uint8_t> response;
+    CompletePrivilegedCall(std::make_unique<RecordingResult>(&reply), false,
+        ExchangeFailure::kResponseUnavailable, &response, closed_pipe);
+    CheckBrokerFailureDetails(reply, "broker_unavailable", "broker_response", closed_pipe);
+  }
+  ReplyState timeout;
+  std::vector<uint8_t> response;
+  CompletePrivilegedCall(std::make_unique<RecordingResult>(&timeout), false,
+      ExchangeFailure::kResponseUnavailable, &response, ERROR_TIMEOUT);
+  CheckBrokerFailureDetails(timeout, "broker_response_timeout", "broker_response", ERROR_TIMEOUT);
 }
 
 void TestBrokerFailureCapture() {
@@ -837,7 +1040,7 @@ void TestBrokerFailureCapture() {
   test_diagnostic_changes_error = true;
   client_cancel_event = nullptr;
   fuzevpn_distribution::test_distribution_mode = fuzevpn_distribution::Mode::installed;
-  scm_scenario = ScmScenario::absent;
+  scm_scenario = ScmScenario::running;
   scm_manager_queries = transport_open_attempts = transport_trust_queries = 0;
   transport_cancelled = false;
   transport_open_error = ERROR_NOT_SUPPORTED;
@@ -849,8 +1052,8 @@ void TestBrokerFailureCapture() {
         failure == ExchangeFailure::kBrokerUnavailable &&
         windows_error == ERROR_NOT_SUPPORTED && GetLastError() == ERROR_INVALID_DATA,
         "actual Exchange snapshots the connection error before diagnostic changes errno");
-  Check(scm_manager_queries == 0 && transport_open_attempts == 1,
-        "failure capture neither queries a real service nor retries a terminal error");
+  Check(scm_manager_queries == 1 && transport_open_attempts == 1,
+        "failure capture queries only simulated SCM identity and never retries a terminal pipe error");
   flutter::MethodCall<flutter::EncodableValue> oversized("wireguard.isConnected",
       std::make_unique<flutter::EncodableValue>(std::string(2 * 1024 * 1024, 'x')));
   SetLastError(ERROR_NOT_SUPPORTED);
@@ -894,12 +1097,12 @@ void TestPassiveBrokerTransport() {
       "actual passive ConnectToBroker retries a running service for exactly two virtual seconds");
   reset();
   Check(connect(true) == INVALID_HANDLE_VALUE && GetLastError() == ERROR_PIPE_BUSY &&
-      transport_ticks == 0 && transport_open_attempts == 1 && scm_manager_queries == 0 &&
+      transport_ticks == 0 && transport_open_attempts == 1 && scm_manager_queries == 1 &&
       transport_trust_queries == 0,
-      "diagnostic single-attempt connection neither waits nor queries/starts the service");
+      "diagnostic single-attempt connection verifies identity without waiting or starting the service");
   reset(); transport_open_error = ERROR_ACCESS_DENIED;
   Check(connect() == INVALID_HANDLE_VALUE && GetLastError() == ERROR_ACCESS_DENIED &&
-      transport_open_attempts == 1 && transport_ticks == 0 && scm_manager_queries == 0,
+      transport_open_attempts == 1 && transport_ticks == 0 && scm_manager_queries == 1,
       "actual pipe authentication/access denial is terminal before retries");
   reset(); transport_cancelled = true;
   Check(connect() == INVALID_HANDLE_VALUE && GetLastError() == ERROR_CANCELLED &&
@@ -911,15 +1114,15 @@ void TestPassiveBrokerTransport() {
       "passive transport cancellation interrupts its first wait without a new pipe request");
   reset(); scm_scenario = ScmScenario::query_failed;
   Check(connect() == INVALID_HANDLE_VALUE && GetLastError() == ERROR_ACCESS_DENIED &&
-      transport_open_attempts == 1 && transport_trust_queries == 0 && transport_ticks == 0,
+      transport_open_attempts == 0 && transport_trust_queries == 0 && transport_ticks == 0,
       "unknown SCM status remains explicit and cannot launch an installed or portable fallback");
   reset(); scm_scenario = ScmScenario::absent;
-  Check(connect() == INVALID_HANDLE_VALUE && GetLastError() == ERROR_PIPE_BUSY &&
-      transport_open_attempts == 1 && transport_trust_queries > 0 && transport_ticks == 0,
-      "confirmed absent service preserves the original pipe error despite trust checks");
+  Check(connect() == INVALID_HANDLE_VALUE && GetLastError() == ERROR_FILE_NOT_FOUND &&
+      transport_open_attempts == 0 && transport_trust_queries > 0 && transport_ticks == 0,
+      "confirmed absent service never connects to a stale endpoint or static fallback");
   reset(); transport_open_error = ERROR_INVALID_PARAMETER;
   Check(connect() == INVALID_HANDLE_VALUE && GetLastError() == ERROR_INVALID_PARAMETER &&
-      transport_open_attempts == 1 && transport_trust_queries > 0 && scm_manager_queries == 0,
+      transport_open_attempts == 1 && transport_trust_queries > 0 && scm_manager_queries == 1,
       "nonretryable pipe error is preserved across unsigned-development detection");
   inspect_pipe_connections = false;
   client_cancel_event = old_cancel;
@@ -960,6 +1163,10 @@ void TestRuntimeStatusFailures() {
 }
 
 void TestServiceIdleHandoff() {
+  const auto previous_status_handle = service_status_handle;
+  service_status_handle = reinterpret_cast<SERVICE_STATUS_HANDLE>(static_cast<ULONG_PTR>(108));
+  inspect_service_status = true;
+  const auto confirm_yield = +[](DWORD*) { return true; };
   service_yield_event = CreateEventW(nullptr, TRUE, FALSE, nullptr);
   service_stop_event = CreateEventW(nullptr, TRUE, FALSE, nullptr);
   const auto reset = [&]() {
@@ -967,6 +1174,7 @@ void TestServiceIdleHandoff() {
     service_idle_request.Clear(); service_accepts_yield.store(true);
     test_protection_known = true; test_wireguard_stopped = true;
     test_openvpn_stopped = true; test_wireguard_protection = test_openvpn_protection = false;
+    inspected_service_status_updates = 0; inspected_service_state = SERVICE_RUNNING;
     ResetEvent(service_yield_event); ResetEvent(service_stop_event);
   };
   reset();
@@ -974,25 +1182,34 @@ void TestServiceIdleHandoff() {
       WaitForSingleObject(service_yield_event, 0) == WAIT_OBJECT_0 &&
       WaitForSingleObject(service_stop_event, 0) == WAIT_TIMEOUT,
       "SCM idle command queues a distinct wake without requesting service STOP");
-  Check(ConsumeServiceIdleHandoff() && !service_accepts_yield.load(),
+  Check(ConsumeServiceIdleHandoff(confirm_yield) && !service_accepts_yield.load(),
       "serialized worker accepts confirmed idle service and forbids further handoff requests");
   reset();
   VpnServiceControlHandler(fuzevpn_handoff::kYieldIdleControl, 0, nullptr, nullptr);
+  Check(!ConsumeServiceIdleHandoff(+[](DWORD* error) {
+        if (error != nullptr) *error = ERROR_ACCESS_DENIED;
+        return false;
+      }) && service_accepts_yield.load() && inspected_service_status_updates == 0 &&
+      inspected_service_state == SERVICE_RUNNING &&
+      WaitForSingleObject(service_stop_event, 0) == WAIT_TIMEOUT,
+      "failed durable confirmation preserves RUNNING service without publishing STOP_PENDING");
+  reset();
+  VpnServiceControlHandler(fuzevpn_handoff::kYieldIdleControl, 0, nullptr, nullptr);
   runtime_ownership.AuthorizeMutation("another-user", true);
-  Check(!ConsumeServiceIdleHandoff() && service_accepts_yield.load(),
+  Check(!ConsumeServiceIdleHandoff(confirm_yield) && service_accepts_yield.load(),
       "concurrent prepare reservation prevents yield even before a tunnel or filters exist");
   SetEvent(service_yield_event);
-  Check(!ConsumeServiceIdleHandoff() && WaitForSingleObject(service_yield_event, 0) == WAIT_TIMEOUT,
+  Check(!ConsumeServiceIdleHandoff(confirm_yield) && WaitForSingleObject(service_yield_event, 0) == WAIT_TIMEOUT,
       "late wake after a consumed request is cleared without a busy loop");
   reset(); test_wireguard_stopped = false;
   VpnServiceControlHandler(fuzevpn_handoff::kYieldIdleControl, 0, nullptr, nullptr);
-  Check(!ConsumeServiceIdleHandoff(), "active tunnel cannot yield service");
+  Check(!ConsumeServiceIdleHandoff(confirm_yield), "active tunnel cannot yield service");
   reset(); test_wireguard_protection = true;
   VpnServiceControlHandler(fuzevpn_handoff::kYieldIdleControl, 0, nullptr, nullptr);
-  Check(!ConsumeServiceIdleHandoff(), "retained protection cannot yield service");
+  Check(!ConsumeServiceIdleHandoff(confirm_yield), "retained protection cannot yield service");
   reset(); test_protection_known = false;
   VpnServiceControlHandler(fuzevpn_handoff::kYieldIdleControl, 0, nullptr, nullptr);
-  Check(!ConsumeServiceIdleHandoff(), "unknown filtering policy cannot yield service");
+  Check(!ConsumeServiceIdleHandoff(confirm_yield), "unknown filtering policy cannot yield service");
   reset(); service_accepts_yield.store(false);
   Check(VpnServiceControlHandler(fuzevpn_handoff::kYieldIdleControl, 0, nullptr, nullptr) == ERROR_SERVICE_CANNOT_ACCEPT_CTRL &&
       !service_idle_request.Pending(), "service not ready refuses control");
@@ -1006,6 +1223,8 @@ void TestServiceIdleHandoff() {
   reset(); service_accepts_yield.store(false);
   CloseHandle(service_yield_event); CloseHandle(service_stop_event);
   service_yield_event = service_stop_event = nullptr;
+  service_status_handle = previous_status_handle;
+  inspect_service_status = false;
 }
 
 void TestRuntimeOwnership() {
@@ -1148,6 +1367,48 @@ void TestRuntimeOwnership() {
   runtime_ownership = Ownership();
   SetPrivilegedRuntimeKind(PrivilegedRuntimeKind::user_interface);
 }
+
+void TestOpenVpnExceptionDispatch() {
+  SetPrivilegedRuntimeKind(PrivilegedRuntimeKind::vpn_service);
+  runtime_ownership = fuzevpn::RuntimeOwnership{};
+  test_runtime_user = "account-openvpn-exception";
+  test_wireguard_stopped = test_openvpn_stopped = true;
+  test_wireguard_protection = false;
+  test_openvpn_protection = false;
+  test_protection_known = true;
+  Check(runtime_ownership.AuthorizeMutation(test_runtime_user, true) ==
+        fuzevpn::RuntimeOwnership::Authorization::allowed, "reserve synthetic OpenVPN owner");
+  test_openvpn_protection = true;
+  for (const auto mode : {1u, 2u}) {
+    test_openvpn_exception = mode;
+    bool shutdown = false;
+    std::vector<uint8_t> response;
+    try {
+      response = Dispatch(EncodedCall("openvpn.reconnect"),
+                          &shutdown, nullptr, nullptr, false);
+    } catch (...) {
+      Check(false, "OpenVPN exception escaped the dispatcher and would terminate the service");
+      continue;
+    }
+    ReplyState reply;
+    RecordingResult receiver(&reply);
+    Check(flutter::StandardMethodCodec::GetInstance().DecodeAndProcessResponseEnvelope(
+        response.data(), response.size(), &receiver), "exception produces a complete broker response");
+    CheckBrokerFailureDetails(reply, "openvpn_connection_failed", "openvpn_native_exception", ERROR_SUCCESS);
+    Check(std::string(response.begin(), response.end()).find("private-openvpn-profile-detail") == std::string::npos,
+          "native exception text never leaves the service");
+    Check(!shutdown && test_openvpn_protection && runtime_ownership.HasOwner(),
+          "exception retains filtering and ownership instead of claiming successful cleanup");
+  }
+  test_openvpn_exception = 0;
+  bool shutdown = false;
+  const auto next = Dispatch(EncodedCall("openvpn.isConnected"), &shutdown, nullptr, nullptr, false);
+  Check(fuzevpn_ipc::ValidateResponseEnvelope(next.data(), next.size()),
+        "the broker remains able to answer the next request after an OpenVPN exception");
+  test_openvpn_protection = false;
+  runtime_ownership.ReleaseIfIdle(true);
+  test_runtime_user = "S-1-5-21-1-2-3-1001";
+}
 LRESULT CALLBACK TestWindowProc(HWND window, UINT message, WPARAM wparam,
                                 LPARAM lparam) {
   if (message == kPrivilegedCallCompletedMessage) {
@@ -1196,7 +1457,7 @@ void TestPlatformDelivery() {
   inspect_pipe_connections = true;
   test_diagnostic_changes_error = true;
   fuzevpn_distribution::test_distribution_mode = fuzevpn_distribution::Mode::installed;
-  scm_scenario = ScmScenario::absent;
+  scm_scenario = ScmScenario::running;
   transport_cancelled = false;
   transport_open_error = ERROR_NOT_SUPPORTED;
   transport_open_attempts = scm_manager_queries = 0;
@@ -1216,7 +1477,7 @@ void TestPlatformDelivery() {
   CheckBrokerFailureDetails(failed_connection, "broker_unavailable",
                            "broker_connection", ERROR_NOT_SUPPORTED);
   Check(failed_connection.callback_thread == platform_thread &&
-        transport_open_attempts == 1 && scm_manager_queries == 0,
+         transport_open_attempts == 1 && scm_manager_queries == 1,
         "worker Windows code crosses threads without reading GUI errno or real SCM");
   test_diagnostic_changes_error = false;
   inspect_pipe_connections = false;
@@ -1240,9 +1501,19 @@ int main() {
   Check(TestMaintenanceNetworkRecovery(), "historical service errors require independent read-only network proof");
   Check(TestPortableServiceLease(), "portable service lease preserves active and unknown runtime state");
   Check(TestProtectedStoreReadFailures(), "missing values remain distinct from storage failures without real store I/O");
+  Check(TestProtectedStoreWriteFailures(),
+        "protected-store writes report a fixed stage and Win32 error and retry only transient replace/delete locks");
   TestExclusiveRuntime();
+  Check(fuzevpn_runtime_namespace_test::TestRuntimeNamespace(),
+        "private runtime namespace resists public-name squatting and preserves exclusion");
+  Check(fuzevpn_service_endpoint_test::TestServicePipeEndpoint(),
+        "random live endpoints are published after pipe creation through protected 64-bit registry fixtures");
+  Check(fuzevpn_legacy_runtime_test::TestLegacyRuntimeGuard(),
+        "legitimate legacy runtime detection never acquires an attacker-controlled public mutex");
   TestServiceRepair();
   TestWireGuardCandidates();
+  TestWireGuardHandshakeWait();
+  TestNativeDiagnosticIdentifiers();
   Check(TestProtectedStoreTokenRouting(),
         "protected storage explicitly routes and restores the user's folder token");
   Check(TestProtectedDiagnosticRouting(),
@@ -1262,6 +1533,7 @@ int main() {
   TestInstallationPolicy();
   TestProtocolValidation();
   TestRuntimeOwnership();
+  TestOpenVpnExceptionDispatch();
   TestServerInspectionRights();
   TestScopedInspectionPrivilege();
   TestIoAndAuthentication();

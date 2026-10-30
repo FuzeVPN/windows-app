@@ -4,7 +4,6 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:intl/intl.dart' show DateFormat;
 import 'package:url_launcher/url_launcher.dart';
 
 import 'app_controller.dart';
@@ -16,6 +15,7 @@ import 'core/models.dart';
 import 'core/windows_update_controller.dart';
 import 'fuze_emblem.dart';
 import 'l10n/app_localizations.dart';
+import 'l10n/date_time_format.dart';
 import 'windows_update_panel.dart';
 
 part 'settings_page.dart';
@@ -146,13 +146,7 @@ class _AppShellState extends State<AppShell> {
                 closeOnSelect: true,
               ),
             ),
-            body: Column(
-              children: [
-                _updateNotice(),
-                _savedSessionNotice(),
-                Expanded(child: _Content(controller: controller)),
-              ],
-            ),
+            body: _body(),
           );
         }
         return Scaffold(
@@ -160,15 +154,7 @@ class _AppShellState extends State<AppShell> {
             child: Row(
               children: [
                 _Sidebar(controller: controller, compact: false),
-                Expanded(
-                  child: Column(
-                    children: [
-                      _updateNotice(),
-                      _savedSessionNotice(),
-                      Expanded(child: _Content(controller: controller)),
-                    ],
-                  ),
-                ),
+                Expanded(child: _body()),
               ],
             ),
           ),
@@ -211,6 +197,25 @@ class _AppShellState extends State<AppShell> {
       child: shell,
     );
   }
+
+  Widget _body() => LayoutBuilder(
+    builder: (context, constraints) => SingleChildScrollView(
+      key: const ValueKey('shell-content-scroll'),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _updateNotice(),
+          _savedSessionNotice(),
+          // Preserve each page's viewport and fixed controls. Large notices
+          // scroll away instead of shrinking that viewport or overflowing.
+          SizedBox(
+            height: constraints.maxHeight,
+            child: _Content(controller: controller),
+          ),
+        ],
+      ),
+    ),
+  );
 
   Widget _savedSessionNotice() {
     if (!controller.savedSessionVerificationPending) {
@@ -1015,6 +1020,7 @@ Future<void> _requestLocationChange(
       final confirmed = await showDialog<bool>(
         context: context,
         builder: (dialogContext) => AlertDialog(
+          scrollable: true,
           title: Text(context.tr('Changer de serveur ?')),
           content: Text(
             context.tr(
@@ -1160,7 +1166,12 @@ class _DeviceEnrollmentIssueCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final action = switch (issue.kind) {
+    // Toggling from a retained kill switch would only disconnect. Hide the
+    // retry instead when the controller cannot honour it.
+    final VoidCallback? retry = controller.canRetryConnection
+        ? controller.retryConnection
+        : null;
+    final (String, VoidCallback?) action = switch (issue.kind) {
       DeviceEnrollmentIssueKind.sessionExpired => (
         'Se connecter',
         () => _showSignInDialog(context, controller),
@@ -1185,18 +1196,12 @@ class _DeviceEnrollmentIssueCard extends StatelessWidget {
         'Créer une nouvelle identité',
         () => _confirmIdentityReset(context, controller),
       ),
-      DeviceEnrollmentIssueKind.openVpnProfileExists => (
-        'Réessayer',
-        controller.toggleConnection,
-      ),
+      DeviceEnrollmentIssueKind.openVpnProfileExists => ('Réessayer', retry),
       DeviceEnrollmentIssueKind.openVpnProfileRevoked => (
         'Renouveler le profil',
         controller.renewOpenVpnProfile,
       ),
-      DeviceEnrollmentIssueKind.openVpnOperationPending => (
-        'Réessayer',
-        controller.toggleConnection,
-      ),
+      DeviceEnrollmentIssueKind.openVpnOperationPending => ('Réessayer', retry),
       DeviceEnrollmentIssueKind.openVpnSignerUnavailable => (
         'Voir les réglages',
         () => controller.selectSection(AppSection.settings),
@@ -1210,14 +1215,8 @@ class _DeviceEnrollmentIssueCard extends StatelessWidget {
         'Choisir un emplacement',
         () => controller.selectSection(AppSection.locations),
       ),
-      DeviceEnrollmentIssueKind.rateLimited => (
-        'Réessayer',
-        controller.toggleConnection,
-      ),
-      DeviceEnrollmentIssueKind.unknown => (
-        'Réessayer',
-        controller.toggleConnection,
-      ),
+      DeviceEnrollmentIssueKind.rateLimited => ('Réessayer', retry),
+      DeviceEnrollmentIssueKind.unknown => ('Réessayer', retry),
     };
     return _NoticeCard(
       icon: Icons.info_outline,
@@ -2046,6 +2045,7 @@ Future<void> _confirmIdentityReset(
   final confirmed = await showDialog<bool>(
     context: context,
     builder: (dialogContext) => AlertDialog(
+      scrollable: true,
       title: Text(context.tr('Créer une nouvelle identité VPN ?')),
       content: Text(
         context.tr(
@@ -2073,9 +2073,13 @@ Future<void> _showNodeUnavailableDialog(
   BuildContext context,
   AppController controller,
 ) async {
+  // From a retained kill switch a toggle would only disconnect: offer the
+  // retry only when the same connection can run again with WFP in place.
+  final canRetry = controller.canRetryConnection;
   final action = await showDialog<String>(
     context: context,
     builder: (dialogContext) => AlertDialog(
+      scrollable: true,
       title: Text(context.tr('Emplacement indisponible')),
       content: Text(
         context.tr('Réessayez maintenant ou choisissez un autre emplacement.'),
@@ -2089,10 +2093,11 @@ Future<void> _showNodeUnavailableDialog(
           onPressed: () => Navigator.of(dialogContext).pop('location'),
           child: Text(context.tr('Choisir un emplacement')),
         ),
-        FilledButton(
-          onPressed: () => Navigator.of(dialogContext).pop('retry'),
-          child: Text(context.tr('Réessayer')),
-        ),
+        if (canRetry)
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop('retry'),
+            child: Text(context.tr('Réessayer')),
+          ),
       ],
     ),
   );
@@ -2100,7 +2105,7 @@ Future<void> _showNodeUnavailableDialog(
   if (action == 'location') {
     controller.selectSection(AppSection.locations);
   } else if (action == 'retry') {
-    await controller.toggleConnection();
+    await controller.retryConnection();
   }
 }
 
@@ -2248,6 +2253,7 @@ class _SignInDialog extends StatefulWidget {
 class _SignInDialogState extends State<_SignInDialog> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _submissionErrorKey = GlobalKey();
   bool _isSubmitting = false;
   bool _isBrowserSubmitting = false;
   bool _isReopeningBrowser = false;
@@ -2289,7 +2295,18 @@ class _SignInDialogState extends State<_SignInDialog> {
         _isSubmitting = false;
         _submissionErrorMessage = widget.controller.errorMessage;
       });
+      _revealSubmissionError();
     }
+  }
+
+  void _revealSubmissionError() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final errorContext = _submissionErrorKey.currentContext;
+      if (errorContext != null) {
+        unawaited(Scrollable.ensureVisible(errorContext, alignment: 0.5));
+      }
+    });
   }
 
   Future<void> _signInWithBrowser() async {
@@ -2318,6 +2335,7 @@ class _SignInDialogState extends State<_SignInDialog> {
         _isBrowserSubmitting = false;
         _submissionErrorMessage = failure;
       });
+      _revealSubmissionError();
     }
   }
 
@@ -2481,11 +2499,16 @@ class _SignInDialogState extends State<_SignInDialog> {
                   if (!_browserActive && _submissionErrorMessage != null) ...[
                     const SizedBox(height: 12),
                     Align(
+                      key: _submissionErrorKey,
                       alignment: AlignmentDirectional.centerStart,
-                      child: Text(
-                        context.tr(_submissionErrorMessage!),
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.error,
+                      child: Semantics(
+                        key: const ValueKey('sign-in-submission-error'),
+                        liveRegion: true,
+                        child: Text(
+                          context.tr(_submissionErrorMessage!),
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.error,
+                          ),
                         ),
                       ),
                     ),

@@ -9,6 +9,7 @@
 
 #include <filesystem>
 #include <string>
+#include <utility>
 #include <vector>
 
 namespace fuzevpn_installation {
@@ -89,12 +90,16 @@ inline bool IsTrustedOwner(PSID sid) {
 // Checking the owner also prevents that account from granting itself access.
 inline bool IsProtectedDescriptor(PSECURITY_DESCRIPTOR descriptor,
                                    bool directory,
-                                   bool containing_ancestor = false) {
+                                   bool containing_ancestor = false,
+                                   const char** rejection = nullptr) {
+  if (rejection != nullptr) *rejection = "descriptor";
   PSID owner = nullptr;
   BOOL defaulted = FALSE;
   if (descriptor == nullptr || !IsValidSecurityDescriptor(descriptor) ||
-      !GetSecurityDescriptorOwner(descriptor, &owner, &defaulted) ||
-      !IsTrustedOwner(owner)) return false;
+      !GetSecurityDescriptorOwner(descriptor, &owner, &defaulted)) return false;
+  if (rejection != nullptr) *rejection = "owner";
+  if (!IsTrustedOwner(owner)) return false;
+  if (rejection != nullptr) *rejection = "acl";
   PACL acl = nullptr;
   BOOL present = FALSE;
   if (!GetSecurityDescriptorDacl(descriptor, &present, &acl, &defaulted) ||
@@ -119,6 +124,34 @@ inline bool IsProtectedDescriptor(PSECURITY_DESCRIPTOR descriptor,
     MapGenericMask(&rights, &mapping);
     if ((rights & dangerous) != 0 &&
         !IsTrustedOwner(const_cast<DWORD*>(&ace->SidStart))) return false;
+  }
+  return true;
+}
+
+// Executable trees may be readable by ordinary users. Plaintext runtime keys
+// need a separate confidentiality policy and a protected, private file DACL.
+inline bool IsPrivateRuntimeFileDescriptor(PSECURITY_DESCRIPTOR descriptor) {
+  if (!IsProtectedDescriptor(descriptor, false)) return false;
+  SECURITY_DESCRIPTOR_CONTROL control = 0;
+  DWORD revision = 0;
+  if (!GetSecurityDescriptorControl(descriptor, &control, &revision) ||
+      (control & SE_DACL_PROTECTED) == 0) return false;
+  PACL acl = nullptr;
+  BOOL present = FALSE, defaulted = FALSE;
+  if (!GetSecurityDescriptorDacl(descriptor, &present, &acl, &defaulted) ||
+      !present || acl == nullptr) return false;
+  for (DWORD index = 0; index < acl->AceCount; ++index) {
+    void* raw = nullptr;
+    if (!GetAce(acl, index, &raw)) return false;
+    const auto* header = static_cast<const ACE_HEADER*>(raw);
+    if ((header->AceFlags & INHERIT_ONLY_ACE) != 0 ||
+        header->AceType == ACCESS_DENIED_ACE_TYPE) continue;
+    if (header->AceType != ACCESS_ALLOWED_ACE_TYPE ||
+        header->AceSize < sizeof(ACCESS_ALLOWED_ACE)) return false;
+    const auto* ace = static_cast<const ACCESS_ALLOWED_ACE*>(raw);
+    PSID sid = const_cast<DWORD*>(&ace->SidStart);
+    if (ace->Mask != 0 && !IsWellKnownSid(sid, WinLocalSystemSid) &&
+        !IsWellKnownSid(sid, WinBuiltinAdministratorsSid)) return false;
   }
   return true;
 }
@@ -263,6 +296,17 @@ inline bool ValidateInstallationTarget(const std::filesystem::path& directory) {
 
 // Machine-owned tunnel configuration must not traverse an interactive user's
 // profile. Existing untrusted objects are rejected, never repaired by pathname.
+// Only fixed targets/operations and system error numbers may cross into reports.
+struct RuntimeStorageFailure {
+  std::string stage;
+  DWORD win32_error = ERROR_SUCCESS;
+  bool Set(const char* target, const char* operation, DWORD code) {
+    stage = std::string("wg_storage_") + target + "_" + operation;
+    win32_error = code;
+    return false;
+  }
+};
+
 class ProtectedRuntimeDirectory final {
  public:
   ~ProtectedRuntimeDirectory() {
@@ -272,11 +316,17 @@ class ProtectedRuntimeDirectory final {
   ProtectedRuntimeDirectory(const ProtectedRuntimeDirectory&) = delete;
   ProtectedRuntimeDirectory& operator=(const ProtectedRuntimeDirectory&) = delete;
 
-  bool Open(bool create) {
-    if (!handles_.empty()) return false;
+  bool Open(bool create, RuntimeStorageFailure* failure = nullptr) {
+    RuntimeStorageFailure ignored;
+    if (failure == nullptr) failure = &ignored;
+    *failure = {};
+    if (!handles_.empty())
+      return failure->Set("directory", "open", ERROR_INVALID_STATE);
     PWSTR known = nullptr;
-    if (FAILED(SHGetKnownFolderPath(FOLDERID_ProgramData, 0, nullptr, &known)))
-      return false;
+    const HRESULT status = SHGetKnownFolderPath(FOLDERID_ProgramData, 0, nullptr, &known);
+    if (FAILED(status))
+      return failure->Set("program_data", "lookup", HRESULT_FACILITY(status) == FACILITY_WIN32 ?
+          HRESULT_CODE(status) : ERROR_PATH_NOT_FOUND);
     std::filesystem::path root(known);
     CoTaskMemFree(known);
     std::vector<std::filesystem::path> ancestors;
@@ -287,22 +337,24 @@ class ProtectedRuntimeDirectory final {
       path = parent;
     }
     for (auto it = ancestors.rbegin(); it != ancestors.rend(); ++it) {
-      if (!Pin(*it, true)) return false;
+      if (!Pin(*it, true, *it == root ? "program_data" : "ancestor", failure)) return false;
     }
     PSECURITY_DESCRIPTOR descriptor = nullptr;
     if (!ConvertStringSecurityDescriptorToSecurityDescriptorW(
         L"D:P(A;OICI;FA;;;BA)(A;OICI;FA;;;SY)", SDDL_REVISION_1,
-        &descriptor, nullptr)) return false;
+        &descriptor, nullptr)) return failure->Set("directory", "descriptor", GetLastError());
     SECURITY_ATTRIBUTES security{sizeof(SECURITY_ATTRIBUTES), descriptor, FALSE};
     bool valid = true;
-    for (const wchar_t* component : {L"FuzeVPN", L"Runtime", L"WireGuard"}) {
-      root /= component;
+    for (const auto& component : {std::pair{L"FuzeVPN", "fuzevpn"},
+                                  std::pair{L"Runtime", "runtime"},
+                                  std::pair{L"WireGuard", "wireguard"}}) {
+      root /= component.first;
       if (create && !CreateDirectoryW(root.c_str(), &security) &&
           GetLastError() != ERROR_ALREADY_EXISTS) {
-        valid = false;
+        valid = failure->Set(component.second, "create", GetLastError());
         break;
       }
-      if (!Pin(root, false)) {
+      if (!Pin(root, false, component.second, failure)) {
         valid = false;
         break;
       }
@@ -314,32 +366,44 @@ class ProtectedRuntimeDirectory final {
   const std::filesystem::path& path() const { return directory_; }
 
  private:
-  bool Pin(const std::filesystem::path& path, bool ancestor) {
+  bool Pin(const std::filesystem::path& path, bool ancestor,
+           const char* target, RuntimeStorageFailure* failure) {
     HANDLE handle = CreateFileW(path.c_str(), FILE_READ_ATTRIBUTES | READ_CONTROL,
         FILE_SHARE_READ, nullptr, OPEN_EXISTING,
         FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OPEN_REPARSE_POINT, nullptr);
-    if (handle == INVALID_HANDLE_VALUE) return false;
+    if (handle == INVALID_HANDLE_VALUE) return failure->Set(target, "open", GetLastError());
     BY_HANDLE_FILE_INFORMATION info{};
     std::wstring final_path(32768, L'\0');
+    bool valid = GetFileInformationByHandle(handle, &info) != FALSE;
+    if (!valid) failure->Set(target, "metadata", GetLastError());
+    if (valid && ((info.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0 ||
+        (info.dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT) != 0))
+      valid = failure->Set(target, "type", ERROR_ACCESS_DENIED);
     const DWORD length = GetFinalPathNameByHandleW(handle, final_path.data(),
         static_cast<DWORD>(final_path.size()), FILE_NAME_NORMALIZED | VOLUME_NAME_DOS);
-    bool valid = GetFileInformationByHandle(handle, &info) &&
-        (info.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0 &&
-        (info.dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT) == 0 &&
-        length != 0 && length < final_path.size();
+    if (valid && (length == 0 || length >= final_path.size()))
+      valid = failure->Set(target, "path", length == 0 ? GetLastError() : ERROR_INSUFFICIENT_BUFFER);
     if (valid) {
       final_path.resize(length);
       if (final_path.rfind(L"\\\\?\\", 0) == 0) final_path.erase(0, 4);
       auto expected = path.wstring();
       while (expected.size() > 2 && expected.back() == L'\\') expected.pop_back();
       while (final_path.size() > 2 && final_path.back() == L'\\') final_path.pop_back();
-      valid = SamePath(final_path, expected);
+      if (!SamePath(final_path, expected))
+        valid = failure->Set(target, "path", ERROR_ACCESS_DENIED);
     }
     PSECURITY_DESCRIPTOR descriptor = nullptr;
-    if (valid) valid = GetSecurityInfo(handle, SE_FILE_OBJECT,
-        OWNER_SECURITY_INFORMATION | DACL_SECURITY_INFORMATION, nullptr,
-        nullptr, nullptr, nullptr, &descriptor) == ERROR_SUCCESS &&
-        IsProtectedDescriptor(descriptor, true, ancestor);
+    if (valid) {
+      const DWORD code = GetSecurityInfo(handle, SE_FILE_OBJECT,
+          OWNER_SECURITY_INFORMATION | DACL_SECURITY_INFORMATION, nullptr,
+          nullptr, nullptr, nullptr, &descriptor);
+      if (code != ERROR_SUCCESS) valid = failure->Set(target, "security", code);
+      else {
+        const char* rejection = "descriptor";
+        if (!IsProtectedDescriptor(descriptor, true, ancestor, &rejection))
+          valid = failure->Set(target, rejection, ERROR_ACCESS_DENIED);
+      }
+    }
     if (descriptor != nullptr) LocalFree(descriptor);
     if (!valid) { CloseHandle(handle); return false; }
     handles_.push_back(handle);

@@ -10,7 +10,7 @@
   "theme.ConfirmCancelMessage": "Vil du avbryte?",
   "theme.ExecuteUpgradeRelatedBundleMessage": "Forrige versjon",
   "theme.HelpHeader": "Hjelp",
-  "theme.HelpText": "/install, /repair, /uninstall: installer, reparer, avinstaller. /quiet: stillemodus. /norestart: ikke start på nytt. DesktopShortcut=1: snarvei på skrivebordet. InstallFolder=\"D:ApplicationsFuzeVPN\": opprinnelig mappe. Oppdateringer beholder den installerte mappen.",
+  "theme.HelpText": "/install, /repair, /uninstall: installer, reparer, avinstaller. /quiet: stillemodus. /norestart: ikke start på nytt. DesktopShortcut=1: snarvei på skrivebordet. InstallFolder=\"D:\\Applications\\FuzeVPN\": opprinnelig mappe. Oppdateringer beholder den installerte mappen.",
   "theme.HelpCloseButton": "Lukk",
   "theme.InstallLicenseLinkText": "[WixBundleName] <a href=\"#\">lisensvilkår</a>.",
   "theme.InstallAcceptCheckbox": "Jeg godtar lisensvilkårene",

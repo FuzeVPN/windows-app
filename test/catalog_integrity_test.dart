@@ -9,10 +9,10 @@ import 'package:fuzevpn_windows/l10n/generated_catalogs.dart';
 
 void main() {
   test(
-    'the 30 complete compiled catalogs match their editable JSON sources',
+    'the 70 complete compiled catalogs match their editable JSON sources',
     () {
-      expect(translationCatalogs, hasLength(30));
-      expect(AppStrings.supportedLocales, hasLength(30));
+      expect(translationCatalogs, hasLength(70));
+      expect(AppStrings.supportedLocales, hasLength(70));
       expect(
         sourceCatalog,
         jsonDecode(File('lib/l10n/catalogs/source.json').readAsStringSync()),
@@ -165,11 +165,13 @@ void main() {
     },
   );
 
-  test('only Arabic Persian and Urdu use right to left layout', () {
+  test('Arabic Persian Urdu Hebrew and Pashto use right to left layout', () {
     expect(AppLanguage.values.where((l) => l.isRightToLeft).toSet(), {
       AppLanguage.arabic,
       AppLanguage.persian,
       AppLanguage.urdu,
+      AppLanguage.hebrew,
+      AppLanguage.pashto,
     });
   });
 
@@ -194,9 +196,7 @@ void main() {
         }
         expect(
           strings.text('Réessayez dans 42 secondes.'),
-          strings
-              .text('Réessayez dans {seconds} secondes.')
-              .replaceAll('{seconds}', '42'),
+          strings.retryAfter(42),
         );
         expect(strings.text('An unknown message'), 'An unknown message');
       }

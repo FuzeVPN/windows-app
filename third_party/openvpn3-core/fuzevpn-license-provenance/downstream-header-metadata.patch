@@ -1,0 +1,96 @@
+diff --git a/third_party/openvpn3-core/openvpn/asio/asioresolverres.hpp b/third_party/openvpn3-core/openvpn/asio/asioresolverres.hpp
+index 673f18f..96d9b2c 100644
+--- a/third_party/openvpn3-core/openvpn/asio/asioresolverres.hpp
++++ b/third_party/openvpn3-core/openvpn/asio/asioresolverres.hpp
+@@ -6,18 +6,7 @@
+ //
+ //    Copyright (C) 2012-2017 OpenVPN Technologies, Inc.
+ //
+-//    This program is free software: you can redistribute it and/or modify
+-//    it under the terms of the GNU General Public License Version 3
+-//    as published by the Free Software Foundation.
+-//
+-//    This program is distributed in the hope that it will be useful,
+-//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+-//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-//    GNU General Public License for more details.
+-//
+-//    You should have received a copy of the GNU General Public License
+-//    along with this program in the COPYING file.
+-//    If not, see <http://www.gnu.org/licenses/>.
++//    SPDX-License-Identifier: MPL-2.0 OR AGPL-3.0-only WITH openvpn3-openssl-exception
+ 
+ #pragma once
+ 
+diff --git a/third_party/openvpn3-core/openvpn/crypto/tls_crypt_v2.hpp b/third_party/openvpn3-core/openvpn/crypto/tls_crypt_v2.hpp
+index 4a97eff..6f98c7b 100644
+--- a/third_party/openvpn3-core/openvpn/crypto/tls_crypt_v2.hpp
++++ b/third_party/openvpn3-core/openvpn/crypto/tls_crypt_v2.hpp
+@@ -6,18 +6,7 @@
+ //
+ //    Copyright (C) 2017-2018 OpenVPN Technologies, Inc.
+ //
+-//    This program is free software: you can redistribute it and/or modify
+-//    it under the terms of the GNU General Public License Version 3
+-//    as published by the Free Software Foundation.
+-//
+-//    This program is distributed in the hope that it will be useful,
+-//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+-//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-//    GNU General Public License for more details.
+-//
+-//    You should have received a copy of the GNU General Public License
+-//    along with this program in the COPYING file.
+-//    If not, see <http://www.gnu.org/licenses/>.
++//    SPDX-License-Identifier: MPL-2.0 OR AGPL-3.0-only WITH openvpn3-openssl-exception
+ 
+ // Classes for handling OpenVPN tls-crypt-v2 internals
+ 
+diff --git a/third_party/openvpn3-core/openvpn/mbedtls/util/pem.hpp b/third_party/openvpn3-core/openvpn/mbedtls/util/pem.hpp
+index 1583643..2d7ba9c 100644
+--- a/third_party/openvpn3-core/openvpn/mbedtls/util/pem.hpp
++++ b/third_party/openvpn3-core/openvpn/mbedtls/util/pem.hpp
+@@ -6,18 +6,7 @@
+ //
+ //    Copyright (C) 2017-2018 OpenVPN Technologies, Inc.
+ //
+-//    This program is free software: you can redistribute it and/or modify
+-//    it under the terms of the GNU General Public License Version 3
+-//    as published by the Free Software Foundation.
+-//
+-//    This program is distributed in the hope that it will be useful,
+-//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+-//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-//    GNU General Public License for more details.
+-//
+-//    You should have received a copy of the GNU General Public License
+-//    along with this program in the COPYING file.
+-//    If not, see <http://www.gnu.org/licenses/>.
++//    SPDX-License-Identifier: MPL-2.0 OR AGPL-3.0-only WITH openvpn3-openssl-exception
+ 
+ // Wrap the mbedTLS PEM API defined in <mbedtls/pem.h> so
+ // that it can be used as part of the crypto layer of the OpenVPN core.
+diff --git a/third_party/openvpn3-core/openvpn/openssl/util/pem.hpp b/third_party/openvpn3-core/openvpn/openssl/util/pem.hpp
+index 707c0f0..e4c29d0 100644
+--- a/third_party/openvpn3-core/openvpn/openssl/util/pem.hpp
++++ b/third_party/openvpn3-core/openvpn/openssl/util/pem.hpp
+@@ -6,18 +6,7 @@
+ //
+ //    Copyright (C) 2017-2018 OpenVPN Technologies, Inc.
+ //
+-//    This program is free software: you can redistribute it and/or modify
+-//    it under the terms of the GNU General Public License Version 3
+-//    as published by the Free Software Foundation.
+-//
+-//    This program is distributed in the hope that it will be useful,
+-//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+-//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-//    GNU General Public License for more details.
+-//
+-//    You should have received a copy of the GNU General Public License
+-//    along with this program in the COPYING file.
+-//    If not, see <http://www.gnu.org/licenses/>.
++//    SPDX-License-Identifier: MPL-2.0 OR AGPL-3.0-only WITH openvpn3-openssl-exception
+ 
+ // Wrap the OpenSSL PEM API defined in <openssl/pem.h> so
+ // that it can be used as part of the crypto layer of the OpenVPN core.

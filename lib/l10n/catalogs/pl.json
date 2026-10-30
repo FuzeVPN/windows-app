@@ -598,5 +598,14 @@
   "Cette demande de connexion a expiré ou a déjà été utilisée. Recommencez depuis FuzeVPN.": "To żądanie logowania wygasło lub zostało już użyte. Zacznij ponownie z FuzeVPN.",
   "La connexion par navigateur est momentanément indisponible. Utilisez votre adresse e-mail et votre mot de passe, ou réessayez plus tard.": "Logowanie przez przeglądarkę jest chwilowo niedostępne. Użyj swojego adresu e-mail i hasła lub spróbuj ponownie później.",
   "Reconnectez-vous à votre compte dans le navigateur, puis réessayez depuis FuzeVPN.": "Zaloguj się ponownie na swoje konto w przeglądarce, a następnie spróbuj ponownie z FuzeVPN.",
-  "Mises à jour désactivées dans cette version de test.": "Aktualizacje są wyłączone w tej wersji testowej."
+  "Mises à jour désactivées dans cette version de test.": "Aktualizacje są wyłączone w tej wersji testowej.",
+  "Autorisation reçue": "Otrzymano autoryzację",
+  "Autorisation refusée": "Odmowa autoryzacji",
+  "Demande invalide": "Nieprawidłowe żądanie",
+  "Revenez dans FuzeVPN pour terminer la connexion.": "Wróć do FuzeVPN, aby dokończyć logowanie.",
+  "Délai avant réessai : {seconds} s.": "Czas do ponownej próby: {seconds} s.",
+  "Serveurs : {count}": "Serwery: {count}",
+  "Villes : {count}": "Miasta: {count}",
+  "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "Blokuje UDP poza tunelem VPN. Aby objąć także WebRTC przez TCP/TLS, włącz kill switch.",
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Blokuje DNS poza tunelem na portach 53 i 853. Aby objąć także DNS przez HTTPS, włącz kill switch."
 }

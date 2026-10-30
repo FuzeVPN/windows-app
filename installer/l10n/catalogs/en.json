@@ -86,7 +86,7 @@
   "native.11": "Close FuzeVPN and its update assistant, then run the installation again. No process was force-terminated.",
   "native.12": "The VPN could not be stopped safely.",
   "native.13": "Maintenance cannot be completed. Run the installation again to repair FuzeVPN.",
-  "native.14": "Rollback is still blocked by maintenance; run the installation again to repair.",
+  "native.14": "Rollback keeps the maintenance network block in place; run the installation again to repair.",
   "native.WindowsCode": "{message} (Windows code {code}).",
   "native.WarningFormat": "FuzeVPN: [1] (Windows code [2]).",
   "theme.SuccessOpenApp": "Open FuzeVPN from the Start menu. Your personal preferences have been preserved."

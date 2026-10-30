@@ -10,6 +10,47 @@ import 'package:fuzevpn_windows/core/windows_update_models.dart';
 import 'windows_update_models_test.dart' show manifest;
 
 void main() {
+  for (final tags in [
+    ('W/"publication"', '"publication"'),
+    ('"publication"', 'W/"publication"'),
+  ]) {
+    test(
+      'update revalidation uses weak ETag comparison ${tags.$1} -> ${tags.$2}',
+      () async {
+        final server = await _Server.open();
+        addTearDown(server.close);
+        server.responses.addAll([
+          _Response(body: manifest(), etag: tags.$1),
+          _Response(status: 304, etag: tags.$2),
+        ]);
+        final first = await server.api.latestWindowsUpdate();
+        expect(
+          await server.api.latestWindowsUpdate(revalidate: true),
+          same(first),
+        );
+        expect(
+          server.requests.last.headers.value(HttpHeaders.ifNoneMatchHeader),
+          tags.$1,
+        );
+      },
+    );
+  }
+  test(
+    'a different opaque ETag still invalidates a 304 update response',
+    () async {
+      final server = await _Server.open();
+      addTearDown(server.close);
+      server.responses.addAll([
+        _Response(body: manifest(), etag: 'W/"publication"'),
+        const _Response(status: 304, etag: '"other-publication"'),
+      ]);
+      await server.api.latestWindowsUpdate();
+      await expectLater(
+        server.api.latestWindowsUpdate(revalidate: true),
+        throwsFormatException,
+      );
+    },
+  );
   test(
     'all eight publications have separate requests, caches and ETags',
     () async {

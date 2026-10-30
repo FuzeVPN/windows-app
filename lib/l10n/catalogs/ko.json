@@ -598,5 +598,14 @@
   "Cette demande de connexion a expiré ou a déjà été utilisée. Recommencez depuis FuzeVPN.": "이 로그인 요청이 만료되었거나 이미 사용되었습니다. FuzeVPN에서 다시 시작하세요.",
   "La connexion par navigateur est momentanément indisponible. Utilisez votre adresse e-mail et votre mot de passe, ou réessayez plus tard.": "브라우저 로그인을 일시적으로 사용할 수 없습니다. 이메일 주소와 비밀번호를 사용하거나 나중에 다시 시도하세요.",
   "Reconnectez-vous à votre compte dans le navigateur, puis réessayez depuis FuzeVPN.": "브라우저에서 계정에 다시 로그인한 후 FuzeVPN에서 다시 시도하세요.",
-  "Mises à jour désactivées dans cette version de test.": "이 테스트 버전에서는 업데이트가 비활성화되어 있습니다."
+  "Mises à jour désactivées dans cette version de test.": "이 테스트 버전에서는 업데이트가 비활성화되어 있습니다.",
+  "Autorisation reçue": "인증이 수신되었습니다",
+  "Autorisation refusée": "인증이 거부되었습니다",
+  "Demande invalide": "잘못된 요청",
+  "Revenez dans FuzeVPN pour terminer la connexion.": "FuzeVPN으로 돌아가 로그인을 완료하세요.",
+  "Délai avant réessai : {seconds} s.": "재시도 대기 시간: {seconds}초.",
+  "Serveurs : {count}": "서버: {count}",
+  "Villes : {count}": "도시: {count}",
+  "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "VPN 터널 외부의 UDP를 차단합니다. TCP/TLS를 통한 WebRTC도 보호하려면 킬 스위치를 활성화하세요.",
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "터널 외부의 포트 53 및 853에서 DNS를 차단합니다. HTTPS를 통한 DNS도 보호하려면 킬 스위치를 활성화하세요."
 }

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="am-ET" Language="1118" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+  <String Id="Caption" Value="[WixBundleName] መጫን" />
+  <String Id="CheckingForUpdatesLabel" Value="ዝማኔዎችን በመፈለግ ላይ" />
+  <String Id="ConfirmCancelMessage" Value="መሰረዝ ይፈልጋሉ?" />
+  <String Id="DesktopShortcut" Value="በዴስክቶፕ ላይ አቋራጭ ፍጠር" />
+  <String Id="ExecuteUpgradeRelatedBundleMessage" Value="የቀድሞ ስሪት" />
+  <String Id="FailureCacheHeader" Value="ዝግጅቱ አልተሳካም" />
+  <String Id="FailureCloseButton" Value="ዝጋ" />
+  <String Id="FailureHeader" Value="አልተሳካም" />
+  <String Id="FailureHyperlinkLogText" Value="ክወናው ተቋርጧል። &lt;a href=&quot;#&quot;&gt;ምዝግቡን&lt;/a&gt; ይመልከቱ፣ ችግሩን ያስተካክሉና እንደገና ይሞክሩ።" />
+  <String Id="FailureInstallHeader" Value="መጫኑ ተቋርጧል" />
+  <String Id="FailureLayoutHeader" Value="መቅዳቱ አልተሳካም" />
+  <String Id="FailureModifyHeader" Value="ለውጡ ተቋርጧል" />
+  <String Id="FailureRepairHeader" Value="ጥገናው ተቋርጧል" />
+  <String Id="FailureRestartButton" Value="እንደገና ጀምር" />
+  <String Id="FailureRestartText" Value="መመለሱን ለማጠናቀቅ እንደገና ያስጀምሩ።" />
+  <String Id="FailureUninstallHeader" Value="ማራገፉ ተቋርጧል" />
+  <String Id="FailureUnsafeUninstallHeader" Value="ማራገፉ ተቋርጧል" />
+  <String Id="FilesInUseCloseRadioButton" Value="መተግበሪያዎችን ዝጋ" />
+  <String Id="FilesInUseDontCloseRadioButton" Value="መተግበሪያዎችን ክፍት አቆይ" />
+  <String Id="FilesInUseExitButton" Value="ሰርዝ" />
+  <String Id="FilesInUseIgnoreButton" Value="ተወው" />
+  <String Id="FilesInUseLabel" Value="የሚከተሉትን መተግበሪያዎች ዝጉ፣ ከዚያ እንደገና ይሞክሩ።" />
+  <String Id="FilesInUseNetfxCloseRadioButton" Value="መተግበሪያዎችን ዝጋ" />
+  <String Id="FilesInUseRetryButton" Value="እንደገና ሞክር" />
+  <String Id="FilesInUseTitle" Value="ጥቅም ላይ ያሉ ፋይሎች" />
+  <String Id="HelpCloseButton" Value="ዝጋ" />
+  <String Id="HelpHeader" Value="እገዛ" />
+  <String Id="HelpText" Value="/install, /repair, /uninstall፦ ጫን፣ ጠግን፣ አራግፍ። /quiet፦ ጸጥታ ሁነታ። /norestart፦ እንደገና አታስጀምር። DesktopShortcut=1፦ የዴስክቶፕ አቋራጭ። InstallFolder=&quot;D:\Applications\FuzeVPN&quot;፦ የመጀመሪያ አቃፊ። ዝማኔዎች የተጫነበትን አቃፊ ያቆያሉ።" />
+  <String Id="InstallAcceptCheckbox" Value="በፈቃዱ ውሎችና ሁኔታዎች &amp;እስማማለሁ" />
+  <String Id="InstallCancelButton" Value="ሰርዝ" />
+  <String Id="InstallHeader" Value="እንኳን ደህና መጡ" />
+  <String Id="InstallInstallButton" Value="ጫን" />
+  <String Id="InstallLicenseLinkText" Value="[WixBundleName] &lt;a href=&quot;#&quot;&gt;የፈቃድ ውሎች&lt;/a&gt;።" />
+  <String Id="InstallMessage" Value="FuzeVPN ን በዚህ ኮምፒውተር ላይ ይጫኑ።" />
+  <String Id="InstallMessageOptions" Value="FuzeVPN ን በዚህ ኮምፒውተር ላይ ይጫኑ።" />
+  <String Id="InstallOptionsButton" Value="አማራጮች" />
+  <String Id="InstallVersion" Value="ስሪት [WixBundleVersion]" />
+  <String Id="InstallVersionNotice" Value="ስሪት [WixBundleVersion] [BuildNotice]" />
+  <String Id="ModifyCancelButton" Value="ሰርዝ" />
+  <String Id="ModifyHeader" Value="ጥገና" />
+  <String Id="ModifyRepairButton" Value="ጠግን" />
+  <String Id="ModifyUninstallButton" Value="አራግፍ" />
+  <String Id="OptionsBrowseButton" Value="ፈልግ" />
+  <String Id="OptionsCancelButton" Value="ሰርዝ" />
+  <String Id="OptionsHeader" Value="አማራጮች" />
+  <String Id="OptionsLocationLabel" Value="የመጫኛ አቃፊ (በ Windows የተጠበቀ)" />
+  <String Id="OptionsOkButton" Value="እሺ" />
+  <String Id="OptionsPerMachineScopeText" Value="ሁሉም ተጠቃሚዎች" />
+  <String Id="OptionsPerUserScopeText" Value="የአሁኑ ተጠቃሚ" />
+  <String Id="OverallProgressPackageText" Value="በማዘጋጀት ላይ…" />
+  <String Id="PreserveInstallFolder" Value="በዝማኔዎች ወቅት ያለው አቃፊ ይቀመጣል። በይነገጹን በነጻነት ለማንቀሳቀስ ተንቀሳቃሹን ማህደር ይጠቀሙ።" />
+  <String Id="ProgressCancelButton" Value="ሰርዝ" />
+  <String Id="ProgressHeader" Value="በመጫን ላይ" />
+  <String Id="ProgressLabel" Value="ሂደት" />
+  <String Id="SuccessCacheHeader" Value="ፋይሎቹ ዝግጁ ናቸው" />
+  <String Id="SuccessCloseButton" Value="ዝጋ" />
+  <String Id="SuccessHeader" Value="ክወናው ተጠናቋል" />
+  <String Id="SuccessInstallHeader" Value="መጫኑ ተጠናቋል" />
+  <String Id="SuccessLaunchButton" Value="ክፈት" />
+  <String Id="SuccessLayoutHeader" Value="ፋይሎቹ ዝግጁ ናቸው" />
+  <String Id="SuccessModifyHeader" Value="ለውጡ ተጠናቋል" />
+  <String Id="SuccessOpenApp" Value="FuzeVPN ን ከጀምር ምናሌ ይክፈቱ። የግል ምርጫዎችዎ ተጠብቀዋል።" />
+  <String Id="SuccessRepairHeader" Value="ጥገናው ተጠናቋል" />
+  <String Id="SuccessRestartButton" Value="እንደገና ጀምር" />
+  <String Id="SuccessRestartText" Value="ለማጠናቀቅ ኮምፒውተርዎን እንደገና ያስጀምሩ።" />
+  <String Id="SuccessUninstallHeader" Value="ማራገፉ ተጠናቋል" />
+  <String Id="SuccessUninstallRestartText" Value="ማራገፉን ለማጠናቀቅ እንደገና ያስጀምሩ።" />
+  <String Id="SuccessUnsafeUninstallHeader" Value="ማራገፉ ተጠናቋል" />
+  <String Id="Title" Value="[WixBundleName]" />
+  <String Id="UpdateButton" Value="አዘምን" />
+</WixLocalization>

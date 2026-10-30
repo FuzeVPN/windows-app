@@ -114,6 +114,27 @@ CheckResult EvaluateDns(const std::vector<std::string>& expected, const std::vec
   }
   return CheckResult::passed;
 }
+CheckResult EvaluateDnsConfiguration(const NetworkExpectation& expected,
+    const std::optional<std::vector<NumericAddress>>& adapter,
+    const std::optional<std::vector<NumericAddress>>& nrpt) {
+  if (expected.dns.empty()) return CheckResult::skipped;
+  const auto evaluate = [&expected](const auto& source) {
+    return source ? EvaluateDns(expected.dns, *source) : CheckResult::unknown;
+  };
+  switch (expected.dns_mode) {
+    case DnsConfigurationMode::adapter: return evaluate(adapter);
+    case DnsConfigurationMode::nrpt: return evaluate(nrpt);
+    case DnsConfigurationMode::adapter_and_nrpt: {
+      const auto adapter_result = evaluate(adapter), nrpt_result = evaluate(nrpt);
+      if (adapter_result == CheckResult::failed || nrpt_result == CheckResult::failed)
+        return CheckResult::failed;
+      if (adapter_result == CheckResult::unknown || nrpt_result == CheckResult::unknown)
+        return CheckResult::unknown;
+      return CheckResult::passed;
+    }
+  }
+  return CheckResult::unknown;
+}
 
 NetworkObservation ReadNetworkObservation(const NetworkExpectation& expected) {
   NetworkObservation out;
@@ -142,9 +163,11 @@ NetworkObservation ReadNetworkObservation(const NetworkExpectation& expected) {
     if (routes->NumEntries <= 65536) out.routing = EvaluateRoutes(expected,
         std::span<const MIB_IPFORWARD_ROW2>(routes->Table, routes->NumEntries));
   }
+  std::optional<std::vector<NumericAddress>> adapter_dns, nrpt_dns;
   ULONG size = 16384, status = ERROR_BUFFER_OVERFLOW;
   std::vector<BYTE> buffer;
-  for (unsigned attempt = 0; attempt < 3 && status == ERROR_BUFFER_OVERFLOW && size <= 1024 * 1024; ++attempt) {
+  for (unsigned attempt = 0; expected.dns_mode != DnsConfigurationMode::nrpt &&
+      attempt < 3 && status == ERROR_BUFFER_OVERFLOW && size <= 1024 * 1024; ++attempt) {
     buffer.resize(size);
     status = GetAdaptersAddresses(AF_UNSPEC, GAA_FLAG_SKIP_UNICAST | GAA_FLAG_SKIP_ANYCAST | GAA_FLAG_SKIP_MULTICAST,
       nullptr, reinterpret_cast<IP_ADAPTER_ADDRESSES*>(buffer.data()), &size);
@@ -165,13 +188,12 @@ NetworkObservation ReadNetworkObservation(const NetworkExpectation& expected) {
         dns.push_back(FromSocket(value));
       }
     }
-    out.dns = EvaluateDns(expected.dns, dns);
-    if (!expected.nrpt_rule.empty() && !expected.dns.empty()) {
-      const auto nrpt = ReadNrpt(expected.nrpt_rule);
-      if (!nrpt) out.dns = CheckResult::unknown;
-      else if (EvaluateDns(expected.dns, *nrpt) != CheckResult::passed) out.dns = CheckResult::failed;
-    }
+    adapter_dns = std::move(dns);
   }
+  if (expected.dns_mode != DnsConfigurationMode::adapter &&
+      !expected.nrpt_rule.empty() && !expected.dns.empty())
+    nrpt_dns = ReadNrpt(expected.nrpt_rule);
+  out.dns = EvaluateDnsConfiguration(expected, adapter_dns, nrpt_dns);
   return out;
 }
 }  // namespace fuzevpn_diagnostics

@@ -5,6 +5,7 @@
 #include "openvpn_identity_record.h"
 #include "openvpn_identity_selection.h"
 #include "openvpn_connection_state.h"
+#include "openvpn_worker_completion.h"
 #include "openvpn_diagnostic_state.h"
 #include "vpn_reconnect_binding.h"
 
@@ -24,11 +25,14 @@
 
 #define FUZEVPN_OPENVPN_DCO_DIAGNOSTIC(event) \
   ::fuzevpn::RecordOpenVpnDcoDiagnostic(::fuzevpn::OpenVpnDcoDiagnostic::event)
-#define FUZEVPN_OPENVPN_CONFIGURATION_DIAGNOSTIC(expected, index, rule) \
+#define FUZEVPN_OPENVPN_CONFIGURATION_DIAGNOSTIC(expected, index, rule, adapter_dns, nrpt_dns) \
   do { try { NET_LUID diagnostic_luid{}; \
     if (ConvertInterfaceIndexToLuid(index, &diagnostic_luid) == NO_ERROR) \
       ::fuzevpn_diagnostics::CaptureNetworkExpectation(expected.addresses, expected.routes, \
-          expected.dns, index, rule, diagnostic_luid.Value); \
+          expected.dns, index, rule, diagnostic_luid.Value, \
+          nrpt_dns ? (adapter_dns ? ::fuzevpn_diagnostics::DnsConfigurationMode::adapter_and_nrpt \
+                                 : ::fuzevpn_diagnostics::DnsConfigurationMode::nrpt) \
+                   : ::fuzevpn_diagnostics::DnsConfigurationMode::adapter); \
   } catch (...) {} } while (false)
 #include <client/ovpncli.cpp>
 #undef FUZEVPN_OPENVPN_DCO_DIAGNOSTIC
@@ -86,7 +90,7 @@ void WriteConnectionDiagnostic(const fuzevpn::OpenVpnDiagnosticSnapshot& snapsho
                                const openvpn::Win::CommandControl& commands,
                                const std::string& failure,
                                std::uint64_t engine_connect_ms,
-                               bool success) {
+                               bool success, bool worker_exception = false) {
   // Called only by the broker request thread, which has the selected user's
   // protected-store context. No worker-thread filesystem I/O or new driver IOCTL.
   try {
@@ -117,6 +121,7 @@ void WriteConnectionDiagnostic(const fuzevpn::OpenVpnDiagnosticSnapshot& snapsho
         " area=openvpn event=connection_attempt_snapshot " +
         fuzevpn::FormatOpenVpnDiagnostic(snapshot, commands.command_failed.load(), failure) +
         " success=" + std::to_string(success) +
+        " worker_exception=" + std::to_string(worker_exception) +
         " engine_connect_ms=" + std::to_string(engine_connect_ms) +
         " setup_commands_ms=" + std::to_string(commands.setup_commands_ms.load()) +
         " setup_validation_ms=" + std::to_string(commands.setup_validation_ms.load()) +
@@ -576,15 +581,20 @@ class Client final : public openvpn::ClientAPI::OpenVPNClient,
         SetFailure(FailureForEvent(status.status, status.message).c_str());
     }
     connection_.Complete();
-    worker_complete_ = true;
     condition_.notify_all();
   }
-  bool Wait() { std::unique_lock<std::mutex> lock(mutex_); return condition_.wait_for(lock, std::chrono::seconds(25), [this] { return connection_.connected || connection_.terminal; }) && connection_.connected; }
-  bool connected() const { std::lock_guard<std::mutex> lock(mutex_); return connection_.connected; }
+  bool Wait() { std::unique_lock<std::mutex> lock(mutex_); return condition_.wait_for(lock, std::chrono::seconds(25), [this] { return connection_.connected || connection_.terminal || worker_completion_.failed(); }) && connection_.connected && !worker_completion_.failed(); }
+  bool connected() const { std::lock_guard<std::mutex> lock(mutex_); return connection_.connected && !worker_completion_.failed(); }
+  bool WorkerFailed() const noexcept { return worker_completion_.failed(); }
+  template <typename Work>
+  void RunWorker(Work&& work) noexcept {
+    worker_completion_.Run(mutex_, condition_, std::forward<Work>(work),
+        [this](const openvpn::ClientAPI::Status& status) { Complete(status); });
+  }
   void RequestStop() { commands->cancelled.store(true); stop(); }
   bool WaitForCompletion(std::chrono::seconds maximum) {
     std::unique_lock<std::mutex> lock(mutex_);
-    return condition_.wait_for(lock, maximum, [this] { return worker_complete_; });
+    return condition_.wait_for(lock, maximum, [this] { return worker_completion_.finished(); });
   }
   std::shared_ptr<openvpn::Win::CommandControl> commands = std::make_shared<openvpn::Win::CommandControl>();
   fuzevpn::OpenVpnDiagnosticState diagnostics;
@@ -601,7 +611,7 @@ class Client final : public openvpn::ClientAPI::OpenVPNClient,
   fuzevpn::OpenVpnConnectionState connection_;
   NetworkProtectionOptions protection_;
   std::uint64_t interface_luid_ = 0;
-  bool worker_complete_ = false;
+  fuzevpn::OpenVpnWorkerCompletion worker_completion_;
 };
 
 std::unique_ptr<Client> client;
@@ -721,6 +731,12 @@ static bool ConnectLocked(const OpenVpnActivationInput& a) {
   }
   for (const auto& cipher : a.ciphers) if (!Cipher(cipher)) { SetFailure("openvpn_profile_rejected"); return false; }
   for (const auto& dns : a.dns) if (!IPv4(dns)) { SetFailure("openvpn_profile_rejected"); return false; }
+  openvpn::Win::ActivationNetworkContract network_contract;
+  if (!openvpn::Win::BuildActivationNetworkContract(a.addresses, a.dns,
+                                                   a.ipv6_enabled, &network_contract)) {
+    SetFailure("openvpn_profile_rejected");
+    return false;
+  }
   std::string certificate, ca_certificates, tls_crypt_v2;
   const auto erase_remote_material = [&]() {
     Erase(&certificate);
@@ -790,6 +806,7 @@ static bool ConnectLocked(const OpenVpnActivationInput& a) {
   client = std::make_unique<Client>(a.protection); openvpn::ClientAPI::Config config; config.content = std::move(profile); config.protoVersionOverride = 4; config.compressionMode = "no"; config.dco = true;
   const auto eval = client->eval_config(config); if (eval.error || !eval.autologin) { Erase(&config.content); client.reset(); SetFailure("openvpn_profile_rejected"); return false; }
   Client* const connecting_client = client.get();
+  connecting_client->commands->activation_network = std::move(network_contract);
   connecting_client->commands->connection_deadline = GetTickCount64() + 25000;
   // Engine timing includes transport, tunnel setup and WFP promotion, but not
   // API enrollment, bundled-driver validation or the previous tunnel's stop.
@@ -798,23 +815,22 @@ static bool ConnectLocked(const OpenVpnActivationInput& a) {
     fuzevpn::ScopedOpenVpnDiagnosticState diagnostic_scope(&connecting_client->diagnostics);
     fuzevpn_diagnostics::ScopedNetworkExpectationCapture network_scope(&connecting_client->network_configuration);
     openvpn::Win::ScopedCommandControl command_scope(connecting_client->commands.get());
-    openvpn::ClientAPI::Status status;
-    try { status = connecting_client->connect(); }
-    catch (...) { status.error = true; status.status = "OPENVPN_WORKER_FAILED"; }
-    connecting_client->Complete(status);
+    connecting_client->RunWorker([&] { return connecting_client->connect(); });
     Erase(&config.content);
   });
   const bool engine_connected = client->Wait();
   const auto engine_connect_ms = GetTickCount64() - engine_started;
   if (!engine_connected) {
+    const bool worker_exception = client->WorkerFailed();
+    if (worker_exception) SetFailure("openvpn_connection_failed");
     const std::string progress = OpenVpnCoreFailureCode();
     const auto first_action = client->commands->first_failed_action.load();
     const bool command_failed = client->commands->command_failed.load();
     const unsigned postcondition_failures = client->commands->postcondition_failures.load();
     WriteConnectionDiagnostic(client->diagnostics.Snapshot(),
-        *client->commands, progress, engine_connect_ms, false);
+        *client->commands, progress, engine_connect_ms, false, worker_exception);
     if (!Stop()) return false;
-    const char* classified = fuzevpn::ClassifyOpenVpnAttemptFailure(
+    const char* classified = worker_exception ? nullptr : fuzevpn::ClassifyOpenVpnAttemptFailure(
         progress, first_action, command_failed, postcondition_failures);
     SetFailure(classified ? classified : progress.c_str());
     return false;
@@ -919,7 +935,16 @@ bool OpenVpnCoreDiagnosticsCurrent(const std::string& user, const fuzevpn_diagno
        client->network_configuration.Read().generation == out.configuration_generation));
 }
 bool OpenVpnCoreSuspendForMigration() { std::lock_guard<std::mutex> lock(core_mutex); reconnect_cache.reset(); return Stop(); }
-bool OpenVpnCoreDisconnect() { std::lock_guard<std::mutex> lock(core_mutex); reconnect_cache.reset(); if (!Stop()) return false; DisableNetworkProtection(NetworkProtectionOwner::open_vpn); return true; }
+bool OpenVpnCoreDisconnect() {
+  std::lock_guard<std::mutex> lock(core_mutex);
+  reconnect_cache.reset();
+  if (!Stop()) return false;
+  if (!DisableNetworkProtection(NetworkProtectionOwner::open_vpn)) {
+    SetFailure("network_protection_failed");
+    return false;
+  }
+  return true;
+}
 bool OpenVpnCoreDeleteIdentity() { std::lock_guard<std::mutex> lock(core_mutex); reconnect_cache.reset(); if (!Stop()) return false; const bool active = DeleteIdentity(false); const bool pending = DeleteIdentity(true); return active && pending; }
 
 bool OpenVpnCoreRecoverNetworkState() {

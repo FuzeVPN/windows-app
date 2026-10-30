@@ -10,7 +10,7 @@
   "theme.ConfirmCancelMessage": "Θέλετε να ακυρώσετε;",
   "theme.ExecuteUpgradeRelatedBundleMessage": "Προηγούμενη έκδοση",
   "theme.HelpHeader": "Βοήθεια",
-  "theme.HelpText": "/install, /repair, /uninstall: εγκατάσταση, επιδιόρθωση, απεγκατάσταση. /quiet: αθόρυβη λειτουργία. /norestart: χωρίς επανεκκίνηση. DesktopShortcut=1: συντόμευση επιφάνειας εργασίας. InstallFolder=\"D:ApplicationsFuzeVPN\": αρχικός φάκελος. Οι ενημερώσεις διατηρούν τον εγκατεστημένο φάκελο.",
+  "theme.HelpText": "/install, /repair, /uninstall: εγκατάσταση, επιδιόρθωση, απεγκατάσταση. /quiet: αθόρυβη λειτουργία. /norestart: χωρίς επανεκκίνηση. DesktopShortcut=1: συντόμευση επιφάνειας εργασίας. InstallFolder=\"D:\\Applications\\FuzeVPN\": αρχικός φάκελος. Οι ενημερώσεις διατηρούν τον εγκατεστημένο φάκελο.",
   "theme.HelpCloseButton": "Κλείσιμο",
   "theme.InstallLicenseLinkText": "[WixBundleName] <a href=\"#\">όροι άδειας χρήσης</a>.",
   "theme.InstallAcceptCheckbox": "Συμφωνώ με τους όρους και τις προϋποθέσεις της άδειας χρήσης",

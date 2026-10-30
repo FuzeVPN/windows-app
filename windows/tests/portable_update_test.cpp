@@ -236,6 +236,94 @@ void RunCases(Fixtures* fixtures) {
   Require(!RemoveStaging(fixtures->root().root_path()), "volume root deletion accepted");
   Require(RemoveStaging(next) && !std::filesystem::exists(next), "bounded staging removal failed");
 }
+void RunInventoryCases(Fixtures* fixtures) {
+  using namespace fuzevpn_portable_update;
+  // Deliberately inert text fixtures: no PE, ELF, application or helper runs.
+  const auto root = fixtures->root() / L"inventory";
+  std::filesystem::create_directories(root / L"data/flutter_assets");
+  std::filesystem::create_directories(root / L"plugins");
+  const std::vector<std::pair<std::string, std::string>> files = {
+    {"data/app.so", "synthetic-aot-data"}, {"data/flutter_assets/AssetManifest.bin", "synthetic-assets"},
+    {"plugins/frontend.dll", "synthetic-library"}, {"frontend.txt", "synthetic-frontend"}
+  };
+  const std::string header = "FUZEVPN_PORTABLE_V1\nversion=1.2.3\n" +
+      std::string(kInventoryExclusions) + "\n";
+  std::string text = header;
+  for (const auto& [name, contents] : files) {
+    WriteText(root / fuzevpn_update::Wide(name), contents);
+    text += "file=" + std::to_string(contents.size()) + "\t" +
+        Hash(Bytes(contents.begin(), contents.end())) + "\t" + name + "\n";
+  }
+  Inventory inventory;
+  Failure failure;
+  Require(ParseInventory(text, &inventory) && inventory.files.size() == files.size() &&
+      inventory.version.text() == "1.2.3", "complete inventory framing rejected");
+  Require(VerifyInventoryFiles(root, inventory, &failure), "complete file inventory rejected");
+  for (const auto& [name, contents] : files) {
+    std::string changed = contents; changed.back() ^= 1;
+    WriteText(root / fuzevpn_update::Wide(name), changed);
+    Require(!VerifyInventoryFiles(root, inventory, &failure) &&
+        failure.code == "update_portable_manifest_invalid", "altered frontend bytes authorized");
+    WriteText(root / fuzevpn_update::Wide(name), contents);
+  }
+  WriteText(root / L"plugins/unlisted.dll", "synthetic-extra-library");
+  Require(!VerifyInventoryFiles(root, inventory, &failure), "unlisted plugin authorized");
+  Require(DeleteFileW((root / L"plugins/unlisted.dll").c_str()), "extra fixture cleanup");
+  Require(DeleteFileW((root / L"frontend.txt").c_str()), "missing-file fixture setup");
+  Require(!VerifyInventoryFiles(root, inventory, &failure), "missing inventory file authorized");
+  WriteText(root / L"frontend.txt", files.back().second);
+  Require(VerifyInventoryFiles(root, inventory, &failure), "restored inventory rejected");
+  const std::string hash(64, 'a');
+  const auto record = [&](const std::string& size, const std::string& name) {
+    return "file=" + size + "\t" + hash + "\t" + name + "\n";
+  };
+  for (const auto& invalid : {
+      std::string("FUZEVPN_PORTABLE_V0\nversion=1.2.3\n") + std::string(kInventoryExclusions) + "\n" + record("1", "file.txt"),
+      std::string("FUZEVPN_PORTABLE_V1\nversion=1.2.3\nexclude=data/app.so\n") + record("1", "file.txt"),
+      header + record("0", "file.txt"), header + record("01", "file.txt"),
+      header + record("536870913", "file.txt"), header + record("1", "../escape"),
+      header + record("1", "file.txt") + record("1", "FILE.TXT"),
+      header + record("1", "data") + record("1", "data/app.so"),
+      header + record("1", "fuzevpn-runtime.exe"), header + record("1", "README-PORTABLE.TXT")}) {
+    Require(!ParseInventory(invalid, &inventory), "invalid signed inventory accepted");
+  }
+  Require(!ParseInventory(text.substr(0, text.size() - 1), &inventory), "missing inventory newline accepted");
+  Require(!ParseInventory("\xef\xbb\xbf" + text, &inventory), "inventory BOM accepted");
+  Require(!ParseInventory(text + std::string("\0", 1), &inventory), "inventory NUL accepted");
+  Require(!ParseInventory(header + record("1", "data/CON.txt"), &inventory), "reserved inventory name accepted");
+  std::string too_many = header;
+  for (unsigned index = 0; index <= kMaximumArchiveEntries; ++index)
+    too_many += record("1", "f-" + std::to_string(index));
+  Require(!ParseInventory(too_many, &inventory), "inventory entry bound bypassed");
+}
+void RunHelperAttemptCases(Fixtures* fixtures) {
+  using namespace fuzevpn_portable_update;
+  const auto root = fixtures->root() / L"helper-attempt";
+  std::filesystem::create_directory(root);
+  const auto source_path = root / L"inert-source.txt";
+  const auto destination = root / L"fuzevpn-update.exe";
+  WriteText(source_path, "inert helper fixture, never executed");
+  fuzevpn_update::PinnedFile source;
+  Require(source.Open(source_path, true), "helper source fixture pin failed");
+  Failure failure;
+  Require(CopyHelperForAttempt(source, destination, &failure), "first helper attempt rejected");
+  // A failed launcher leaves its copied file behind. Retry must replace that
+  // operation-owned file, including an incomplete previous copy.
+  WriteText(destination, "partial previous attempt");
+  Require(CopyHelperForAttempt(source, destination, &failure) &&
+      ReadText(destination) == ReadText(source_path), "failed launch poisoned helper retry");
+  // Model a running image using the same no-delete sharing boundary, without
+  // creating any process or executing the inert fixture.
+  HANDLE running_image = CreateFileW(destination.c_str(), GENERIC_READ, FILE_SHARE_READ,
+      nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+  Require(running_image != INVALID_HANDLE_VALUE, "running-helper double failed");
+  const bool while_running = CopyHelperForAttempt(source, destination, &failure);
+  CloseHandle(running_image);
+  Require(!while_running && failure.code == "update_busy", "live helper should remain busy");
+  Require(CopyHelperForAttempt(source, destination, &failure) &&
+      ReadText(destination) == ReadText(source_path), "retry stayed poisoned after helper exit");
+  Require(!CopyHelperForAttempt(source, source_path, &failure), "helper copy replaced its source");
+}
 }  // namespace
 
 int main(int argc, char** argv) {
@@ -283,7 +371,9 @@ int main(int argc, char** argv) {
     Require(argc == 2, "provide fresh absolute test fixture directory");
     Fixtures fixtures(std::filesystem::absolute(argv[1]).lexically_normal());
     RunCases(&fixtures);
-    std::cout << "Portable ZIP security, integrity and transaction/rollback cases passed\n";
+    RunInventoryCases(&fixtures);
+    RunHelperAttemptCases(&fixtures);
+    std::cout << "Portable ZIP security, signed-inventory consistency, helper retries and transaction/rollback cases passed\n";
     return 0;
   } catch (const std::exception& error) {
     std::cerr << "Portable update tests failed: " << error.what() << '\n';

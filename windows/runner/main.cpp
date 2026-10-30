@@ -68,19 +68,16 @@ HWND FindExistingFuzeVpnWindow(const FuzeVpnActivationIdentity& identity) {
   }
 }
 
-void ActivateExistingInstance() {
+bool ActivateExistingInstance() {
   const FuzeVpnActivationIdentity identity(CurrentExecutablePath());
   // The first instance can hold the mutex before Flutter has created its
   // window. Retry briefly so a double-click during startup remains silent.
-  for (int attempt = 0; attempt < 40; ++attempt) {
-    const HWND window = FindExistingFuzeVpnWindow(identity);
-    const UINT message = FuzeVpnSingleInstanceMessage();
-    if (window != nullptr && message != 0 &&
-        PostMessageW(window, message, 0, 0)) {
-      return;
-    }
-    Sleep(50);
-  }
+  return FuzeVpnTryActivateExistingWindow(
+      [&identity]() { return FindExistingFuzeVpnWindow(identity); },
+      [](HWND window) {
+        const UINT message = FuzeVpnSingleInstanceMessage();
+        return message != 0 && PostMessageW(window, message, 0, 0) != FALSE;
+      }, []() { Sleep(50); });
 }
 
 }  // namespace
@@ -89,13 +86,19 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
                       _In_ wchar_t *command_line, _In_ int show_command) {
   HANDLE instance_mutex =
       CreateMutexW(nullptr, TRUE, kFuzeVpnSingleInstanceMutexName);
-  if (instance_mutex == nullptr) {
-    return EXIT_FAILURE;
-  }
-  if (GetLastError() == ERROR_ALREADY_EXISTS) {
-    ActivateExistingInstance();
-    CloseHandle(instance_mutex);
-    return EXIT_SUCCESS;
+  const DWORD instance_error = GetLastError();
+  const auto instance_decision = FuzeVpnDecideSingleInstanceStartup(
+      instance_mutex, instance_error, ActivateExistingInstance, []() {
+        MessageBoxW(nullptr,
+            L"FuzeVPN could not open safely because its instance lock is unavailable "
+            L"or no existing FuzeVPN window could be activated.\n\n"
+            L"Wait for FuzeVPN to finish starting, then try again.",
+            L"FuzeVPN", MB_OK | MB_ICONERROR);
+      });
+  if (instance_decision != FuzeVpnSingleInstanceDecision::primary) {
+    if (instance_mutex != nullptr) CloseHandle(instance_mutex);
+    return instance_decision == FuzeVpnSingleInstanceDecision::activated
+        ? EXIT_SUCCESS : EXIT_FAILURE;
   }
 
   // Attach to console when present (e.g., 'flutter run') or create a

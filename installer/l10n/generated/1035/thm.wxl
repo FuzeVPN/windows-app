@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="fi-FI" Language="1035" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+  <String Id="Caption" Value="Asennetaan [WixBundleName]" />
+  <String Id="CheckingForUpdatesLabel" Value="Tarkistetaan päivityksiä" />
+  <String Id="ConfirmCancelMessage" Value="Haluatko peruuttaa?" />
+  <String Id="DesktopShortcut" Value="Luo työpöydälle pikakuvake" />
+  <String Id="ExecuteUpgradeRelatedBundleMessage" Value="Edellinen versio" />
+  <String Id="FailureCacheHeader" Value="Valmistelu epäonnistui" />
+  <String Id="FailureCloseButton" Value="Sulje" />
+  <String Id="FailureHeader" Value="Virhe" />
+  <String Id="FailureHyperlinkLogText" Value="Toiminto keskeytyi. Tarkista &lt;a href=&quot;#&quot;&gt;loki&lt;/a&gt;, korjaa ongelma ja yritä uudelleen." />
+  <String Id="FailureInstallHeader" Value="Asennus keskeytyi" />
+  <String Id="FailureLayoutHeader" Value="Kopiointi epäonnistui" />
+  <String Id="FailureModifyHeader" Value="Muutos keskeytyi" />
+  <String Id="FailureRepairHeader" Value="Korjaus keskeytyi" />
+  <String Id="FailureRestartButton" Value="Käynnistä uudelleen" />
+  <String Id="FailureRestartText" Value="Viimeistele palautus käynnistämällä uudelleen." />
+  <String Id="FailureUninstallHeader" Value="Asennuksen poisto keskeytyi" />
+  <String Id="FailureUnsafeUninstallHeader" Value="Asennuksen poisto keskeytyi" />
+  <String Id="FilesInUseCloseRadioButton" Value="Sulje sovellukset" />
+  <String Id="FilesInUseDontCloseRadioButton" Value="Pidä sovellukset avoinna" />
+  <String Id="FilesInUseExitButton" Value="Peruuta" />
+  <String Id="FilesInUseIgnoreButton" Value="Ohita" />
+  <String Id="FilesInUseLabel" Value="Sulje seuraavat sovellukset ja yritä uudelleen." />
+  <String Id="FilesInUseNetfxCloseRadioButton" Value="Sulje sovellukset" />
+  <String Id="FilesInUseRetryButton" Value="Yritä uudelleen" />
+  <String Id="FilesInUseTitle" Value="Tiedostot ovat käytössä" />
+  <String Id="HelpCloseButton" Value="Sulje" />
+  <String Id="HelpHeader" Value="Ohje" />
+  <String Id="HelpText" Value="/install, /repair, /uninstall: asenna, korjaa, poista asennus. /quiet: hiljainen tila. /norestart: älä käynnistä uudelleen. DesktopShortcut=1: työpöydän pikakuvake. InstallFolder=&quot;D:\Applications\FuzeVPN&quot;: asennuksen aloituskansio. Päivitykset säilyttävät asennuskansion." />
+  <String Id="InstallAcceptCheckbox" Value="&amp;Hyväksyn käyttöoikeusehdot" />
+  <String Id="InstallCancelButton" Value="Peruuta" />
+  <String Id="InstallHeader" Value="Tervetuloa" />
+  <String Id="InstallInstallButton" Value="Asenna" />
+  <String Id="InstallLicenseLinkText" Value="[WixBundleName] &lt;a href=&quot;#&quot;&gt;käyttöoikeusehdot&lt;/a&gt;." />
+  <String Id="InstallMessage" Value="Asenna FuzeVPN tähän tietokoneeseen." />
+  <String Id="InstallMessageOptions" Value="Asenna FuzeVPN tähän tietokoneeseen." />
+  <String Id="InstallOptionsButton" Value="Asetukset" />
+  <String Id="InstallVersion" Value="Versio [WixBundleVersion]" />
+  <String Id="InstallVersionNotice" Value="Versio [WixBundleVersion] [BuildNotice]" />
+  <String Id="ModifyCancelButton" Value="Peruuta" />
+  <String Id="ModifyHeader" Value="Ylläpito" />
+  <String Id="ModifyRepairButton" Value="Korjaa" />
+  <String Id="ModifyUninstallButton" Value="Poista asennus" />
+  <String Id="OptionsBrowseButton" Value="Selaa" />
+  <String Id="OptionsCancelButton" Value="Peruuta" />
+  <String Id="OptionsHeader" Value="Asetukset" />
+  <String Id="OptionsLocationLabel" Value="Asennuskansio (Windowsin suojaama)" />
+  <String Id="OptionsOkButton" Value="OK" />
+  <String Id="OptionsPerMachineScopeText" Value="Kaikki käyttäjät" />
+  <String Id="OptionsPerUserScopeText" Value="Nykyinen käyttäjä" />
+  <String Id="OverallProgressPackageText" Value="Valmistellaan…" />
+  <String Id="PreserveInstallFolder" Value="Nykyinen kansio säilytetään päivitysten aikana. Jos haluat siirtää käyttöliittymää vapaasti, käytä kannettavaa pakettia." />
+  <String Id="ProgressCancelButton" Value="Peruuta" />
+  <String Id="ProgressHeader" Value="Asennus käynnissä" />
+  <String Id="ProgressLabel" Value="Edistyminen" />
+  <String Id="SuccessCacheHeader" Value="Tiedostot valmiina" />
+  <String Id="SuccessCloseButton" Value="Sulje" />
+  <String Id="SuccessHeader" Value="Toiminto valmis" />
+  <String Id="SuccessInstallHeader" Value="Asennus valmis" />
+  <String Id="SuccessLaunchButton" Value="Avaa" />
+  <String Id="SuccessLayoutHeader" Value="Tiedostot valmiina" />
+  <String Id="SuccessModifyHeader" Value="Muutos valmis" />
+  <String Id="SuccessOpenApp" Value="Avaa FuzeVPN Käynnistä-valikosta. Henkilökohtaiset asetuksesi on säilytetty." />
+  <String Id="SuccessRepairHeader" Value="Korjaus valmis" />
+  <String Id="SuccessRestartButton" Value="Käynnistä uudelleen" />
+  <String Id="SuccessRestartText" Value="Viimeistele käynnistämällä tietokone uudelleen." />
+  <String Id="SuccessUninstallHeader" Value="Asennuksen poisto valmis" />
+  <String Id="SuccessUninstallRestartText" Value="Viimeistele asennuksen poisto käynnistämällä uudelleen." />
+  <String Id="SuccessUnsafeUninstallHeader" Value="Asennuksen poisto valmis" />
+  <String Id="Title" Value="[WixBundleName]" />
+  <String Id="UpdateButton" Value="Päivitä" />
+</WixLocalization>

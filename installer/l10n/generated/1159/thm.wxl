@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="rw-RW" Language="1159" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+  <String Id="Caption" Value="Gushyiraho [WixBundleName]" />
+  <String Id="CheckingForUpdatesLabel" Value="Kugenzura amavugurura" />
+  <String Id="ConfirmCancelMessage" Value="Urashaka guhagarika?" />
+  <String Id="DesktopShortcut" Value="Kora akamenyetso gafungura porogaramu kuri ecran y&apos;ibanze" />
+  <String Id="ExecuteUpgradeRelatedBundleMessage" Value="Verisiyo ibanza" />
+  <String Id="FailureCacheHeader" Value="Gutegura byananiranye" />
+  <String Id="FailureCloseButton" Value="Funga" />
+  <String Id="FailureHeader" Value="Byananiranye" />
+  <String Id="FailureHyperlinkLogText" Value="Igikorwa cyahagaze. Reba &lt;a href=&quot;#&quot;&gt;inyandiko&lt;/a&gt;, ukemure ikibazo wongere ugerageze." />
+  <String Id="FailureInstallHeader" Value="Ishyirwaho ryahagaze" />
+  <String Id="FailureLayoutHeader" Value="Gukoporora byananiranye" />
+  <String Id="FailureModifyHeader" Value="Guhindura byahagaze" />
+  <String Id="FailureRepairHeader" Value="Gusana byahagaze" />
+  <String Id="FailureRestartButton" Value="Ongera utangize" />
+  <String Id="FailureRestartText" Value="Ongera utangize kugira ngo urangize gusubiza uko byari bimeze." />
+  <String Id="FailureUninstallHeader" Value="Gukuraho byahagaze" />
+  <String Id="FailureUnsafeUninstallHeader" Value="Gukuraho byahagaze" />
+  <String Id="FilesInUseCloseRadioButton" Value="Funga porogaramu" />
+  <String Id="FilesInUseDontCloseRadioButton" Value="Komeza gufungura porogaramu" />
+  <String Id="FilesInUseExitButton" Value="Hagarika" />
+  <String Id="FilesInUseIgnoreButton" Value="Irengagize" />
+  <String Id="FilesInUseLabel" Value="Funga porogaramu zikurikira, hanyuma wongere ugerageze." />
+  <String Id="FilesInUseNetfxCloseRadioButton" Value="Funga porogaramu" />
+  <String Id="FilesInUseRetryButton" Value="Ongera ugerageze" />
+  <String Id="FilesInUseTitle" Value="Amadosiye arakoreshwa" />
+  <String Id="HelpCloseButton" Value="Funga" />
+  <String Id="HelpHeader" Value="Ubufasha" />
+  <String Id="HelpText" Value="/install, /repair, /uninstall: shyiraho, sana, kuraho. /quiet: uburyo butuje. /norestart: ntukongere gutangiza. DesktopShortcut=1: akamenyetso gafungura porogaramu kuri ecran y&apos;ibanze. InstallFolder=&quot;D:\Applications\FuzeVPN&quot;: ububiko bw&apos;ibanze. Amavugurura agumana ububiko bwashyizwemo." />
+  <String Id="InstallAcceptCheckbox" Value="&amp;Nemera amabwiriza n&apos;ibisabwa by&apos;uruhushya" />
+  <String Id="InstallCancelButton" Value="Hagarika" />
+  <String Id="InstallHeader" Value="Murakaza neza" />
+  <String Id="InstallInstallButton" Value="Shyiraho" />
+  <String Id="InstallLicenseLinkText" Value="[WixBundleName] &lt;a href=&quot;#&quot;&gt;amabwiriza y&apos;uruhushya&lt;/a&gt;." />
+  <String Id="InstallMessage" Value="Shyiraho FuzeVPN kuri iyi mudasobwa." />
+  <String Id="InstallMessageOptions" Value="Shyiraho FuzeVPN kuri iyi mudasobwa." />
+  <String Id="InstallOptionsButton" Value="Amahitamo" />
+  <String Id="InstallVersion" Value="Verisiyo [WixBundleVersion]" />
+  <String Id="InstallVersionNotice" Value="Verisiyo [WixBundleVersion] [BuildNotice]" />
+  <String Id="ModifyCancelButton" Value="Hagarika" />
+  <String Id="ModifyHeader" Value="Kubungabunga" />
+  <String Id="ModifyRepairButton" Value="Sana" />
+  <String Id="ModifyUninstallButton" Value="Kuraho" />
+  <String Id="OptionsBrowseButton" Value="Shakisha" />
+  <String Id="OptionsCancelButton" Value="Hagarika" />
+  <String Id="OptionsHeader" Value="Amahitamo" />
+  <String Id="OptionsLocationLabel" Value="Ububiko bwo gushyiramo (burinzwe na Windows)" />
+  <String Id="OptionsOkButton" Value="OK" />
+  <String Id="OptionsPerMachineScopeText" Value="Abakoresha bose" />
+  <String Id="OptionsPerUserScopeText" Value="Umukoresha uriho" />
+  <String Id="OverallProgressPackageText" Value="Birimo gutegurwa…" />
+  <String Id="PreserveInstallFolder" Value="Ububiko busanzwe bugumaho mu gihe cy&apos;amavugurura. Kugira ngo wimure porogaramu uko ushaka, koresha ububiko bwa verisiyo igendanwa." />
+  <String Id="ProgressCancelButton" Value="Hagarika" />
+  <String Id="ProgressHeader" Value="Ishyirwaho rirakomeje" />
+  <String Id="ProgressLabel" Value="Aho bigeze" />
+  <String Id="SuccessCacheHeader" Value="Amadosiye ariteguye" />
+  <String Id="SuccessCloseButton" Value="Funga" />
+  <String Id="SuccessHeader" Value="Igikorwa cyarangiye" />
+  <String Id="SuccessInstallHeader" Value="Ishyirwaho ryarangiye" />
+  <String Id="SuccessLaunchButton" Value="Fungura" />
+  <String Id="SuccessLayoutHeader" Value="Amadosiye ariteguye" />
+  <String Id="SuccessModifyHeader" Value="Guhindura byarangiye" />
+  <String Id="SuccessOpenApp" Value="Fungura FuzeVPN uhereye kuri menu yo Gutangira. Amahitamo yawe bwite yarabitswe." />
+  <String Id="SuccessRepairHeader" Value="Gusana byarangiye" />
+  <String Id="SuccessRestartButton" Value="Ongera utangize" />
+  <String Id="SuccessRestartText" Value="Ongera utangize mudasobwa yawe kugira ngo urangize." />
+  <String Id="SuccessUninstallHeader" Value="Gukuraho byarangiye" />
+  <String Id="SuccessUninstallRestartText" Value="Ongera utangize kugira ngo urangize gukuraho." />
+  <String Id="SuccessUnsafeUninstallHeader" Value="Gukuraho byarangiye" />
+  <String Id="Title" Value="[WixBundleName]" />
+  <String Id="UpdateButton" Value="Vugurura" />
+</WixLocalization>

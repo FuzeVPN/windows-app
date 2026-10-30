@@ -12,6 +12,7 @@ $utf8 = [Text.UTF8Encoding]::new($false)
 function Xml([string]$value) { [Security.SecurityElement]::Escape($value) }
 function EscapeCppString([string]$value) { 'L"' + $value.Replace('\','\\').Replace('"','\"').Replace("`r",'\r').Replace("`n",'\n').Replace("`t",'\t') + '"' }
 function Tokens([string]$value) { (@([regex]::Matches($value, '\{[A-Za-z_][A-Za-z0-9_]*\}|\[[A-Za-z0-9_]+\]') | ForEach-Object { $_.Value } | Sort-Object -CaseSensitive) -join '|') }
+function CommandExamples([string]$value) { (@([regex]::Matches($value, '/[A-Za-z]+|[A-Za-z][A-Za-z0-9_]*=(?:"[^"]*"|[0-9]+)') | ForEach-Object { $_.Value } | Sort-Object -CaseSensitive) -join '|') }
 function Write-Generated([string]$relative, [string]$content) {
   $path = Join-Path $output $relative
   $content = $content.Replace("`r`n", "`n")
@@ -38,6 +39,7 @@ foreach ($locale in $locales) {
     $value = $catalog.$key
     if ($value -isnot [string] -or [string]::IsNullOrWhiteSpace($value) -or $value.Contains([char]0xFFFD)) { throw "Invalid installer translation $code/$key" }
     if ((Tokens $value) -cne (Tokens $reference.$key)) { throw "Installer placeholders differ: $code/$key" }
+    if ($key -ceq 'theme.HelpText' -and (CommandExamples $value) -cne (CommandExamples $reference.$key)) { throw "Installer command examples differ: $code/$key" }
   }
   $catalogs[$code] = $catalog
 }
@@ -47,7 +49,10 @@ foreach ($locale in $locales) {
   $code = $locale.code
   $catalog = $catalogs[$code]
   $nativeValues = @($nativeKeys | ForEach-Object { EscapeCppString $catalog.$_ }) -join ",`n      "
-  $rows.Add("  { $($locale.lcids[0]), $(EscapeCppString $code), {`n      $nativeValues`n  } },")
+  # Some named locales (for example Malagasy) have no assigned Windows LANGID.
+  # Keep their native catalog addressable by code without inventing an OS alias.
+  $languageId = if ($locale.lcids.Count -gt 0) { $locale.lcids[0] } else { 0 }
+  $rows.Add("  { $languageId, $(EscapeCppString $code), {`n      $nativeValues`n  } },")
   $rtl = $null -ne $locale.PSObject.Properties['rtl'] -and $locale.rtl
   foreach ($lcid in $locale.lcids) {
     $aliases.Add("  { $lcid, $(EscapeCppString $code) },")
@@ -106,7 +111,11 @@ inline const Catalog& Resolve(unsigned language_id) {
   const auto primary = language_id & 0x3ff;
   // Chinese regions/scripts are explicit aliases: unknown Chinese uses simplified.
   if (primary == 4) return *Find(L"zh_Hans");
-  for (const auto& catalog : catalogs) if ((catalog.language_id & 0x3ff) == primary) return catalog;
+  // Shared primary IDs do not identify the requested script or even language
+  // (Croatian and Serbian share one). Only the explicit aliases above are safe.
+  if (primary == 0x1a || primary == 0x2c || primary == 0x43 ||
+      primary == 0x46 || primary == 0x68) return *Find(L"en");
+  for (const auto& catalog : catalogs) if (catalog.language_id && (catalog.language_id & 0x3ff) == primary) return catalog;
   return *Find(L"en");
 }
 inline const wchar_t* Text(const Catalog& catalog, Message message) {

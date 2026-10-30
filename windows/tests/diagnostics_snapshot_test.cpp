@@ -97,6 +97,10 @@ void NetworkChecks() {
   const auto first = capture.Read();
   capture.Store({"10.8.0.2"}, {"0.0.0.0/1"}, {"10.8.0.1"}, 12, {}, 800);
   Check(first.generation != capture.Read().generation, "even identical reconnection invalidates prior observation");
+  capture.Store({"10.8.0.2"}, {}, {"10.8.0.1"}, 12, "FuzeVPNDNSRoutingV1-123-456-0", 800,
+      DnsConfigurationMode::nrpt);
+  Check(capture.Read().dns_mode == DnsConfigurationMode::nrpt,
+        "captured DNS mode preserves the configuration selected by the engine");
   capture.Store({"10.8.0.2"}, {}, {}, 0, {}, 0);
   Check(capture.Read().luid == 0 && capture.Read().generation != first.generation,
         "invalid capture cannot reuse old adapter evidence");
@@ -139,6 +143,43 @@ void NetworkChecks() {
   Check(!ParseNumericAddress("10.8.0.0/33", true), "invalid IPv4 prefix refused");
   expected.luid = 0;
   Check(EvaluateAddresses(expected, AF_INET, addresses, &count) == CheckResult::failed, "no adapter identity never matches");
+}
+void DnsModeChecks() {
+  NetworkExpectation expected; expected.dns = {"10.8.0.1"};
+  const std::vector<NumericAddress> correct{*ParseNumericAddress("10.8.0.1")};
+  const std::vector<NumericAddress> wrong{*ParseNumericAddress("10.8.0.99")}, missing;
+  Check(expected.dns_mode == DnsConfigurationMode::adapter,
+      "WireGuard adapter-only expectation does not silently require NRPT");
+  Check(EvaluateDnsConfiguration(expected, correct, std::nullopt) == CheckResult::passed &&
+      EvaluateDnsConfiguration(expected, correct, wrong) == CheckResult::passed,
+      "adapter-only mode validates its DNS without consulting an unrelated NRPT source");
+  Check(EvaluateDnsConfiguration(expected, missing, correct) == CheckResult::failed &&
+      EvaluateDnsConfiguration(expected, std::nullopt, correct) == CheckResult::unknown,
+      "adapter-only missing configuration differs from unreadable evidence");
+  expected.dns_mode = DnsConfigurationMode::nrpt;
+  Check(EvaluateDnsConfiguration(expected, missing, correct) == CheckResult::passed &&
+      EvaluateDnsConfiguration(expected, std::nullopt, correct) == CheckResult::passed,
+      "NRPT-only mode accepts correct rule without imposing adapter DNS");
+  Check(EvaluateDnsConfiguration(expected, correct, missing) == CheckResult::failed &&
+      EvaluateDnsConfiguration(expected, correct, wrong) == CheckResult::failed &&
+      EvaluateDnsConfiguration(expected, correct, std::nullopt) == CheckResult::unknown,
+      "NRPT-only absent or divergent rule fails while inaccessible rule stays unknown");
+  expected.dns_mode = DnsConfigurationMode::adapter_and_nrpt;
+  Check(EvaluateDnsConfiguration(expected, correct, correct) == CheckResult::passed,
+      "combined DNS mode passes only with both configured sources");
+  for (const auto& bad : {missing, wrong}) {
+    Check(EvaluateDnsConfiguration(expected, correct, bad) == CheckResult::failed &&
+        EvaluateDnsConfiguration(expected, bad, correct) == CheckResult::failed,
+        "combined DNS mode rejects either missing or divergent source");
+  }
+  Check(EvaluateDnsConfiguration(expected, correct, std::nullopt) == CheckResult::unknown &&
+      EvaluateDnsConfiguration(expected, std::nullopt, correct) == CheckResult::unknown,
+      "combined DNS mode cannot pass with one inaccessible source");
+  Check(EvaluateDnsConfiguration(expected, missing, std::nullopt) == CheckResult::failed,
+      "definitive missing DNS remains failed even if the other source is inaccessible");
+  expected.dns.clear();
+  Check(EvaluateDnsConfiguration(expected, std::nullopt, std::nullopt) == CheckResult::skipped,
+      "no DNS expectation remains skipped");
 }
 void EncodingChecks() {
   RuntimeObservation source;
@@ -208,6 +249,6 @@ void EncodingChecks() {
 }
 }
 int main() {
-  try { AsyncChecks(); NetworkChecks(); EncodingChecks(); std::cout << "diagnostics snapshot: passive synthetic checks passed\n"; return 0; }
+  try { AsyncChecks(); NetworkChecks(); DnsModeChecks(); EncodingChecks(); std::cout << "diagnostics snapshot: passive synthetic checks passed\n"; return 0; }
   catch (const std::exception& error) { std::cerr << error.what() << '\n'; return 1; }
 }

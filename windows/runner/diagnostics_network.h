@@ -23,6 +23,11 @@ CheckResult EvaluateRoutes(const NetworkExpectation& expected,
     std::span<const MIB_IPFORWARD_ROW2> rows);
 CheckResult EvaluateDns(const std::vector<std::string>& expected,
                         const std::vector<NumericAddress>& actual);
+// An unavailable source is unknown; an available empty source is missing DNS.
+// Only sources required by the captured configuration mode affect the result.
+CheckResult EvaluateDnsConfiguration(const NetworkExpectation& expected,
+    const std::optional<std::vector<NumericAddress>>& adapter,
+    const std::optional<std::vector<NumericAddress>>& nrpt);
 // Reads exact owned adapter only. No sockets, netsh, service or registry writes.
 NetworkObservation ReadNetworkObservation(const NetworkExpectation& expected);
 }

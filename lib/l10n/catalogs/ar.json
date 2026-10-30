@@ -598,5 +598,14 @@
   "Cette demande de connexion a expiré ou a déjà été utilisée. Recommencez depuis FuzeVPN.": "انتهت صلاحية طلب تسجيل الدخول هذا أو تم استخدامه بالفعل. ابدأ مجددًا من FuzeVPN.",
   "La connexion par navigateur est momentanément indisponible. Utilisez votre adresse e-mail et votre mot de passe, ou réessayez plus tard.": "تسجيل الدخول عبر المتصفح غير متاح مؤقتًا. استخدم عنوان بريدك الإلكتروني وكلمة المرور، أو حاول مجددًا لاحقًا.",
   "Reconnectez-vous à votre compte dans le navigateur, puis réessayez depuis FuzeVPN.": "سجل الدخول إلى حسابك مجددًا في المتصفح، ثم حاول مجددًا من FuzeVPN.",
-  "Mises à jour désactivées dans cette version de test.": "التحديثات معطلة في هذه النسخة التجريبية."
+  "Mises à jour désactivées dans cette version de test.": "التحديثات معطلة في هذه النسخة التجريبية.",
+  "Autorisation reçue": "تم استلام التفويض",
+  "Autorisation refusée": "تم رفض التفويض",
+  "Demande invalide": "طلب غير صالح",
+  "Revenez dans FuzeVPN pour terminer la connexion.": "عُد إلى FuzeVPN لإكمال تسجيل الدخول.",
+  "Délai avant réessai : {seconds} s.": "مدة الانتظار قبل إعادة المحاولة: {seconds} ث.",
+  "Serveurs : {count}": "الخوادم: {count}",
+  "Villes : {count}": "المدن: {count}",
+  "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "يحظر UDP خارج نفق VPN. لتغطية WebRTC عبر TCP/TLS أيضًا، فعّل مفتاح الإيقاف.",
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "يحظر DNS خارج النفق على المنفذين 53 و853. لتغطية DNS عبر HTTPS أيضًا، فعّل مفتاح الإيقاف."
 }

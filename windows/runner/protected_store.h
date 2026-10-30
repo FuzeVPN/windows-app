@@ -31,6 +31,21 @@ ProtectedValueReadStatus ReadProtectedValueStatus(const std::string& key,
 bool WriteProtectedValue(const std::string& key, const std::string& value);
 bool DeleteProtectedValue(const std::string& key);
 
+// Non-sensitive outcome of a mutation. On failure `stage` is one of the fixed
+// secure_store_* names and `win32_error` that step's Windows error; neither
+// ever names a path or a value. `attempts` counts tries of the reported step,
+// including retried replacements/deletions that eventually succeeded.
+struct ProtectedStoreFailure {
+  const char* stage = nullptr;
+  unsigned long win32_error = 0;
+  int attempts = 0;
+};
+bool WriteProtectedValueDetailed(const std::string& key,
+                                 const std::string& value,
+                                 ProtectedStoreFailure* failure);
+bool DeleteProtectedValueDetailed(const std::string& key,
+                                  ProtectedStoreFailure* failure);
+
 // Stable Windows account identifier for isolating native reconnect state.
 // Empty means the account could not be established; callers must fail closed.
 std::string ProtectedStoreUserId();

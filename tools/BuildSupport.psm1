@@ -26,6 +26,28 @@ function Assert-FuzeHash {
   }
 }
 
+function Assert-FuzeDcoDependency {
+  $root = Get-FuzeProjectRoot
+  $pin = (Get-FuzeDependencyPins).openvpn_dco
+  Assert-FuzeHash -Path (Join-Path $root $pin.source_archive) -Hash $pin.source_hash
+  $manifest = Get-Content -LiteralPath (Join-Path $root $pin.payload_manifest) -Raw | ConvertFrom-Json
+  if ($manifest.Version -cne $pin.version -or $manifest.SourceCommit -cne $pin.commit) {
+    throw 'The bundled DCO provenance does not match the dependency pin.'
+  }
+  $files = @($manifest.Files)
+  if ($files.Count -ne 12) { throw 'The bundled DCO manifest must cover all four driver variants.' }
+  foreach ($arch in @('amd64','arm64')) {
+    foreach ($variant in @('win10','win11')) {
+      foreach ($name in @('ovpn-dco.cat','ovpn-dco.inf','ovpn-dco.sys')) {
+        $relative = "$arch/$variant/$name"
+        $entry = @($files | Where-Object Path -CEQ $relative)
+        if ($entry.Count -ne 1) { throw "Missing or duplicate bundled DCO manifest entry: $relative" }
+        Assert-FuzeHash -Path (Join-Path (Join-Path $root $pin.directory) $relative) -Hash $entry[0].Sha256
+      }
+    }
+  }
+}
+
 function Get-FuzePinnedDownload {
   param([Parameter(Mandatory)]$Pin, [switch]$Offline, [string[]]$DownloadSeeds = @())
   $root = Get-FuzeProjectRoot
@@ -148,4 +170,4 @@ function Publish-FuzeNativeTriplet {
   }
 }
 
-Export-ModuleMember -Function Get-FuzeProjectRoot,Get-FuzeDependencyPins,Invoke-FuzeChecked,Assert-FuzeHash,Get-FuzePinnedDownload,Expand-FuzeZip,Initialize-FuzeGitDependency,Get-FuzeVisualStudioTools,Publish-FuzeNativeTriplet
+Export-ModuleMember -Function Get-FuzeProjectRoot,Get-FuzeDependencyPins,Invoke-FuzeChecked,Assert-FuzeHash,Assert-FuzeDcoDependency,Get-FuzePinnedDownload,Expand-FuzeZip,Initialize-FuzeGitDependency,Get-FuzeVisualStudioTools,Publish-FuzeNativeTriplet
