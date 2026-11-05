@@ -607,5 +607,12 @@
   "Serveurs : {count}": "Server: {count}",
   "Villes : {count}": "Kota: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "Memblokir UDP di luar terowongan VPN. Untuk juga mencakup WebRTC melalui TCP/TLS, aktifkan kill switch.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Memblokir DNS di luar terowongan pada port 53 dan 853. Untuk juga mencakup DNS melalui HTTPS, aktifkan kill switch."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Memblokir DNS di luar terowongan pada port 53 dan 853. Untuk juga mencakup DNS melalui HTTPS, aktifkan kill switch.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "Perangkat ini tidak dapat dihapus. Periksa koneksi Anda lalu coba lagi.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "Pemutusan koneksi VPN tidak dapat dikonfirmasi. Coba putuskan koneksi lagi.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "Sesi tersimpan tidak dapat dihapus. Coba keluar dari akun lagi.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch masih memblokir lalu lintas jaringan. Coba putuskan koneksi lagi.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "Terowongan VPN masih aktif. Coba putuskan koneksi lagi.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN tidak dapat dimulai karena kunci instansinya tidak tersedia atau tidak ada jendela FuzeVPN yang sudah terbuka yang dapat diaktifkan.\n\nTunggu hingga FuzeVPN selesai dimulai, lalu coba lagi.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Pembaruan versi portabel tidak dapat diterapkan. Versi sebelumnya berada di folder aslinya atau dalam cadangan pemulihan."
 }

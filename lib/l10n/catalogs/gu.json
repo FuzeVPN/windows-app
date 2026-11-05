@@ -607,5 +607,12 @@
   "Serveurs : {count}": "સર્વર્સ: {count}",
   "Villes : {count}": "શહેરો: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "VPN ટનલની બહાર UDP અવરોધે છે. TCP/TLS પર WebRTC ને પણ આવરી લેવા kill switch સક્ષમ કરો.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "ટનલની બહાર પોર્ટ 53 અને 853 પર DNS અવરોધે છે. HTTPS પર DNS ને પણ આવરી લેવા kill switch સક્ષમ કરો."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "ટનલની બહાર પોર્ટ 53 અને 853 પર DNS અવરોધે છે. HTTPS પર DNS ને પણ આવરી લેવા kill switch સક્ષમ કરો.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "આ ઉપકરણ દૂર કરી શકાયું નથી. તમારું કનેક્શન તપાસો અને ફરી પ્રયાસ કરો.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "VPN ડિસકનેક્ટ થયાની પુષ્ટિ થઈ શકી નથી. ડિસકનેક્ટ કરવાનો ફરી પ્રયાસ કરો.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "સાચવેલું સત્ર કાઢી શકાયું નથી. ખાતામાંથી સાઇન આઉટ કરવાનો ફરી પ્રયાસ કરો.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch હજી નેટવર્ક ટ્રાફિક અવરોધે છે. ડિસકનેક્ટ કરવાનો ફરી પ્રયાસ કરો.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPN ટનલ હજી સક્રિય છે. ડિસકનેક્ટ કરવાનો ફરી પ્રયાસ કરો.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN શરૂ થઈ શક્યું નથી, કારણ કે તેનો ઇન્સ્ટન્સ લોક ઉપલબ્ધ નથી અથવા FuzeVPNની કોઈપણ હાલની વિન્ડો સક્રિય કરી શકાઈ નથી.\n\nFuzeVPN શરૂ થવાનું પૂર્ણ થાય ત્યાં સુધી રાહ જુઓ, પછી ફરી પ્રયાસ કરો.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "પોર્ટેબલ અપડેટ લાગુ કરી શકાયું નથી. તમારું અગાઉનું વર્ઝન તેના મૂળ ફોલ્ડરમાં અથવા પુનઃપ્રાપ્તિ બેકઅપમાં છે."
 }

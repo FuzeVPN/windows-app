@@ -607,5 +607,12 @@
   "Serveurs : {count}": "Serveri: {count}",
   "Villes : {count}": "Pilsētas: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "Bloķē UDP ārpus VPN tuneļa. Lai aptvertu arī WebRTC caur TCP/TLS, ieslēdziet kill switch.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Bloķē DNS ārpus tuneļa 53. un 853. portā. Lai aptvertu arī DNS caur HTTPS, ieslēdziet kill switch."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Bloķē DNS ārpus tuneļa 53. un 853. portā. Lai aptvertu arī DNS caur HTTPS, ieslēdziet kill switch.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "Šo ierīci neizdevās noņemt. Pārbaudiet savienojumu un mēģiniet vēlreiz.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "Neizdevās apstiprināt VPN atvienošanu. Mēģiniet atvienoties vēlreiz.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "Saglabāto sesiju neizdevās izdzēst. Mēģiniet vēlreiz izrakstīties no konta.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch joprojām bloķē tīkla datplūsmu. Mēģiniet atvienoties vēlreiz.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPN tunelis joprojām ir aktīvs. Mēģiniet atvienoties vēlreiz.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN nevarēja palaist, jo tā instances bloķētājs nav pieejams vai nevarēja aktivizēt nevienu esošu FuzeVPN logu.\n\nPagaidiet, līdz FuzeVPN pabeidz palaišanu, un mēģiniet vēlreiz.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Portatīvās versijas atjauninājumu neizdevās lietot. Iepriekšējā versija atrodas sākotnējā mapē vai atkopšanas rezerves kopijā."
 }

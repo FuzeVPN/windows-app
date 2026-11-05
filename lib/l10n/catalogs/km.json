@@ -607,5 +607,12 @@
   "Serveurs : {count}": "ម៉ាស៊ីនមេ៖ {count}",
   "Villes : {count}": "ទីក្រុង៖ {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "ទប់ស្កាត់ UDP ក្រៅបណ្ដាញរូង VPN។ ដើម្បីគ្របដណ្ដប់ WebRTC តាម TCP/TLS ផងដែរ សូមបើក kill switch។",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "ទប់ស្កាត់ DNS ក្រៅបណ្ដាញរូងតាមច្រក 53 និង 853។ ដើម្បីគ្របដណ្ដប់ DNS តាម HTTPS ផងដែរ សូមបើក kill switch។"
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "ទប់ស្កាត់ DNS ក្រៅបណ្ដាញរូងតាមច្រក 53 និង 853។ ដើម្បីគ្របដណ្ដប់ DNS តាម HTTPS ផងដែរ សូមបើក kill switch។",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "មិនអាចដកឧបករណ៍នេះចេញបានទេ។ ពិនិត្យការតភ្ជាប់របស់អ្នក រួចព្យាយាមម្ដងទៀត។",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "មិនអាចបញ្ជាក់ថា VPN បានផ្ដាច់ទេ។ ព្យាយាមផ្ដាច់ម្ដងទៀត។",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "មិនអាចលុបសម័យដែលបានរក្សាទុកបានទេ។ ព្យាយាមចេញពីគណនីម្ដងទៀត។",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "kill switch នៅតែទប់ស្កាត់ចរាចរណ៍បណ្ដាញ។ ព្យាយាមផ្ដាច់ម្ដងទៀត។",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "បណ្ដាញរូង VPN នៅតែសកម្ម។ ព្យាយាមផ្ដាច់ម្ដងទៀត។",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "មិនអាចចាប់ផ្ដើម FuzeVPN បានទេ ព្រោះមិនអាចប្រើសោចាក់សម្រាប់ instance របស់វា ឬមិនអាចធ្វើឱ្យបង្អួច FuzeVPN ដែលមានស្រាប់ណាមួយសកម្មបាន។\n\nរង់ចាំរហូតដល់ FuzeVPN ចាប់ផ្ដើមរួច រួចព្យាយាមម្ដងទៀត។",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "មិនអាចអនុវត្តការធ្វើបច្ចុប្បន្នភាពកំណែចល័តបានទេ។ កំណែមុនរបស់អ្នកស្ថិតនៅក្នុងថតដើមរបស់វា ឬក្នុងច្បាប់ចម្លងបម្រុងសម្រាប់ការស្ដារឡើងវិញ។"
 }

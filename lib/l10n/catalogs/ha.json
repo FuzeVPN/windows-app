@@ -607,5 +607,12 @@
   "Serveurs : {count}": "Sabobin: {count}",
   "Villes : {count}": "Birane: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "Yana toshe UDP a wajen ramin VPN. Don haɗa WebRTC ta TCP/TLS cikin kariyar, kunna kill switch.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Yana toshe DNS a wajen ramin a tashoshin 53 da 853. Don haɗa DNS ta HTTPS cikin kariyar, kunna kill switch."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Yana toshe DNS a wajen ramin a tashoshin 53 da 853. Don haɗa DNS ta HTTPS cikin kariyar, kunna kill switch.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "Ba a iya cire wannan na'urar ba. Duba haɗin Intanet ɗinka, sannan sake gwadawa.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "Ba a iya tabbatar da katse haɗin VPN ba. Sake gwada katse haɗi.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "Ba a iya share zaman da aka adana ba. Sake gwada fita daga asusun.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch har yanzu yana toshe zirga-zirgar hanyar sadarwa. Sake gwada katse haɗi.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "Ramin VPN har yanzu yana aiki. Sake gwada katse haɗi.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN bai iya farawa ba saboda makullin da ke hana buɗe kwafi fiye da ɗaya ba ya samuwa, ko kuma ba a iya mayar da wata taga FuzeVPN da ke buɗe ta zama mai aiki ba.\n\nJira FuzeVPN ya gama farawa, sannan sake gwadawa.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Ba a iya aiwatar da sabunta sigar da ake iya ɗauka ba. Sigar da kake da ita a baya tana cikin babban fayil ɗinta na asali ko kuma cikin ajiyar farfadowa."
 }

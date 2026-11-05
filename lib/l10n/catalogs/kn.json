@@ -607,5 +607,12 @@
   "Serveurs : {count}": "ಸರ್ವರ್‌ಗಳು: {count}",
   "Villes : {count}": "ನಗರಗಳು: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "VPN ಟನಲ್‌ನ ಹೊರಗಿನ UDP ಅನ್ನು ನಿರ್ಬಂಧಿಸುತ್ತದೆ. TCP/TLS ಮೂಲಕ WebRTC ಅನ್ನೂ ಒಳಗೊಳ್ಳಲು ಕಿಲ್ ಸ್ವಿಚ್ ಸಕ್ರಿಯಗೊಳಿಸಿ.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "ಟನಲ್‌ನ ಹೊರಗಿನ DNS ಅನ್ನು 53 ಮತ್ತು 853 ಪೋರ್ಟ್‌ಗಳಲ್ಲಿ ನಿರ್ಬಂಧಿಸುತ್ತದೆ. HTTPS ಮೂಲಕ DNS ಅನ್ನೂ ಒಳಗೊಳ್ಳಲು ಕಿಲ್ ಸ್ವಿಚ್ ಸಕ್ರಿಯಗೊಳಿಸಿ."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "ಟನಲ್‌ನ ಹೊರಗಿನ DNS ಅನ್ನು 53 ಮತ್ತು 853 ಪೋರ್ಟ್‌ಗಳಲ್ಲಿ ನಿರ್ಬಂಧಿಸುತ್ತದೆ. HTTPS ಮೂಲಕ DNS ಅನ್ನೂ ಒಳಗೊಳ್ಳಲು ಕಿಲ್ ಸ್ವಿಚ್ ಸಕ್ರಿಯಗೊಳಿಸಿ.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "ಈ ಸಾಧನವನ್ನು ತೆಗೆದುಹಾಕಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ನಿಮ್ಮ ಸಂಪರ್ಕವನ್ನು ಪರಿಶೀಲಿಸಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "VPN ಸಂಪರ್ಕ ಕಡಿತಗೊಂಡಿರುವುದನ್ನು ಖಚಿತಪಡಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ಸಂಪರ್ಕ ಕಡಿತಗೊಳಿಸಲು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "ಉಳಿಸಿದ ಸೆಷನ್ ಅನ್ನು ಅಳಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ಖಾತೆಯಿಂದ ಸೈನ್ ಔಟ್ ಮಾಡಲು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "ಕಿಲ್ ಸ್ವಿಚ್ ಇನ್ನೂ ನೆಟ್‌ವರ್ಕ್ ಸಂಚಾರವನ್ನು ನಿರ್ಬಂಧಿಸುತ್ತಿದೆ. ಸಂಪರ್ಕ ಕಡಿತಗೊಳಿಸಲು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPN ಟನಲ್ ಇನ್ನೂ ಸಕ್ರಿಯವಾಗಿದೆ. ಸಂಪರ್ಕ ಕಡಿತಗೊಳಿಸಲು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN ಪ್ರಾರಂಭವಾಗಲಿಲ್ಲ, ಏಕೆಂದರೆ ಅದರ ಇನ್‌ಸ್ಟನ್ಸ್ ಲಾಕ್ ಲಭ್ಯವಿಲ್ಲ ಅಥವಾ ಈಗಾಗಲೇ ಇರುವ ಯಾವುದೇ FuzeVPN ವಿಂಡೋವನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ.\n\nFuzeVPN ಪ್ರಾರಂಭವಾಗುವವರೆಗೆ ಕಾಯಿರಿ, ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "ಪೋರ್ಟಬಲ್ ನವೀಕರಣವನ್ನು ಅನ್ವಯಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ನಿಮ್ಮ ಹಿಂದಿನ ಆವೃತ್ತಿಯು ಅದರ ಮೂಲ ಫೋಲ್ಡರ್‌ನಲ್ಲಿ ಅಥವಾ ಮರುಪಡೆಯುವಿಕೆ ಬ್ಯಾಕಪ್‌ನಲ್ಲಿದೆ."
 }

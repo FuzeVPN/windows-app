@@ -607,5 +607,12 @@
   "Serveurs : {count}": "სერვერები: {count}",
   "Villes : {count}": "ქალაქები: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "ბლოკავს UDP-ს VPN გვირაბის გარეთ. WebRTC-ის TCP/TLS-ით დასაფარადაც ჩართეთ kill switch.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "ბლოკავს DNS-ს გვირაბის გარეთ 53 და 853 პორტებზე. HTTPS-ით DNS-ის დასაფარადაც ჩართეთ kill switch."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "ბლოკავს DNS-ს გვირაბის გარეთ 53 და 853 პორტებზე. HTTPS-ით DNS-ის დასაფარადაც ჩართეთ kill switch.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "ამ მოწყობილობის წაშლა ვერ მოხერხდა. შეამოწმეთ კავშირი და ხელახლა სცადეთ.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "VPN-ის გათიშვა ვერ დადასტურდა. ხელახლა სცადეთ გათიშვა.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "შენახული სესიის წაშლა ვერ მოხერხდა. ხელახლა სცადეთ ანგარიშიდან გასვლა.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch კვლავ ბლოკავს ქსელის ტრაფიკს. ხელახლა სცადეთ გათიშვა.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPN გვირაბი ჯერ კიდევ აქტიურია. ხელახლა სცადეთ გათიშვა.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN ვერ გაეშვა, რადგან მისი ეგზემპლარის ბლოკირება მიუწვდომელია ან FuzeVPN-ის ვერცერთი არსებული ფანჯარა ვერ გააქტიურდა.\n\nდაელოდეთ FuzeVPN-ის გაშვების დასრულებას და ხელახლა სცადეთ.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "პორტატიული ვერსიის განახლება ვერ იქნა გამოყენებული. წინა ვერსია თავდაპირველ საქაღალდეში ან აღდგენის სარეზერვო ასლშია."
 }

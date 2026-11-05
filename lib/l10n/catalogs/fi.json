@@ -607,5 +607,12 @@
   "Serveurs : {count}": "Palvelimet: {count}",
   "Villes : {count}": "Kaupungit: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "Estää UDP-liikenteen VPN-tunnelin ulkopuolella. Ota kill switch käyttöön suojataksesi myös TCP/TLS:n kautta kulkevan WebRTC-liikenteen.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Estää DNS-liikenteen tunnelin ulkopuolella porteissa 53 ja 853. Ota kill switch käyttöön suojataksesi myös HTTPS:n kautta kulkevan DNS-liikenteen."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Estää DNS-liikenteen tunnelin ulkopuolella porteissa 53 ja 853. Ota kill switch käyttöön suojataksesi myös HTTPS:n kautta kulkevan DNS-liikenteen.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "Tätä laitetta ei voitu poistaa. Tarkista yhteys ja yritä uudelleen.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "VPN-yhteyden katkaisemista ei voitu vahvistaa. Yritä katkaista yhteys uudelleen.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "Tallennettua istuntoa ei voitu poistaa. Yritä kirjautua ulos tililtäsi uudelleen.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch estää edelleen verkkoliikennettä. Yritä katkaista yhteys uudelleen.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPN-tunneli on edelleen aktiivinen. Yritä katkaista yhteys uudelleen.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN ei voinut käynnistyä, koska sen instanssilukko ei ole käytettävissä tai mitään olemassa olevaa FuzeVPN-ikkunaa ei voitu aktivoida.\n\nOdota, että FuzeVPN on käynnistynyt, ja yritä sitten uudelleen.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Siirrettävän version päivitystä ei voitu asentaa. Aiempi versiosi on alkuperäisessä kansiossa tai palautusvarmuuskopiossa."
 }

@@ -607,5 +607,12 @@
   "Serveurs : {count}": "เซิร์ฟเวอร์: {count}",
   "Villes : {count}": "เมือง: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "บล็อก UDP นอกอุโมงค์ VPN หากต้องการครอบคลุม WebRTC ผ่าน TCP/TLS ด้วย ให้เปิดคิลสวิตช์",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "บล็อก DNS นอกอุโมงค์ที่พอร์ต 53 และ 853 หากต้องการครอบคลุม DNS ผ่าน HTTPS ด้วย ให้เปิดคิลสวิตช์"
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "บล็อก DNS นอกอุโมงค์ที่พอร์ต 53 และ 853 หากต้องการครอบคลุม DNS ผ่าน HTTPS ด้วย ให้เปิดคิลสวิตช์",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "ไม่สามารถนำอุปกรณ์นี้ออกได้ ตรวจสอบการเชื่อมต่อแล้วลองอีกครั้ง",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "ไม่สามารถยืนยันการตัดการเชื่อมต่อ VPN ได้ ลองตัดการเชื่อมต่ออีกครั้ง",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "ไม่สามารถลบเซสชันที่บันทึกไว้ได้ ลองออกจากระบบบัญชีอีกครั้ง",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch ยังคงบล็อกการรับส่งข้อมูลเครือข่ายอยู่ ลองตัดการเชื่อมต่ออีกครั้ง",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "อุโมงค์ VPN ยังคงทำงานอยู่ ลองตัดการเชื่อมต่ออีกครั้ง",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "ไม่สามารถเริ่ม FuzeVPN ได้ เนื่องจากล็อกอินสแตนซ์ไม่พร้อมใช้งาน หรือไม่สามารถเปิดใช้งานหน้าต่าง FuzeVPN ที่มีอยู่ได้\n\nรอให้ FuzeVPN เริ่มทำงานเสร็จแล้วลองอีกครั้ง",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "ไม่สามารถใช้การอัปเดตเวอร์ชันพกพาได้ เวอร์ชันก่อนหน้ายังคงอยู่ในโฟลเดอร์เดิมหรือในข้อมูลสำรองสำหรับการกู้คืน"
 }

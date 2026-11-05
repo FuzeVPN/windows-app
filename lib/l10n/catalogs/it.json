@@ -607,5 +607,12 @@
   "Serveurs : {count}": "Server: {count}",
   "Villes : {count}": "Città: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "Blocca UDP al di fuori del tunnel VPN. Per coprire anche WebRTC tramite TCP/TLS, attiva il kill switch.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Blocca il DNS al di fuori del tunnel sulle porte 53 e 853. Per coprire anche il DNS tramite HTTPS, attiva il kill switch."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Blocca il DNS al di fuori del tunnel sulle porte 53 e 853. Per coprire anche il DNS tramite HTTPS, attiva il kill switch.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "Non è stato possibile rimuovere questo dispositivo. Controlla la connessione e riprova.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "Non è stato possibile confermare la disconnessione della VPN. Prova a disconnetterti di nuovo.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "Non è stato possibile eliminare la sessione salvata. Prova a uscire di nuovo dal tuo account.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Il kill switch continua a bloccare il traffico di rete. Prova a disconnetterti di nuovo.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "Il tunnel VPN è ancora attivo. Prova a disconnetterti di nuovo.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "Non è stato possibile avviare FuzeVPN perché il blocco dell’istanza non è disponibile o non è stato possibile attivare alcuna finestra di FuzeVPN già aperta.\n\nAttendi che FuzeVPN completi l’avvio, quindi riprova.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Non è stato possibile applicare l’aggiornamento portatile. La versione precedente si trova nella cartella originale o nel backup di ripristino."
 }

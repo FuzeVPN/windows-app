@@ -607,5 +607,12 @@
   "Serveurs : {count}": "Serverlər: {count}",
   "Villes : {count}": "Şəhərlər: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "VPN tunelindən kənarda UDP-ni bloklayır. TCP/TLS üzərindən WebRTC-ni də əhatə etmək üçün kill switch funksiyasını aktiv edin.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Tuneldən kənarda 53 və 853 portlarında DNS-i bloklayır. HTTPS üzərindən DNS-i də əhatə etmək üçün kill switch funksiyasını aktiv edin."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Tuneldən kənarda 53 və 853 portlarında DNS-i bloklayır. HTTPS üzərindən DNS-i də əhatə etmək üçün kill switch funksiyasını aktiv edin.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "Bu cihaz silinə bilmədi. Bağlantınızı yoxlayın və yenidən cəhd edin.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "VPN bağlantısının kəsilməsi təsdiqlənə bilmədi. Bağlantını yenidən kəsməyə cəhd edin.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "Saxlanmış sessiya silinə bilmədi. Hesabdan yenidən çıxmağa cəhd edin.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch şəbəkə trafikini bloklamağa davam edir. Bağlantını yenidən kəsməyə cəhd edin.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPN tuneli hələ də aktivdir. Bağlantını yenidən kəsməyə cəhd edin.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN başlaya bilmədi, çünki onun instansiya kilidi əlçatan deyil və ya mövcud FuzeVPN pəncərələrindən heç biri aktivləşdirilə bilmədi.\n\nFuzeVPN tam başlayana qədər gözləyin, sonra yenidən cəhd edin.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Portativ versiyanın yeniləməsi tətbiq edilə bilmədi. Əvvəlki versiyanız ilkin qovluğunda və ya bərpa üçün ehtiyat nüsxədədir."
 }

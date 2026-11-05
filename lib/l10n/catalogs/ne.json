@@ -607,5 +607,12 @@
   "Serveurs : {count}": "सर्भरहरू: {count}",
   "Villes : {count}": "सहरहरू: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "VPN टनेल बाहिर UDP रोक्छ। TCP/TLS मार्फत WebRTC पनि समेट्न kill switch सक्षम गर्नुहोस्।",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "टनेल बाहिर पोर्ट 53 र 853 मा DNS रोक्छ। HTTPS मार्फत DNS पनि समेट्न kill switch सक्षम गर्नुहोस्।"
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "टनेल बाहिर पोर्ट 53 र 853 मा DNS रोक्छ। HTTPS मार्फत DNS पनि समेट्न kill switch सक्षम गर्नुहोस्।",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "यो उपकरण हटाउन सकिएन। आफ्नो जडान जाँचेर फेरि प्रयास गर्नुहोस्।",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "VPN विच्छेद भएको पुष्टि गर्न सकिएन। फेरि विच्छेद गर्ने प्रयास गर्नुहोस्।",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "सङ्ग्रहित सत्र मेटाउन सकिएन। खाताबाट फेरि साइन आउट गर्ने प्रयास गर्नुहोस्।",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "kill switch ले अझै नेटवर्क ट्राफिक रोकिरहेको छ। फेरि विच्छेद गर्ने प्रयास गर्नुहोस्।",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPN टनेल अझै सक्रिय छ। फेरि विच्छेद गर्ने प्रयास गर्नुहोस्।",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN सुरु हुन सकेन, किनकि यसको इन्स्ट्यान्स लक उपलब्ध छैन वा पहिल्यै खुला कुनै FuzeVPN सञ्झ्याल सक्रिय गर्न सकिएन।\n\nFuzeVPN को सुरुवात पूरा नभएसम्म पर्खनुहोस्, अनि फेरि प्रयास गर्नुहोस्।",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "पोर्टेबल अद्यावधिक लागू गर्न सकिएन। तपाईंको अघिल्लो संस्करण यसको मूल फोल्डरमा वा पुनःप्राप्ति ब्याकअपमा छ।"
 }

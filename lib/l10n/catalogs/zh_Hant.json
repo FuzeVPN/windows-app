@@ -607,5 +607,12 @@
   "Serveurs : {count}": "伺服器：{count}",
   "Villes : {count}": "城市：{count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "封鎖VPN通道外的UDP。若要同時保護透過TCP/TLS傳輸的WebRTC，請啟用終止開關。",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "封鎖通道外連接埠53和853上的DNS。若要同時保護透過HTTPS傳輸的DNS，請啟用終止開關。"
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "封鎖通道外連接埠53和853上的DNS。若要同時保護透過HTTPS傳輸的DNS，請啟用終止開關。",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "無法移除此裝置。請檢查網路連線後重試。",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "無法確認 VPN 已中斷連線。請再次嘗試中斷連線。",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "無法清除已儲存的工作階段。請再次嘗試登出帳戶。",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "終止開關仍在封鎖網路流量。請再次嘗試中斷連線。",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPN 通道仍處於啟用狀態。請再次嘗試中斷連線。",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN 無法啟動，因為執行個體鎖定無法使用，或無法啟用任何現有的 FuzeVPN 視窗。\n\n請等待 FuzeVPN 啟動完成後重試。",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "無法套用可攜版更新。您的舊版本仍位於原始資料夾或復原備份中。"
 }

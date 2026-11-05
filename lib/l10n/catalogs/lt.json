@@ -607,5 +607,12 @@
   "Serveurs : {count}": "Serveriai: {count}",
   "Villes : {count}": "Miestai: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "Blokuoja UDP už VPN tunelio ribų. Norėdami apsaugoti ir WebRTC srautą per TCP/TLS, įjunkite apsaugos jungiklį.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Blokuoja DNS už tunelio ribų 53 ir 853 prievaduose. Norėdami apsaugoti ir DNS per HTTPS, įjunkite apsaugos jungiklį."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Blokuoja DNS už tunelio ribų 53 ir 853 prievaduose. Norėdami apsaugoti ir DNS per HTTPS, įjunkite apsaugos jungiklį.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "Nepavyko pašalinti įrenginio. Patikrinkite ryšį ir bandykite dar kartą.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "Nepavyko patvirtinti VPN atjungimo. Pabandykite atjungti dar kartą.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "Nepavyko ištrinti išsaugoto seanso. Pabandykite dar kartą atsijungti nuo paskyros.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Apsaugos jungiklis vis dar blokuoja tinklo srautą. Pabandykite atjungti dar kartą.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPN tunelis vis dar aktyvus. Pabandykite atjungti dar kartą.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN nepavyko paleisti, nes nepasiekiamas jos egzemplioriaus užraktas arba nepavyko suaktyvinti nė vieno jau atverto FuzeVPN lango.\n\nPalaukite, kol FuzeVPN baigs paleidimą, ir bandykite dar kartą.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Nepavyko pritaikyti nešiojamosios versijos naujinimo. Ankstesnė versija yra pradiniame aplanke arba atkūrimo atsarginėje kopijoje."
 }

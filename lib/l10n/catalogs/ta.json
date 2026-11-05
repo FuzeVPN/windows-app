@@ -607,5 +607,12 @@
   "Serveurs : {count}": "சேவையகங்கள்: {count}",
   "Villes : {count}": "நகரங்கள்: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "VPN சுரங்கத்திற்கு வெளியே UDP ஐத் தடுக்கிறது. TCP/TLS வழியான WebRTC ஐயும் தடுக்க kill switch ஐ இயக்கவும்.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "சுரங்கத்திற்கு வெளியே 53 மற்றும் 853 போர்ட்களில் DNS ஐத் தடுக்கிறது. HTTPS வழியான DNS ஐயும் தடுக்க kill switch ஐ இயக்கவும்."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "சுரங்கத்திற்கு வெளியே 53 மற்றும் 853 போர்ட்களில் DNS ஐத் தடுக்கிறது. HTTPS வழியான DNS ஐயும் தடுக்க kill switch ஐ இயக்கவும்.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "இந்தச் சாதனத்தை அகற்ற முடியவில்லை. உங்கள் இணைப்பைச் சரிபார்த்து மீண்டும் முயற்சிக்கவும்.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "VPN இணைப்பு துண்டிக்கப்பட்டதை உறுதிப்படுத்த முடியவில்லை. மீண்டும் இணைப்பைத் துண்டிக்க முயற்சிக்கவும்.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "சேமிக்கப்பட்ட அமர்வை அழிக்க முடியவில்லை. கணக்கிலிருந்து மீண்டும் வெளியேற முயற்சிக்கவும்.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch இன்னும் பிணையப் போக்குவரத்தைத் தடுக்கிறது. மீண்டும் இணைப்பைத் துண்டிக்க முயற்சிக்கவும்.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPN சுரங்கம் இன்னும் செயலில் உள்ளது. மீண்டும் இணைப்பைத் துண்டிக்க முயற்சிக்கவும்.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN ஐத் தொடங்க முடியவில்லை. அதன் நிகழ்வுப் பூட்டு கிடைக்கவில்லை அல்லது ஏற்கனவே உள்ள FuzeVPN சாளரத்தைச் செயல்படுத்த முடியவில்லை.\n\nFuzeVPN தொடங்கி முடியும் வரை காத்திருந்து, மீண்டும் முயற்சிக்கவும்.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "எடுத்துச் செல்லக்கூடிய பதிப்பிற்கான புதுப்பிப்பைப் பயன்படுத்த முடியவில்லை. உங்கள் முந்தைய பதிப்பு அதன் அசல் கோப்புறையிலோ மீட்புக் காப்புப்பிரதியிலோ உள்ளது."
 }

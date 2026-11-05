@@ -607,5 +607,12 @@
   "Serveurs : {count}": "Àwọn olupèsè: {count}",
   "Villes : {count}": "Àwọn ìlú: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "Ó ń dí UDP níta ọ̀nà VPN. Láti bo WebRTC lórí TCP/TLS pẹ̀lú, mú kill switch ṣiṣẹ́.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Ó ń dí DNS níta ọ̀nà VPN lórí àwọn èbúté 53 àti 853. Láti bo DNS lórí HTTPS pẹ̀lú, mú kill switch ṣiṣẹ́."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Ó ń dí DNS níta ọ̀nà VPN lórí àwọn èbúté 53 àti 853. Láti bo DNS lórí HTTPS pẹ̀lú, mú kill switch ṣiṣẹ́.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "A kò lè yọ ẹ̀rọ yìí kúrò. Ṣàyẹ̀wò ìsopọ̀ rẹ kí o sì tún gbìyànjú.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "A kò lè jẹ́rìí pé a ti gé ìsopọ̀ VPN. Tún gbìyànjú láti gé ìsopọ̀ náà.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "A kò lè pa ìgbà ìwọlé tí a fi pamọ́ rẹ́. Tún gbìyànjú láti jáde kúrò nínú àkọọ́lẹ̀ náà.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch ṣì ń dí ìrìnàjò dátà nẹ́tíwọ́ọ̀kì. Tún gbìyànjú láti gé ìsopọ̀ náà.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "Ojú ọ̀nà VPN ṣì ń ṣiṣẹ́. Tún gbìyànjú láti gé ìsopọ̀ náà.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN kò lè bẹ̀rẹ̀ nítorí pé títìpa ẹ̀dà tó ń ṣiṣẹ́ kò sí, tàbí a kò lè mú fèrèsé FuzeVPN kankan tí ó ti ṣí ṣiṣẹ́.\n\nDúró kí FuzeVPN parí bíbẹ̀rẹ̀, kí o sì tún gbìyànjú.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "A kò lè fi ìmúdójúìwọ̀n ẹ̀dà alágbèéká sílò. Ẹ̀dà rẹ àtijọ́ wà nínú fódà rẹ àkọ́kọ́ tàbí nínú ẹ̀dà àfẹ́yìntì fún ìmúpadàbọ̀."
 }

@@ -607,5 +607,12 @@
   "Serveurs : {count}": "Pelayan: {count}",
   "Villes : {count}": "Bandar: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "Menyekat UDP di luar terowong VPN. Untuk meliputi juga WebRTC melalui TCP/TLS, aktifkan kill switch.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Menyekat DNS di luar terowong pada port 53 dan 853. Untuk meliputi juga DNS melalui HTTPS, aktifkan kill switch."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Menyekat DNS di luar terowong pada port 53 dan 853. Untuk meliputi juga DNS melalui HTTPS, aktifkan kill switch.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "Peranti ini tidak dapat dialih keluar. Semak sambungan anda dan cuba lagi.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "Pemutusan sambungan VPN tidak dapat disahkan. Cuba putuskan sambungan semula.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "Sesi yang disimpan tidak dapat dipadamkan. Cuba log keluar daripada akaun semula.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch masih menyekat trafik rangkaian. Cuba putuskan sambungan semula.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "Terowong VPN masih aktif. Cuba putuskan sambungan semula.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN tidak dapat dimulakan kerana kunci instansnya tidak tersedia atau tiada tetingkap FuzeVPN sedia ada yang dapat diaktifkan.\n\nTunggu sehingga FuzeVPN selesai dimulakan, kemudian cuba lagi.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Kemas kini mudah alih tidak dapat digunakan. Versi terdahulu anda berada dalam folder asalnya atau dalam sandaran pemulihan."
 }

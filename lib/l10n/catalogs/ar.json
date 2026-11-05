@@ -607,5 +607,12 @@
   "Serveurs : {count}": "الخوادم: {count}",
   "Villes : {count}": "المدن: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "يحظر UDP خارج نفق VPN. لتغطية WebRTC عبر TCP/TLS أيضًا، فعّل مفتاح الإيقاف.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "يحظر DNS خارج النفق على المنفذين 53 و853. لتغطية DNS عبر HTTPS أيضًا، فعّل مفتاح الإيقاف."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "يحظر DNS خارج النفق على المنفذين 53 و853. لتغطية DNS عبر HTTPS أيضًا، فعّل مفتاح الإيقاف.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "تعذّرت إزالة هذا الجهاز. تحقق من اتصالك ثم أعد المحاولة.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "تعذّر تأكيد قطع اتصال VPN. حاول قطع الاتصال مرة أخرى.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "تعذّر مسح الجلسة المحفوظة. حاول تسجيل الخروج من الحساب مرة أخرى.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "لا يزال مفتاح الإيقاف يحظر حركة مرور الشبكة. حاول قطع الاتصال مرة أخرى.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "لا يزال نفق VPN نشطًا. حاول قطع الاتصال مرة أخرى.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "تعذّر بدء تشغيل FuzeVPN لأن قفل المثيل غير متاح أو تعذّر تنشيط أي نافذة FuzeVPN موجودة.\n\nانتظر حتى يكتمل بدء تشغيل FuzeVPN، ثم أعد المحاولة.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "تعذّر تطبيق تحديث النسخة المحمولة. يوجد الإصدار السابق في مجلده الأصلي أو في النسخة الاحتياطية للاسترداد."
 }

@@ -607,5 +607,12 @@
   "Serveurs : {count}": "Сервери: {count}",
   "Villes : {count}": "Міста: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "Блокує UDP поза VPN-тунелем. Щоб також охопити WebRTC через TCP/TLS, увімкніть аварійне блокування.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Блокує DNS поза тунелем на портах 53 і 853. Щоб також охопити DNS через HTTPS, увімкніть аварійне блокування."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Блокує DNS поза тунелем на портах 53 і 853. Щоб також охопити DNS через HTTPS, увімкніть аварійне блокування.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "Не вдалося видалити цей пристрій. Перевірте підключення та повторіть спробу.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "Не вдалося підтвердити відключення VPN. Повторіть спробу відключення.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "Не вдалося видалити збережений сеанс. Повторіть спробу виходу з облікового запису.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Аварійний вимикач досі блокує мережевий трафік. Повторіть спробу відключення.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "Тунель VPN досі активний. Повторіть спробу відключення.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "Не вдалося запустити FuzeVPN, оскільки блокування екземпляра недоступне або не вдалося активувати жодне з наявних вікон FuzeVPN.\n\nДочекайтеся завершення запуску FuzeVPN та повторіть спробу.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Не вдалося застосувати оновлення портативної версії. Попередня версія знаходиться у вихідній папці або в резервній копії для відновлення."
 }

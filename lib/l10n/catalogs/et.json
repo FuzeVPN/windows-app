@@ -607,5 +607,12 @@
   "Serveurs : {count}": "Serverid: {count}",
   "Villes : {count}": "Linnad: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "Blokeerib UDP väljaspool VPN-tunnelit. WebRTC katmiseks ka TCP/TLS-i kaudu lubage hädaseiskamine.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Blokeerib DNS-i väljaspool tunnelit portidel 53 ja 853. DNS-i katmiseks ka HTTPS-i kaudu lubage hädaseiskamine."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Blokeerib DNS-i väljaspool tunnelit portidel 53 ja 853. DNS-i katmiseks ka HTTPS-i kaudu lubage hädaseiskamine.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "Seadet ei saanud eemaldada. Kontrollige ühendust ja proovige uuesti.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "VPN-ühenduse katkestamist ei saanud kinnitada. Proovige ühendus uuesti katkestada.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "Salvestatud seanssi ei saanud kustutada. Proovige kontolt uuesti välja logida.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Hädaseiskamine blokeerib endiselt võrguliiklust. Proovige ühendus uuesti katkestada.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPN-tunnel on endiselt aktiivne. Proovige ühendus uuesti katkestada.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN ei saanud käivituda, sest selle eksemplari lukk pole saadaval või ühtegi olemasolevat FuzeVPN akent ei saanud aktiveerida.\n\nOodake, kuni FuzeVPN on käivitunud, ja proovige uuesti.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Kaasaskantava versiooni värskendust ei saanud rakendada. Eelmine versioon asub algses kaustas või taastamise varukoopias."
 }

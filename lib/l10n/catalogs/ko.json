@@ -607,5 +607,12 @@
   "Serveurs : {count}": "서버: {count}",
   "Villes : {count}": "도시: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "VPN 터널 외부의 UDP를 차단합니다. TCP/TLS를 통한 WebRTC도 보호하려면 킬 스위치를 활성화하세요.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "터널 외부의 포트 53 및 853에서 DNS를 차단합니다. HTTPS를 통한 DNS도 보호하려면 킬 스위치를 활성화하세요."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "터널 외부의 포트 53 및 853에서 DNS를 차단합니다. HTTPS를 통한 DNS도 보호하려면 킬 스위치를 활성화하세요.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "이 장치를 제거하지 못했습니다. 연결을 확인한 후 다시 시도하세요.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "VPN 연결이 해제되었는지 확인하지 못했습니다. 연결 해제를 다시 시도하세요.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "저장된 세션을 삭제하지 못했습니다. 계정 로그아웃을 다시 시도하세요.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch가 여전히 네트워크 트래픽을 차단하고 있습니다. 연결 해제를 다시 시도하세요.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPN 터널이 여전히 활성 상태입니다. 연결 해제를 다시 시도하세요.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "인스턴스 잠금을 사용할 수 없거나 기존 FuzeVPN 창을 활성화할 수 없어 FuzeVPN을 시작하지 못했습니다.\n\nFuzeVPN 시작이 완료될 때까지 기다린 후 다시 시도하세요.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "포터블 버전 업데이트를 적용하지 못했습니다. 이전 버전은 원래 폴더 또는 복구 백업에 있습니다."
 }

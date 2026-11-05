@@ -607,5 +607,12 @@
   "Serveurs : {count}": "ସର୍ଭର: {count}",
   "Villes : {count}": "ସହର: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "VPN ଟନେଲ୍ ବାହାରେ UDP ଅବରୋଧ କରେ। TCP/TLS ଦେଇ WebRTC କୁ ମଧ୍ୟ ସୁରକ୍ଷା ଦେବା ପାଇଁ kill switch ସକ୍ରିୟ କରନ୍ତୁ।",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "ଟନେଲ୍ ବାହାରେ ପୋର୍ଟ 53 ଓ 853 ରେ DNS ଅବରୋଧ କରେ। HTTPS ଦେଇ DNS କୁ ମଧ୍ୟ ସୁରକ୍ଷା ଦେବା ପାଇଁ kill switch ସକ୍ରିୟ କରନ୍ତୁ।"
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "ଟନେଲ୍ ବାହାରେ ପୋର୍ଟ 53 ଓ 853 ରେ DNS ଅବରୋଧ କରେ। HTTPS ଦେଇ DNS କୁ ମଧ୍ୟ ସୁରକ୍ଷା ଦେବା ପାଇଁ kill switch ସକ୍ରିୟ କରନ୍ତୁ।",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "ଏହି ଡିଭାଇସ୍‌କୁ ହଟାଇହେଲା ନାହିଁ। ଆପଣଙ୍କ ସଂଯୋଗ ଯାଞ୍ଚ କରି ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "VPN ବିଚ୍ଛିନ୍ନ ହୋଇଥିବାର ପୁଷ୍ଟି କରିହେଲା ନାହିଁ। ପୁଣି ବିଚ୍ଛିନ୍ନ କରିବାକୁ ଚେଷ୍ଟା କରନ୍ତୁ।",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "ସଂରକ୍ଷିତ ସେସନ୍ ମିଟାଇହେଲା ନାହିଁ। ଖାତାରୁ ସାଇନ୍ ଆଉଟ୍ କରିବାକୁ ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch ଏପର୍ଯ୍ୟନ୍ତ ନେଟୱର୍କ ଟ୍ରାଫିକ୍ ଅବରୋଧ କରୁଛି। ପୁଣି ବିଚ୍ଛିନ୍ନ କରିବାକୁ ଚେଷ୍ଟା କରନ୍ତୁ।",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPN ଟନେଲ୍ ଏପର୍ଯ୍ୟନ୍ତ ସକ୍ରିୟ ଅଛି। ପୁଣି ବିଚ୍ଛିନ୍ନ କରିବାକୁ ଚେଷ୍ଟା କରନ୍ତୁ।",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN ଆରମ୍ଭ ହୋଇପାରିଲା ନାହିଁ, କାରଣ ଏହାର ଇନ୍‌ଷ୍ଟାନ୍ସ ଲକ୍ ଉପଲବ୍ଧ ନାହିଁ କିମ୍ବା ପୂର୍ବରୁ ଥିବା କୌଣସି FuzeVPN ୱିଣ୍ଡୋକୁ ସକ୍ରିୟ କରିହେଲା ନାହିଁ।\n\nFuzeVPN ଆରମ୍ଭ ହେବା ସମ୍ପୂର୍ଣ୍ଣ ହେବା ପର୍ଯ୍ୟନ୍ତ ଅପେକ୍ଷା କରି ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "ପୋର୍ଟେବଲ୍ ଅପଡେଟ୍ ଲାଗୁ କରିହେଲା ନାହିଁ। ଆପଣଙ୍କ ପୂର୍ବ ସଂସ୍କରଣ ଏହାର ମୂଳ ଫୋଲ୍ଡର୍‌ରେ କିମ୍ବା ପୁନରୁଦ୍ଧାର ବ୍ୟାକଅପ୍‌ରେ ଅଛି।"
 }

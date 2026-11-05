@@ -607,5 +607,12 @@
   "Serveurs : {count}": "Сървъри: {count}",
   "Villes : {count}": "Градове: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "Блокира UDP извън VPN тунела. За да обхванете и WebRTC през TCP/TLS, включете аварийното прекъсване.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Блокира DNS извън тунела на портове 53 и 853. За да обхванете и DNS през HTTPS, включете аварийното прекъсване."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Блокира DNS извън тунела на портове 53 и 853. За да обхванете и DNS през HTTPS, включете аварийното прекъсване.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "Устройството не можа да бъде премахнато. Проверете връзката си и опитайте отново.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "Прекъсването на VPN връзката не можа да бъде потвърдено. Опитайте отново да прекъснете връзката.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "Запазената сесия не можа да бъде изтрита. Опитайте отново да излезете от акаунта.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Аварийното прекъсване продължава да блокира мрежовия трафик. Опитайте отново да прекъснете връзката.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPN тунелът все още е активен. Опитайте отново да прекъснете връзката.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN не можа да стартира, защото заключването на неговия екземпляр е недостъпно или никой съществуващ прозорец на FuzeVPN не можа да бъде активиран.\n\nИзчакайте FuzeVPN да завърши стартирането си и опитайте отново.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Преносимата актуализация не можа да бъде приложена. Предишната ви версия се намира в първоначалната си папка или в резервното копие за възстановяване."
 }

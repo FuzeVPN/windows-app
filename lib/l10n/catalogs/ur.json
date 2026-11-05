@@ -607,5 +607,12 @@
   "Serveurs : {count}": "سرورز: {count}",
   "Villes : {count}": "شہر: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "VPN ٹنل کے باہر UDP کو روکتا ہے۔ TCP/TLS کے ذریعے WebRTC کو بھی کور کرنے کے لیے کل سوئچ فعال کریں۔",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "ٹنل کے باہر پورٹس 53 اور 853 پر DNS کو روکتا ہے۔ HTTPS کے ذریعے DNS کو بھی کور کرنے کے لیے کل سوئچ فعال کریں۔"
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "ٹنل کے باہر پورٹس 53 اور 853 پر DNS کو روکتا ہے۔ HTTPS کے ذریعے DNS کو بھی کور کرنے کے لیے کل سوئچ فعال کریں۔",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "یہ آلہ ہٹایا نہیں جا سکا۔ اپنا کنکشن چیک کریں اور دوبارہ کوشش کریں۔",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "VPN کا کنکشن منقطع ہونے کی تصدیق نہیں ہو سکی۔ دوبارہ کنکشن منقطع کرنے کی کوشش کریں۔",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "محفوظ کردہ سیشن مٹایا نہیں جا سکا۔ اکاؤنٹ سے دوبارہ سائن آؤٹ کرنے کی کوشش کریں۔",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch اب بھی نیٹ ورک ٹریفک کو روک رہا ہے۔ دوبارہ کنکشن منقطع کرنے کی کوشش کریں۔",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPN ٹنل اب بھی فعال ہے۔ دوبارہ کنکشن منقطع کرنے کی کوشش کریں۔",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN شروع نہیں ہو سکا کیونکہ اس کا انسٹینس لاک دستیاب نہیں ہے یا FuzeVPN کی کسی موجودہ ونڈو کو فعال نہیں کیا جا سکا۔\n\nFuzeVPN کے شروع ہونے کا عمل مکمل ہونے کا انتظار کریں، پھر دوبارہ کوشش کریں۔",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "پورٹیبل اپ ڈیٹ لاگو نہیں ہو سکی۔ آپ کا پچھلا ورژن اپنے اصل فولڈر میں یا بحالی کے بیک اپ میں موجود ہے۔"
 }

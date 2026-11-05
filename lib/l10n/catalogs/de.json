@@ -607,5 +607,12 @@
   "Serveurs : {count}": "Server: {count}",
   "Villes : {count}": "Städte: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "Blockiert UDP außerhalb des VPN-Tunnels. Aktivieren Sie den Kill Switch, um auch WebRTC über TCP/TLS abzudecken.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Blockiert DNS außerhalb des Tunnels auf den Ports 53 und 853. Aktivieren Sie den Kill Switch, um auch DNS über HTTPS abzudecken."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Blockiert DNS außerhalb des Tunnels auf den Ports 53 und 853. Aktivieren Sie den Kill Switch, um auch DNS über HTTPS abzudecken.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "Dieses Gerät konnte nicht entfernt werden. Prüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "Die Trennung der VPN-Verbindung konnte nicht bestätigt werden. Versuchen Sie erneut, die Verbindung zu trennen.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "Die gespeicherte Sitzung konnte nicht gelöscht werden. Versuchen Sie erneut, sich von Ihrem Konto abzumelden.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Der Kill Switch blockiert weiterhin den Netzwerkverkehr. Versuchen Sie erneut, die Verbindung zu trennen.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "Der VPN-Tunnel ist weiterhin aktiv. Versuchen Sie erneut, die Verbindung zu trennen.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN konnte nicht gestartet werden, weil die Instanzsperre nicht verfügbar ist oder kein vorhandenes FuzeVPN-Fenster aktiviert werden konnte.\n\nWarten Sie, bis FuzeVPN vollständig gestartet ist, und versuchen Sie es erneut.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Das portable Update konnte nicht angewendet werden. Ihre vorherige Version befindet sich im ursprünglichen Ordner oder in der Wiederherstellungssicherung."
 }

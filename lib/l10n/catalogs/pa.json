@@ -607,5 +607,12 @@
   "Serveurs : {count}": "ਸਰਵਰ: {count}",
   "Villes : {count}": "ਸ਼ਹਿਰ: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "VPN ਟਨਲ ਤੋਂ ਬਾਹਰ UDP ਨੂੰ ਰੋਕਦਾ ਹੈ। TCP/TLS ਰਾਹੀਂ WebRTC ਨੂੰ ਵੀ ਕਵਰ ਕਰਨ ਲਈ kill switch ਚਾਲੂ ਕਰੋ।",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "ਟਨਲ ਤੋਂ ਬਾਹਰ ਪੋਰਟ 53 ਅਤੇ 853 'ਤੇ DNS ਨੂੰ ਰੋਕਦਾ ਹੈ। HTTPS ਰਾਹੀਂ DNS ਨੂੰ ਵੀ ਕਵਰ ਕਰਨ ਲਈ kill switch ਚਾਲੂ ਕਰੋ।"
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "ਟਨਲ ਤੋਂ ਬਾਹਰ ਪੋਰਟ 53 ਅਤੇ 853 'ਤੇ DNS ਨੂੰ ਰੋਕਦਾ ਹੈ। HTTPS ਰਾਹੀਂ DNS ਨੂੰ ਵੀ ਕਵਰ ਕਰਨ ਲਈ kill switch ਚਾਲੂ ਕਰੋ।",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "ਇਹ ਡਿਵਾਈਸ ਹਟਾਈ ਨਹੀਂ ਜਾ ਸਕੀ। ਆਪਣਾ ਕਨੈਕਸ਼ਨ ਜਾਂਚੋ ਅਤੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "VPN ਦੇ ਡਿਸਕਨੈਕਟ ਹੋਣ ਦੀ ਪੁਸ਼ਟੀ ਨਹੀਂ ਹੋ ਸਕੀ। ਡਿਸਕਨੈਕਟ ਕਰਨ ਦੀ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "ਸੇਵ ਕੀਤਾ ਸੈਸ਼ਨ ਮਿਟਾਇਆ ਨਹੀਂ ਜਾ ਸਕਿਆ। ਖਾਤੇ ਤੋਂ ਲੌਗ ਆਉਟ ਕਰਨ ਦੀ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch ਅਜੇ ਵੀ ਨੈੱਟਵਰਕ ਟ੍ਰੈਫਿਕ ਰੋਕ ਰਿਹਾ ਹੈ। ਡਿਸਕਨੈਕਟ ਕਰਨ ਦੀ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPN ਟਨਲ ਅਜੇ ਵੀ ਸਰਗਰਮ ਹੈ। ਡਿਸਕਨੈਕਟ ਕਰਨ ਦੀ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN ਸ਼ੁਰੂ ਨਹੀਂ ਹੋ ਸਕਿਆ, ਕਿਉਂਕਿ ਇਸ ਦਾ ਇੰਸਟੈਂਸ ਲਾਕ ਉਪਲਬਧ ਨਹੀਂ ਹੈ ਜਾਂ FuzeVPN ਦੀ ਕਿਸੇ ਮੌਜੂਦਾ ਵਿੰਡੋ ਨੂੰ ਸਰਗਰਮ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਿਆ।\n\nFuzeVPN ਦੇ ਸ਼ੁਰੂ ਹੋਣ ਤੱਕ ਉਡੀਕ ਕਰੋ, ਫਿਰ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "ਪੋਰਟੇਬਲ ਅੱਪਡੇਟ ਲਾਗੂ ਨਹੀਂ ਹੋ ਸਕਿਆ। ਤੁਹਾਡਾ ਪਿਛਲਾ ਵਰਜਨ ਆਪਣੇ ਮੂਲ ਫੋਲਡਰ ਜਾਂ ਰਿਕਵਰੀ ਬੈਕਅੱਪ ਵਿੱਚ ਮੌਜੂਦ ਹੈ।"
 }

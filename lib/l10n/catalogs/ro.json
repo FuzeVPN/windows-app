@@ -607,5 +607,12 @@
   "Serveurs : {count}": "Servere: {count}",
   "Villes : {count}": "Orașe: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "Blochează UDP în afara tunelului VPN. Pentru a acoperi și WebRTC prin TCP/TLS, activați kill switch.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Blochează DNS în afara tunelului pe porturile 53 și 853. Pentru a acoperi și DNS prin HTTPS, activați kill switch."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Blochează DNS în afara tunelului pe porturile 53 și 853. Pentru a acoperi și DNS prin HTTPS, activați kill switch.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "Acest dispozitiv nu a putut fi eliminat. Verificați conexiunea și încercați din nou.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "Deconectarea VPN nu a putut fi confirmată. Încercați din nou deconectarea.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "Sesiunea salvată nu a putut fi ștearsă. Încercați din nou deconectarea de la cont.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch-ul blochează în continuare traficul de rețea. Încercați din nou deconectarea.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "Tunelul VPN este în continuare activ. Încercați din nou deconectarea.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN nu a putut porni deoarece blocarea instanței nu este disponibilă sau nu a putut fi activată nicio fereastră FuzeVPN existentă.\n\nAșteptați finalizarea pornirii FuzeVPN, apoi încercați din nou.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Actualizarea versiunii portabile nu a putut fi aplicată. Versiunea anterioară se află în folderul original sau în copia de rezervă pentru recuperare."
 }

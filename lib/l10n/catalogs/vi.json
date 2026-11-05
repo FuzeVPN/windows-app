@@ -607,5 +607,12 @@
   "Serveurs : {count}": "Máy chủ: {count}",
   "Villes : {count}": "Thành phố: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "Chặn UDP bên ngoài đường hầm VPN. Để bảo vệ cả WebRTC qua TCP/TLS, hãy bật kill switch.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Chặn DNS bên ngoài đường hầm trên cổng 53 và 853. Để bảo vệ cả DNS qua HTTPS, hãy bật kill switch."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Chặn DNS bên ngoài đường hầm trên cổng 53 và 853. Để bảo vệ cả DNS qua HTTPS, hãy bật kill switch.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "Không thể xóa thiết bị này. Kiểm tra kết nối rồi thử lại.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "Không thể xác nhận VPN đã ngắt kết nối. Thử ngắt kết nối lại.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "Không thể xóa phiên đã lưu. Thử đăng xuất khỏi tài khoản một lần nữa.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch vẫn đang chặn lưu lượng mạng. Thử ngắt kết nối lại.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "Đường hầm VPN vẫn đang hoạt động. Thử ngắt kết nối lại.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "Không thể khởi động FuzeVPN vì khóa phiên chạy của ứng dụng không khả dụng hoặc không thể kích hoạt bất kỳ cửa sổ FuzeVPN hiện có nào.\n\nĐợi FuzeVPN khởi động xong rồi thử lại.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Không thể áp dụng bản cập nhật cho phiên bản không cần cài đặt. Phiên bản trước của bạn nằm trong thư mục ban đầu hoặc trong bản sao lưu khôi phục."
 }

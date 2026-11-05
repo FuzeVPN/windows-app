@@ -607,5 +607,12 @@
   "Serveurs : {count}": "సర్వర్లు: {count}",
   "Villes : {count}": "నగరాలు: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "VPN టన్నెల్ వెలుపల UDPను నిరోధిస్తుంది. TCP/TLS ద్వారా WebRTCను కూడా కవర్ చేయడానికి kill switchను ప్రారంభించండి.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "టన్నెల్ వెలుపల 53 మరియు 853 పోర్ట్‌లలో DNSను నిరోధిస్తుంది. HTTPS ద్వారా DNSను కూడా కవర్ చేయడానికి kill switchను ప్రారంభించండి."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "టన్నెల్ వెలుపల 53 మరియు 853 పోర్ట్‌లలో DNSను నిరోధిస్తుంది. HTTPS ద్వారా DNSను కూడా కవర్ చేయడానికి kill switchను ప్రారంభించండి.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "ఈ పరికరాన్ని తొలగించలేకపోయాము. మీ కనెక్షన్‌ను తనిఖీ చేసి మళ్లీ ప్రయత్నించండి.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "VPN డిస్‌కనెక్ట్ అయిందని నిర్ధారించలేకపోయాము. మళ్లీ డిస్‌కనెక్ట్ చేయడానికి ప్రయత్నించండి.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "సేవ్ చేసిన సెషన్‌ను తొలగించలేకపోయాము. ఖాతా నుండి మళ్లీ సైన్ అవుట్ చేయడానికి ప్రయత్నించండి.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch ఇప్పటికీ నెట్‌వర్క్ ట్రాఫిక్‌ను నిరోధిస్తోంది. మళ్లీ డిస్‌కనెక్ట్ చేయడానికి ప్రయత్నించండి.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPN టన్నెల్ ఇప్పటికీ సక్రియంగా ఉంది. మళ్లీ డిస్‌కనెక్ట్ చేయడానికి ప్రయత్నించండి.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPNను ప్రారంభించలేకపోయాము. దాని ఇన్‌స్టాన్స్ లాక్ అందుబాటులో లేదు లేదా ఇప్పటికే ఉన్న FuzeVPN విండోను సక్రియం చేయలేకపోయాము.\n\nFuzeVPN ప్రారంభం పూర్తయ్యే వరకు వేచి ఉండి, మళ్లీ ప్రయత్నించండి.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "పోర్టబుల్ అప్‌డేట్‌ను వర్తింపజేయలేకపోయాము. మీ మునుపటి వెర్షన్ దాని అసలు ఫోల్డర్‌లో లేదా రికవరీ బ్యాకప్‌లో ఉంది."
 }

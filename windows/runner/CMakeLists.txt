@@ -123,7 +123,7 @@ target_compile_definitions(fuzevpn_update PRIVATE NOMINMAX WIN32_LEAN_AND_MEAN
   "FUZEVPN_FILE_DESCRIPTION=\"FuzeVPN update\"")
 target_compile_options(fuzevpn_update PRIVATE
   "$<$<CONFIG:Debug>:/MTd>" "$<$<NOT:$<CONFIG:Debug>>:/MT>")
-target_link_libraries(fuzevpn_update PRIVATE advapi32 bcrypt crypt32 shell32 ole32 wintrust version msi)
+target_link_libraries(fuzevpn_update PRIVATE advapi32 bcrypt crypt32 shell32 ole32 wintrust version msi comctl32)
 target_link_options(fuzevpn_update PRIVATE /DEPENDENTLOADFLAG:0x800)
 add_dependencies(${BINARY_NAME} fuzevpn_update)
 
@@ -207,7 +207,7 @@ target_compile_definitions(${BINARY_NAME} PRIVATE "NOMINMAX" "WIN32_LEAN_AND_MEA
 # Add dependency libraries and include directories. Add any application-specific
 # dependencies here.
 target_link_libraries(${BINARY_NAME} PRIVATE flutter flutter_wrapper_app)
-target_link_libraries(${BINARY_NAME} PRIVATE "dwmapi.lib" "crypt32.lib" "shell32.lib" "advapi32.lib" "msi.lib"
+target_link_libraries(${BINARY_NAME} PRIVATE "dwmapi.lib" "crypt32.lib" "shell32.lib" "advapi32.lib" "msi.lib" "comctl32.lib"
   "fwpuclnt.lib" "iphlpapi.lib" "rpcrt4.lib" "ws2_32.lib" "wintrust.lib"
   "winhttp.lib" "bcrypt.lib" "version.lib" "ole32.lib")
 target_include_directories(${BINARY_NAME} PRIVATE "${CMAKE_SOURCE_DIR}")
@@ -545,6 +545,17 @@ set_target_properties(fuzevpn_single_instance_test PROPERTIES
   RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/native-tests")
 fuzevpn_add_native_test(single_instance fuzevpn_single_instance_test)
 set_tests_properties(single_instance PROPERTIES TIMEOUT 10)
+
+add_executable(fuzevpn_native_dialog_localization_test EXCLUDE_FROM_ALL
+  "../tests/native_dialog_localization_test.cpp")
+apply_standard_settings(fuzevpn_native_dialog_localization_test)
+target_compile_definitions(fuzevpn_native_dialog_localization_test PRIVATE NOMINMAX WIN32_LEAN_AND_MEAN)
+target_include_directories(fuzevpn_native_dialog_localization_test PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
+target_link_libraries(fuzevpn_native_dialog_localization_test PRIVATE comctl32)
+set_target_properties(fuzevpn_native_dialog_localization_test PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/native-tests")
+fuzevpn_add_native_test(native_dialog_localization fuzevpn_native_dialog_localization_test)
+set_tests_properties(native_dialog_localization PROPERTIES TIMEOUT 10)
 
 add_executable(fuzevpn_wireguard_local_identity_test EXCLUDE_FROM_ALL
   "../tests/wireguard_local_identity_test.cpp" "privileged_runtime.cpp")

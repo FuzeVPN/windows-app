@@ -607,5 +607,12 @@
   "Serveurs : {count}": "Servers: {count}",
   "Villes : {count}": "Steden: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "Blokkeert UDP buiten de VPN-tunnel. Schakel de kill switch in om ook WebRTC via TCP/TLS af te dekken.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Blokkeert DNS buiten de tunnel op poorten 53 en 853. Schakel de kill switch in om ook DNS via HTTPS af te dekken."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Blokkeert DNS buiten de tunnel op poorten 53 en 853. Schakel de kill switch in om ook DNS via HTTPS af te dekken.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "Dit apparaat kon niet worden verwijderd. Controleer uw verbinding en probeer het opnieuw.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "Het verbreken van de VPN-verbinding kon niet worden bevestigd. Probeer de verbinding opnieuw te verbreken.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "De opgeslagen sessie kon niet worden gewist. Probeer opnieuw uit te loggen bij uw account.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "De kill switch blokkeert nog steeds netwerkverkeer. Probeer de verbinding opnieuw te verbreken.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "De VPN-tunnel is nog steeds actief. Probeer de verbinding opnieuw te verbreken.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN kon niet worden gestart omdat de instantievergrendeling niet beschikbaar is of geen bestaand FuzeVPN-venster kon worden geactiveerd.\n\nWacht totdat FuzeVPN volledig is gestart en probeer het opnieuw.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "De portable update kon niet worden toegepast. Uw vorige versie staat in de oorspronkelijke map of in de herstelback-up."
 }

@@ -607,5 +607,12 @@
   "Serveurs : {count}": "አገልጋዮች፦ {count}",
   "Villes : {count}": "ከተሞች፦ {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "ከ VPN ዋሻ ውጭ UDP ን ያግዳል። በ TCP/TLS የሚሄድ WebRTC ንም ለመሸፈን kill switch ን ያንቁ።",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "ከዋሻው ውጭ በ53 እና 853 ወደቦች የሚሄድ DNS ን ያግዳል። በ HTTPS የሚሄድ DNS ንም ለመሸፈን kill switch ን ያንቁ።"
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "ከዋሻው ውጭ በ53 እና 853 ወደቦች የሚሄድ DNS ን ያግዳል። በ HTTPS የሚሄድ DNS ንም ለመሸፈን kill switch ን ያንቁ።",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "ይህን መሣሪያ ማስወገድ አልተቻለም። የኢንተርኔት ግንኙነትዎን ያረጋግጡና እንደገና ይሞክሩ።",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "የ VPN ግንኙነቱ መቋረጡን ማረጋገጥ አልተቻለም። ግንኙነቱን ለማቋረጥ እንደገና ይሞክሩ።",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "የተቀመጠውን ክፍለ ጊዜ መሰረዝ አልተቻለም። ከመለያዎ ለመውጣት እንደገና ይሞክሩ።",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch አሁንም የኔትወርክ ትራፊክን እያገደ ነው። ግንኙነቱን ለማቋረጥ እንደገና ይሞክሩ።",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "የ VPN ዋሻው አሁንም ንቁ ነው። ግንኙነቱን ለማቋረጥ እንደገና ይሞክሩ።",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "አንድ ቅጂ ብቻ እንዲሠራ የሚቆጣጠረው መቆለፊያ ስለማይገኝ ወይም የተከፈተ የ FuzeVPN መስኮት ንቁ ማድረግ ስላልተቻለ FuzeVPN መጀመር አልቻለም።\n\nFuzeVPN መጀመሩን እስኪያጠናቅቅ ይጠብቁና እንደገና ይሞክሩ።",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "የተንቀሳቃሽ ስሪቱን ዝማኔ መተግበር አልተቻለም። የቀድሞ ስሪትዎ በመጀመሪያው አቃፊው ወይም በመመለሻ ምትኬው ውስጥ ይገኛል።"
 }

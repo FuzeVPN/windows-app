@@ -607,5 +607,12 @@
   "Serveurs : {count}": "Servidores: {count}",
   "Villes : {count}": "Ciudades: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "Bloquea UDP fuera del túnel VPN. Para cubrir también WebRTC mediante TCP/TLS, activa el kill switch.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Bloquea el DNS fuera del túnel en los puertos 53 y 853. Para cubrir también el DNS mediante HTTPS, activa el kill switch."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Bloquea el DNS fuera del túnel en los puertos 53 y 853. Para cubrir también el DNS mediante HTTPS, activa el kill switch.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "No se ha podido retirar este dispositivo. Comprueba tu conexión y vuelve a intentarlo.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "No se ha podido confirmar la desconexión de la VPN. Intenta desconectarla de nuevo.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "No se ha podido borrar la sesión guardada. Intenta cerrar la sesión de tu cuenta de nuevo.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "El kill switch sigue bloqueando el tráfico de red. Intenta desconectar la VPN de nuevo.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "El túnel VPN sigue activo. Intenta desconectarlo de nuevo.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN no ha podido iniciarse porque el bloqueo de instancia no está disponible o no se ha podido activar ninguna ventana existente de FuzeVPN.\n\nEspera a que FuzeVPN termine de iniciarse y vuelve a intentarlo.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "No se ha podido aplicar la actualización portátil. La versión anterior se encuentra en su carpeta original o en la copia de seguridad de recuperación."
 }

@@ -607,5 +607,12 @@
   "Serveurs : {count}": "Servere: {count}",
   "Villes : {count}": "Byer: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "Blokerer UDP uden for VPN-tunnelen. Aktivér kill switch for også at dække WebRTC via TCP/TLS.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Blokerer DNS uden for tunnelen på port 53 og 853. Aktivér kill switch for også at dække DNS via HTTPS."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Blokerer DNS uden for tunnelen på port 53 og 853. Aktivér kill switch for også at dække DNS via HTTPS.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "Denne enhed kunne ikke fjernes. Kontrollér din forbindelse, og prøv igen.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "Det kunne ikke bekræftes, at VPN-forbindelsen er afbrudt. Prøv at afbryde forbindelsen igen.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "Den gemte session kunne ikke slettes. Prøv at logge ud af din konto igen.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch blokerer stadig netværkstrafik. Prøv at afbryde forbindelsen igen.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPN-tunnelen er stadig aktiv. Prøv at afbryde forbindelsen igen.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN kunne ikke starte, fordi instanslåsen ikke er tilgængelig, eller fordi ingen eksisterende FuzeVPN-vinduer kunne aktiveres.\n\nVent, indtil FuzeVPN er færdig med at starte, og prøv igen.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Den portable opdatering kunne ikke anvendes. Din tidligere version ligger i den oprindelige mappe eller i sikkerhedskopien til gendannelse."
 }

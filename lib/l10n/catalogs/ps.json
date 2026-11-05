@@ -607,5 +607,12 @@
   "Serveurs : {count}": "سرورونه: {count}",
   "Villes : {count}": "ښارونه: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "د VPN تونل څخه بهر UDP بندوي. د TCP/TLS له لارې د WebRTC پوښلو لپاره هم kill switch فعال کړئ.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "د تونل څخه بهر په 53 او 853 پورټونو DNS بندوي. د HTTPS له لارې د DNS پوښلو لپاره هم kill switch فعال کړئ."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "د تونل څخه بهر په 53 او 853 پورټونو DNS بندوي. د HTTPS له لارې د DNS پوښلو لپاره هم kill switch فعال کړئ.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "دا وسیله لیرې نه شوه. خپل اتصال وګورئ او بیا هڅه وکړئ.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "د VPN اتصال پرې کېدل تایید نه شول. د اتصال پرې کولو بیا هڅه وکړئ.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "خوندي شوې ناسته ړنګه نه شوه. له حسابه د وتلو بیا هڅه وکړئ.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "kill switch لا هم د شبکې ټرافیک بندوي. د اتصال پرې کولو بیا هڅه وکړئ.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "د VPN تونل لا هم فعال دی. د اتصال پرې کولو بیا هڅه وکړئ.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN پیل نه شو، ځکه چې د پروګرام د یوې بېلګې د چلولو قلف شتون نه لري یا د FuzeVPN کومه له مخکې پرانیستې کړکۍ فعاله نه شوه.\n\nد FuzeVPN د پیل بشپړېدو ته انتظار وکړئ، بیا هڅه وکړئ.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "د پورټبل نسخې تازه کول پلي نه شول. ستاسو پخوانۍ نسخه په خپل اصلي فولډر یا د بېرته راګرځولو په خوندي کاپي کې شته."
 }

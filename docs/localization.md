@@ -27,6 +27,10 @@ Flutter catalogs do not update installer text automatically.
 Translation contributions follow the licensing and review rules in
 [CONTRIBUTING.md](../CONTRIBUTING.md).
 
+The same generator also writes `windows/runner/generated_native_catalogs.h`
+for startup and portable-update error dialogs. These dialogs use the saved app
+language, or the Windows UI language when the setting follows the system.
+
 Punjabi uses Gurmukhi, Azerbaijani and Uzbek use Latin, and Serbian uses
 Cyrillic. Hebrew and Pashto use right-to-left layout alongside Arabic, Persian
 and Urdu. Script-sensitive Windows font fallbacks and untracked spacing keep

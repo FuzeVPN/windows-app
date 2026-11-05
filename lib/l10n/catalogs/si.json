@@ -607,5 +607,12 @@
   "Serveurs : {count}": "සේවාදායක: {count}",
   "Villes : {count}": "නගර: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "VPN උමඟෙන් පිටත UDP අවහිර කරයි. TCP/TLS හරහා WebRTC ද ආවරණය කිරීමට kill switch සක්‍රීය කරන්න.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "උමඟෙන් පිටත 53 සහ 853 තොටවල DNS අවහිර කරයි. HTTPS හරහා DNS ද ආවරණය කිරීමට kill switch සක්‍රීය කරන්න."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "උමඟෙන් පිටත 53 සහ 853 තොටවල DNS අවහිර කරයි. HTTPS හරහා DNS ද ආවරණය කිරීමට kill switch සක්‍රීය කරන්න.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "මෙම උපාංගය ඉවත් කිරීමට නොහැකි විය. ඔබගේ සම්බන්ධතාව පරීක්ෂා කර නැවත උත්සාහ කරන්න.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "VPN සම්බන්ධතාව විසන්ධි වූ බව තහවුරු කිරීමට නොහැකි විය. නැවත විසන්ධි කිරීමට උත්සාහ කරන්න.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "සුරකින ලද සැසිය මකා දැමීමට නොහැකි විය. ගිණුමෙන් නැවත වරනය වීමට උත්සාහ කරන්න.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch තවමත් ජාල ගමනාගමනය අවහිර කරයි. නැවත විසන්ධි කිරීමට උත්සාහ කරන්න.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPN උමඟ තවමත් සක්‍රීයයි. නැවත විසන්ධි කිරීමට උත්සාහ කරන්න.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN ආරම්භ කිරීමට නොහැකි විය. එහි ධාවන අවස්ථා අගුල ලබාගත නොහැක, නැතහොත් දැනට පවතින FuzeVPN කවුළුවක් සක්‍රීය කිරීමට නොහැකි විය.\n\nFuzeVPN ආරම්භ වී අවසන් වන තෙක් රැඳී සිට නැවත උත්සාහ කරන්න.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "අතේ ගෙන යා හැකි අනුවාදයේ යාවත්කාලීනය යෙදීමට නොහැකි විය. ඔබගේ පෙර අනුවාදය එහි මුල් ෆෝල්ඩරයේ හෝ ප්‍රතිසාධන උපස්ථයේ ඇත."
 }

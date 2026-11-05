@@ -607,5 +607,12 @@
   "Serveurs : {count}": "Mga server: {count}",
   "Villes : {count}": "Mga lungsod: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "Hinaharangan ang UDP sa labas ng VPN tunnel. Para masaklaw din ang WebRTC sa TCP/TLS, i-enable ang kill switch.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Hinaharangan ang DNS sa labas ng tunnel sa mga port 53 at 853. Para masaklaw din ang DNS sa HTTPS, i-enable ang kill switch."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Hinaharangan ang DNS sa labas ng tunnel sa mga port 53 at 853. Para masaklaw din ang DNS sa HTTPS, i-enable ang kill switch.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "Hindi maalis ang device na ito. Suriin ang iyong koneksyon at subukang muli.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "Hindi makumpirma ang pag-disconnect sa VPN. Subukang mag-disconnect muli.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "Hindi mabura ang naka-save mong session. Subukang mag-sign out muli sa iyong account.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Hinaharangan pa rin ng kill switch ang trapiko sa network. Subukang mag-disconnect muli.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "Aktibo pa rin ang VPN tunnel. Subukang mag-disconnect muli.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "Hindi masimulan ang FuzeVPN dahil hindi available ang lock ng instance nito o hindi ma-activate ang alinmang bukas na window ng FuzeVPN.\n\nHintaying matapos ang pagsisimula ng FuzeVPN, pagkatapos ay subukang muli.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Hindi mailapat ang portable na update. Nasa orihinal na folder nito o sa backup para sa pagbawi ang dati mong bersyon."
 }
