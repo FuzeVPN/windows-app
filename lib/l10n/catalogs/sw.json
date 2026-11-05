@@ -607,5 +607,12 @@
   "Serveurs : {count}": "Seva: {count}",
   "Villes : {count}": "Majiji: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "Huzuia UDP nje ya tunnel ya VPN. Ili pia kulinda WebRTC kupitia TCP/TLS, washa kill switch.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Huzuia DNS nje ya tunnel kwenye milango 53 na 853. Ili pia kulinda DNS kupitia HTTPS, washa kill switch."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Huzuia DNS nje ya tunnel kwenye milango 53 na 853. Ili pia kulinda DNS kupitia HTTPS, washa kill switch.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "Kifaa hiki hakikuweza kuondolewa. Angalia muunganisho wako kisha ujaribu tena.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "Kukatika kwa muunganisho wa VPN hakukuweza kuthibitishwa. Jaribu kukata muunganisho tena.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "Kipindi kilichohifadhiwa hakikuweza kufutwa. Jaribu kutoka kwenye akaunti tena.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch bado inazuia trafiki ya mtandao. Jaribu kukata muunganisho tena.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "Handaki la VPN bado linatumika. Jaribu kukata muunganisho tena.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN haikuweza kuanza kwa sababu kufuli ya nakala yake haipatikani au hakuna dirisha la FuzeVPN lililopo lililoweza kuamilishwa.\n\nSubiri FuzeVPN imalize kuanza, kisha ujaribu tena.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Sasisho la toleo linalobebeka halikuweza kutekelezwa. Toleo lako la awali liko kwenye folda yake ya asili au kwenye nakala rudufu ya urejeshaji."
 }

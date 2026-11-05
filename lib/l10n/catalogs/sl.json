@@ -607,5 +607,12 @@
   "Serveurs : {count}": "Strežniki: {count}",
   "Villes : {count}": "Mesta: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "Blokira UDP zunaj predora VPN. Če želite zaščititi tudi WebRTC prek TCP/TLS, omogočite kill switch.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Blokira DNS zunaj predora na vratih 53 in 853. Če želite zaščititi tudi DNS prek HTTPS, omogočite kill switch."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Blokira DNS zunaj predora na vratih 53 in 853. Če želite zaščititi tudi DNS prek HTTPS, omogočite kill switch.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "Naprave ni bilo mogoče odstraniti. Preverite povezavo in poskusite znova.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "Prekinitve povezave VPN ni bilo mogoče potrditi. Znova poskusite prekiniti povezavo.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "Shranjene seje ni bilo mogoče izbrisati. Znova se poskusite odjaviti iz računa.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch še vedno blokira omrežni promet. Znova poskusite prekiniti povezavo.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "Predor VPN je še vedno aktiven. Znova poskusite prekiniti povezavo.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN se ni mogel zagnati, ker zaklep njegovega primerka ni na voljo ali ni bilo mogoče aktivirati nobenega obstoječega okna FuzeVPN.\n\nPočakajte, da se FuzeVPN zažene, nato poskusite znova.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Posodobitve prenosne različice ni bilo mogoče uveljaviti. Prejšnja različica je v prvotni mapi ali v varnostni kopiji za obnovitev."
 }

@@ -607,5 +607,12 @@
   "Serveurs : {count}": "सर्व्हर: {count}",
   "Villes : {count}": "शहरे: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "VPN टनेलच्या बाहेरील UDP अवरोधित करते. TCP/TLS वरील WebRTC सुद्धा संरक्षित करण्यासाठी kill switch सक्षम करा.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "टनेलच्या बाहेर पोर्ट 53 आणि 853 वरील DNS अवरोधित करते. HTTPS वरील DNS सुद्धा संरक्षित करण्यासाठी kill switch सक्षम करा."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "टनेलच्या बाहेर पोर्ट 53 आणि 853 वरील DNS अवरोधित करते. HTTPS वरील DNS सुद्धा संरक्षित करण्यासाठी kill switch सक्षम करा.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "हे उपकरण काढता आले नाही. तुमची जोडणी तपासा आणि पुन्हा प्रयत्न करा.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "VPN जोडणी तोडल्याची पुष्टी करता आली नाही. पुन्हा जोडणी तोडण्याचा प्रयत्न करा.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "जतन केलेले सत्र मिटवता आले नाही. खात्यातून पुन्हा साइन आउट करण्याचा प्रयत्न करा.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch अजूनही नेटवर्क रहदारी अवरोधित करत आहे. पुन्हा जोडणी तोडण्याचा प्रयत्न करा.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPN टनेल अजूनही सक्रिय आहे. पुन्हा जोडणी तोडण्याचा प्रयत्न करा.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN सुरू होऊ शकले नाही, कारण त्याचे इन्स्टन्स लॉक उपलब्ध नाही किंवा आधीपासून उघडलेली कोणतीही FuzeVPN विंडो सक्रिय करता आली नाही.\n\nFuzeVPN सुरू होईपर्यंत थांबा, नंतर पुन्हा प्रयत्न करा.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "पोर्टेबल आवृत्तीचे अपडेट लागू करता आले नाही. तुमची मागील आवृत्ती तिच्या मूळ फोल्डरमध्ये किंवा पुनर्प्राप्तीसाठीच्या बॅकअपमध्ये आहे."
 }

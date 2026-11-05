@@ -607,5 +607,12 @@
   "Serveurs : {count}": "সার্ভার: {count}",
   "Villes : {count}": "শহর: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "VPN টানেলের বাইরে UDP ব্লক করে। TCP/TLS-এর মাধ্যমে WebRTC-ও সুরক্ষিত করতে kill switch সক্রিয় করুন।",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "টানেলের বাইরে 53 ও 853 পোর্টে DNS ব্লক করে। HTTPS-এর মাধ্যমে DNS-ও সুরক্ষিত করতে kill switch সক্রিয় করুন।"
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "টানেলের বাইরে 53 ও 853 পোর্টে DNS ব্লক করে। HTTPS-এর মাধ্যমে DNS-ও সুরক্ষিত করতে kill switch সক্রিয় করুন।",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "এই ডিভাইসটি সরানো যায়নি। আপনার সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "VPN সংযোগ বিচ্ছিন্ন হয়েছে কি না তা নিশ্চিত করা যায়নি। আবার সংযোগ বিচ্ছিন্ন করার চেষ্টা করুন।",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "সংরক্ষিত সেশনটি মুছে ফেলা যায়নি। অ্যাকাউন্ট থেকে আবার সাইন আউট করার চেষ্টা করুন।",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "kill switch এখনও নেটওয়ার্ক ট্রাফিক ব্লক করছে। আবার সংযোগ বিচ্ছিন্ন করার চেষ্টা করুন।",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPN টানেলটি এখনও সক্রিয়। আবার সংযোগ বিচ্ছিন্ন করার চেষ্টা করুন।",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN চালু হতে পারেনি, কারণ এর ইনস্ট্যান্স লক উপলভ্য নয় অথবা আগে থেকে খোলা কোনো FuzeVPN উইন্ডো সক্রিয় করা যায়নি।\n\nFuzeVPN চালু হওয়া শেষ হওয়া পর্যন্ত অপেক্ষা করে আবার চেষ্টা করুন।",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "পোর্টেবল আপডেটটি প্রয়োগ করা যায়নি। আপনার আগের সংস্করণটি তার মূল ফোল্ডারে অথবা পুনরুদ্ধারের ব্যাকআপে রয়েছে।"
 }

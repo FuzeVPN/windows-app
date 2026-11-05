@@ -9,6 +9,7 @@
 #include "installation_security.h"
 #include "distribution_mode.h"
 #include "runtime_architecture.h"
+#include "native_dialog_localization.h"
 
 namespace {
 std::string Ascii(const wchar_t* value) {
@@ -75,7 +76,8 @@ bool Restart(const std::filesystem::path& target) {
 }
 int ApplyPortable(const std::filesystem::path& source, const std::string& hash,
                   const fuzevpn_update::Version& target_version,
-                  const std::filesystem::path& target, HANDLE parent, HANDLE ready) {
+                  const std::filesystem::path& target, HANDLE parent, HANDLE ready,
+                  const fuzevpn::l10n::NativeCatalog& catalog) {
   using namespace fuzevpn_update;
   using namespace fuzevpn_portable_update;
   Handle parent_handle{parent}, ready_handle{ready};
@@ -156,8 +158,9 @@ int ApplyPortable(const std::filesystem::path& source, const std::string& hash,
         MoveFileExW(backup.c_str(), target.c_str(), MOVEFILE_WRITE_THROUGH)) Restart(target);
   } else if (!applied && failure.stage != "portable_rollback") Restart(target);
   if (!applied) {
-    const std::wstring message = L"The portable update could not be applied. Your previous version remains in its original folder or in the recovery backup.\n\nReference: update_portable_replace_failed\nWindows error: " + std::to_wstring(error);
-    MessageBoxW(nullptr, message.c_str(), L"FuzeVPN update", MB_OK | MB_ICONERROR);
+    fuzevpn::l10n::ShowNativeError(catalog,
+        std::wstring(L"FuzeVPN \u2014 ") + catalog.updates,
+        fuzevpn::l10n::PortableUpdateFailureText(catalog, error));
   }
   RemoveStaging(candidate); // fails harmlessly if it was renamed into place
   DeleteFileW(source.c_str());
@@ -227,17 +230,23 @@ int APIENTRY wWinMain(HINSTANCE, HINSTANCE, wchar_t*, int) {
       CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
       result = Apply(arguments[3], Ascii(arguments[5]), version);
       CoUninitialize();
-    } else if (count == 14 && wcscmp(arguments[1], L"--apply-portable") == 0 &&
+    } else if ((count == 14 || count == 16) &&
+        wcscmp(arguments[1], L"--apply-portable") == 0 &&
         wcscmp(arguments[2], L"--source") == 0 && wcscmp(arguments[4], L"--sha256") == 0 &&
         wcscmp(arguments[6], L"--version") == 0 && wcscmp(arguments[8], L"--target") == 0 &&
         wcscmp(arguments[10], L"--parent-handle") == 0 && wcscmp(arguments[12], L"--ready-handle") == 0 &&
         fuzevpn_update::ValidHash(Ascii(arguments[5])) &&
         fuzevpn_update::ParseVersion(Ascii(arguments[7]), &version)) {
       uintptr_t parent = 0, ready = 0;
-      if (Number(arguments[11], &parent) && Number(arguments[13], &ready) && parent != ready) {
+      const auto* catalog = count == 16 && wcscmp(arguments[14], L"--language") == 0
+          ? fuzevpn::l10n::NativeStoredCatalog(arguments[15]) : nullptr;
+      if ((count == 14 || catalog != nullptr) && Number(arguments[11], &parent) &&
+          Number(arguments[13], &ready) && parent != ready) {
         CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
         result = ApplyPortable(arguments[3], Ascii(arguments[5]), version, arguments[9],
-            reinterpret_cast<HANDLE>(parent), reinterpret_cast<HANDLE>(ready));
+            reinterpret_cast<HANDLE>(parent), reinterpret_cast<HANDLE>(ready),
+            catalog != nullptr ? *catalog :
+                fuzevpn::l10n::NativeSystemCatalog(fuzevpn::l10n::NativeSystemLocaleName()));
         CoUninitialize();
       }
     }

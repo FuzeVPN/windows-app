@@ -607,5 +607,12 @@
   "Serveurs : {count}": "Serverrada: {count}",
   "Villes : {count}": "Magaalooyinka: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "Waxay xannibtaa UDP meel ka baxsan tunnel-ka VPN. Si loo daboolo WebRTC ee TCP/TLS, daar kill switch.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Waxay xannibtaa DNS meel ka baxsan tunnel-ka ee dekedaha 53 iyo 853. Si loo daboolo DNS over HTTPS, daar kill switch."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Waxay xannibtaa DNS meel ka baxsan tunnel-ka ee dekedaha 53 iyo 853. Si loo daboolo DNS over HTTPS, daar kill switch.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "Qalabkan lama saari karin. Hubi xiriirkaaga oo mar kale isku day.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "Lama xaqiijin karin in VPN-ka la gooyay. Mar kale isku day inaad goyso xiriirka.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "Fadhiga kaydsan lama tirtiri karin. Mar kale isku day inaad ka baxdo akoonka.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch weli wuxuu xannibayaa taraafikada shabakadda. Mar kale isku day inaad goyso xiriirka.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "Tunelka VPN weli wuu shaqaynayaa. Mar kale isku day inaad goyso xiriirka.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN ma bilaaban karin sababtoo ah qufulka nuqulka socda lama heli karo ama lama hawlgelin karin daaqad FuzeVPN oo hore u furnayd.\n\nSug inta FuzeVPN uu dhammaynayo bilaabashada, dabadeed mar kale isku day.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Cusboonaysiinta nooca la qaadan karo lama dabaqi karin. Noocaagii hore wuxuu ku jiraa galka asalka ah ama nuqulka kaydka ee soo-celinta."
 }

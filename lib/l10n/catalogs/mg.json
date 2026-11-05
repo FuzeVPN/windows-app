@@ -607,5 +607,12 @@
   "Serveurs : {count}": "Mpizara: {count}",
   "Villes : {count}": "Tanàna: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "Manakana UDP ivelan'ny tonelina VPN. Alefaso ny kill switch mba handrakofana ny WebRTC amin'ny TCP/TLS koa.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Manakana DNS ivelan'ny tonelina amin'ny seranana 53 sy 853. Alefaso ny kill switch mba handrakofana ny DNS amin'ny HTTPS koa."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Manakana DNS ivelan'ny tonelina amin'ny seranana 53 sy 853. Alefaso ny kill switch mba handrakofana ny DNS amin'ny HTTPS koa.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "Tsy afaka nesorina ity fitaovana ity. Hamarino ny fifandraisanao dia andramo indray.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "Tsy afaka nohamarinina ny fanapahana ny fifandraisana VPN. Andramo tapahina indray ny fifandraisana.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "Tsy afaka nofafana ny sesiona voatahiry. Andramo mivoaka amin’ny kaonty indray.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Mbola manakana ny fifamoivoizana amin’ny tambajotra ny kill switch. Andramo tapahina indray ny fifandraisana.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "Mbola mandeha ny tonelina VPN. Andramo tapahina indray ny fifandraisana.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "Tsy afaka nanomboka ny FuzeVPN satria tsy azo ampiasaina ny hidin’ny fampandehanana azy na tsy nisy varavarankely FuzeVPN efa misokatra azo navitrika.\n\nAndraso mandra-pahavitan’ny fanombohan’ny FuzeVPN, dia andramo indray.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Tsy afaka nampiharina ny fanavaozana ny kinova portable. Ao amin’ny lahatahiry niaviany na ao amin’ny tahiry fiarovana ho an’ny famerenana ny kinova teo aloha."
 }

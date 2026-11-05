@@ -607,5 +607,12 @@
   "Serveurs : {count}": "ဆာဗာများ: {count}",
   "Villes : {count}": "မြို့များ: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "VPN tunnel ပြင်ပရှိ UDP ကို ပိတ်ဆို့သည်။ TCP/TLS မှတစ်ဆင့် WebRTC ကိုလည်း ကာကွယ်ရန် kill switch ကို ဖွင့်ပါ။",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Tunnel ပြင်ပရှိ DNS ကို port 53 နှင့် 853 တွင် ပိတ်ဆို့သည်။ HTTPS မှတစ်ဆင့် DNS ကိုလည်း ကာကွယ်ရန် kill switch ကို ဖွင့်ပါ။"
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Tunnel ပြင်ပရှိ DNS ကို port 53 နှင့် 853 တွင် ပိတ်ဆို့သည်။ HTTPS မှတစ်ဆင့် DNS ကိုလည်း ကာကွယ်ရန် kill switch ကို ဖွင့်ပါ။",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "ဤစက်ကို ဖယ်ရှား၍မရပါ။ သင်၏ချိတ်ဆက်မှုကို စစ်ဆေးပြီး ပြန်လည်ကြိုးစားပါ။",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "VPN ချိတ်ဆက်မှု ဖြုတ်ပြီးကြောင်း အတည်မပြုနိုင်ပါ။ ချိတ်ဆက်မှုကို ထပ်မံဖြုတ်ကြည့်ပါ။",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "သိမ်းဆည်းထားသော session ကို ဖျက်၍မရပါ။ အကောင့်မှ ထပ်မံထွက်ကြည့်ပါ။",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch က ကွန်ရက်အသွားအလာကို ပိတ်ဆို့ထားဆဲဖြစ်သည်။ ချိတ်ဆက်မှုကို ထပ်မံဖြုတ်ကြည့်ပါ။",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPN tunnel သည် အသက်ဝင်နေဆဲဖြစ်သည်။ ချိတ်ဆက်မှုကို ထပ်မံဖြုတ်ကြည့်ပါ။",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN ကို စတင်၍မရပါ။ ၎င်း၏ instance lock ကို အသုံးမပြုနိုင်ပါ၊ သို့မဟုတ် ရှိပြီးသား FuzeVPN ဝင်းဒိုးတစ်ခုကိုမျှ အသက်ဝင်အောင် မလုပ်နိုင်ပါ။\n\nFuzeVPN စတင်ပြီးသည်အထိ စောင့်ပြီး ပြန်လည်ကြိုးစားပါ။",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "portable အပ်ဒိတ်ကို အသုံးချ၍မရပါ။ သင်၏ ယခင်ဗားရှင်းသည် မူလဖိုင်တွဲ သို့မဟုတ် ပြန်လည်ရယူရန် အရန်သိမ်းဆည်းထားသည့်နေရာတွင် ရှိနေပါသည်။"
 }

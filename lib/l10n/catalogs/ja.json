@@ -607,5 +607,12 @@
   "Serveurs : {count}": "サーバー：{count}",
   "Villes : {count}": "都市：{count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "VPNトンネル外のUDPをブロックします。TCP/TLS経由のWebRTCも対象にするには、キルスイッチを有効にしてください。",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "トンネル外のポート53および853でDNSをブロックします。HTTPS経由のDNSも対象にするには、キルスイッチを有効にしてください。"
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "トンネル外のポート53および853でDNSをブロックします。HTTPS経由のDNSも対象にするには、キルスイッチを有効にしてください。",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "このデバイスを削除できませんでした。接続を確認してから、もう一度お試しください。",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "VPNの切断を確認できませんでした。もう一度切断してください。",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "保存されたセッションを消去できませんでした。アカウントからのログアウトをもう一度お試しください。",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "キルスイッチが引き続きネットワーク通信をブロックしています。もう一度切断してください。",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPNトンネルはまだ有効です。もう一度切断してください。",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "インスタンスロックを利用できないか、既存のFuzeVPNウィンドウをアクティブにできなかったため、FuzeVPNを起動できませんでした。\n\nFuzeVPNの起動が完了するまで待ってから、もう一度お試しください。",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "ポータブル版の更新を適用できませんでした。以前のバージョンは元のフォルダーまたは復旧用バックアップにあります。"
 }

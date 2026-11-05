@@ -607,5 +607,12 @@
   "Serveurs : {count}": "Serverët: {count}",
   "Villes : {count}": "Qytetet: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "Bllokon UDP jashtë tunelit VPN. Për të mbuluar edhe WebRTC përmes TCP/TLS, aktivizoni kill switch.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Bllokon DNS jashtë tunelit në portat 53 dhe 853. Për të mbuluar edhe DNS përmes HTTPS, aktivizoni kill switch."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Bllokon DNS jashtë tunelit në portat 53 dhe 853. Për të mbuluar edhe DNS përmes HTTPS, aktivizoni kill switch.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "Kjo pajisje nuk u hoq. Kontrolloni lidhjen dhe provoni përsëri.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "Shkëputja e VPN-së nuk mund të konfirmohej. Provoni ta shkëputni përsëri.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "Sesioni i ruajtur nuk mund të fshihej. Provoni përsëri të dilni nga llogaria.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch ende bllokon trafikun e rrjetit. Provoni ta shkëputni përsëri.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "Tuneli VPN është ende aktiv. Provoni ta shkëputni përsëri.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN nuk mund të nisej, sepse kyçja e instancës së tij nuk është e disponueshme ose nuk mund të aktivizohej asnjë dritare ekzistuese e FuzeVPN.\n\nPrisni derisa FuzeVPN të përfundojë nisjen, pastaj provoni përsëri.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Përditësimi i versionit portativ nuk mund të zbatohej. Versioni juaj i mëparshëm ndodhet në dosjen fillestare ose në kopjen rezervë për rikuperim."
 }

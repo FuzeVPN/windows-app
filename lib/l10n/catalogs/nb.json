@@ -607,5 +607,12 @@
   "Serveurs : {count}": "Servere: {count}",
   "Villes : {count}": "Byer: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "Blokkerer UDP utenfor VPN-tunnelen. Aktiver kill switch for også å dekke WebRTC via TCP/TLS.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Blokkerer DNS utenfor tunnelen på port 53 og 853. Aktiver kill switch for også å dekke DNS via HTTPS."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Blokkerer DNS utenfor tunnelen på port 53 og 853. Aktiver kill switch for også å dekke DNS via HTTPS.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "Denne enheten kunne ikke fjernes. Kontroller tilkoblingen din og prøv igjen.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "Det kunne ikke bekreftes at VPN-tilkoblingen er frakoblet. Prøv å koble fra på nytt.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "Den lagrede økten kunne ikke slettes. Prøv å logge ut av kontoen din på nytt.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch blokkerer fortsatt nettverkstrafikken. Prøv å koble fra på nytt.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPN-tunnelen er fortsatt aktiv. Prøv å koble fra på nytt.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN kunne ikke starte fordi instanslåsen er utilgjengelig eller ingen eksisterende FuzeVPN-vinduer kunne aktiveres.\n\nVent til FuzeVPN er ferdig med å starte, og prøv igjen.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Den portable oppdateringen kunne ikke brukes. Den forrige versjonen ligger i den opprinnelige mappen eller i sikkerhetskopien for gjenoppretting."
 }

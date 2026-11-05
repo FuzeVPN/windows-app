@@ -607,5 +607,12 @@
   "Serveurs : {count}": "Servidores: {count}",
   "Villes : {count}": "Cidades: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "Bloqueia UDP fora do túnel VPN. Para cobrir também WebRTC via TCP/TLS, ative o kill switch.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Bloqueia DNS fora do túnel nas portas 53 e 853. Para cobrir também DNS via HTTPS, ative o kill switch."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Bloqueia DNS fora do túnel nas portas 53 e 853. Para cobrir também DNS via HTTPS, ative o kill switch.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "Não foi possível remover este dispositivo. Verifique sua conexão e tente novamente.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "Não foi possível confirmar a desconexão da VPN. Tente desconectar novamente.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "Não foi possível apagar a sessão salva. Tente sair da sua conta novamente.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "O kill switch continua bloqueando o tráfego de rede. Tente desconectar novamente.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "O túnel VPN continua ativo. Tente desconectar novamente.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "Não foi possível iniciar o FuzeVPN porque o bloqueio de instância está indisponível ou nenhuma janela existente do FuzeVPN pôde ser ativada.\n\nAguarde o FuzeVPN terminar de iniciar e tente novamente.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Não foi possível aplicar a atualização portátil. Sua versão anterior está na pasta original ou no backup de recuperação."
 }

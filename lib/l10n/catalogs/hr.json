@@ -607,5 +607,12 @@
   "Serveurs : {count}": "Poslužitelji: {count}",
   "Villes : {count}": "Gradovi: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "Blokira UDP izvan VPN tunela. Kako biste obuhvatili i WebRTC putem TCP/TLS-a, uključite kill switch.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Blokira DNS izvan tunela na priključcima 53 i 853. Kako biste obuhvatili i DNS putem HTTPS-a, uključite kill switch."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Blokira DNS izvan tunela na priključcima 53 i 853. Kako biste obuhvatili i DNS putem HTTPS-a, uključite kill switch.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "Uređaj nije moguće ukloniti. Provjerite vezu pa pokušajte ponovno.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "Nije moguće potvrditi prekid VPN veze. Pokušajte ponovno prekinuti vezu.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "Nije moguće izbrisati spremljenu sesiju. Pokušajte se ponovno odjaviti s računa.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch i dalje blokira mrežni promet. Pokušajte ponovno prekinuti vezu.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPN tunel i dalje je aktivan. Pokušajte ponovno prekinuti vezu.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN se nije mogao pokrenuti jer zaključavanje njegove instance nije dostupno ili nije bilo moguće aktivirati nijedan postojeći prozor FuzeVPN-a.\n\nPričekajte da FuzeVPN dovrši pokretanje pa pokušajte ponovno.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Ažuriranje prijenosne verzije nije moguće primijeniti. Prethodna verzija nalazi se u izvornoj mapi ili u sigurnosnoj kopiji za oporavak."
 }

@@ -6,7 +6,9 @@
 #include <windows.h>
 
 #include "flutter_window.h"
+#include "native_dialog_localization.h"
 #include "openvpn_tunnel.h"
+#include "protected_store.h"
 #include "privileged_broker.h"
 #include "single_instance.h"
 #include "single_instance_identity.h"
@@ -89,11 +91,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
   const DWORD instance_error = GetLastError();
   const auto instance_decision = FuzeVpnDecideSingleInstanceStartup(
       instance_mutex, instance_error, ActivateExistingInstance, []() {
-        MessageBoxW(nullptr,
-            L"FuzeVPN could not open safely because its instance lock is unavailable "
-            L"or no existing FuzeVPN window could be activated.\n\n"
-            L"Wait for FuzeVPN to finish starting, then try again.",
-            L"FuzeVPN", MB_OK | MB_ICONERROR);
+        std::string saved_language;
+        ReadProtectedValue("app_language", &saved_language);
+        const auto& catalog = fuzevpn::l10n::ResolveNativeCatalog(saved_language);
+        fuzevpn::l10n::ShowNativeError(catalog, L"FuzeVPN", catalog.startup_failure);
       });
   if (instance_decision != FuzeVpnSingleInstanceDecision::primary) {
     if (instance_mutex != nullptr) CloseHandle(instance_mutex);

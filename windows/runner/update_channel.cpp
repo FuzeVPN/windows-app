@@ -6,6 +6,8 @@
 #include "distribution_mode.h"
 #include "runtime_architecture.h"
 #include "portable_update.h"
+#include "native_dialog_localization.h"
+#include "protected_store.h"
 #include <winhttp.h>
 #include <shellapi.h>
 #include <softpub.h>
@@ -324,11 +326,15 @@ struct UpdateChannel::Impl {
     startup.StartupInfo.dwFlags = STARTF_USESHOWWINDOW; startup.StartupInfo.wShowWindow = SW_HIDE;
     startup.lpAttributeList = attributes;
     PROCESS_INFORMATION process{};
+    std::string saved_language;
+    ReadProtectedValue("app_language", &saved_language);
+    const auto& catalog = fuzevpn::l10n::ResolveNativeCatalog(saved_language);
     std::wstring command = L"\"" + copied_helper.wstring() + L"\" --apply-portable --source \"" +
         prepared->file->path().wstring() + L"\" --sha256 " + Wide(prepared->hash) +
         L" --version " + Wide(prepared->version.text()) + L" --target \"" + directory.wstring() +
         L"\" --parent-handle " + std::to_wstring(reinterpret_cast<uintptr_t>(parent_process.value)) +
-        L" --ready-handle " + std::to_wstring(reinterpret_cast<uintptr_t>(write_pipe.value));
+        L" --ready-handle " + std::to_wstring(reinterpret_cast<uintptr_t>(write_pipe.value)) +
+        L" --language " + catalog.code;
     if (!CreateProcessW(copied_helper.c_str(), command.data(), nullptr, nullptr, TRUE,
         EXTENDED_STARTUPINFO_PRESENT | CREATE_NO_WINDOW, nullptr,
         prepared->directory->path().c_str(), &startup.StartupInfo, &process))

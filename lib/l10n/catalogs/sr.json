@@ -607,5 +607,12 @@
   "Serveurs : {count}": "Сервери: {count}",
   "Villes : {count}": "Градови: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "Блокира UDP изван VPN тунела. Да бисте обухватили и WebRTC преко TCP/TLS-а, укључите kill switch.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Блокира DNS изван тунела на портовима 53 и 853. Да бисте обухватили и DNS преко HTTPS-а, укључите kill switch."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Блокира DNS изван тунела на портовима 53 и 853. Да бисте обухватили и DNS преко HTTPS-а, укључите kill switch.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "Уређај није могао да се уклони. Проверите везу, па покушајте поново.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "Прекид VPN везе није могао да се потврди. Покушајте поново да прекинете везу.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "Сачувана сесија није могла да се избрише. Покушајте поново да се одјавите са налога.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch и даље блокира мрежни саобраћај. Покушајте поново да прекинете везу.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPN тунел је и даље активан. Покушајте поново да прекинете везу.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN није могао да се покрене јер закључавање његове инстанце није доступно или ниједан постојећи FuzeVPN прозор није могао да се активира.\n\nСачекајте да се FuzeVPN покрене, па покушајте поново.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Ажурирање преносиве верзије није могло да се примени. Претходна верзија се налази у својој првобитној фасцикли или у резервној копији за опоравак."
 }

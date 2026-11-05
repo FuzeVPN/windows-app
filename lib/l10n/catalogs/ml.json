@@ -607,5 +607,12 @@
   "Serveurs : {count}": "സെർവറുകൾ: {count}",
   "Villes : {count}": "നഗരങ്ങൾ: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "VPN ടണലിന് പുറത്തുള്ള UDP തടയുന്നു. TCP/TLS വഴിയുള്ള WebRTC കൂടി പരിരക്ഷിക്കാൻ കിൽ സ്വിച്ച് പ്രവർത്തനക്ഷമമാക്കുക.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "53, 853 പോർട്ടുകളിൽ ടണലിന് പുറത്തുള്ള DNS തടയുന്നു. HTTPS വഴിയുള്ള DNS കൂടി പരിരക്ഷിക്കാൻ കിൽ സ്വിച്ച് പ്രവർത്തനക്ഷമമാക്കുക."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "53, 853 പോർട്ടുകളിൽ ടണലിന് പുറത്തുള്ള DNS തടയുന്നു. HTTPS വഴിയുള്ള DNS കൂടി പരിരക്ഷിക്കാൻ കിൽ സ്വിച്ച് പ്രവർത്തനക്ഷമമാക്കുക.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "ഈ ഉപകരണം നീക്കം ചെയ്യാനായില്ല. നിങ്ങളുടെ കണക്ഷൻ പരിശോധിച്ച് വീണ്ടും ശ്രമിക്കുക.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "VPN വിച്ഛേദിച്ചതായി സ്ഥിരീകരിക്കാനായില്ല. വിച്ഛേദിക്കാൻ വീണ്ടും ശ്രമിക്കുക.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "സംരക്ഷിച്ച സെഷൻ മായ്ക്കാനായില്ല. അക്കൗണ്ടിൽ നിന്ന് സൈൻ ഔട്ട് ചെയ്യാൻ വീണ്ടും ശ്രമിക്കുക.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "കിൽ സ്വിച്ച് ഇപ്പോഴും നെറ്റ്‌വർക്ക് ട്രാഫിക് തടയുന്നു. വിച്ഛേദിക്കാൻ വീണ്ടും ശ്രമിക്കുക.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPN ടണൽ ഇപ്പോഴും സജീവമാണ്. വിച്ഛേദിക്കാൻ വീണ്ടും ശ്രമിക്കുക.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN ആരംഭിക്കാനായില്ല, കാരണം അതിന്റെ ഇൻസ്റ്റൻസ് ലോക്ക് ലഭ്യമല്ല അല്ലെങ്കിൽ നിലവിലുള്ള ഒരു FuzeVPN വിൻഡോയും സജീവമാക്കാനായില്ല.\n\nFuzeVPN ആരംഭിക്കുന്നത് പൂർത്തിയാകുന്നതുവരെ കാത്തിരുന്ന് വീണ്ടും ശ്രമിക്കുക.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "പോർട്ടബിൾ അപ്‌ഡേറ്റ് പ്രയോഗിക്കാനായില്ല. നിങ്ങളുടെ മുൻ പതിപ്പ് അതിന്റെ യഥാർത്ഥ ഫോൾഡറിലോ വീണ്ടെടുക്കൽ ബാക്കപ്പിലോ ഉണ്ട്."
 }

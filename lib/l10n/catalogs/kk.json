@@ -607,5 +607,12 @@
   "Serveurs : {count}": "Серверлер: {count}",
   "Villes : {count}": "Қалалар: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "VPN туннелінен тыс UDP трафигін бұғаттайды. TCP/TLS арқылы өтетін WebRTC трафигін де қамту үшін kill switch қосыңыз.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Туннельден тыс 53 және 853 порттарындағы DNS трафигін бұғаттайды. HTTPS арқылы өтетін DNS трафигін де қамту үшін kill switch қосыңыз."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Туннельден тыс 53 және 853 порттарындағы DNS трафигін бұғаттайды. HTTPS арқылы өтетін DNS трафигін де қамту үшін kill switch қосыңыз.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "Бұл құрылғыны жою мүмкін болмады. Қосылымды тексеріп, қайталап көріңіз.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "VPN ажыратылғанын растау мүмкін болмады. Қайта ажыратып көріңіз.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "Сақталған сеансты өшіру мүмкін болмады. Есептік жазбадан қайта шығып көріңіз.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch әлі де желі трафигін бұғаттауда. Қайта ажыратып көріңіз.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPN туннелі әлі белсенді. Қайта ажыратып көріңіз.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN іске қосылмады, себебі оның дана құлпы қолжетімсіз немесе бар FuzeVPN терезелерінің ешқайсысын белсендіру мүмкін болмады.\n\nFuzeVPN іске қосылып болғанша күтіп, қайталап көріңіз.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Портативті нұсқаның жаңартуын қолдану мүмкін болмады. Алдыңғы нұсқа бастапқы қалтасында немесе қалпына келтіруге арналған сақтық көшірмеде орналасқан."
 }

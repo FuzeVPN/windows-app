@@ -607,5 +607,12 @@
   "Serveurs : {count}": "Servrar: {count}",
   "Villes : {count}": "Städer: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "Blockerar UDP utanför VPN-tunneln. Aktivera kill switch för att även täcka WebRTC via TCP/TLS.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Blockerar DNS utanför tunneln på portarna 53 och 853. Aktivera kill switch för att även täcka DNS via HTTPS."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Blockerar DNS utanför tunneln på portarna 53 och 853. Aktivera kill switch för att även täcka DNS via HTTPS.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "Den här enheten kunde inte tas bort. Kontrollera din anslutning och försök igen.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "Det gick inte att bekräfta att VPN-anslutningen har kopplats från. Försök koppla från igen.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "Den sparade sessionen kunde inte rensas. Försök logga ut från ditt konto igen.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch blockerar fortfarande nätverkstrafik. Försök koppla från igen.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPN-tunneln är fortfarande aktiv. Försök koppla från igen.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN kunde inte starta eftersom instanslåset inte är tillgängligt eller inget befintligt FuzeVPN-fönster kunde aktiveras.\n\nVänta tills FuzeVPN har startat klart och försök sedan igen.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Den portabla uppdateringen kunde inte tillämpas. Din tidigare version finns i den ursprungliga mappen eller i återställningskopian."
 }

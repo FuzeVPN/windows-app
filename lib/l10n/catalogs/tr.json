@@ -607,5 +607,12 @@
   "Serveurs : {count}": "Sunucular: {count}",
   "Villes : {count}": "Şehirler: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "VPN tüneli dışındaki UDP trafiğini engeller. TCP/TLS üzerinden WebRTC trafiğini de kapsamak için kill switch özelliğini etkinleştirin.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Tünel dışında 53 ve 853 bağlantı noktalarındaki DNS trafiğini engeller. HTTPS üzerinden DNS trafiğini de kapsamak için kill switch özelliğini etkinleştirin."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Tünel dışında 53 ve 853 bağlantı noktalarındaki DNS trafiğini engeller. HTTPS üzerinden DNS trafiğini de kapsamak için kill switch özelliğini etkinleştirin.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "Bu cihaz kaldırılamadı. Bağlantınızı kontrol edip tekrar deneyin.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "VPN bağlantısının kesildiği doğrulanamadı. Bağlantıyı kesmeyi tekrar deneyin.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "Kaydedilmiş oturum silinemedi. Hesabınızdan çıkış yapmayı tekrar deneyin.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch ağ trafiğini engellemeye devam ediyor. Bağlantıyı kesmeyi tekrar deneyin.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPN tüneli hâlâ etkin. Bağlantıyı kesmeyi tekrar deneyin.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN, örnek kilidi kullanılamadığı veya mevcut FuzeVPN pencerelerinden hiçbiri etkinleştirilemediği için başlatılamadı.\n\nFuzeVPN’in başlatılmasının tamamlanmasını bekleyip tekrar deneyin.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Taşınabilir güncelleme uygulanamadı. Önceki sürümünüz özgün klasöründe veya kurtarma yedeğinde bulunuyor."
 }

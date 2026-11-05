@@ -607,5 +607,12 @@
   "Serveurs : {count}": "Serverlar: {count}",
   "Villes : {count}": "Shaharlar: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "VPN tunnelidan tashqaridagi UDP trafigini bloklaydi. TCP/TLS orqali WebRTC’ni ham qamrab olish uchun kill switch’ni yoqing.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Tunnel tashqarisidagi DNS’ni 53 va 853 portlarida bloklaydi. HTTPS orqali DNS’ni ham qamrab olish uchun kill switch’ni yoqing."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Tunnel tashqarisidagi DNS’ni 53 va 853 portlarida bloklaydi. HTTPS orqali DNS’ni ham qamrab olish uchun kill switch’ni yoqing.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "Bu qurilmani olib tashlab bo‘lmadi. Ulanishingizni tekshirib, qayta urinib ko‘ring.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "VPN ulanishi uzilganini tasdiqlab bo‘lmadi. Ulanishni qayta uzib ko‘ring.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "Saqlangan seansni o‘chirib bo‘lmadi. Hisobdan qayta chiqib ko‘ring.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch tarmoq trafigini bloklashda davom etmoqda. Ulanishni qayta uzib ko‘ring.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPN tunneli hali ham faol. Ulanishni qayta uzib ko‘ring.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN ishga tushmadi, chunki uning nusxa qulfi mavjud emas yoki mavjud FuzeVPN oynalaridan hech birini faollashtirib bo‘lmadi.\n\nFuzeVPN ishga tushishi tugaguncha kuting, so‘ng qayta urinib ko‘ring.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Portativ yangilanishni qo‘llab bo‘lmadi. Oldingi versiyangiz o‘zining asl papkasida yoki tiklash uchun zaxira nusxasida joylashgan."
 }

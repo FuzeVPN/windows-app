@@ -607,5 +607,12 @@
   "Serveurs : {count}": "Serwery: {count}",
   "Villes : {count}": "Miasta: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "Blokuje UDP poza tunelem VPN. Aby objąć także WebRTC przez TCP/TLS, włącz kill switch.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Blokuje DNS poza tunelem na portach 53 i 853. Aby objąć także DNS przez HTTPS, włącz kill switch."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Blokuje DNS poza tunelem na portach 53 i 853. Aby objąć także DNS przez HTTPS, włącz kill switch.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "Nie udało się usunąć tego urządzenia. Sprawdź połączenie i spróbuj ponownie.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "Nie udało się potwierdzić rozłączenia VPN. Spróbuj rozłączyć ponownie.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "Nie udało się usunąć zapisanej sesji. Spróbuj ponownie wylogować się z konta.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Wyłącznik awaryjny nadal blokuje ruch sieciowy. Spróbuj rozłączyć ponownie.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "Tunel VPN jest nadal aktywny. Spróbuj rozłączyć ponownie.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "Nie udało się uruchomić FuzeVPN, ponieważ blokada instancji jest niedostępna lub nie udało się uaktywnić żadnego istniejącego okna FuzeVPN.\n\nPoczekaj na zakończenie uruchamiania FuzeVPN, a następnie spróbuj ponownie.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Nie udało się zastosować aktualizacji wersji przenośnej. Poprzednia wersja znajduje się w oryginalnym folderze lub w kopii zapasowej do odzyskiwania."
 }

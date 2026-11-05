@@ -8,6 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fuzevpn_windows/app_controller.dart';
 import 'package:fuzevpn_windows/core/browser_auth.dart';
 import 'package:fuzevpn_windows/l10n/app_localizations.dart';
+import 'package:fuzevpn_windows/l10n/generated_catalogs.dart';
 import 'package:fuzevpn_windows/main.dart';
 
 import 'connection_ux_test.dart' show ConnectionUxController;
@@ -31,6 +32,36 @@ Future<(int, String)> _get(Uri uri) async {
 }
 
 void main() {
+  test('error messages and native dialogs are translated in every app language', () {
+    const messages = [
+      "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.",
+      "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.",
+      "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.",
+      "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.",
+      "Le tunnel VPN est toujours actif. Réessayez la déconnexion.",
+      "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.",
+      "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.",
+    ];
+    for (final message in messages) {
+      expect(sourceCatalog, contains(message));
+      for (final language in AppLanguage.values.where(
+        (language) => language != AppLanguage.system,
+      )) {
+        final catalog = translationCatalogs[language.storageValue]!;
+        final translated = catalog[message];
+        expect(translated, isNotNull, reason: '${language.name}: $message');
+        expect(
+          AppStrings.forLanguage(language).text(message),
+          translated,
+          reason: language.name,
+        );
+        if (language != AppLanguage.french) {
+          expect(translated, isNot(message), reason: language.name);
+        }
+      }
+    }
+  });
+
   test('selective protection descriptions preserve their limits in every language', () {
     const webRtc =
         'Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.';

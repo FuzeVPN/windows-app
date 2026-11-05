@@ -607,5 +607,12 @@
   "Serveurs : {count}": "Szerverek: {count}",
   "Villes : {count}": "Városok: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "Blokkolja az UDP-forgalmat a VPN-alagúton kívül. A TCP/TLS-en keresztüli WebRTC-forgalom lefedéséhez is kapcsolja be a kill switch védelmet.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Blokkolja a DNS-forgalmat az alagúton kívül az 53-as és 853-as porton. A HTTPS-en keresztüli DNS-forgalom lefedéséhez is kapcsolja be a kill switch védelmet."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Blokkolja a DNS-forgalmat az alagúton kívül az 53-as és 853-as porton. A HTTPS-en keresztüli DNS-forgalom lefedéséhez is kapcsolja be a kill switch védelmet.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "Az eszközt nem sikerült eltávolítani. Ellenőrizze a kapcsolatot, majd próbálkozzon újra.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "A VPN-kapcsolat bontását nem sikerült megerősíteni. Próbálja meg újra bontani a kapcsolatot.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "Nem sikerült törölni a mentett munkamenetet. Próbáljon meg újra kijelentkezni a fiókból.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "A kill switch még mindig blokkolja a hálózati forgalmat. Próbálja meg újra bontani a kapcsolatot.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "A VPN-alagút még mindig aktív. Próbálja meg újra bontani a kapcsolatot.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "A FuzeVPN nem tudott elindulni, mert a példányzárolása nem érhető el, vagy egyik meglévő FuzeVPN-ablak sem volt aktiválható.\n\nVárja meg, amíg a FuzeVPN elindul, majd próbálkozzon újra.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "A hordozható frissítést nem sikerült alkalmazni. Az előző verzió az eredeti mappájában vagy a helyreállítási biztonsági másolatban található."
 }

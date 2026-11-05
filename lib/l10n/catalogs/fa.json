@@ -607,5 +607,12 @@
   "Serveurs : {count}": "سرورها: {count}",
   "Villes : {count}": "شهرها: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "UDP خارج از تونل VPN را مسدود می‌کند. برای پوشش WebRTC از طریق TCP/TLS نیز، کلید قطع اضطراری را فعال کنید.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "DNS خارج از تونل را روی درگاه‌های 53 و 853 مسدود می‌کند. برای پوشش DNS از طریق HTTPS نیز، کلید قطع اضطراری را فعال کنید."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "DNS خارج از تونل را روی درگاه‌های 53 و 853 مسدود می‌کند. برای پوشش DNS از طریق HTTPS نیز، کلید قطع اضطراری را فعال کنید.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "این دستگاه حذف نشد. اتصال خود را بررسی کنید و دوباره تلاش کنید.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "قطع اتصال VPN تأیید نشد. دوباره برای قطع اتصال تلاش کنید.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "نشست ذخیره‌شده پاک نشد. دوباره برای خروج از حساب تلاش کنید.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "کلید قطع اضطراری همچنان ترافیک شبکه را مسدود می‌کند. دوباره برای قطع اتصال تلاش کنید.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "تونل VPN همچنان فعال است. دوباره برای قطع اتصال تلاش کنید.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN راه‌اندازی نشد، زیرا قفل نمونهٔ برنامه در دسترس نیست یا هیچ‌یک از پنجره‌های موجود FuzeVPN فعال نشد.\n\nمنتظر بمانید تا راه‌اندازی FuzeVPN تمام شود، سپس دوباره تلاش کنید.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "به‌روزرسانی نسخهٔ قابل‌حمل اعمال نشد. نسخهٔ قبلی شما در پوشهٔ اصلی خود یا در پشتیبان بازیابی قرار دارد."
 }

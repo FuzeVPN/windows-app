@@ -607,5 +607,12 @@
   "Serveurs : {count}": "Ihe nkesa: {count}",
   "Villes : {count}": "Obodo: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "Ọ na-egbochi UDP n'èzí ọwara VPN. Iji kpuchiekwa WebRTC site na TCP/TLS, gbanye kill switch.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Ọ na-egbochi DNS n'èzí ọwara na ọdụ 53 na 853. Iji kpuchiekwa DNS site na HTTPS, gbanye kill switch."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Ọ na-egbochi DNS n'èzí ọwara na ọdụ 53 na 853. Iji kpuchiekwa DNS site na HTTPS, gbanye kill switch.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "Enweghị ike iwepụ ngwaọrụ a. Lelee njikọ gị ma gbalịa ọzọ.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "Enweghị ike ikwenye na akwụsịla njikọ VPN. Gbalịa ịkwụsị njikọ ọzọ.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "Enweghị ike ihichapụ oge akaụntụ echekwara. Gbalịa ọzọ ịpụ na akaụntụ.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch ka na-egbochi okporo ụzọ netwọkụ. Gbalịa ịkwụsị njikọ ọzọ.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "Ọwa VPN ka na-arụ ọrụ. Gbalịa ịkwụsị njikọ ọzọ.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN enweghị ike ịmalite n’ihi na mkpọchi nke mbipụta ya na-arụ ọrụ adịghị ma ọ bụ enweghị ike ime ka windo FuzeVPN dị adị rụọ ọrụ.\n\nChere ka FuzeVPN malite kpamkpam, wee gbalịa ọzọ.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Enweghị ike itinye mmelite ụdị a na-ebugharị. Ụdị gị gara aga dị na folda mbụ ya ma ọ bụ na nnomi ndabere maka iweghachi."
 }

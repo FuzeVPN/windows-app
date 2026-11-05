@@ -607,5 +607,12 @@
   "Serveurs : {count}": "Servery: {count}",
   "Villes : {count}": "Města: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "Blokuje UDP mimo tunel VPN. Chcete-li pokrýt i WebRTC přes TCP/TLS, zapněte kill switch.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Blokuje DNS mimo tunel na portech 53 a 853. Chcete-li pokrýt i DNS přes HTTPS, zapněte kill switch."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Blokuje DNS mimo tunel na portech 53 a 853. Chcete-li pokrýt i DNS přes HTTPS, zapněte kill switch.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "Toto zařízení se nepodařilo odebrat. Zkontrolujte připojení a zkuste to znovu.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "Odpojení VPN se nepodařilo potvrdit. Zkuste se znovu odpojit.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "Uloženou relaci se nepodařilo vymazat. Zkuste se znovu odhlásit z účtu.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Funkce kill switch stále blokuje síťový provoz. Zkuste se znovu odpojit.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "Tunel VPN je stále aktivní. Zkuste se znovu odpojit.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN se nepodařilo spustit, protože zámek jeho instance není dostupný nebo se nepodařilo aktivovat žádné stávající okno FuzeVPN.\n\nPočkejte, až se FuzeVPN spustí, a zkuste to znovu.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Aktualizaci přenosné verze se nepodařilo použít. Předchozí verze zůstává v původní složce nebo v záloze pro obnovení."
 }

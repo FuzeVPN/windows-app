@@ -607,5 +607,12 @@
   "Serveurs : {count}": "Servery: {count}",
   "Villes : {count}": "Mestá: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "Blokuje UDP mimo tunela VPN. Ak chcete pokryť aj WebRTC cez TCP/TLS, zapnite núdzové odpojenie.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Blokuje DNS mimo tunela na portoch 53 a 853. Ak chcete pokryť aj DNS cez HTTPS, zapnite núdzové odpojenie."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Blokuje DNS mimo tunela na portoch 53 a 853. Ak chcete pokryť aj DNS cez HTTPS, zapnite núdzové odpojenie.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "Zariadenie sa nepodarilo odstrániť. Skontrolujte pripojenie a skúste to znova.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "Odpojenie VPN sa nepodarilo potvrdiť. Skúste sa odpojiť znova.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "Uloženú reláciu sa nepodarilo vymazať. Skúste sa znova odhlásiť z účtu.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Núdzové odpojenie stále blokuje sieťovú prevádzku. Skúste sa odpojiť znova.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "Tunel VPN je stále aktívny. Skúste sa odpojiť znova.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN sa nepodarilo spustiť, pretože zámok jeho inštancie nie je dostupný alebo sa nepodarilo aktivovať žiadne existujúce okno FuzeVPN.\n\nPočkajte, kým sa FuzeVPN spustí, a skúste to znova.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Aktualizáciu prenosnej verzie sa nepodarilo použiť. Predchádzajúca verzia sa nachádza v pôvodnom priečinku alebo v zálohe na obnovenie."
 }

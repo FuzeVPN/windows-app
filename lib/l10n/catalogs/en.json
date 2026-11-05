@@ -607,5 +607,12 @@
   "Serveurs : {count}": "Servers: {count}",
   "Villes : {count}": "Cities: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "Blocks UDP outside the VPN tunnel. To also cover WebRTC over TCP/TLS, enable the kill switch.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Blocks DNS outside the tunnel on ports 53 and 853. To also cover DNS over HTTPS, enable the kill switch."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Blocks DNS outside the tunnel on ports 53 and 853. To also cover DNS over HTTPS, enable the kill switch.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "This device could not be removed. Check your connection and try again.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "The VPN disconnection could not be confirmed. Try disconnecting again.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "The saved session could not be cleared. Try signing out of your account again.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "The kill switch is still blocking network traffic. Try disconnecting again.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "The VPN tunnel is still active. Try disconnecting again.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN could not start because its instance lock is unavailable or no existing FuzeVPN window could be activated.\n\nWait for FuzeVPN to finish starting, then try again.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "The portable update could not be applied. Your previous version is in its original folder or in the recovery backup."
 }

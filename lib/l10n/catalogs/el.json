@@ -607,5 +607,12 @@
   "Serveurs : {count}": "Διακομιστές: {count}",
   "Villes : {count}": "Πόλεις: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "Αποκλείει το UDP εκτός της σήραγγας VPN. Για κάλυψη και του WebRTC μέσω TCP/TLS, ενεργοποιήστε το kill switch.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Αποκλείει το DNS εκτός της σήραγγας στις θύρες 53 και 853. Για κάλυψη και του DNS μέσω HTTPS, ενεργοποιήστε το kill switch."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "Αποκλείει το DNS εκτός της σήραγγας στις θύρες 53 και 853. Για κάλυψη και του DNS μέσω HTTPS, ενεργοποιήστε το kill switch.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "Δεν ήταν δυνατή η αφαίρεση αυτής της συσκευής. Ελέγξτε τη σύνδεσή σας και δοκιμάστε ξανά.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "Δεν ήταν δυνατή η επιβεβαίωση της αποσύνδεσης VPN. Δοκιμάστε ξανά την αποσύνδεση.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "Δεν ήταν δυνατή η διαγραφή της αποθηκευμένης συνεδρίας. Δοκιμάστε ξανά την αποσύνδεση από τον λογαριασμό.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Το kill switch εξακολουθεί να αποκλείει την κίνηση δικτύου. Δοκιμάστε ξανά την αποσύνδεση.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "Η σήραγγα VPN παραμένει ενεργή. Δοκιμάστε ξανά την αποσύνδεση.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "Δεν ήταν δυνατή η εκκίνηση του FuzeVPN, επειδή το κλείδωμα της παρουσίας του δεν είναι διαθέσιμο ή δεν ήταν δυνατή η ενεργοποίηση κάποιου υπάρχοντος παραθύρου FuzeVPN.\n\nΠεριμένετε να ολοκληρωθεί η εκκίνηση του FuzeVPN και δοκιμάστε ξανά.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Δεν ήταν δυνατή η εφαρμογή της ενημέρωσης της φορητής έκδοσης. Η προηγούμενη έκδοσή σας βρίσκεται στον αρχικό της φάκελο ή στο αντίγραφο ασφαλείας ανάκτησης."
 }

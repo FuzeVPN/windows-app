@@ -607,5 +607,12 @@
   "Serveurs : {count}": "ເຊີບເວີ: {count}",
   "Villes : {count}": "ເມືອງ: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "ບລັອກ UDP ນອກອຸໂມງ VPN. ເພື່ອປ້ອງກັນ WebRTC ຜ່ານ TCP/TLS ນຳ ໃຫ້ເປີດສະວິດຕັດການເຊື່ອມຕໍ່.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "ບລັອກ DNS ນອກອຸໂມງໃນພອດ 53 ແລະ 853. ເພື່ອປ້ອງກັນ DNS ຜ່ານ HTTPS ນຳ ໃຫ້ເປີດສະວິດຕັດການເຊື່ອມຕໍ່."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "ບລັອກ DNS ນອກອຸໂມງໃນພອດ 53 ແລະ 853. ເພື່ອປ້ອງກັນ DNS ຜ່ານ HTTPS ນຳ ໃຫ້ເປີດສະວິດຕັດການເຊື່ອມຕໍ່.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "ບໍ່ສາມາດລຶບອຸປະກອນນີ້ໄດ້. ກວດສອບການເຊື່ອມຕໍ່ແລ້ວລອງອີກຄັ້ງ.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "ບໍ່ສາມາດຢືນຢັນການຕັດການເຊື່ອມຕໍ່ VPN ໄດ້. ລອງຕັດການເຊື່ອມຕໍ່ອີກຄັ້ງ.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "ບໍ່ສາມາດລຶບເຊດຊັນທີ່ບັນທຶກໄວ້ໄດ້. ລອງອອກຈາກບັນຊີອີກຄັ້ງ.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "ສະວິດຕັດການເຊື່ອມຕໍ່ຍັງບລັອກການຮັບສົ່ງຂໍ້ມູນເຄືອຂ່າຍ. ລອງຕັດການເຊື່ອມຕໍ່ອີກຄັ້ງ.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "ອຸໂມງ VPN ຍັງເຮັດວຽກຢູ່. ລອງຕັດການເຊື່ອມຕໍ່ອີກຄັ້ງ.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "ບໍ່ສາມາດເລີ່ມ FuzeVPN ໄດ້ ເພາະຕົວລັອກອິນສະແຕນຊ໌ຂອງມັນບໍ່ພ້ອມໃຊ້ງານ ຫຼືບໍ່ສາມາດເປີດໃຊ້ໜ້າຕ່າງ FuzeVPN ທີ່ມີຢູ່ໄດ້.\n\nລໍຖ້າໃຫ້ FuzeVPN ເລີ່ມເຮັດວຽກສຳເລັດ ແລ້ວລອງອີກຄັ້ງ.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "ບໍ່ສາມາດນຳໃຊ້ການອັບເດດເວີຊັນແບບພົກພາໄດ້. ເວີຊັນກ່ອນຂອງທ່ານຍັງຢູ່ໃນໂຟນເດີເດີມ ຫຼືໃນສຳເນົາສຳຮອງສຳລັບການກູ້ຄືນ."
 }

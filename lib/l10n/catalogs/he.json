@@ -607,5 +607,12 @@
   "Serveurs : {count}": "שרתים: {count}",
   "Villes : {count}": "ערים: {count}",
   "Bloque l’UDP hors du tunnel VPN. Pour couvrir aussi WebRTC via TCP/TLS, activez le kill switch.": "חוסם UDP מחוץ למנהרת ה-VPN. כדי לכסות גם WebRTC דרך TCP/TLS, יש להפעיל את מתג הניתוק.",
-  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "חוסם DNS מחוץ למנהרה ביציאות 53 ו-853. כדי לכסות גם DNS דרך HTTPS, יש להפעיל את מתג הניתוק."
+  "Bloque le DNS hors du tunnel sur les ports 53 et 853. Pour couvrir aussi le DNS via HTTPS, activez le kill switch.": "חוסם DNS מחוץ למנהרה ביציאות 53 ו-853. כדי לכסות גם DNS דרך HTTPS, יש להפעיל את מתג הניתוק.",
+  "Cet appareil n’a pas pu être retiré. Vérifiez votre connexion puis réessayez.": "לא ניתן היה להסיר את המכשיר. יש לבדוק את החיבור ולנסות שוב.",
+  "La déconnexion VPN n’a pas pu être confirmée. Réessayez la déconnexion.": "לא ניתן היה לאשר את ניתוק ה-VPN. יש לנסות להתנתק שוב.",
+  "La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.": "לא ניתן היה למחוק את נתוני החיבור השמורים לחשבון. יש לנסות שוב להתנתק מהחשבון.",
+  "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "מתג הניתוק עדיין חוסם את תעבורת הרשת. יש לנסות להתנתק שוב.",
+  "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "מנהרת ה-VPN עדיין פעילה. יש לנסות להתנתק שוב.",
+  "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "לא ניתן היה להפעיל את FuzeVPN משום שנעילת המופע שלו אינה זמינה, או שלא ניתן היה להפעיל אף חלון קיים של FuzeVPN.\n\nיש להמתין לסיום ההפעלה של FuzeVPN ולנסות שוב.",
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "לא ניתן היה להחיל את עדכון הגרסה הניידת. הגרסה הקודמת נמצאת בתיקייה המקורית שלה או בגיבוי לשחזור."
 }
