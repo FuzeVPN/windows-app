@@ -92,6 +92,32 @@ void ParserChecks() {
   const auto& openvpn = std::get<Map>(Events(normal)[3]);
   Check(Text(openvpn, "last_error") == "openvpn_tls_handshake_failed" &&
       Integer(openvpn, "first_failed_code") == 50, "structured engine details retained");
+  // Support reports reject the Dart-only openvpn_client_certificate_rejected;
+  // the native writers spell it certificate_invalid, and a raw one is mapped.
+  const auto certificate = SanitizeNativeDiagnosticTail(
+      Line("area=openvpn event=native_error code=openvpn_certificate_expired") +
+      Line("area=openvpn event=native_error code=openvpn_client_certificate_rejected") +
+      Line("area=openvpn event=native_error code=certificate_invalid") +
+      Line("area=openvpn event=connection_attempt_snapshot first_error=openvpn_certificate_expired "
+           "last_error=certificate_invalid failure_before_stop=certificate_invalid") +
+      Line("area=openvpn event=connection_attempt_snapshot first_error=openvpn_client_certificate_rejected "
+           "last_error=openvpn_client_certificate_rejected "
+           "failure_before_stop=openvpn_client_certificate_rejected"));
+  Check(Events(certificate).size() == 5 &&
+      Text(std::get<Map>(Events(certificate)[0]), "code") == "openvpn_certificate_expired" &&
+      Text(std::get<Map>(Events(certificate)[1]), "code") == "certificate_invalid" &&
+      Text(std::get<Map>(Events(certificate)[2]), "code") == "certificate_invalid",
+      "server verdict on the client certificate kept in its support spelling");
+  const auto& verdict = std::get<Map>(Events(certificate)[3]);
+  Check(Text(verdict, "first_error") == "openvpn_certificate_expired" &&
+      Text(verdict, "last_error") == "certificate_invalid" &&
+      Text(verdict, "failure_before_stop") == "certificate_invalid",
+      "client certificate verdicts retained in the attempt snapshot");
+  const auto& raw = std::get<Map>(Events(certificate)[4]);
+  Check(Text(raw, "first_error") == "certificate_invalid" &&
+      Text(raw, "last_error") == "certificate_invalid" &&
+      Text(raw, "failure_before_stop") == "certificate_invalid",
+      "a raw client certificate rejection never reaches the export");
   const auto private_fields = SanitizeNativeDiagnosticTail(
       Line("area=broker event=connection_failed code=access_token_value account=secret token=secret "
            "path=C:\\Users\\Other message=private email=person@example.com") +

@@ -21,6 +21,7 @@
 #include "diagnostics_local.h"
 #include "single_instance.h"
 #include "utils.h"
+#include "window_close_policy.h"
 #include "wireguard_tunnel.h"
 
 namespace {
@@ -407,10 +408,15 @@ FlutterWindow::MessageHandler(HWND hwnd, UINT const message,
       if (tls_trust_channel_) tls_trust_channel_->ProcessCompletions();
       return 0;
     case WM_CLOSE:
-      if (tray_available_) {
+      if (fuzevpn_window::DecideClose(tray_available_) ==
+          fuzevpn_window::CloseAction::hide_to_tray) {
         ShowWindow(hwnd, SW_HIDE);
       } else {
+        // No tray icon: the window is the only way back in and the only place
+        // left to quit from. Keep it and let Dart open its Quit dialog; the
+        // close request itself still changes nothing in the VPN.
         ActivateFuzeVpnWindow(hwnd);
+        NotifyDart("closeRequested");
       }
       return 0;
     case kConnectivityRestoredMessage:

@@ -25,7 +25,7 @@ class _ConnectionPage extends StatelessWidget {
             icon: Icons.workspace_premium_outlined,
             color: AppTheme.warningFor(context),
           )
-        : controller.isInitialized
+        : _showsLiveConnectionState(controller)
         ? _connectionState(controller.vpnStatus, context)
         : _ConnectionState(
             label: context.tr('Vérification de la protection…'),
@@ -122,6 +122,14 @@ class _ConnectionPage extends StatelessWidget {
   }
 }
 
+// The startup resume under a retained kill switch runs before the controller
+// is initialized: its real state is shown, with the stop it can be given,
+// rather than a verification notice nothing can act on.
+bool _showsLiveConnectionState(AppController controller) =>
+    controller.isInitialized ||
+    controller.isConnectionCommandRunning ||
+    controller.isStoppingVpn;
+
 bool _showsSubscriptionRequiredHero(AppController controller) =>
     controller.isInitialized &&
     !controller.runtimeVerificationPending &&
@@ -165,7 +173,7 @@ class _ConnectionHero extends StatelessWidget {
       final panelPadding = wide && !hasNotice ? 28.0 : 20.0;
       // This panel has a fixed dark surface in both themes. Its status colors
       // therefore follow the dark palette independently of the app theme.
-      final statusColor = !controller.isInitialized
+      final statusColor = !_showsLiveConnectionState(controller)
           ? const Color(0xFFB8C4CC)
           : subscriptionRequired
           ? const Color(0xFFFFBE70)
@@ -220,6 +228,16 @@ class _ConnectionHero extends StatelessWidget {
           ],
         ),
       );
+      // The button stops the running command. While it is still preparing
+      // or connecting with nothing armed, that only cancels it; in any other
+      // case (a location change that begins by disconnecting, a renewal of a
+      // tunnel that is up, a retained protection) it disconnects.
+      final stopsOperation = controller.canCancelConnection;
+      final cancelsBeforeProtection =
+          stopsOperation &&
+          !controller.requiresExplicitDisconnect &&
+          (controller.vpnStatus == VpnStatus.preparing ||
+              controller.vpnStatus == VpnStatus.connecting);
       final action = FilledButton.icon(
         key: const ValueKey('connection-primary-action'),
         style: FilledButton.styleFrom(
@@ -233,7 +251,12 @@ class _ConnectionHero extends StatelessWidget {
             fontWeight: FontWeight.w700,
           ),
         ),
-        onPressed: !enabled || controller.isConnectionBusy
+        // A running connection, reconnection or renewal can always be
+        // stopped, also before the controller is initialized. Any other busy
+        // cause (a disconnect in progress included) keeps the button off.
+        onPressed: stopsOperation
+            ? () => controller.disconnectVpn()
+            : !enabled || controller.isConnectionBusy
             ? null
             : subscriptionRequired
             ? () => _openAccountDestination(context, controller)
@@ -241,9 +264,11 @@ class _ConnectionHero extends StatelessWidget {
         icon: Icon(
           controller.runtimeVerificationPending
               ? Icons.refresh
+              : cancelsBeforeProtection
+              ? Icons.close
               : subscriptionRequired
               ? Icons.account_circle_outlined
-              : controller.requiresExplicitDisconnect
+              : stopsOperation || controller.requiresExplicitDisconnect
               ? Icons.lock_open_outlined
               : controller.savedSessionVerificationPending
               ? Icons.refresh
@@ -253,9 +278,11 @@ class _ConnectionHero extends StatelessWidget {
           context.tr(
             controller.runtimeVerificationPending
                 ? 'Réessayer'
+                : cancelsBeforeProtection
+                ? 'Annuler'
                 : subscriptionRequired
                 ? 'Mon compte'
-                : controller.requiresExplicitDisconnect
+                : stopsOperation || controller.requiresExplicitDisconnect
                 ? 'Déconnecter'
                 : controller.savedSessionVerificationPending
                 ? 'Réessayer'
@@ -264,6 +291,32 @@ class _ConnectionHero extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
       );
+      // The runtime state is unknown: retrying stays passive, and this is
+      // the explicit stop of whatever may still be running or blocking.
+      final forceDisconnect =
+          controller.runtimeVerificationPending && controller.canDisconnectVpn
+          ? OutlinedButton.icon(
+              key: const ValueKey('connection-force-disconnect'),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: AppTheme.ivory,
+                side: BorderSide(color: AppTheme.ivory.withValues(alpha: 0.6)),
+                minimumSize: const Size(0, 48),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 22,
+                  vertical: 15,
+                ),
+                textStyle: theme.textTheme.labelLarge?.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              onPressed: () => controller.disconnectVpn(),
+              icon: const Icon(Icons.lock_open_outlined),
+              label: Text(
+                context.tr('Déconnecter'),
+                textAlign: TextAlign.center,
+              ),
+            )
+          : null;
       return Container(
         key: const ValueKey('connection-control-panel'),
         decoration: BoxDecoration(
@@ -291,14 +344,33 @@ class _ConnectionHero extends StatelessWidget {
                               const SizedBox(height: 24),
                               Align(
                                 alignment: AlignmentDirectional.centerStart,
-                                child: action,
+                                child: forceDisconnect == null
+                                    ? action
+                                    : Wrap(
+                                        spacing: 12,
+                                        runSpacing: 10,
+                                        children: [action, forceDisconnect],
+                                      ),
                               ),
                             ],
                           ),
                   ),
                   if (hasNotice && wide) ...[
                     const SizedBox(width: 24),
-                    SizedBox(width: 194, child: action),
+                    SizedBox(
+                      width: 194,
+                      child: forceDisconnect == null
+                          ? action
+                          : Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                action,
+                                const SizedBox(height: 10),
+                                forceDisconnect,
+                              ],
+                            ),
+                    ),
                   ] else if (wide) ...[
                     const SizedBox(width: 28),
                     _TunnelIllustration(

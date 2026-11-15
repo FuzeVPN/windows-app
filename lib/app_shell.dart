@@ -13,6 +13,7 @@ import 'brand_config.dart';
 import 'core/location_directory.dart';
 import 'core/models.dart';
 import 'core/windows_update_controller.dart';
+import 'country_flag_assets.dart';
 import 'fuze_emblem.dart';
 import 'l10n/app_localizations.dart';
 import 'l10n/date_time_format.dart';
@@ -1171,6 +1172,15 @@ class _DeviceEnrollmentIssueCard extends StatelessWidget {
     final VoidCallback? retry = controller.canRetryConnection
         ? controller.retryConnection
         : null;
+    // A profile kept for another key or an expired certificate: a renewal
+    // (new key) replaces it.
+    final VoidCallback? renew = controller.canRenewOpenVpnProfile
+        ? controller.renewOpenVpnProfile
+        : null;
+    // The server refuses to renew a revoked profile: a new key replaces it.
+    final VoidCallback? replace = controller.canRenewOpenVpnProfile
+        ? controller.replaceRevokedOpenVpnProfile
+        : null;
     final (String, VoidCallback?) action = switch (issue.kind) {
       DeviceEnrollmentIssueKind.sessionExpired => (
         'Se connecter',
@@ -1196,10 +1206,13 @@ class _DeviceEnrollmentIssueCard extends StatelessWidget {
         'Créer une nouvelle identité',
         () => _confirmIdentityReset(context, controller),
       ),
-      DeviceEnrollmentIssueKind.openVpnProfileExists => ('Réessayer', retry),
+      DeviceEnrollmentIssueKind.openVpnProfileExists => (
+        'Renouveler le profil',
+        renew,
+      ),
       DeviceEnrollmentIssueKind.openVpnProfileRevoked => (
         'Renouveler le profil',
-        controller.renewOpenVpnProfile,
+        replace,
       ),
       DeviceEnrollmentIssueKind.openVpnOperationPending => ('Réessayer', retry),
       DeviceEnrollmentIssueKind.openVpnSignerUnavailable => (
@@ -1316,10 +1329,13 @@ class _CountryFlag extends StatelessWidget {
   Widget build(BuildContext context) {
     final normalizedCode = countryCode.trim().toUpperCase();
     final isIsoCode = _isIsoCountryCode(normalizedCode);
+    // Decided synchronously: a country published by the API after this build
+    // shows its bundled flag at once, without waiting for an asset lookup.
+    final flagAsset = isIsoCode ? countryFlagAsset(normalizedCode) : null;
 
     return Semantics(
       key: ValueKey('country-flag-$normalizedCode'),
-      label: _CountryFlagPainter.drawnCountries.contains(normalizedCode)
+      label: flagAsset != null
           ? context
                 .tr('Drapeau : {country}')
                 .replaceAll('{country}', _countryName(context, normalizedCode))
@@ -1339,9 +1355,17 @@ class _CountryFlag extends StatelessWidget {
                 size: height * 0.75,
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               )
-            : CustomPaint(
-                painter: _CountryFlagPainter(normalizedCode),
-                child: const SizedBox.expand(),
+            : flagAsset == null
+            ? _CountryCodeBadge(normalizedCode)
+            : Image.asset(
+                flagAsset,
+                fit: BoxFit.cover,
+                filterQuality: FilterQuality.medium,
+                cacheWidth: _flagCacheWidth(context, width, height),
+                // The enclosing Semantics node already names the flag.
+                excludeFromSemantics: true,
+                errorBuilder: (context, error, stackTrace) =>
+                    _CountryCodeBadge(normalizedCode),
               ),
       ),
     );
@@ -1354,454 +1378,58 @@ bool _isIsoCountryCode(String code) {
   return !units.any((unit) => unit < 0x41 || unit > 0x5A);
 }
 
-class _CountryFlagPainter extends CustomPainter {
-  const _CountryFlagPainter(this.countryCode);
+/// Decoded width, in physical pixels, of a flag shown in a [width] by
+/// [height] box, so that a long list does not keep full-size bitmaps. Null
+/// keeps the image at its own width.
+///
+/// The displayed width times the device pixel ratio is not enough on its own:
+/// - [BoxFit.cover] scales a flag wider than the box up to the box height. A
+///   third of the bundled flags are 2:1, so the box width alone would decode
+///   them too small and stretch them; twice the height covers them.
+/// - Decoding straight to a much smaller size drops source pixels and leaves
+///   jagged stripes at 24 by 16. Halving at most stays clean; the rest of the
+///   reduction is left to [FilterQuality.medium] when the flag is painted.
+int? _flagCacheWidth(BuildContext context, double width, double height) {
+  final displayedWidth =
+      (math.max(width, height * 2) * MediaQuery.devicePixelRatioOf(context))
+          .ceil();
+  // Never enlarge while decoding.
+  if (displayedWidth >= countryFlagImageWidth) return null;
+  return math.max(displayedWidth, countryFlagImageWidth ~/ 2);
+}
 
-  static const drawnCountries = {
-    'AT',
-    'AU',
-    'BE',
-    'CA',
-    'CH',
-    'DE',
-    'DK',
-    'ES',
-    'FI',
-    'FR',
-    'GB',
-    'IE',
-    'IT',
-    'JP',
-    'NL',
-    'NO',
-    'PL',
-    'PT',
-    'SE',
-    'SG',
-    'US',
-  };
+/// The ISO code on a neutral background, for a code without a bundled flag.
+class _CountryCodeBadge extends StatelessWidget {
+  const _CountryCodeBadge(this.countryCode);
 
   final String countryCode;
 
   @override
-  void paint(Canvas canvas, Size size) {
-    switch (countryCode) {
-      case 'AT':
-        _horizontalStripes(canvas, size, const [
-          Colors.red,
-          Colors.white,
-          Colors.red,
-        ]);
-      case 'AU':
-        _australia(canvas, size);
-      case 'BE':
-        _verticalStripes(canvas, size, const [
-          Color(0xff171717),
-          Colors.amber,
-          Colors.red,
-        ]);
-      case 'CA':
-        _canada(canvas, size);
-      case 'CH':
-        _switzerland(canvas, size);
-      case 'DE':
-        _horizontalStripes(canvas, size, const [
-          Colors.black,
-          Colors.red,
-          Colors.amber,
-        ]);
-      case 'DK':
-        _nordic(
-          canvas,
-          size,
-          background: const Color(0xffc8102e),
-          cross: Colors.white,
-        );
-      case 'ES':
-        _horizontalStripes(
-          canvas,
-          size,
-          const [Colors.red, Colors.amber, Colors.red],
-          proportions: [1, 2, 1],
-        );
-      case 'FI':
-        _nordic(
-          canvas,
-          size,
-          background: Colors.white,
-          cross: const Color(0xff003580),
-        );
-      case 'FR':
-        _verticalStripes(canvas, size, const [
-          Color(0xff0055a4),
-          Colors.white,
-          Color(0xffef4135),
-        ]);
-      case 'GB':
-        _unitedKingdom(canvas, size);
-      case 'IE':
-        _verticalStripes(canvas, size, const [
-          Color(0xff169b62),
-          Colors.white,
-          Color(0xffff883e),
-        ]);
-      case 'IT':
-        _verticalStripes(canvas, size, const [
-          Color(0xff009246),
-          Colors.white,
-          Color(0xffce2b37),
-        ]);
-      case 'JP':
-        _japan(canvas, size);
-      case 'NL':
-        _horizontalStripes(canvas, size, const [
-          Color(0xffae1c28),
-          Colors.white,
-          Color(0xff21468b),
-        ]);
-      case 'NO':
-        _nordic(
-          canvas,
-          size,
-          background: const Color(0xffba0c2f),
-          cross: Colors.white,
-          innerCross: const Color(0xff00205b),
-        );
-      case 'PL':
-        _horizontalStripes(canvas, size, const [Colors.white, Colors.red]);
-      case 'PT':
-        _portugal(canvas, size);
-      case 'SE':
-        _nordic(
-          canvas,
-          size,
-          background: const Color(0xff006aa7),
-          cross: const Color(0xfffecc00),
-        );
-      case 'SG':
-        _singapore(canvas, size);
-      case 'US':
-        _unitedStates(canvas, size);
-      default:
-        _genericFlag(canvas, size, countryCode);
-    }
-  }
+  Widget build(BuildContext context) => CustomPaint(
+    painter: _CountryCodeBadgePainter(countryCode),
+    child: const SizedBox.expand(),
+  );
+}
+
+class _CountryCodeBadgePainter extends CustomPainter {
+  const _CountryCodeBadgePainter(this.countryCode);
+
+  final String countryCode;
 
   @override
-  bool shouldRepaint(covariant _CountryFlagPainter oldDelegate) =>
+  void paint(Canvas canvas, Size size) =>
+      _genericFlag(canvas, size, countryCode);
+
+  @override
+  bool shouldRepaint(covariant _CountryCodeBadgePainter oldDelegate) =>
       oldDelegate.countryCode != countryCode;
 }
 
-void _drawFlagRect(Canvas canvas, Size size, Color color) {
-  canvas.drawRect(Offset.zero & size, Paint()..color = color);
-}
-
-void _horizontalStripes(
-  Canvas canvas,
-  Size size,
-  List<Color> colors, {
-  List<double>? proportions,
-}) {
-  final weights = proportions ?? List<double>.filled(colors.length, 1);
-  final total = weights.fold<double>(0, (sum, value) => sum + value);
-  var top = 0.0;
-  for (var index = 0; index < colors.length; index++) {
-    final height = size.height * weights[index] / total;
-    canvas.drawRect(
-      Rect.fromLTWH(0, top, size.width, height),
-      Paint()..color = colors[index],
-    );
-    top += height;
-  }
-}
-
-void _verticalStripes(Canvas canvas, Size size, List<Color> colors) {
-  final width = size.width / colors.length;
-  for (var index = 0; index < colors.length; index++) {
-    canvas.drawRect(
-      Rect.fromLTWH(width * index, 0, width, size.height),
-      Paint()..color = colors[index],
-    );
-  }
-}
-
-void _nordic(
-  Canvas canvas,
-  Size size, {
-  required Color background,
-  required Color cross,
-  Color? innerCross,
-}) {
-  _drawFlagRect(canvas, size, background);
-  final horizontal = Rect.fromLTWH(
-    0,
-    size.height * .40,
-    size.width,
-    size.height * .20,
-  );
-  final vertical = Rect.fromLTWH(
-    size.width * .32,
-    0,
-    size.width * .20,
-    size.height,
-  );
-  canvas.drawRect(horizontal, Paint()..color = cross);
-  canvas.drawRect(vertical, Paint()..color = cross);
-  if (innerCross != null) {
-    final innerHorizontal = Rect.fromLTWH(
-      0,
-      size.height * .445,
-      size.width,
-      size.height * .11,
-    );
-    final innerVertical = Rect.fromLTWH(
-      size.width * .365,
-      0,
-      size.width * .11,
-      size.height,
-    );
-    canvas.drawRect(innerHorizontal, Paint()..color = innerCross);
-    canvas.drawRect(innerVertical, Paint()..color = innerCross);
-  }
-}
-
-void _australia(Canvas canvas, Size size) {
-  _drawFlagRect(canvas, size, const Color(0xff012169));
-  _unitedKingdom(
-    canvas,
-    size,
-    rect: Rect.fromLTWH(0, 0, size.width * .48, size.height * .58),
-  );
-  _drawStar(
-    canvas,
-    Offset(size.width * .75, size.height * .68),
-    size.height * .18,
-    Colors.white,
-  );
-  _drawStar(
-    canvas,
-    Offset(size.width * .88, size.height * .36),
-    size.height * .09,
-    Colors.white,
-  );
-  _drawStar(
-    canvas,
-    Offset(size.width * .66, size.height * .34),
-    size.height * .08,
-    Colors.white,
-  );
-}
-
-void _canada(Canvas canvas, Size size) {
-  _verticalStripes(canvas, size, const [Colors.red, Colors.white, Colors.red]);
-  final center = Offset(size.width * .5, size.height * .5);
-  final paint = Paint()..color = Colors.red;
-  final path = Path()
-    ..moveTo(center.dx, size.height * .16)
-    ..lineTo(center.dx + size.width * .07, size.height * .35)
-    ..lineTo(center.dx + size.width * .17, size.height * .27)
-    ..lineTo(center.dx + size.width * .11, size.height * .47)
-    ..lineTo(center.dx + size.width * .19, size.height * .47)
-    ..lineTo(center.dx + size.width * .06, size.height * .62)
-    ..lineTo(center.dx + size.width * .09, size.height * .82)
-    ..lineTo(center.dx, size.height * .70)
-    ..lineTo(center.dx - size.width * .09, size.height * .82)
-    ..lineTo(center.dx - size.width * .06, size.height * .62)
-    ..lineTo(center.dx - size.width * .19, size.height * .47)
-    ..lineTo(center.dx - size.width * .11, size.height * .47)
-    ..lineTo(center.dx - size.width * .17, size.height * .27)
-    ..lineTo(center.dx - size.width * .07, size.height * .35)
-    ..close();
-  canvas.drawPath(path, paint);
-}
-
-void _switzerland(Canvas canvas, Size size) {
-  _drawFlagRect(canvas, size, const Color(0xffd52b1e));
-  final paint = Paint()..color = Colors.white;
-  canvas.drawRect(
-    Rect.fromLTWH(
-      size.width * .39,
-      size.height * .18,
-      size.width * .22,
-      size.height * .64,
-    ),
-    paint,
-  );
-  canvas.drawRect(
-    Rect.fromLTWH(
-      size.width * .22,
-      size.height * .39,
-      size.width * .56,
-      size.height * .22,
-    ),
-    paint,
-  );
-}
-
-void _japan(Canvas canvas, Size size) {
-  _drawFlagRect(canvas, size, Colors.white);
-  canvas.drawCircle(
-    Offset(size.width * .5, size.height * .5),
-    size.height * .28,
-    Paint()..color = const Color(0xffbc002d),
-  );
-}
-
-void _portugal(Canvas canvas, Size size) {
-  _verticalStripes(canvas, size, const [Color(0xff046a38), Color(0xffda291c)]);
-  canvas.drawCircle(
-    Offset(size.width * .43, size.height * .5),
-    size.height * .23,
-    Paint()..color = const Color(0xffffcd00),
-  );
-  canvas.drawCircle(
-    Offset(size.width * .43, size.height * .5),
-    size.height * .14,
-    Paint()..color = Colors.white,
-  );
-}
-
-void _singapore(Canvas canvas, Size size) {
-  _horizontalStripes(canvas, size, const [Color(0xffed2939), Colors.white]);
-  final center = Offset(size.width * .23, size.height * .30);
-  canvas.drawCircle(center, size.height * .18, Paint()..color = Colors.white);
-  canvas.drawCircle(
-    Offset(center.dx + size.width * .06, center.dy),
-    size.height * .15,
-    Paint()..color = const Color(0xffed2939),
-  );
-  for (var index = 0; index < 5; index++) {
-    _drawStar(
-      canvas,
-      Offset(
-        center.dx + size.width * .12 + size.width * .07 * index,
-        center.dy + size.height * .16,
-      ),
-      size.height * .035,
-      Colors.white,
-    );
-  }
-}
-
-void _unitedStates(Canvas canvas, Size size) {
-  final stripeHeight = size.height / 13;
-  for (var index = 0; index < 13; index++) {
-    canvas.drawRect(
-      Rect.fromLTWH(0, stripeHeight * index, size.width, stripeHeight),
-      Paint()..color = index.isEven ? const Color(0xffb22234) : Colors.white,
-    );
-  }
-  canvas.drawRect(
-    Rect.fromLTWH(0, 0, size.width * .42, stripeHeight * 7),
-    Paint()..color = const Color(0xff3c3b6e),
-  );
-  for (var row = 0; row < 3; row++) {
-    for (var column = 0; column < 4; column++) {
-      canvas.drawCircle(
-        Offset(
-          size.width * (.08 + column * .09),
-          size.height * (.10 + row * .16),
-        ),
-        size.height * .025,
-        Paint()..color = Colors.white,
-      );
-    }
-  }
-}
-
-void _unitedKingdom(Canvas canvas, Size size, {Rect? rect}) {
-  final target = rect ?? (Offset.zero & size);
-  canvas.drawRect(target, Paint()..color = const Color(0xff012169));
-  final center = target.center;
-  final diagonal = Paint()
-    ..color = Colors.white
-    ..strokeWidth = target.height * .22
-    ..strokeCap = StrokeCap.square;
-  canvas.drawLine(
-    Offset(target.left, target.top),
-    Offset(target.right, target.bottom),
-    diagonal,
-  );
-  canvas.drawLine(
-    Offset(target.right, target.top),
-    Offset(target.left, target.bottom),
-    diagonal,
-  );
-  final redDiagonal = Paint()
-    ..color = const Color(0xffc8102e)
-    ..strokeWidth = target.height * .09
-    ..strokeCap = StrokeCap.square;
-  canvas.drawLine(
-    Offset(target.left, target.top),
-    Offset(target.right, target.bottom),
-    redDiagonal,
-  );
-  canvas.drawLine(
-    Offset(target.right, target.top),
-    Offset(target.left, target.bottom),
-    redDiagonal,
-  );
-  canvas.drawRect(
-    Rect.fromLTWH(
-      target.left,
-      center.dy - target.height * .13,
-      target.width,
-      target.height * .26,
-    ),
-    Paint()..color = Colors.white,
-  );
-  canvas.drawRect(
-    Rect.fromLTWH(
-      center.dx - target.width * .13,
-      target.top,
-      target.width * .26,
-      target.height,
-    ),
-    Paint()..color = Colors.white,
-  );
-  canvas.drawRect(
-    Rect.fromLTWH(
-      target.left,
-      center.dy - target.height * .07,
-      target.width,
-      target.height * .14,
-    ),
-    Paint()..color = const Color(0xffc8102e),
-  );
-  canvas.drawRect(
-    Rect.fromLTWH(
-      center.dx - target.width * .07,
-      target.top,
-      target.width * .14,
-      target.height,
-    ),
-    Paint()..color = const Color(0xffc8102e),
-  );
-}
-
-void _drawStar(Canvas canvas, Offset center, double radius, Color color) {
-  final path = Path();
-  for (var index = 0; index < 10; index++) {
-    final angle = -math.pi / 2 + index * math.pi / 5;
-    final currentRadius = index.isEven ? radius : radius * .42;
-    final point = Offset(
-      center.dx + math.cos(angle) * currentRadius,
-      center.dy + math.sin(angle) * currentRadius,
-    );
-    if (index == 0) {
-      path.moveTo(point.dx, point.dy);
-    } else {
-      path.lineTo(point.dx, point.dy);
-    }
-  }
-  path.close();
-  canvas.drawPath(path, Paint()..color = color);
-}
-
 void _genericFlag(Canvas canvas, Size size, String code) {
-  // An ISO badge is honest when no flag artwork is bundled. Never invent a
-  // national flag from hashed colors (new language options exposed this path).
-  _drawFlagRect(canvas, size, const Color(0xffe4e7ea));
+  // An ISO badge is honest when no flag image is bundled for the code or the
+  // bundled image cannot be read. Never invent a national flag from hashed
+  // colors.
+  canvas.drawRect(Offset.zero & size, Paint()..color = const Color(0xffe4e7ea));
   final painter = TextPainter(
     text: TextSpan(
       text: code,
@@ -1837,7 +1465,9 @@ Future<void> _requestConnection(
     return;
   }
   if (controller.requiresExplicitDisconnect) {
-    await controller.quickConnect();
+    // The button says Disconnect: send that intent, never a toggle that a
+    // state change in between could turn into a connection.
+    await controller.disconnectVpn();
     return;
   }
   if (controller.savedSessionVerificationPending) {

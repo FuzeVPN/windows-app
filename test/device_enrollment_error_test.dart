@@ -658,9 +658,10 @@ void main() {
         expect(openVpn.disconnectCalls, 0);
         expect(wireguard.disconnectCalls, 0);
         expect(api.createOpenVpnCalls, 7);
-        // The retry is a new attempt: it reads the CSR once and sends it.
+        // The retry is a new attempt: it reads the CSR once and sends it,
+        // the same active key as before.
         expect(openVpn.csrCalls, 2);
-        expect(api.receivedCsrs.last, 'csr-2');
+        expect(api.receivedCsrs.last, 'csr-1');
         expect(openVpn.importCalls, 1);
         expect(openVpn.protectionActive, isTrue);
         expect(controller.vpnStatus, VpnStatus.connected);
@@ -881,9 +882,11 @@ void main() {
     testWidgets('s’arrête avant de dépasser l’échéance du budget', (
       tester,
     ) async {
+      // The readiness wait always names its delay (Retry-After 3 here).
       const retryLater = ApiException(
         statusCode: 409,
         errorCode: 'openvpn_operation_pending',
+        retryAfterSeconds: 3,
       );
       final api = FakeApiClient()
         ..openVpnHold = const Duration(seconds: 10)
@@ -902,7 +905,7 @@ void main() {
       await pumpSeconds(tester, 15);
       await connecting;
 
-      // 10 s held per request plus the 3 s default wait: a fifth request
+      // 10 s held per request plus the 3 s Retry-After: a fifth request
       // would start after 52 s, beyond the 45 s budget.
       expect(api.createOpenVpnCalls, 4);
       expect(
@@ -917,11 +920,44 @@ void main() {
       final waits = traceSince(start, 'profile_pending_wait');
       expect(waits, hasLength(3));
       expect(waits, everyElement(contains('attempt=')));
-      // No Retry-After: the trace says so instead of the 3 s default.
-      expect(waits, everyElement(isNot(contains('count='))));
+      expect(waits, everyElement(contains('count=3')));
       final exhausted = traceSince(start, 'profile_pending_exhausted').single;
       expect(exhausted, contains('attempt=4'));
       expect(exhausted, contains('duration_ms=49000'));
+      controller.dispose();
+    });
+
+    testWidgets('sans Retry-After, une création en attente n’est pas '
+        'renvoyée', (tester) async {
+      // Only the readiness wait answers pending for free, and it always
+      // sends Retry-After. Without it, the server counted this creation
+      // before another operation of the device refused it: sending it
+      // again would count again.
+      const countedPending = ApiException(
+        statusCode: 409,
+        errorCode: 'openvpn_operation_pending',
+      );
+      final api = FakeApiClient()
+        ..openVpnResults = [
+          for (var attempt = 0; attempt < 6; attempt++) countedPending,
+        ];
+      final openVpn = FakeOpenVpnBridge();
+      final controller = openVpnControllerFor(api, openVpn);
+      final start = markTrace();
+
+      final connecting = controller.toggleConnection();
+      await pumpSeconds(tester, 15);
+      await connecting;
+
+      expect(api.createOpenVpnCalls, 1);
+      expect(
+        controller.deviceEnrollmentIssue?.kind,
+        DeviceEnrollmentIssueKind.openVpnOperationPending,
+      );
+      expect(controller.vpnStatus, VpnStatus.blocked);
+      expect(openVpn.importCalls, 0);
+      expect(traceSince(start, 'profile_pending_wait'), isEmpty);
+      expect(controller.canRetryConnection, isTrue);
       controller.dispose();
     });
 
@@ -1435,7 +1471,8 @@ final fakeOpenVpnActivation = OpenVpnActivation(
   serverName: 'frankfurt-01.openvpn.internal',
   remoteCertTlsServer: true,
   ciphers: const ['AES-256-GCM'],
-  notAfter: DateTime.utc(2027, 1, 1),
+  // Far from expiry, whatever the real date: no renewal unless a test asks.
+  notAfter: DateTime.utc(2099),
 );
 
 final fakeDualOpenVpnActivation = OpenVpnActivation(
@@ -1453,7 +1490,7 @@ final fakeDualOpenVpnActivation = OpenVpnActivation(
   serverName: 'frankfurt-01.openvpn.internal',
   remoteCertTlsServer: true,
   ciphers: const ['AES-256-GCM'],
-  notAfter: DateTime.utc(2027, 1, 1),
+  notAfter: DateTime.utc(2099),
 );
 
 class FakeApiClient extends ApiClient {
@@ -1545,6 +1582,19 @@ class _DeviceNameWindow extends WindowBridge {
 }
 
 class FakeSecureStore extends SecureStore {
+  // Like every store call the controller makes, the renewal marker stays
+  // in this fake: an unmocked channel would never answer in a widget test.
+  @override
+  Future<String?> openVpnRenewalDeviceId() async => null;
+  @override
+  Future<void> saveOpenVpnRenewalDeviceId(
+    String deviceId, {
+    String? csrSha256,
+  }) async {}
+  @override
+  Future<void> clearOpenVpnRenewalDeviceId() async {}
+  @override
+  Future<String?> openVpnRenewalCsrSha256() async => null;
   String? storedToken = 'session-token-not-displayed';
   int clearTokenCalls = 0;
   Object? saveCurrentDeviceIdFailure;
@@ -1680,18 +1730,28 @@ class FakeOpenVpnBridge extends OpenVpnBridge
     protectionActive = false;
   }
 
+  // The active identity's CSR, until [deleteProfile] removes that identity.
+  String? _activeCsr;
+  int _keys = 0;
+
   @override
   Future<void> deleteProfile() async {
     deleteProfileCalls += 1;
+    _activeCsr = null;
   }
 
-  /// A distinct value per call, so a CSR regenerated within one attempt or
-  /// reused across attempts is visible in [FakeApiClient.receivedCsrs].
+  /// Like the native GetCsr without renewal: the same CSR for as long as
+  /// the active identity exists, and a new key ('csr-2', ...) only once it
+  /// was deleted, so a CSR regenerated within one attempt or reused across
+  /// attempts is visible in [FakeApiClient.receivedCsrs].
   @override
   Future<String> getOrCreateCsr({
     required String accountId,
     required String deviceId,
-  }) async => 'csr-${++csrCalls}';
+  }) async {
+    csrCalls++;
+    return _activeCsr ??= 'csr-${++_keys}';
+  }
 
   @override
   Future<void> importAndConnect(OpenVpnActivation activation) async {

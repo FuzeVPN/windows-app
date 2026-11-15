@@ -1,4 +1,6 @@
 // SPDX-License-Identifier: MPL-2.0
+import 'dart:io';
+
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fuzevpn_windows/app_controller.dart';
@@ -6,9 +8,12 @@ import 'package:fuzevpn_windows/core/api_client.dart';
 import 'package:fuzevpn_windows/core/diagnostic_log.dart';
 import 'package:fuzevpn_windows/core/diagnostics_controller.dart';
 import 'package:fuzevpn_windows/core/diagnostics_models.dart';
+import 'package:fuzevpn_windows/core/diagnostics_support.dart';
+import 'package:fuzevpn_windows/core/local_diagnostic_trace.dart';
 import 'package:fuzevpn_windows/core/models.dart';
 
 import 'support/audit_fixtures.dart' as fixtures;
+import 'support/backend_support_vocabulary.dart';
 
 class _RecordingDiagnostics extends DiagnosticsController {
   final errors = <DiagnosticError>[];
@@ -20,6 +25,15 @@ class _RecordingDiagnostics extends DiagnosticsController {
     bool terminal = true,
   }) {
     if (terminal) errors.add(error);
+  }
+}
+
+class _EventDiagnostics extends _RecordingDiagnostics {
+  final events = <DiagnosticEvent>[];
+  @override
+  void recordEvent(DiagnosticEvent event) {
+    events.add(event);
+    super.recordEvent(event);
   }
 }
 
@@ -233,6 +247,148 @@ void main() {
       expect(line, isNot(contains('private_secret')));
     },
   );
+
+  // recentLines is a bounded ring shared by this file: slice after a marker.
+  var marks = 0;
+  String markTrace() {
+    final marker = 'renewal_trace_mark_${marks++}';
+    DiagnosticLog.record(area: 'trace_test', event: marker);
+    return marker;
+  }
+
+  List<String> since(String marker) {
+    final lines = DiagnosticLog.recentLines;
+    final index = lines.lastIndexWhere(
+      (line) => line.endsWith(' event=$marker'),
+    );
+    expect(index, isNot(-1), reason: 'trace marker $marker was evicted');
+    return lines.skip(index + 1).toList();
+  }
+
+  Future<Map<String, Object?>> collect(List<String> lines) async {
+    final directory = await Directory.systemTemp.createTemp('fuzevpn-renew-');
+    addTearDown(() => directory.delete(recursive: true));
+    return LocalDiagnosticTrace.collect(
+      path: '${directory.path}${Platform.pathSeparator}diagnostic.log',
+      currentLines: lines,
+    );
+  }
+
+  test(
+    'the local reader rejects renewal values outside the support vocabulary',
+    () async {
+      // Values of an earlier draft that the backend's closed lists refuse:
+      // one of them would make it reject the whole full report.
+      for (final line in [
+        '2026-11-10T12:00:00Z area=openvpn event=certificate_renewal_started '
+            'count=3',
+        '2026-11-10T12:00:00Z area=openvpn event=certificate_renewal_completed '
+            'count=90',
+        '2026-11-10T12:00:00Z area=openvpn event=started reason=proactive',
+        '2026-11-10T12:00:00Z area=openvpn event=native_connect_failed '
+            'code=openvpn_client_certificate_rejected',
+      ]) {
+        final collected = await collect([line]);
+        expect(collected['events'], isEmpty, reason: line);
+        expect(collected['discarded_lines'], 1, reason: line);
+      }
+      final accepted = await collect([
+        '2026-11-10T12:00:00Z area=openvpn event=started '
+            'code=certificate_expired stage=certificate_renewal count=0',
+        '2026-11-10T12:00:01Z area=openvpn event=attempt_failed '
+            'code=unknown_error stage=certificate_renewal attempt=1',
+        '2026-11-10T12:00:02Z area=openvpn event=completed '
+            'code=openvpn_certificate_expired stage=certificate_renewal count=90',
+      ]);
+      expect(accepted['discarded_lines'], 0);
+      expect(accepted['events'], hasLength(3));
+    },
+  );
+
+  test(
+    'a refused client certificate keeps its code only outside diagnostics',
+    () async {
+      const code = 'openvpn_client_certificate_rejected';
+      expect(diagnosticCodes, isNot(contains(code)));
+      expect(diagnosticCodes, contains('openvpn_certificate_expired'));
+      expect(diagnosticCodes.length, 206);
+      // Reports keep v1's category, never the server certificate's.
+      expect(diagnosticCode(code), 'certificate_invalid');
+      expect(DiagnosticError(code: code).code, 'certificate_invalid');
+      expect(
+        DiagnosticEvent(stage: 'tunnel_start', event: 'error', code: code).code,
+        'certificate_invalid',
+      );
+
+      // Application traces carry the reportable category at their source.
+      final marker = markTrace();
+      await DiagnosticLog.recordFailure(
+        area: 'openvpn',
+        event: 'native_connect_failed',
+        error: PlatformException(code: code, message: 'private-detail'),
+      );
+      await DiagnosticLog.record(
+        area: 'openvpn',
+        event: 'native_state_recovered',
+        code: code,
+      );
+      final lines = since(marker);
+      expect(lines, hasLength(2));
+      for (final line in lines) {
+        expect(line, contains('code=certificate_invalid'));
+        expect(line, isNot(contains(code)));
+        expect(line, isNot(contains('private')));
+      }
+      expect((await collect(lines))['discarded_lines'], 0);
+
+      // A native line written by the service keeps the raw code: the support
+      // export maps it, in every field the backend checks.
+      final native = DiagnosticSupport.sanitizeNativeEvent({
+        'timestamp': '2026-11-10T12:00:00.000Z',
+        'area': 'openvpn',
+        'event': 'connection_attempt_snapshot',
+        'code': code,
+        'first_error': code,
+        'last_error': 'openvpn_certificate_expired',
+        'failure_before_stop': code,
+      });
+      expect(native, {
+        'timestamp': '2026-11-10T12:00:00.000Z',
+        'area': 'openvpn',
+        'event': 'connection_attempt_snapshot',
+        'code': 'certificate_invalid',
+        'first_error': 'certificate_invalid',
+        'last_error': 'openvpn_certificate_expired',
+        'failure_before_stop': 'certificate_invalid',
+      });
+      expect(
+        backendSupportViolations({'source': 'native', ...native!}),
+        isEmpty,
+      );
+    },
+  );
+
+  test('renewal steps become certificate_renewal breadcrumbs', () async {
+    final diagnostics = _EventDiagnostics();
+    final app = _controller(diagnostics: diagnostics);
+    addTearDown(app.dispose);
+    for (final event in ['started', 'attempt_failed', 'completed']) {
+      await DiagnosticLog.record(
+        area: 'openvpn',
+        event: event,
+        code: 'automatic',
+        stage: 'certificate_renewal',
+      );
+    }
+    expect(
+      diagnostics.events.map((event) => (event.stage, event.event)).toList(),
+      [
+        ('certificate_renewal', 'begin'),
+        ('certificate_renewal', 'retry'),
+        ('certificate_renewal', 'end'),
+      ],
+    );
+  });
 
   test('unexpected renewal failure preserves renew context', () async {
     final diagnostics = _RecordingDiagnostics();

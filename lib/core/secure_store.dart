@@ -94,7 +94,15 @@ class SecureStore {
       'location_migration_target_location_id';
   static const _migrationUserId = 'location_migration_user_id';
   static const _migrationState = 'location_migration_state';
+  // The OpenVPN renewal marker shares the migration record: both mark a
+  // server operation to resume for a device after a restart, neither holds a
+  // secret, and the native store only accepts its fixed key list.
+  static const _openVpnRenewalDevice = 'openvpn_renewal_device';
+  static const _openVpnRenewalCsr = 'openvpn_renewal_csr_sha256';
+  static const _openVpnEntries = [_openVpnRenewalDevice, _openVpnRenewalCsr];
   static const _channel = MethodChannel('com.fuzevpn/windows_secure_store');
+  // Serializes the record's read-modify-write updates.
+  Future<void> _migrationStateUpdates = Future.value();
   Future<String?> token() => _read(_token);
   Future<void> saveToken(String value) => _write(_token, value);
   Future<void> clearToken() => _delete(_token);
@@ -236,28 +244,19 @@ class SecureStore {
     );
   }
 
-  Future<void> saveLocationMigration(StoredLocationMigration value) async {
-    await _write(
-      _migrationState,
-      jsonEncode({
-        'version': 1,
-        'migration': {
-          'id': value.migrationId,
-          'device': value.deviceId,
-          'target': value.targetLocationId,
-          'user': value.userId,
-        },
-      }),
-    );
-  }
+  Future<void> saveLocationMigration(StoredLocationMigration value) =>
+      _updateMigrationState((state) async {
+        state['migration'] = _encodeMigration(value);
+        return true;
+      }, keepUnreadable: false);
 
   Future<void> clearLocationMigration() async {
     // Keep an atomic tombstone so incomplete legacy cleanup cannot resurrect
     // an older migration on the next launch.
-    await _write(
-      _migrationState,
-      jsonEncode({'version': 1, 'migration': null}),
-    );
+    await _updateMigrationState((state) async {
+      state['migration'] = null;
+      return true;
+    }, keepUnreadable: false);
     for (final key in [
       _migrationId,
       _migrationDeviceId,
@@ -271,6 +270,119 @@ class SecureStore {
       }
     }
   }
+
+  /// The device whose OpenVPN renewal was requested but whose renewed
+  /// certificate has not connected yet. Only identifiers are stored.
+  Future<String?> openVpnRenewalDeviceId() async {
+    final value = await _openVpnRecord();
+    final deviceId = value?[_openVpnRenewalDevice];
+    return deviceId is String && deviceId.isNotEmpty ? deviceId : null;
+  }
+
+  /// The SHA-256 of the pending CSR that renewal was requested for, when the
+  /// marker recorded it.
+  Future<String?> openVpnRenewalCsrSha256() async {
+    final value = await _openVpnRecord();
+    final fingerprint = value?[_openVpnRenewalCsr];
+    return value?[_openVpnRenewalDevice] is String && _isSha256(fingerprint)
+        ? fingerprint as String
+        : null;
+  }
+
+  Future<void> saveOpenVpnRenewalDeviceId(
+    String deviceId, {
+    String? csrSha256,
+  }) => _updateMigrationState((state) async {
+    if (state[_openVpnRenewalDevice] == deviceId &&
+        state[_openVpnRenewalCsr] == csrSha256) {
+      return false;
+    }
+    await _commitLegacyMigration(state);
+    state[_openVpnRenewalDevice] = deviceId;
+    if (csrSha256 == null) {
+      state.remove(_openVpnRenewalCsr);
+    } else {
+      state[_openVpnRenewalCsr] = csrSha256;
+    }
+    return true;
+  }, keepUnreadable: true);
+
+  Future<void> clearOpenVpnRenewalDeviceId() =>
+      _updateMigrationState((state) async {
+        final device = state.remove(_openVpnRenewalDevice);
+        final fingerprint = state.remove(_openVpnRenewalCsr);
+        return device != null || fingerprint != null;
+      }, keepUnreadable: true);
+
+  Future<Map<String, dynamic>?> _openVpnRecord() async {
+    final state = await _read(_migrationState);
+    if (state == null) return null;
+    final value = jsonDecode(state);
+    if (value is! Map<String, dynamic> || value['version'] != 1) {
+      throw const FormatException('Reprise de changement de serveur invalide.');
+    }
+    return value;
+  }
+
+  static bool _isSha256(Object? value) =>
+      value is String && RegExp(r'^[0-9a-f]{64}$').hasMatch(value);
+
+  /// A first write of the record commits the legacy migration it would
+  /// otherwise hide.
+  Future<void> _commitLegacyMigration(Map<String, dynamic> state) async {
+    if (state.containsKey('migration')) return;
+    final legacy = await locationMigration();
+    state['migration'] = legacy == null ? null : _encodeMigration(legacy);
+  }
+
+  /// Applies [update] to the record and writes it when [update] reports a
+  /// change. With [keepUnreadable], an unreadable record is never replaced
+  /// (a renewal marker never discards a migration); otherwise the migration
+  /// replaces it, as it always did. Every entry this version knows is kept;
+  /// entries an earlier version wrote and this one no longer reads are not
+  /// written again.
+  Future<void> _updateMigrationState(
+    Future<bool> Function(Map<String, dynamic> state) update, {
+    required bool keepUnreadable,
+  }) {
+    final result = _migrationStateUpdates.then((_) async {
+      Map<String, dynamic> state;
+      try {
+        final stored = await _read(_migrationState);
+        final value = stored == null ? null : jsonDecode(stored);
+        if (stored != null &&
+            (value is! Map<String, dynamic> || value['version'] != 1)) {
+          throw const FormatException(
+            'Reprise de changement de serveur invalide.',
+          );
+        }
+        state = value == null ? {'version': 1} : value as Map<String, dynamic>;
+      } catch (_) {
+        if (keepUnreadable) rethrow;
+        state = {'version': 1};
+      }
+      if (!await update(state)) return;
+      await _write(
+        _migrationState,
+        jsonEncode({
+          'version': 1,
+          'migration': state['migration'],
+          for (final key in _openVpnEntries)
+            if (state[key] case final String value) key: value,
+        }),
+      );
+    });
+    _migrationStateUpdates = result.then<void>((_) {}, onError: (_) {});
+    return result;
+  }
+
+  static Map<String, String> _encodeMigration(StoredLocationMigration value) =>
+      {
+        'id': value.migrationId,
+        'device': value.deviceId,
+        'target': value.targetLocationId,
+        'user': value.userId,
+      };
 
   static String _encodeLocationIds(Iterable<String> values) => values
       .where((value) => value.isNotEmpty && !value.contains('\n'))

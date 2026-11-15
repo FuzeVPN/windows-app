@@ -16,6 +16,7 @@
 #include "service_handoff_mutex.h"
 #include "service_pipe_endpoint.h"
 #include "diagnostics_snapshot.h"
+#include "openvpn_diagnostic_state.h"
 
 #include "openvpn_tunnel.h"
 #ifdef FUZEVPN_ENABLE_OPENVPN3_CORE
@@ -627,9 +628,12 @@ void WriteSafeDiagnostic(const std::string& operation,
       return;
     }
   }
-  WriteUserDiagnostic("native_last_error.txt", operation + '=' + error_code, false);
+  // The PlatformException keeps its code; the diagnostic files get the
+  // support spelling.
+  const std::string code(fuzevpn::OpenVpnDiagnosticCode(error_code));
+  WriteUserDiagnostic("native_last_error.txt", operation + '=' + code, false);
   AppendNativeDiagnostic(operation.substr(0, operation.find('.')),
-                         "native_error", error_code);
+                         "native_error", code);
 }
 
 void WriteSafeOperation(const std::string& operation, const char* state) {

@@ -297,8 +297,10 @@ unsigned test_native_mutations = 0;
 unsigned test_snapshot_queries = 0;
 std::string TestProtectedStoreUserId() { return test_runtime_user; }
 std::string test_written_diagnostic;
-bool TestWriteUserDiagnostic(const std::string&, const std::string& text, bool) {
+std::string test_written_last_error;
+bool TestWriteUserDiagnostic(const std::string& filename, const std::string& text, bool) {
   test_written_diagnostic = text;
+  if (filename == "native_last_error.txt") test_written_last_error = text;
   if (test_diagnostic_changes_error) SetLastError(ERROR_INVALID_DATA);
   return true;
 }
@@ -729,6 +731,16 @@ void TestNativeDiagnosticIdentifiers() {
   test_written_diagnostic.clear();
   AppendNativeDiagnostic("openvpn", std::string(81, 'A'));
   Check(test_written_diagnostic.empty(), "diagnostic identifiers stay bounded");
+  // Dart acts on openvpn_client_certificate_rejected, but one unknown value
+  // makes the backend reject a whole support report.
+  WriteSafeDiagnostic("openvpn.importAndConnect", "openvpn_client_certificate_rejected");
+  Check(test_written_diagnostic.ends_with(" area=openvpn event=native_error code=certificate_invalid\r\n") &&
+        test_written_last_error == "openvpn.importAndConnect=certificate_invalid",
+        "a rejected client certificate is logged in its support spelling");
+  WriteSafeDiagnostic("openvpn.importAndConnect", "openvpn_certificate_expired");
+  Check(test_written_diagnostic.ends_with(" area=openvpn event=native_error code=openvpn_certificate_expired\r\n") &&
+        test_written_last_error == "openvpn.importAndConnect=openvpn_certificate_expired",
+        "other native error codes are logged unchanged");
 }
 
 std::vector<uint8_t> EncodedCall(const std::string& method,

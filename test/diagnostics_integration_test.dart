@@ -445,6 +445,49 @@ void main() {
     );
   }
 
+  test('an explicit stop joins the cleanup repair instead of cancelling '
+      'it', () async {
+    final bridge = _Snapshot()..cleanup = true;
+    final wg = _CleanupWireGuard()
+      ..connected = true
+      ..protectionActive = true;
+    final app = AppController(
+      api: fixtures.ProbeApi(),
+      store: fixtures.ProbeStore(),
+      window: fixtures.ProbeWindow(),
+      wireguard: wg,
+      openVpn: fixtures.ProbeOpenVpn(),
+      diagnosticsBridge: bridge,
+    )..activeProtocol = VpnProtocol.wireGuard;
+    addTearDown(app.dispose);
+    await app.runUserDiagnostic();
+    Future<void>? joined;
+    bool? commandRunning;
+    bool? cancellable;
+    bool? stopStarted;
+    // In the middle of the repair, which only disconnects. The values are
+    // checked afterwards: the repair swallows whatever its bridge throws.
+    wg.afterDisconnect = () {
+      commandRunning = app.isConnectionCommandRunning;
+      cancellable = app.canCancelConnection;
+      joined = app.disconnectVpn();
+      stopStarted = app.isStoppingVpn;
+    };
+    await app.repairDiagnosticCleanup();
+    await joined;
+
+    expect(commandRunning, isTrue);
+    expect(cancellable, isFalse);
+    expect(stopStarted, isFalse);
+    // One disconnect sequence, the repair's own, with its verdict.
+    expect(wg.disconnectCalls, 1);
+    expect(app.vpnStatus, VpnStatus.disconnected);
+    expect(
+      app.diagnosticMessage,
+      'La déconnexion et le nettoyage sont confirmés.',
+    );
+  });
+
   test(
     'cleanup cannot attach repair results to an unavailable recollection',
     () async {

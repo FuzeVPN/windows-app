@@ -6,6 +6,61 @@
 #include <openvpn/win/command_context.hpp>
 
 namespace fuzevpn {
+// Map a Core event name (or terminal status name) to a public failure code.
+// The detail text is only searched, never retained.
+inline const char* ClassifyOpenVpnCoreEvent(std::string_view name,
+                                            std::string_view detail = {}) {
+  const auto contains = [](std::string_view text, std::string_view part) {
+    return text.find(part) != std::string_view::npos;
+  };
+  if (contains(detail, "dco_compatibility"))
+    return "openvpn_dco_profile_incompatible";
+  if (contains(detail, "cannot acquire TAP handle") ||
+      contains(detail, "DeviceIoControl(") ||
+      contains(detail, "no device handle"))
+    return "openvpn_adapter_failed";
+  if (contains(detail, "tls-crypt") || contains(detail, "static key"))
+    return "openvpn_profile_crypto_failed";
+  if (contains(detail, "private key") || contains(detail, "PEM"))
+    return "openvpn_local_identity_mismatch";
+  // With OpenSSL, Core emits TLS_ALERT_* only for an alert the server sent
+  // (reason SSL_AD_REASON_OFFSET + description), i.e. its verdict while
+  // verifying OUR chain. A local failure to verify the server certificate is
+  // CERT_VERIFY_FAIL, even though OpenSSL then sends its own alert.
+  // certificate_expired names an expired certificate or CRL in that
+  // verification, usually our leaf, but also a lapsed CRL or issuing CA.
+  if (name == "TLS_ALERT_CERTIFICATE_EXPIRED")
+    return "openvpn_certificate_expired";
+  // Other alerts arrive as TLS_ALERT_MISC; Core appends the received alert's
+  // OpenSSL description in brackets. handshake_failure, decrypt_error and
+  // internal_error are also sent for non-certificate causes, so they remain
+  // generic TLS failures.
+  if (name == "TLS_ALERT_BAD_CERTIFICATE" ||
+      name == "TLS_ALERT_CERTIFICATE_REQUIRED" ||
+      name == "TLS_ALERT_CERTIFICATE_REVOKED" ||
+      name == "TLS_ALERT_UNKNOWN_CA" ||
+      name == "TLS_ALERT_UNSUPPORTED_CERTIFICATE" ||
+      (name == "TLS_ALERT_MISC" &&
+       (contains(detail, "[certificate unknown]") ||
+        contains(detail, "[access denied]"))))
+    return "openvpn_client_certificate_rejected";
+  if (contains(name, "CERT") || contains(name, "VERIFY"))
+    return "openvpn_certificate_validation_failed";
+  if (contains(name, "AUTH") || contains(name, "TLS"))
+    return "openvpn_tls_handshake_failed";
+  if (contains(name, "TUN") || contains(name, "DCO"))
+    return "openvpn_adapter_failed";
+  if (name == "ERR_INVALID_CONFIG" ||
+      name == "ERR_INVALID_OPTION_VAL" ||
+      name == "UNUSED_OPTIONS_ERROR")
+    return "openvpn_client_config_failed";
+  if (name == "ERR_INVALID_OPTION_CRYPTO")
+    return "openvpn_profile_crypto_failed";
+  if (name == "TRANSPORT_ERROR" || name == "UDP_CONNECT_ERROR")
+    return "openvpn_transport_failed";
+  return "openvpn_connection_failed";
+}
+
 // Classify the immutable pre-cleanup evidence, so a retry's transport progress
 // cannot hide the original local setup failure. nullptr preserves an existing
 // specific Core error. Failed cleanup is handled by the caller before this.

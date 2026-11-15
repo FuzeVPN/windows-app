@@ -23,6 +23,13 @@ const browserAuthTraceCodes = <String>{
 /// [browserAuthTraceCodes], they do not expand the version-1 catalogue.
 const deviceEnrollmentTraceCodes = <String>{'device_location_locked'};
 
+/// Local trace reference for a server that refused this device's OpenVPN
+/// certificate for a reason other than expiry. Reports keep version 1's
+/// existing `certificate_invalid` category (see [diagnosticCode]).
+const openVpnClientCertificateTraceCodes = <String>{
+  'openvpn_client_certificate_rejected',
+};
+
 /// Version 1 of client-diagnostics-20260916. Never expand this from error text.
 const diagnosticCodes = <String>{
   'api_bootstrap_unavailable',
@@ -239,6 +246,7 @@ String diagnosticCode(String value) {
   final canonical = switch (value) {
     'network_unreachable' => 'network_error',
     'api_resolver_invalid_response' => 'native_operation_failed',
+    'openvpn_client_certificate_rejected' => 'certificate_invalid',
     _ => value,
   };
   return diagnosticCodes.contains(canonical) ? canonical : 'unknown_error';

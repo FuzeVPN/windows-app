@@ -25,6 +25,7 @@ published unchanged with their existing notices and source archives.
 | Flutter, Dart and Flutter packages | exact versions in the build lockfiles | `data/flutter_assets/NOTICES.Z` |
 | Flutter-derived Windows templates | pinned Flutter source | BSD-3-Clause, `licenses/Flutter-BSD-3-Clause.txt` in the source repository |
 | Archivo font | bundled variable font | SIL OFL-1.1, `assets/fonts/Archivo-OFL.txt` |
+| Country flag images | Flagpedia 160-pixel PNG set, https://flagcdn.com/w160.zip, downloaded 2026-11-12; 250 unmodified files | Public domain as stated by Flagpedia, attribution not required; see "Country flag images" below |
 | Source-built WiX installer components | 7.0.0 with local build changes | MS-RL, `installer-licenses/WiX-MS-RL.txt` and `WiX-corresponding-source.zip`; companion release assets also supplied |
 | Microsoft Visual C++ runtime | version from the selected MSVC compiler | Microsoft Visual Studio redistributable software terms |
 
@@ -58,6 +59,17 @@ inflater from miniz 3.1.0 (Rich Geldreich, RAD Game Tools and Valve Software).
 The MIT license is supplied in `licenses/miniz-LICENSE.txt`. The ZIP path
 policy, bounds, signature checks and directory transaction belong to FuzeVPN.
 Upstream source: https://github.com/richgel999/miniz/tree/3.1.0.
+
+## Country flag images
+
+The 250 country flags in `data/flutter_assets/assets/flags` are the unmodified
+160-pixel-wide PNG files published by Flagpedia in
+https://flagcdn.com/w160.zip, downloaded on 2026-11-12 (archive SHA-256
+`37b432035a82b551f83ca8b614d3bc19b68917213d552aa95728a2da39f0f850`). Flagpedia
+states that its flag images are in the public domain, free for commercial use,
+and that attribution is not required; they are based on Wikimedia Commons
+vector files. The source repository records the archive and per-file digests
+in `third_party/flags/`.
 
 ## WireGuard and DCO provenance
 

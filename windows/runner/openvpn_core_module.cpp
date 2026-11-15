@@ -165,37 +165,6 @@ void WriteCleanupDiagnostic(const openvpn::Win::CommandControl& commands,
   }
 }
 
-std::string FailureForEvent(const std::string& name,
-                            const std::string& detail = {}) {
-  if (detail.find("dco_compatibility") != std::string::npos)
-    return "openvpn_dco_profile_incompatible";
-  if (detail.find("cannot acquire TAP handle") != std::string::npos ||
-      detail.find("DeviceIoControl(") != std::string::npos ||
-      detail.find("no device handle") != std::string::npos)
-    return "openvpn_adapter_failed";
-  if (detail.find("tls-crypt") != std::string::npos ||
-      detail.find("static key") != std::string::npos)
-    return "openvpn_profile_crypto_failed";
-  if (detail.find("private key") != std::string::npos ||
-      detail.find("PEM") != std::string::npos)
-    return "openvpn_local_identity_mismatch";
-  if (name.find("CERT") != std::string::npos || name.find("VERIFY") != std::string::npos)
-    return "openvpn_certificate_validation_failed";
-  if (name.find("AUTH") != std::string::npos || name.find("TLS") != std::string::npos)
-    return "openvpn_tls_handshake_failed";
-  if (name.find("TUN") != std::string::npos || name.find("DCO") != std::string::npos)
-    return "openvpn_adapter_failed";
-  if (name == "ERR_INVALID_CONFIG" ||
-      name == "ERR_INVALID_OPTION_VAL" ||
-      name == "UNUSED_OPTIONS_ERROR")
-    return "openvpn_client_config_failed";
-  if (name == "ERR_INVALID_OPTION_CRYPTO")
-    return "openvpn_profile_crypto_failed";
-  if (name == "TRANSPORT_ERROR" || name == "UDP_CONNECT_ERROR")
-    return "openvpn_transport_failed";
-  return "openvpn_connection_failed";
-}
-
 void Erase(std::string* value) {
   if (value && !value->empty()) { SecureZeroMemory(value->data(), value->size()); value->clear(); }
 }
@@ -552,7 +521,7 @@ class Client final : public openvpn::ClientAPI::OpenVPNClient,
     std::lock_guard<std::mutex> lock(mutex_);
     connection_.Event(event.name, event.error, event.fatal, protection_ready);
     if (event.error || event.fatal) {
-      SetFailure(FailureForEvent(event.name, event.info).c_str());
+      SetFailure(fuzevpn::ClassifyOpenVpnCoreEvent(event.name, event.info));
     }
     condition_.notify_all();
   }
@@ -578,7 +547,7 @@ class Client final : public openvpn::ClientAPI::OpenVPNClient,
     std::lock_guard<std::mutex> lock(mutex_);
     if (!connection_.terminal) {
       if (status.error)
-        SetFailure(FailureForEvent(status.status, status.message).c_str());
+        SetFailure(fuzevpn::ClassifyOpenVpnCoreEvent(status.status, status.message));
     }
     connection_.Complete();
     condition_.notify_all();

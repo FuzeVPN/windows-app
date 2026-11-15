@@ -26,6 +26,7 @@ Read the [full licence](LICENSE) and the
 | miniz | MIT; `third_party/miniz/LICENSE` |
 | tray_manager, including its vendored Windows fixes | MIT; `third_party/tray_manager/LICENSE` and `FUZEVPN-PATCHES.md` |
 | Archivo font | SIL Open Font License 1.1; `assets/fonts/Archivo-OFL.txt` |
+| Country flag images | Public domain as stated by Flagpedia, attribution not required; `assets/flags/`, provenance in `third_party/flags/NOTICE.md` |
 | Flutter-derived Windows templates | BSD-3-Clause; `licenses/Flutter-BSD-3-Clause.txt` |
 | Flutter, Dart and packages resolved by `pubspec.lock` | Their respective licences; Flutter generates the runtime `NOTICES.Z` |
 | OpenSSL, Asio, fmt, LZ4, JsonCpp, xxHash and TAP headers | Their respective licences, copied by `tools/package-native-notices.cmake` into binary distributions |

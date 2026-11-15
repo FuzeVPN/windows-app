@@ -208,6 +208,19 @@ void EncodingChecks() {
   Check(Text(Child(encoded, "windows"), "last_error") == "unknown_error", "raw error cannot escape encoder");
   Check(!Has(Child(encoded, "snapshot"), "traffic_blocked"), "filter presence never claims traffic result");
   Check(!Has(Child(encoded, "snapshot"), "bytes_sent"), "missing bytes not fabricated zero");
+  // The Dart-only openvpn_client_certificate_rejected is not a report code.
+  source.openvpn.first_error = "openvpn_certificate_expired";
+  source.openvpn.last_error = "openvpn_client_certificate_rejected";
+  encoded = EncodeSnapshot(source);
+  Check(Text(Child(encoded, "windows"), "first_error") == "openvpn_certificate_expired" &&
+      Text(Child(encoded, "windows"), "last_error") == "certificate_invalid",
+      "server verdict on the client certificate reported in its support spelling");
+  source.openvpn.first_error = "certificate_invalid";
+  encoded = EncodeSnapshot(source);
+  Check(Text(Child(encoded, "windows"), "first_error") == "certificate_invalid",
+      "native diagnostic spelling of the verdict retained");
+  source.openvpn.first_error = "openvpn_dns_configuration_failed";
+  source.openvpn.last_error = "sensitive server text";
   source.openvpn.network.routing = CheckResult::failed;
   encoded = EncodeSnapshot(source);
   Check(CheckResultOf(encoded, "tunnel_configuration") == "failed", "adapter up alone is not complete configuration");

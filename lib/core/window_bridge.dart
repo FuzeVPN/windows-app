@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MPL-2.0
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
@@ -32,7 +33,9 @@ class WindowBridge {
   }
 
   /// Exits after the caller confirms the runtime-specific consequence: an
-  /// installed service retains its lifetime; the portable broker is cleaned up.
+  /// installed service retains its lifetime, tunnel and kill switch; the
+  /// portable engine stops with this window and keeps a kill switch that no
+  /// explicit stop released beforehand.
   Future<void> quit() async {
     if (!Platform.isWindows) return;
     await _channel.invokeMethod<void>('quit');
@@ -77,22 +80,61 @@ class WindowBridge {
     }
   }
 
+  // The channel has a single native-to-Dart handler: both subscriptions
+  // share it, and it is removed once neither is registered.
+  static Future<void> Function(WindowsConnectivityEvent event)?
+  _connectivityHandler;
+  static Future<void> Function()? _closeRequestHandler;
+
+  static void _syncNativeEventHandler() {
+    _channel.setMethodCallHandler(
+      _connectivityHandler == null && _closeRequestHandler == null
+          ? null
+          : _handleNativeEvent,
+    );
+  }
+
+  static Future<void> _handleNativeEvent(MethodCall call) async {
+    switch (call.method) {
+      case 'networkAvailable':
+        await _connectivityHandler?.call(
+          WindowsConnectivityEvent.networkAvailable,
+        );
+      case 'systemResumed':
+        await _connectivityHandler?.call(
+          WindowsConnectivityEvent.systemResumed,
+        );
+      case 'closeRequested':
+        final handler = _closeRequestHandler;
+        if (handler == null) return;
+        // The confirmation may stay open for a long time: the native call
+        // never waits for it, and a failure there never reaches Windows.
+        unawaited(Future<void>.sync(handler).catchError((Object _) {}));
+    }
+  }
+
   void startConnectivityListener(
     Future<void> Function(WindowsConnectivityEvent event) handler,
   ) {
     if (!Platform.isWindows) return;
-    _channel.setMethodCallHandler((call) async {
-      final event = switch (call.method) {
-        'networkAvailable' => WindowsConnectivityEvent.networkAvailable,
-        'systemResumed' => WindowsConnectivityEvent.systemResumed,
-        _ => null,
-      };
-      if (event != null) await handler(event);
-    });
+    _connectivityHandler = handler;
+    _syncNativeEventHandler();
   }
 
   void stopConnectivityListener() {
     if (!Platform.isWindows) return;
-    _channel.setMethodCallHandler(null);
+    _connectivityHandler = null;
+    _syncNativeEventHandler();
+  }
+
+  /// Registers what answers a request to close the window that Windows could
+  /// not turn into "hide to the notification area" because no icon exists
+  /// there. The window then stays open and is the only place left to quit
+  /// from: [handler] opens the Quit confirmation. The request itself changes
+  /// nothing in the VPN. Passing null removes the registration.
+  void setCloseRequestHandler(Future<void> Function()? handler) {
+    if (!Platform.isWindows) return;
+    _closeRequestHandler = handler;
+    _syncNativeEventHandler();
   }
 }

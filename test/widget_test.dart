@@ -157,21 +157,21 @@ void main() {
     expect(
       find.descendant(
         of: find.byKey(const ValueKey('country-flag-AU')),
-        matching: find.byType(CustomPaint),
+        matching: find.byType(Image),
       ),
       findsOneWidget,
     );
     expect(
       find.descendant(
         of: find.byKey(const ValueKey('country-flag-JP')),
-        matching: find.byType(CustomPaint),
+        matching: find.byType(Image),
       ),
       findsOneWidget,
     );
     expect(
       find.descendant(
         of: find.byKey(const ValueKey('country-flag-US')),
-        matching: find.byType(CustomPaint),
+        matching: find.byType(Image),
       ),
       findsOneWidget,
     );

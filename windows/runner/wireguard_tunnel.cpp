@@ -49,6 +49,7 @@
 #ifndef FUZEVPN_SERVICE_PROCESS
 #include <flutter/method_channel.h>
 #include <flutter/standard_method_codec.h>
+#include "runtime_absent_channel.h"
 #endif
 
 namespace {
@@ -1796,8 +1797,14 @@ void RegisterWireGuardChannel(flutter::FlutterEngine* engine) {
         return;
       }
       if (!*tunnel && !*presence) {
-        result->Success();
-        return;
+        // Neither a runtime nor a tunnel service exists. A kill switch that an
+        // earlier runtime persisted may still block the network: an explicit
+        // Disconnect then falls through and starts the runtime that restores
+        // and removes it. With no durable policy there is nothing to stop.
+        if (fuzevpn_runtime_absent::AnswerWithoutRuntime(
+                NetworkProtectionOwner::wire_guard, call.method_name(), &result)) {
+          return;
+        }
       }
       ForwardPrivilegedCall("wireguard", call, std::move(result), true);
       return;
@@ -1846,19 +1853,11 @@ void RegisterWireGuardChannel(flutter::FlutterEngine* engine) {
     }
     if (call.method_name() == "isNetworkProtectionActive" ||
         call.method_name() == "networkProtectionStatus") {
-      bool detection_failed = false;
-      const auto presence = PrivilegedRuntimePresence(&detection_failed);
-      if (!presence) {
-        CompleteRuntimeStatusFailure(std::move(result), detection_failed);
-        return;
-      }
-      if (!*presence) {
-        if (call.method_name() == "networkProtectionStatus")
-          result->Success(NetworkProtectionStatusValue(NetworkProtectionOwner::wire_guard));
-        else result->Success(flutter::EncodableValue(false));
-        return;
-      }
-      ForwardPrivilegedCall("wireguard", call, std::move(result), false);
+      // With no runtime nothing holds a policy, but BFE may still enforce the
+      // one an earlier runtime persisted: it is reported instead of
+      // "inactive". A status read never starts a runtime, whatever the answer.
+      fuzevpn_runtime_absent::RouteStatusOrStop(
+          "wireguard", NetworkProtectionOwner::wire_guard, call, std::move(result));
       return;
     }
     result->NotImplemented();

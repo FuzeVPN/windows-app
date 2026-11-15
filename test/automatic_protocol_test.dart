@@ -429,7 +429,8 @@ final _activation = OpenVpnActivation(
   serverName: 'frankfurt-01.openvpn.internal',
   remoteCertTlsServer: true,
   ciphers: const ['AES-256-GCM'],
-  notAfter: DateTime.utc(2027),
+  // Far from expiry, whatever the real date: no renewal in these tests.
+  notAfter: DateTime.utc(2099),
 );
 
 class AutomaticApi extends ApiClient {
@@ -484,6 +485,19 @@ class AutomaticApi extends ApiClient {
 }
 
 class AutomaticStore extends SecureStore {
+  // Like every store call the controller makes, the renewal marker stays
+  // in this fake: an unmocked channel would never answer in a widget test.
+  @override
+  Future<String?> openVpnRenewalDeviceId() async => null;
+  @override
+  Future<void> saveOpenVpnRenewalDeviceId(
+    String deviceId, {
+    String? csrSha256,
+  }) async {}
+  @override
+  Future<void> clearOpenVpnRenewalDeviceId() async {}
+  @override
+  Future<String?> openVpnRenewalCsrSha256() async => null;
   String? savedProtocol;
 
   @override

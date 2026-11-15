@@ -18,11 +18,6 @@ const _pendingIssue = DeviceEnrollmentIssue(
 const _retryIssues = [
   _pendingIssue,
   DeviceEnrollmentIssue(
-    kind: DeviceEnrollmentIssueKind.openVpnProfileExists,
-    title: 'OpenVPN indisponible',
-    message: 'Un profil OpenVPN existe déjà pour cet appareil.',
-  ),
-  DeviceEnrollmentIssue(
     kind: DeviceEnrollmentIssueKind.rateLimited,
     title: 'Trop de tentatives',
     message: 'Réessayez dans quelques instants.',
@@ -34,17 +29,34 @@ const _retryIssues = [
   ),
 ];
 
+// These issues renew the certificate (a new key) instead of retrying.
+const _renewalIssues = [
+  DeviceEnrollmentIssue(
+    kind: DeviceEnrollmentIssueKind.openVpnProfileExists,
+    title: 'OpenVPN indisponible',
+    message: 'Un profil OpenVPN existe déjà pour cet appareil.',
+  ),
+  DeviceEnrollmentIssue(
+    kind: DeviceEnrollmentIssueKind.openVpnProfileRevoked,
+    title: 'OpenVPN indisponible',
+    message: 'Le profil OpenVPN a été révoqué. Renouvelez-le pour continuer.',
+  ),
+];
+
 /// A failed attempt that still retains the kill switch: the hero offers
 /// Disconnect, so the card's retry must not be the same toggle.
 class _BlockedRetryController extends ConnectionUxController {
   _BlockedRetryController() {
     activeProtocol = null;
     vpnStatus = VpnStatus.blocked;
+    currentDeviceId = 'synthetic-device';
     errorMessage =
         'La connexion VPN a échoué. Le kill switch bloque toujours le trafic réseau.';
   }
 
   int retries = 0;
+  int renewals = 0;
+  int replacements = 0;
   int toggles = 0;
   bool busy = false;
 
@@ -54,6 +66,16 @@ class _BlockedRetryController extends ConnectionUxController {
   @override
   Future<void> retryConnection() async {
     retries++;
+  }
+
+  @override
+  Future<void> renewOpenVpnProfile() async {
+    renewals++;
+  }
+
+  @override
+  Future<void> replaceRevokedOpenVpnProfile() async {
+    replacements++;
   }
 
   @override
@@ -73,6 +95,9 @@ Future<void> _pump(WidgetTester tester, AppController controller) async {
 
 Finder _retryButton(AppStrings strings) =>
     find.widgetWithText(OutlinedButton, strings.text('Réessayer'));
+
+Finder _renewButton(AppStrings strings) =>
+    find.widgetWithText(OutlinedButton, strings.text('Renouveler le profil'));
 
 Finder _optionsButton(AppStrings strings) =>
     find.widgetWithText(OutlinedButton, strings.text('Voir les options'));
@@ -130,6 +155,70 @@ void main() {
 
       expect(controller.retries, 1);
       expect(controller.toggles, 0);
+      await tester.pumpWidget(const SizedBox.shrink());
+      controller.dispose();
+    });
+  }
+
+  for (final issue in _renewalIssues) {
+    testWidgets('${issue.kind.name} renews instead of retrying', (
+      tester,
+    ) async {
+      final controller = _BlockedRetryController()
+        ..deviceEnrollmentIssue = issue;
+      final strings = AppStrings.forLanguage(AppLanguage.french);
+      await _pump(tester, controller);
+
+      expect(controller.canRenewOpenVpnProfile, isTrue);
+      expect(_retryButton(strings), findsNothing);
+      await tester.tap(_renewButton(strings));
+      await tester.pumpAndSettle();
+
+      // The server refuses to renew a revoked profile: the same label
+      // replaces its identity instead.
+      final revoked =
+          issue.kind == DeviceEnrollmentIssueKind.openVpnProfileRevoked;
+      expect(controller.renewals, revoked ? 0 : 1);
+      expect(controller.replacements, revoked ? 1 : 0);
+      expect(controller.retries, 0);
+      expect(controller.toggles, 0);
+      await tester.pumpWidget(const SizedBox.shrink());
+      controller.dispose();
+    });
+  }
+
+  for (final (unavailable, issue) in [
+    for (final unavailable in ['busy', 'migration', 'signed_out'])
+      for (final issue in _renewalIssues.take(2)) (unavailable, issue),
+  ]) {
+    testWidgets('renewal is hidden when it cannot be honoured '
+        '($unavailable, ${issue.kind.name})', (tester) async {
+      final controller = _BlockedRetryController()
+        ..deviceEnrollmentIssue = issue;
+      switch (unavailable) {
+        case 'busy':
+          controller.busy = true;
+        case 'migration':
+          controller.locationMigration = const LocationMigration(
+            migrationId: 'synthetic-migration',
+            deviceId: 'synthetic-device',
+            sourceLocationId: 'de-1',
+            targetLocationId: 'de-2',
+            status: LocationMigrationStatus.draining,
+            retryAfterSeconds: 2,
+          );
+        case 'signed_out':
+          controller.currentDeviceId = null;
+      }
+      final strings = AppStrings.forLanguage(AppLanguage.french);
+      await _pump(tester, controller);
+
+      expect(controller.canRenewOpenVpnProfile, isFalse);
+      expect(find.text(strings.text(issue.message)), findsOneWidget);
+      expect(_renewButton(strings), findsNothing);
+      expect(_retryButton(strings), findsNothing);
+      expect(controller.renewals, 0);
+      expect(controller.replacements, 0);
       await tester.pumpWidget(const SizedBox.shrink());
       controller.dispose();
     });

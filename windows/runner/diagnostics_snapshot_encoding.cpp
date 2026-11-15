@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MPL-2.0
 #include "diagnostics_snapshot.h"
+#include "openvpn_diagnostic_state.h"
 #include <string_view>
 
 namespace fuzevpn_diagnostics {
@@ -17,10 +18,12 @@ void Number(Map& map, const char* key, std::optional<std::uint64_t> value,
 // The diagnostic state can contain progress sentinels. Only real public error
 // categories are eligible for the closed API registry.
 const char* ErrorCode(std::string_view code) {
+  code = fuzevpn::OpenVpnDiagnosticCode(code);
   if (code.empty() || code == "none" || code == "openvpn_transport_started" || code == "openvpn_adapter_opened") return nullptr;
   for (const char* allowed : {"openvpn_connection_failed", "openvpn_adapter_failed",
       "openvpn_transport_failed", "openvpn_profile_crypto_failed", "openvpn_local_identity_mismatch",
-      "openvpn_local_identity_failed", "openvpn_certificate_validation_failed", "openvpn_tls_handshake_failed",
+      "openvpn_local_identity_failed", "openvpn_certificate_validation_failed", "openvpn_certificate_expired",
+      "certificate_invalid", "openvpn_tls_handshake_failed",
       "openvpn_client_config_failed", "openvpn_dns_configuration_failed", "openvpn_network_configuration_failed",
       "openvpn_dco_profile_incompatible", "network_protection_failed", "openvpn_stop_timeout", "openvpn_cleanup_failed"})
     if (code == allowed) return allowed;

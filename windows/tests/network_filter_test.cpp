@@ -77,6 +77,14 @@ std::set<void*> provider_queries;
 int fail_filter_after = -1;
 int fail_enum_after = -1;
 std::function<void()> before_query;
+// Persisted-intent read (unprivileged UI with no runtime): injected failures
+// and a record of what the read asked the engine for.
+bool can_manage = true;
+DWORD open_status = ERROR_SUCCESS;
+DWORD key_read_status = ERROR_SUCCESS;
+UINT32 last_open_lock_wait_ms = 0;
+bool last_open_dynamic = false;
+unsigned transactions = 0;
 void Check(bool condition, const char* message) {
   if (!condition) { std::cerr << message << '\n'; std::exit(EXIT_FAILURE); }
 }
@@ -103,7 +111,7 @@ void CheckManagementAcl(PSECURITY_DESCRIPTOR descriptor) {
 }
 }
 
-bool CanManageNetworkProtection() { return true; }
+bool CanManageNetworkProtection() { return capture::can_manage; }
 bool IsVpnServiceRuntime() { return capture::service_runtime; }
 LONG WINAPI FakeWinVerifyTrust(HWND, GUID*, LPVOID) { return ERROR_SUCCESS; }
 DWORD WINAPI FakeGetModuleFileNameW(HMODULE, LPWSTR path, DWORD count) {
@@ -120,6 +128,9 @@ DWORD WINAPI FakeFwpmEngineOpen0(const wchar_t*, UINT32, SEC_WINNT_AUTH_IDENTITY
                                 const FWPM_SESSION0* session, HANDLE* out) {
   capture::Check(session == nullptr || session->flags == 0 || session->flags == FWPM_SESSION_FLAG_DYNAMIC,
                  "persistent baseline and transient exceptions have separate lifetimes");
+  if (capture::open_status != ERROR_SUCCESS) return capture::open_status;
+  capture::last_open_lock_wait_ms = session ? session->txnWaitTimeoutInMSec : 0;
+  capture::last_open_dynamic = session && (session->flags & FWPM_SESSION_FLAG_DYNAMIC);
   *out = reinterpret_cast<HANDLE>(++capture::next_handle);
   capture::sessions[*out] = {};
   capture::sessions[*out].dynamic = session && (session->flags & FWPM_SESSION_FLAG_DYNAMIC);
@@ -136,6 +147,7 @@ DWORD WINAPI FakeFwpmEngineClose0(HANDLE engine) {
   return ERROR_SUCCESS;
 }
 DWORD WINAPI FakeFwpmTransactionBegin0(HANDLE engine, UINT32) {
+  ++capture::transactions;
   auto& session = capture::sessions.at(engine);
   session.filters.clear(); session.deleted.clear();
   session.add_provider = session.add_layer = session.remove_provider = false;
@@ -295,6 +307,7 @@ DWORD WINAPI FakeFwpmFilterGetById0(HANDLE engine, UINT64 id, FWPM_FILTER0** fil
   return ERROR_SUCCESS;
 }
 DWORD WINAPI FakeFwpmFilterGetByKey0(HANDLE engine, const GUID* key, FWPM_FILTER0** filter) {
+  if (capture::key_read_status != ERROR_SUCCESS) return capture::key_read_status;
   for (const auto& [id, value] : capture::active_filters)
     if (IsEqualGUID(value.key, *key)) return FakeFwpmFilterGetById0(engine, id, filter);
   return static_cast<DWORD>(FWP_E_FILTER_NOT_FOUND);
@@ -453,6 +466,58 @@ void ControlTrafficAndDns() {
   flow.local_port = 128;
   Check(!Permitted(flow), "general physical ICMPv6 echo remains blocked");
 }
+
+struct PersistedRead {
+  PersistedNetworkProtection state = PersistedNetworkProtection::unknown;
+  NetworkProtectionOwner owner = NetworkProtectionOwner::wire_guard;
+  bool kill_switch = false;
+  std::string user = "untouched";
+};
+// The read as the unprivileged UI performs it when no runtime exists: this
+// process may not manage WFP. `seed` holds the caller's values before the
+// call, which only a `present` answer may overwrite. Whatever the answer, the
+// read must leave no session behind, open no transaction and change no filter.
+PersistedRead ReadPersistedAsUi(PersistedRead seed = {}) {
+  const auto sessions_before = sessions.size();
+  const auto filters_before = active_filters.size();
+  const auto last_filter_before = next_filter_id;
+  const auto transactions_before = transactions;
+  const auto events_before = events.size();
+  last_open_lock_wait_ms = 0;
+  last_open_dynamic = true;
+  can_manage = false;
+  SetLastError(ERROR_SUCCESS);
+  seed.state = ReadPersistedNetworkProtection(&seed.owner, &seed.kill_switch, &seed.user);
+  const DWORD read_error = GetLastError();
+  can_manage = true;
+  Check(sessions.size() == sessions_before, "persisted read leaves no WFP session behind");
+  Check(transactions == transactions_before && active_filters.size() == filters_before &&
+        next_filter_id == last_filter_before,
+        "persisted read opens no transaction and adds or removes no filter");
+  if (open_status == ERROR_SUCCESS) {
+    Check(events.size() == events_before + 2 && events[events_before] == "open" &&
+          events[events_before + 1] == "close",
+          "persisted read uses exactly one query session of its own and closes it");
+    Check(last_open_lock_wait_ms > 0 && last_open_lock_wait_ms <= 5000 && !last_open_dynamic,
+          "persisted read bounds the BFE lock wait on a plain, non-dynamic session");
+  } else {
+    Check(events.size() == events_before, "a refused engine leaves nothing to close");
+  }
+  Check(seed.state != PersistedNetworkProtection::unknown || read_error != ERROR_SUCCESS,
+        "an unknown persisted read reports the Windows status of the failed step");
+  SetLastError(read_error);
+  return seed;
+}
+bool Untouched(const PersistedRead& read) {
+  return read.owner == NetworkProtectionOwner::wire_guard && !read.kill_switch &&
+         read.user == "untouched";
+}
+UINT64 IntentFilterId() {
+  for (const auto& [id, filter] : active_filters)
+    if (IsEqualGUID(filter.key, fuzevpn_network_persistence::kIntentFilter)) return id;
+  Check(false, "the persistent intent filter exists");
+  return 0;
+}
 }
 
 int main() {
@@ -510,6 +575,21 @@ int main() {
     Check(enumerations.empty() && enum_allocations.empty(), "cleanup enumeration resources released");
     FakeFwpmEngineClose0(inspection);
     for (const auto id : fixture_ids) active_filters.erase(id);
+  }
+  {
+    // A machine FuzeVPN never armed: the UI positively reads "absent".
+    const auto never_armed = ReadPersistedAsUi();
+    Check(never_armed.state == PersistedNetworkProtection::absent && Untouched(never_armed),
+          "no intent filter in BFE is a confirmed absence that writes no output");
+    // BFE refusing the session (stopped service, denied account) proves
+    // nothing about the filters: never a guessed absence.
+    for (const DWORD refused : {DWORD(ERROR_ACCESS_DENIED), DWORD(EPT_S_NOT_REGISTERED)}) {
+      open_status = refused;
+      const auto closed_engine = ReadPersistedAsUi();
+      Check(closed_engine.state == PersistedNetworkProtection::unknown && Untouched(closed_engine) &&
+            GetLastError() == refused, "an engine that cannot be opened yields unknown, not absent");
+    }
+    open_status = ERROR_SUCCESS;
   }
   const auto owner = NetworkProtectionOwner::open_vpn;
   const NetworkProtectionOptions options;
@@ -637,6 +717,14 @@ int main() {
   Flow permitted_ui = physical;
   permitted_ui.app = L"C:\\Program Files\\FuzeVPN\\fuzevpn_windows.exe";
   Check(Permitted(permitted_ui), "prepared UI exception exists only while runtime lives");
+  {
+    // The same query beside a live runtime neither borrows nor disturbs it.
+    const auto live = ReadPersistedAsUi();
+    Check(live.state == PersistedNetworkProtection::present &&
+          live.owner == NetworkProtectionOwner::open_vpn && live.kill_switch &&
+          sessions.size() == 2 && IsNetworkProtectionActive(owner),
+          "persisted read beside a live runtime leaves its two sessions and policy alone");
+  }
   // Simulate all process handles disappearing. Persistent BFE objects are a
   // separate database; only the dynamic UI/tunnel exceptions disappear.
   CloseEngine(&engine_handle);
@@ -646,6 +734,35 @@ int main() {
   Check(sessions.empty() && !active_filters.empty() && provider_present &&
         !Permitted(physical) && !Permitted(permitted_ui),
         "crash preserves fail-closed baseline and removes the UI exception");
+  {
+    // No runtime process is left (portable relaunch, reboot before the delayed
+    // service starts, stopped service). The process-local status functions of
+    // a UI that may not manage WFP see nothing at all...
+    can_manage = false;
+    Check(!GetNetworkProtectionStatus(owner).active && !IsNetworkProtectionActive(owner),
+          "an unprivileged process reports no policy of its own while BFE still blocks");
+    can_manage = true;
+    // ...while the durable intent names the protocol, the kill switch and the
+    // Windows account that armed the policy still blocking the network.
+    const auto orphaned = ReadPersistedAsUi();
+    Check(orphaned.state == PersistedNetworkProtection::present &&
+          orphaned.owner == NetworkProtectionOwner::open_vpn && orphaned.kill_switch &&
+          orphaned.user == "S-1-5-21-123-456-789-1001" && !Permitted(physical),
+          "with no runtime the UI reads the persisted owner, kill switch and account");
+    // Optional outputs: a caller interested only in presence passes none.
+    can_manage = false;
+    Check(ReadPersistedNetworkProtection(nullptr, nullptr) == PersistedNetworkProtection::present &&
+          sessions.empty(), "persisted read accepts absent output pointers");
+    can_manage = true;
+    // A lock timeout or a denied read of an existing filter is not an absence.
+    for (const DWORD failed : {DWORD(FWP_E_TIMEOUT), DWORD(ERROR_ACCESS_DENIED)}) {
+      key_read_status = failed;
+      const auto unreadable = ReadPersistedAsUi();
+      Check(unreadable.state == PersistedNetworkProtection::unknown && Untouched(unreadable) &&
+            GetLastError() == failed, "an unreadable intent filter yields unknown, never absent");
+    }
+    key_read_status = ERROR_SUCCESS;
+  }
   for (const auto& layer : {FWPM_LAYER_ALE_AUTH_CONNECT_V4, FWPM_LAYER_ALE_AUTH_CONNECT_V6,
                            FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V4, FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V6}) {
     for (const auto protocol : {IPPROTO_TCP, IPPROTO_UDP}) {
@@ -683,13 +800,38 @@ int main() {
     ScopedNetworkProtectionRetention retain_policy;
     Check(DisableNetworkProtection(owner) && IsNetworkProtectionActive(owner),
           "internal runtime stop cannot erase persistent intent");
+    Check(ReadPersistedAsUi().state == PersistedNetworkProtection::present,
+          "the intent an internal runtime stop retained stays readable by the UI");
   }
   fail_commit = true;
   Check(!DisableNetworkProtection(owner) && !Permitted(physical),
         "failed explicit cleanup retains fail-closed policy and reports failure");
+  Check(ReadPersistedAsUi().state == PersistedNetworkProtection::present,
+        "a failed explicit cleanup is still reported as a persisted policy");
   fail_commit = false;
   Check(DisableNetworkProtection(owner) && active_filters.empty() && !provider_present,
         "successful explicit disconnect atomically removes policy and durable intent");
+  {
+    const auto released = ReadPersistedAsUi();
+    Check(released.state == PersistedNetworkProtection::absent && Untouched(released),
+          "after an explicit disconnect the UI reads a confirmed absence");
+    // Portable Quit after an explicit Disconnect: the engine then drains with
+    // the same internal stop as any exit. With nothing left to retain it must
+    // not install a baseline again; the protections stay released.
+    events.clear();
+    Check(PrepareNetworkProtectionForInternalStop() && events.empty(),
+          "an internal stop after an explicit disconnect opens no WFP session");
+    {
+      ScopedNetworkProtectionRetention drain;
+      Check(DisableNetworkProtection(NetworkProtectionOwner::wire_guard) &&
+            DisableNetworkProtection(NetworkProtectionOwner::open_vpn) && events.empty(),
+            "the drain's own tunnel stops touch no WFP object");
+    }
+    Check(active_filters.empty() && !provider_present && sessions.empty() &&
+          !IsNetworkProtectionActive(owner) && Permitted(physical) &&
+          ReadPersistedAsUi().state == PersistedNetworkProtection::absent,
+          "draining the engine after an explicit disconnect re-applies no protection");
+  }
   Check(RestoreNetworkProtection(&restored_user) && restored_user.empty() && active_filters.empty(),
         "a later startup never rearms protection deliberately disconnected");
   Check(SetNetworkProtectionUser("S-1-5-21-123-456-789-1001") && PrepareNetworkProtection(owner, options),
@@ -717,8 +859,69 @@ int main() {
   CloseEngine(&engine_handle); CloseEngine(&transient_engine_handle); protection_lifecycle.Clear();
   Check(!RestoreNetworkProtection(&restored_user) && !Permitted(physical),
         "unsupported persistent intent version stays fail-closed instead of inventing an owner");
+  {
+    const auto unsupported = ReadPersistedAsUi();
+    Check(unsupported.state == PersistedNetworkProtection::unknown && Untouched(unsupported) &&
+          GetLastError() == ERROR_INVALID_DATA,
+          "the UI reads an unsupported intent as unknown: neither an owner nor an absence is invented");
+  }
   Check(fuzevpn_network_persistence::RemoveForMaintenance() == ERROR_SUCCESS && active_filters.empty(),
         "administrator recovery remains available for unsupported or damaged intent metadata");
+  Check(ReadPersistedAsUi().state == PersistedNetworkProtection::absent,
+        "administrator recovery leaves a confirmed absence");
+
+  // Selective protection armed by the other protocol with the kill switch off:
+  // the read must report that owner and flag, not defaults. The seed holds the
+  // opposite values so that an unwritten output cannot pass.
+  const NetworkProtectionOptions selective{false, true, true};
+  Check(SetNetworkProtectionUser("S-1-5-21-123-456-789-1002") &&
+        PromoteNetworkProtection(NetworkProtectionOwner::wire_guard, 55, selective),
+        "prepare WireGuard selective-protection fixture");
+  CloseEngine(&engine_handle); CloseEngine(&transient_engine_handle); protection_lifecycle.Clear();
+  protection_intent = {};
+  const PersistedRead opposite{PersistedNetworkProtection::unknown, NetworkProtectionOwner::open_vpn, true,
+                               "untouched"};
+  {
+    const auto wireguard = ReadPersistedAsUi(opposite);
+    Check(wireguard.state == PersistedNetworkProtection::present &&
+          wireguard.owner == NetworkProtectionOwner::wire_guard && !wireguard.kill_switch &&
+          wireguard.user == "S-1-5-21-123-456-789-1002",
+          "persisted read reports the WireGuard owner, a disabled kill switch and its account");
+  }
+  // Every way the intent filter can be damaged is unknown, with the caller's
+  // values left alone: a wrong owner must never be shown or acted upon.
+  const UINT64 intent_id = IntentFilterId();
+  const Filter intact = active_filters.at(intent_id);
+  const auto damaged = [&](const char* message) {
+    const auto read = ReadPersistedAsUi(opposite);
+    Check(read.state == PersistedNetworkProtection::unknown &&
+          read.owner == NetworkProtectionOwner::open_vpn && read.kill_switch && read.user == "untouched" &&
+          GetLastError() == ERROR_INVALID_DATA, message);
+    active_filters[intent_id] = intact;
+  };
+  active_filters[intent_id].flags &= ~static_cast<UINT32>(FWPM_FILTER_FLAG_PERSISTENT);
+  damaged("an intent filter that is not persistent is unknown");
+  active_filters[intent_id].provider.Data1 ^= 1;
+  damaged("an intent filter of a foreign provider is unknown");
+  active_filters[intent_id].metadata.pop_back();
+  damaged("a truncated intent is unknown");
+  active_filters[intent_id].metadata.clear();
+  damaged("an empty intent is unknown");
+  active_filters[intent_id].metadata[0] = 'X';
+  damaged("an intent with a foreign signature is unknown");
+  active_filters[intent_id].metadata[5] = 2;
+  damaged("an intent naming an unknown protocol is unknown");
+  active_filters[intent_id].metadata[6] |= 0x80;
+  damaged("an intent with unknown option bits is unknown");
+  active_filters[intent_id].metadata[8] = 'X';
+  damaged("an intent whose account is not a SID is unknown");
+  Check(ReadPersistedAsUi(opposite).state == PersistedNetworkProtection::present,
+        "the restored intent is readable again");
+  Check(RestoreNetworkProtection(&restored_user) && restored_user == "S-1-5-21-123-456-789-1002" &&
+        DisableNetworkProtection(NetworkProtectionOwner::wire_guard) && active_filters.empty() &&
+        sessions.empty(), "the runtime started for an explicit disconnect restores then removes the policy");
+  Check(ReadPersistedAsUi().state == PersistedNetworkProtection::absent,
+        "the UI then reads a confirmed absence");
   std::cout << "Production network filter construction tests passed (no packets or WFP changes)\n";
   return EXIT_SUCCESS;
 }

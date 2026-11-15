@@ -1,0 +1,1010 @@
+{
+  "Source": "https://flagcdn.com/w160.zip",
+  "ArchiveSha256": "37b432035a82b551f83ca8b614d3bc19b68917213d552aa95728a2da39f0f850",
+  "Downloaded": "2026-11-12",
+  "Directory": "assets/flags",
+  "FileCount": 250,
+  "Bytes": 215419,
+  "Files": [
+    {
+      "Path": "ad.png",
+      "Sha256": "64e1d2f2c467801f731c832394b66d003cfa15480cd5ef7e01776ed7341a0177"
+    },
+    {
+      "Path": "ae.png",
+      "Sha256": "7ff4c92ac96f02ef5a513c10cf5eb1e4d6e7fedd3ab3306427156244700bc384"
+    },
+    {
+      "Path": "af.png",
+      "Sha256": "9e7a660ca3c048956fcfe3619252e8198e5c85ed9742e90711d79f2b40cefac9"
+    },
+    {
+      "Path": "ag.png",
+      "Sha256": "e9936f402c94348ea5d48003629749dff394238a4b8a94229292e7393b33ae4d"
+    },
+    {
+      "Path": "ai.png",
+      "Sha256": "e5bddc68f6f582b87356278f12563d3a6019d413de99a5203cec21fc7da1e593"
+    },
+    {
+      "Path": "al.png",
+      "Sha256": "0531d813891251121806909f9f382fabdc570896f4a4298915a0b56b144e20f7"
+    },
+    {
+      "Path": "am.png",
+      "Sha256": "22a8ecb10dc6e0234be3fac07a59daab1c1bceba8622c1ca6999d4a5301d3354"
+    },
+    {
+      "Path": "ao.png",
+      "Sha256": "98c2fd6fd1fb75f711ef97484782643e4a467833b76dbf2e6dce21ca0db667a3"
+    },
+    {
+      "Path": "aq.png",
+      "Sha256": "4708c4efaa4c0345453fec72ae2778095e1e686d32701a1447f0cc40c1106cea"
+    },
+    {
+      "Path": "ar.png",
+      "Sha256": "6bdb24b5268d83b9b36717928198671ebee03d67b6352694f11c64509bb7f86c"
+    },
+    {
+      "Path": "as.png",
+      "Sha256": "dbf386edc4cef50c8f0f936138600fd6d63d89a188a077357cabadd169cb2cb9"
+    },
+    {
+      "Path": "at.png",
+      "Sha256": "a67bfd679cfd4d72a865393712d41b9f3f3fd53024c6694001f68ed62e9d8ca5"
+    },
+    {
+      "Path": "au.png",
+      "Sha256": "8896f5f0cc5baee5244f1b744d6d45a5b473b5643e00cf88136c6952b970f315"
+    },
+    {
+      "Path": "aw.png",
+      "Sha256": "7df50660363bad169a68f9c626663a3888ccad43b557493ca55e7fd7a48b521d"
+    },
+    {
+      "Path": "ax.png",
+      "Sha256": "a4932036f04cb87f4332e7205ca3e6ede08f3edc1b4fa06b47c3e825f7252462"
+    },
+    {
+      "Path": "az.png",
+      "Sha256": "96b12feb246377057631682fadeacc8a6a7a56f69f66687be45497504abe87a7"
+    },
+    {
+      "Path": "ba.png",
+      "Sha256": "4b57177ba6f79642ce318095f9185ae0781f6403b941d6fc5d3614fa9629316f"
+    },
+    {
+      "Path": "bb.png",
+      "Sha256": "01f74cf23fda1e10f01957a3ccfc2bb8aefb2f466e1ececbd78276da685db2a3"
+    },
+    {
+      "Path": "bd.png",
+      "Sha256": "293a7619e9c8dcc6859a71ad47a8eefd89c3ff718b6fa4a3472e8adae6a47165"
+    },
+    {
+      "Path": "be.png",
+      "Sha256": "ce6e58def6f432d9bef5de4789551a12f5d806bb7e7f235920cea7f4f1e6e135"
+    },
+    {
+      "Path": "bf.png",
+      "Sha256": "b8bc60ad74c72460fd3873e6cd5a7a100dbdc95c811af68df78de9fedad64b01"
+    },
+    {
+      "Path": "bg.png",
+      "Sha256": "b59fed6291d8d286f031527128ca07611fbbc608392534fb62f2cfc2047dc374"
+    },
+    {
+      "Path": "bh.png",
+      "Sha256": "02686baa1500bab29006531025323a8bef62f33747426a9d3946342fecd97718"
+    },
+    {
+      "Path": "bi.png",
+      "Sha256": "e40614fcd9a1cb2c1039d8dcc8929637fa65b58681e257ae2b02dc780c0e7fa9"
+    },
+    {
+      "Path": "bj.png",
+      "Sha256": "1728deff7732c0a1cb61eeec8f9cd7d0808ec2f284bd0d01b76e13f579d3d450"
+    },
+    {
+      "Path": "bl.png",
+      "Sha256": "53aa01f915ea0bd055d5d39b226161710ed36213294751113525fffdb66ae403"
+    },
+    {
+      "Path": "bm.png",
+      "Sha256": "d33d1162f1fd42597c750bf0f203f5ca36645c982713fe325ea83d5069098e04"
+    },
+    {
+      "Path": "bn.png",
+      "Sha256": "e1ecbed76f88b4e6765b7422f728d4d59a86de346c155326534647f5bafe053d"
+    },
+    {
+      "Path": "bo.png",
+      "Sha256": "4d5be68fed0493214a4011bad770ba02f2e397115d0a5732a8c92c3533d62c60"
+    },
+    {
+      "Path": "bq.png",
+      "Sha256": "d96a592e2a1625959a5ede20226cb1c4902a89c3d2d96669a0e9724df28936af"
+    },
+    {
+      "Path": "br.png",
+      "Sha256": "8512b3a0d591b84adfc78469211ffd1727f9a5e7db06fe9f046e7eb51e626792"
+    },
+    {
+      "Path": "bs.png",
+      "Sha256": "d26351ff7435576d322652b94b24872ca2396b695bff206e509000c8f18ba587"
+    },
+    {
+      "Path": "bt.png",
+      "Sha256": "6bd63e08812f703f9bf1a082b958081c4db8f033a050d3614a4e1d63cc75c740"
+    },
+    {
+      "Path": "bv.png",
+      "Sha256": "299f79c45c58df9c1ee680b77ddca9830a360428b46347ace4fdbade78760245"
+    },
+    {
+      "Path": "bw.png",
+      "Sha256": "7939df4e98695e4bcd8ad82ffd9ef1f03d634217afcc5a89a843dba2032c0425"
+    },
+    {
+      "Path": "by.png",
+      "Sha256": "66b3aeb69b7bebdb300099aa5019def287e7b3f671ccff15a5bdcb300c396aa5"
+    },
+    {
+      "Path": "bz.png",
+      "Sha256": "dee1676943409ddf9401c3db68d6d1b68f5e33965d2ee36f2948beb1f91dc9d5"
+    },
+    {
+      "Path": "ca.png",
+      "Sha256": "e36b7fbd7218d785e18143d5a8ddffbab41188b6cf8d0115e2d7ff555560706e"
+    },
+    {
+      "Path": "cc.png",
+      "Sha256": "aeb88908a46c0f719a106b2e2e9498b9901054eb34b189ac5483b882dae7e4ca"
+    },
+    {
+      "Path": "cd.png",
+      "Sha256": "82b12bf096cad902b8c202abeb995245ad09fc95f1d279e3276f85a190b647a2"
+    },
+    {
+      "Path": "cf.png",
+      "Sha256": "ce65220210da1d79b59e27a1fd4ebeed619494ad36be32d6c56e8fe69839d199"
+    },
+    {
+      "Path": "cg.png",
+      "Sha256": "82c45115a99fc6aed6c45f0a56033e9b6a9d7243f72c2bc11c4a7516f207f588"
+    },
+    {
+      "Path": "ch.png",
+      "Sha256": "533280fe33c0abeafc3ff0a108e846d7454e66fbe955dbef3a27926e549efb1d"
+    },
+    {
+      "Path": "ci.png",
+      "Sha256": "362dfde55da89f2206829a20d8b02d1c91efb7e4ef70b96c61a04a76943bbb14"
+    },
+    {
+      "Path": "ck.png",
+      "Sha256": "c3e8c3329d6089ab8f8fc972fabd166edf490a2baad1972f3e6ca664d27965de"
+    },
+    {
+      "Path": "cl.png",
+      "Sha256": "254f78bb438cdd6d2446a34e3364aeba78164b6eafe339fc54141ac82d5b23fe"
+    },
+    {
+      "Path": "cm.png",
+      "Sha256": "91d2f0756a337d1c7a380b47f9988d46f8dbc7299be8968c34925359faff584e"
+    },
+    {
+      "Path": "cn.png",
+      "Sha256": "778ca166d19bee6fb75cb4995d90acaec2589ce6e9db8720b1df79eecaf523a4"
+    },
+    {
+      "Path": "co.png",
+      "Sha256": "06250e2ed80f6d8dcb9892436e5f128e3d6d52b8072b322e958a06696119af35"
+    },
+    {
+      "Path": "cr.png",
+      "Sha256": "5aca838d62b666d4515a23a9d4a6fa030f495a94a9140f7c23fc7f4e3029442e"
+    },
+    {
+      "Path": "cu.png",
+      "Sha256": "20a32a5cbc8aef925017114a20e776ee1fdbd11dbcfb338f7cf1bd36f2829b25"
+    },
+    {
+      "Path": "cv.png",
+      "Sha256": "fba6129908b2d6edbd54eeae011199cc3516a5ed433ebb4fce7e99806921cf29"
+    },
+    {
+      "Path": "cw.png",
+      "Sha256": "14ed7a97c0fa5d947bddd6abc8890910c103898c0e1837a3898fbd136b2591a2"
+    },
+    {
+      "Path": "cx.png",
+      "Sha256": "a4f39d4c438b5c549cb4257125059456641044ea64a31979345b0eacc158968b"
+    },
+    {
+      "Path": "cy.png",
+      "Sha256": "e7cf4d12f31d1760dcd025dfca00ae36bee9acec26b69788303e8228a81a20f8"
+    },
+    {
+      "Path": "cz.png",
+      "Sha256": "e6869d9ecb3f8678f21bf8a0d25c3f286a6eb8222964fe002e256a2424c11325"
+    },
+    {
+      "Path": "de.png",
+      "Sha256": "ef579f50dd92e3a70b89407c6e1858383cd7a58d7c9e07fccd8afb923b1867ff"
+    },
+    {
+      "Path": "dj.png",
+      "Sha256": "00eb30d5020953d7f9286aca7a396671da266f2c8f643ace618c23f7ffdd9fec"
+    },
+    {
+      "Path": "dk.png",
+      "Sha256": "6328fa68f653e447d1bbd81acf1fb29a0527c5740345a29367e3df02548ca669"
+    },
+    {
+      "Path": "dm.png",
+      "Sha256": "4755bdcea5de5d3b172b2ccb1aa94732619ad9992e5e47037ccc5cfae8f89970"
+    },
+    {
+      "Path": "do.png",
+      "Sha256": "8def698a718a4f0cfadf94cdd946a32ff11f92b6b1627075b0982a6d63e6ef5c"
+    },
+    {
+      "Path": "dz.png",
+      "Sha256": "d61470cba0d7a0c91b450d3a039054abb8fccd0dd955bccc710bed2d02a705be"
+    },
+    {
+      "Path": "ec.png",
+      "Sha256": "cacb35813bb4cf395a9c4341803bc5039556990636cbaae6bcea6694d51e1d62"
+    },
+    {
+      "Path": "ee.png",
+      "Sha256": "2792069a7f599f5b231cfd4ba210149f717fc65f74e4b06a07a69df8d40fff70"
+    },
+    {
+      "Path": "eg.png",
+      "Sha256": "92cddae5b1b60544c3bbb93249c4c92ffe2d51477684e9c62e1b7788979bc517"
+    },
+    {
+      "Path": "eh.png",
+      "Sha256": "d31b9982cdee9aaa01767b832845557947cfd0a18543b8baafcd84de25511bc4"
+    },
+    {
+      "Path": "er.png",
+      "Sha256": "f637ce61f01279855bad3e7ba15f49fad1e3d2d8957fc39ec23b4878ca9af6c6"
+    },
+    {
+      "Path": "es.png",
+      "Sha256": "f08d4200bb64066e6d43487b1cbb04cce1e3bac59546258cc206caaf99fe3a72"
+    },
+    {
+      "Path": "et.png",
+      "Sha256": "3fb98832b0c55d43ae842f05b0bb482cd5afbbe632f8deb530c1af6bff684ca3"
+    },
+    {
+      "Path": "fi.png",
+      "Sha256": "f991a44ca68053d90d6e5c15207012c0b2303f9c5ad67701a7261e8ea2b80a30"
+    },
+    {
+      "Path": "fj.png",
+      "Sha256": "28b5b92d207cad955c38182af5567a92f8674af3b7701dfd4a4cbe9de8c9903e"
+    },
+    {
+      "Path": "fk.png",
+      "Sha256": "ae0dc7ed4dc274d0ec7d2b120e32e1899d3c827e2d635177d391b028e1300453"
+    },
+    {
+      "Path": "fm.png",
+      "Sha256": "3cda648893758f00a5bf52282316cf331477cbf49ed5be75c802eb11b6447472"
+    },
+    {
+      "Path": "fo.png",
+      "Sha256": "2c0bfe4f5eae34cb25d1810f31ca2e9e2d50446b27b3b5eedafdf4b370da1c53"
+    },
+    {
+      "Path": "fr.png",
+      "Sha256": "cadee3fa97d9f93ff456fba1a0b23392741b6b16f628b87740159453aa4fed79"
+    },
+    {
+      "Path": "ga.png",
+      "Sha256": "f70c1aa7017cc97a35821b1c0dbdb4e3cddb29dbe079f941bee9c6045c8370dd"
+    },
+    {
+      "Path": "gb.png",
+      "Sha256": "62bc061bdc7296b2f47a3e3227fd423a66e6384c43608297775ab31984f75aae"
+    },
+    {
+      "Path": "gd.png",
+      "Sha256": "8b720fc08fa5da4e3c3bf19230eda2d6a2721c3ca9c982d0e27de4f9e677ad44"
+    },
+    {
+      "Path": "ge.png",
+      "Sha256": "ccff9e41f12baf98485a0dff8c135c5154af087bf99b7cb9dadce723226738dd"
+    },
+    {
+      "Path": "gf.png",
+      "Sha256": "e1ab65bd82683adaf8bc070a19fed98952884bb4bfb31982e1fc892ff7eba34b"
+    },
+    {
+      "Path": "gg.png",
+      "Sha256": "d5076eefd39b0a3eae46110eff5f08b3e4d2382e90b6f49c423e84c7f9898699"
+    },
+    {
+      "Path": "gh.png",
+      "Sha256": "fde0c05d1f10d035bb839aa660086df612b16c0d7f0e3b659fd748d046017b82"
+    },
+    {
+      "Path": "gi.png",
+      "Sha256": "541a273e50b3c2642725c817a1dad571bdf66492b0fcd2792275d8cc2dd48619"
+    },
+    {
+      "Path": "gl.png",
+      "Sha256": "908d0a70910785c805a0c4cee9221f2b87eb0640d76798e357bca2e290fc4f86"
+    },
+    {
+      "Path": "gm.png",
+      "Sha256": "193e67a657f73f4d91887dd3958942a649de8574ac1839c3373eda64fda3779e"
+    },
+    {
+      "Path": "gn.png",
+      "Sha256": "e26c7524cb10bee2e63b3f28bb009a018240cf1ad28fd376032942fd2ad25150"
+    },
+    {
+      "Path": "gp.png",
+      "Sha256": "58e5534f92ac5065fb7252547d275a7c674abaa8af0c98f17f311e2532e0fab0"
+    },
+    {
+      "Path": "gq.png",
+      "Sha256": "b8e6cae65632d0e8cefb11a413ecf82509183fadd3e1bd88f4f24dcbcae6d8c5"
+    },
+    {
+      "Path": "gr.png",
+      "Sha256": "33e5a940af2b9731bcacd6c5c358643f643c9a6da3807d71c846cef894545598"
+    },
+    {
+      "Path": "gs.png",
+      "Sha256": "337b871f9fcad93010d3b988d14c654659811ceb4f9b5e1f283baec4f43becec"
+    },
+    {
+      "Path": "gt.png",
+      "Sha256": "80a14ff7e29c3b78654a2102bebd76eec788bf082524f07498b870034469a6ef"
+    },
+    {
+      "Path": "gu.png",
+      "Sha256": "ac4388fdce3d583ba8771464783de985f86fb217c80287ce6fd422567349aa65"
+    },
+    {
+      "Path": "gw.png",
+      "Sha256": "b9e63dfe6088f3bd1a372e738bb670274e9ea48ad6c1e424a6f651586c92fd1a"
+    },
+    {
+      "Path": "gy.png",
+      "Sha256": "5bb05826d93c26180388ef4ca2f5ac4ab11721e3b39b35079a9fa402987c7168"
+    },
+    {
+      "Path": "hk.png",
+      "Sha256": "9394358838eb5d6ef00718fc49a768c331f2278b0258ff5796ca210de520fc0a"
+    },
+    {
+      "Path": "hm.png",
+      "Sha256": "c14a089f21c6f823d4e5e5c6aad6a035605da80553d7b87022dda2ef99558b69"
+    },
+    {
+      "Path": "hn.png",
+      "Sha256": "5715e02f2559eb246c1c6ad350709f9fe0113e886a33321db49631937154348c"
+    },
+    {
+      "Path": "hr.png",
+      "Sha256": "e3e46c4f3630f14b70b0a027f708763bf9671a34266842962ef2a22ff002f246"
+    },
+    {
+      "Path": "ht.png",
+      "Sha256": "885a254a7471be945d127bab1e17509a7abd8899bd97bfc42ff0b43abff1bd3a"
+    },
+    {
+      "Path": "hu.png",
+      "Sha256": "130fd374ad656cd22db3bf0bd05ceeb480525fb589680fa5baf9c74645430ce0"
+    },
+    {
+      "Path": "id.png",
+      "Sha256": "d37ef50acba39877a78929fe101cc97308844818575d2f1238270ef3dfa5cc61"
+    },
+    {
+      "Path": "ie.png",
+      "Sha256": "24acacb455ba03ca7a0ebbc9461e55dba7afdca7a3c3ce27004576abd25b0e74"
+    },
+    {
+      "Path": "il.png",
+      "Sha256": "290e155c303680310d838994e0e807b007ed7c1c5f69ff14a8d455d9eac1a508"
+    },
+    {
+      "Path": "im.png",
+      "Sha256": "59feadd3f2807d9143231ec3fff4d2a807fc6528be5a5c382a9fbea394aec6cd"
+    },
+    {
+      "Path": "in.png",
+      "Sha256": "2d21b5bae83706eeb221cdb34c9b67535e920847f5566b00fa66479d7a3aad84"
+    },
+    {
+      "Path": "io.png",
+      "Sha256": "c821fa5e61341ac2d586d8685c9a0b16c51a57060040a71344722fbbd85f58c5"
+    },
+    {
+      "Path": "iq.png",
+      "Sha256": "78aa387bf04e4a27f292f81adb066b45c733cb70510943523a75d283e9650a84"
+    },
+    {
+      "Path": "ir.png",
+      "Sha256": "207fde2b0c77554d89dd48af3cc609ff6b96929f6f0de32ee7f7b89377ce6348"
+    },
+    {
+      "Path": "is.png",
+      "Sha256": "f1e0055662cc57ce7972bdbe62b211b80f1cccd464fe1d2961d2dec4938d296e"
+    },
+    {
+      "Path": "it.png",
+      "Sha256": "1dfb9ea9cb89097836d39c0902c0a7283bbd7d222d80c1ddc990899717b1ae0e"
+    },
+    {
+      "Path": "je.png",
+      "Sha256": "9cb46484c49286547a2e1f88230e92361bb9ad4ab04184564bf3b81d9409264e"
+    },
+    {
+      "Path": "jm.png",
+      "Sha256": "8692b78fc94a7ce5d6dce3263dcc2b5a8aa60baf590cb52206908b8654e4cec9"
+    },
+    {
+      "Path": "jo.png",
+      "Sha256": "ea50e4ea5efeebb81329acd91c0bc3e3f6103b54da080ca8be5ba6d013db4de1"
+    },
+    {
+      "Path": "jp.png",
+      "Sha256": "5b1b16b2ce91a6c214576f10b5cb135ef92ad29eb7f79462f98fb72f8f9ad3c7"
+    },
+    {
+      "Path": "ke.png",
+      "Sha256": "4c37b98edbabe168641b40fc218051ac01fab5abbcc479ba6becc9a40da248ee"
+    },
+    {
+      "Path": "kg.png",
+      "Sha256": "6a5f1de95031f3f33ce41d2ac19bc60672ff373be1c476a8568367b8b2dc092a"
+    },
+    {
+      "Path": "kh.png",
+      "Sha256": "80e9db50b06c3bc7ffe848abf8bfb07710f0cbd9fb88e3ecd2b32e788fe017a7"
+    },
+    {
+      "Path": "ki.png",
+      "Sha256": "4dcbfdbe26451fde4f2678442124282d64d4cffccaea257bcb73509bd4f09375"
+    },
+    {
+      "Path": "km.png",
+      "Sha256": "99545508bd3ed2e3ae889386a85d476d880613b73300a4d5e4bd3bbca30876d6"
+    },
+    {
+      "Path": "kn.png",
+      "Sha256": "85cdd2e9f17f6b09f04d3f764f6c51110a41e6be15f208b4047a95a467332c1a"
+    },
+    {
+      "Path": "kp.png",
+      "Sha256": "e6a247fc671664dc6847056bbdeefee4c63aa418dd5b68728a36c025be8daaaf"
+    },
+    {
+      "Path": "kr.png",
+      "Sha256": "983cabccf4632413c7880b58f6b41636584f0d24989379f454bb6bc082821f81"
+    },
+    {
+      "Path": "kw.png",
+      "Sha256": "2805d559580a539ccb6a45c90a04440e97d4a7e162f4e503c18696c966f63d90"
+    },
+    {
+      "Path": "ky.png",
+      "Sha256": "5684255af1cec8c72668344e44318525b3e92ee815e235a45faaf72313b40f75"
+    },
+    {
+      "Path": "kz.png",
+      "Sha256": "9130950e0800b6bf3f0de08905048ef933c0bbc089e2139ead13feebbd0401fe"
+    },
+    {
+      "Path": "la.png",
+      "Sha256": "53b076a7faed28ed3e1e6d6c75abc08f905c7e2a07c0730e57670fe79ababb6a"
+    },
+    {
+      "Path": "lb.png",
+      "Sha256": "0432f530c37848cebf5790b907c79613024f0295d984a49a91c8d93840697880"
+    },
+    {
+      "Path": "lc.png",
+      "Sha256": "439aed223a33259d83811581c1c99ba12db7619bccd0e4612468eb85ad0f1ca2"
+    },
+    {
+      "Path": "li.png",
+      "Sha256": "829468d72a640eedb30797156135a13ce4e3680894af13c45e4f5dbe291c1456"
+    },
+    {
+      "Path": "lk.png",
+      "Sha256": "dcbc8543235d7e41a019b56bb5902a0d43c56b370373afa503c5815eed1ec31b"
+    },
+    {
+      "Path": "lr.png",
+      "Sha256": "2066db274ab6dfc6c0548ee01f670208ce91631cca39d8c126f487b5cab548a6"
+    },
+    {
+      "Path": "ls.png",
+      "Sha256": "7eedb73518320e19fbd4109d71c0f1265a097c5c4a314e0d40d370298a211cca"
+    },
+    {
+      "Path": "lt.png",
+      "Sha256": "2db22ac319acc5f544a30f3fbe32bd03739b0882d4089bbf244bbce9dbcb4fa1"
+    },
+    {
+      "Path": "lu.png",
+      "Sha256": "66cd4e22bd6e6355802ed1f20ac413ae804b52fc9fbf95b84f85c614e0c5a2a2"
+    },
+    {
+      "Path": "lv.png",
+      "Sha256": "b3b91b5e1259b79553fd991dc60c33feb8e4557c04fea70dc0fdc0d07634ebc5"
+    },
+    {
+      "Path": "ly.png",
+      "Sha256": "09a1a34eb1e2cfcb9bc46465e5d54ada66656880ddaad38ec800926b4db72d1e"
+    },
+    {
+      "Path": "ma.png",
+      "Sha256": "f8ba2b3d85487825208ebd18dc1f9cc82d14d028ae79f684ee2be014285a4054"
+    },
+    {
+      "Path": "mc.png",
+      "Sha256": "98ec9702c2da3d2993e871cb48592bdca4da36aa07e3a6a7b5c8256998f98a1f"
+    },
+    {
+      "Path": "md.png",
+      "Sha256": "6b4c82b3c821db50197e1dd80830844934bfc47f278d999218fb15ba063f9cd9"
+    },
+    {
+      "Path": "me.png",
+      "Sha256": "8bbd84c257c2c21fd3bbdfc02b78e754e33cb5f033af04f6aa4c9f6595b7de00"
+    },
+    {
+      "Path": "mf.png",
+      "Sha256": "cadee3fa97d9f93ff456fba1a0b23392741b6b16f628b87740159453aa4fed79"
+    },
+    {
+      "Path": "mg.png",
+      "Sha256": "1862217d11ab01050047bf01a5496c94ccd5910c1ba9c6c86abf9f466fc9eac8"
+    },
+    {
+      "Path": "mh.png",
+      "Sha256": "c4c785e9498e1b2d35f2be018a5ebb488fd266e79fa810d8232b7012485ce1c4"
+    },
+    {
+      "Path": "mk.png",
+      "Sha256": "7722bec9830bc9ebbfdb391c698e006df2e18562597a007ec2c23add1fe31def"
+    },
+    {
+      "Path": "ml.png",
+      "Sha256": "45b1fc0891b3fef52ba6ef98eae5039b4311e91d087220e89300f42a244e84f0"
+    },
+    {
+      "Path": "mm.png",
+      "Sha256": "092248967ad64ab23cac32dd9f2ff8380fd2ce04461b035f1520236e7b4d8fc3"
+    },
+    {
+      "Path": "mn.png",
+      "Sha256": "0f77bf97da6d4447902385132f21de4099cec8d351b1493b0a6e93b5299190e9"
+    },
+    {
+      "Path": "mo.png",
+      "Sha256": "22d4dcc5581e4b1bfb0dd87d49115e14aa3e237724558d1a0e6d1a990d67f1c4"
+    },
+    {
+      "Path": "mp.png",
+      "Sha256": "5b5a09ac24e28d81b28f701e8d1199e7608629e57a63686a569b5cbcf4314d79"
+    },
+    {
+      "Path": "mq.png",
+      "Sha256": "1ac348300ee1e7facd92cf25cda32f5680d79c5ff1a455737c4564930f3f91a8"
+    },
+    {
+      "Path": "mr.png",
+      "Sha256": "cc0f70a0fe77366806ff3b0052ad20bd854a7fbd0fd9e1d73e92513c0165ff2e"
+    },
+    {
+      "Path": "ms.png",
+      "Sha256": "dda20add68deb2da0bba84c57db50e44961f0f6c684001de04184e0c4f80afd6"
+    },
+    {
+      "Path": "mt.png",
+      "Sha256": "a3f44eae210484194eca0da4c1dbf74dc20b24d69a7866c4aeda797e8219e93d"
+    },
+    {
+      "Path": "mu.png",
+      "Sha256": "7ab38707bf6f4c5d0371287d641cfa36f4516f4f7b70ae2b2738c579282ef7c2"
+    },
+    {
+      "Path": "mv.png",
+      "Sha256": "ef09d8934e17a0023bbc2f6312ccd1cb9564e95b8b5f53e794f2fe01131e1534"
+    },
+    {
+      "Path": "mw.png",
+      "Sha256": "6d4ac82937d34ed367d63142a3768cc7ad5bf9540c9ed7aaefa7e9cc8a6ee5b7"
+    },
+    {
+      "Path": "mx.png",
+      "Sha256": "2ed5ac817849b95fe11ffab4d61afdf9f7236f80429dec55299f4da38bd73ccb"
+    },
+    {
+      "Path": "my.png",
+      "Sha256": "fdd0ea2be30d2af07a8621df4ed4d47ddbedc6c7f939338558f30abe4b0c679f"
+    },
+    {
+      "Path": "mz.png",
+      "Sha256": "6b76e86daf5e1a9f39cc8c54f82b3364ff180d74f6081ff21933036129df8ab6"
+    },
+    {
+      "Path": "na.png",
+      "Sha256": "194e77f16777ea186a3e457f12f481e908b629e5954f945e8b9646de8ff16beb"
+    },
+    {
+      "Path": "nc.png",
+      "Sha256": "98d8f4fe359e229fbe76be666270830345dc52efdc5fc3d3be0f6afdeb02fa60"
+    },
+    {
+      "Path": "ne.png",
+      "Sha256": "f0e602e4ed2d6d48d6dbbffa26104f69a912e1622652e5f3ca86f7c855fb1cb7"
+    },
+    {
+      "Path": "nf.png",
+      "Sha256": "51beebefa4047a722d5aa812b5d53ac62b94147f2e75a4985ad6fa91ba2c1c0b"
+    },
+    {
+      "Path": "ng.png",
+      "Sha256": "ff9a346bcaeba99fc94415da2fe176438de62dfb10b28b04c9ec2f30ec7020cc"
+    },
+    {
+      "Path": "ni.png",
+      "Sha256": "066b3ae813e1f0c7579d3551031a1d1e14501480602190cae01afa23cafd7ea7"
+    },
+    {
+      "Path": "nl.png",
+      "Sha256": "a452da7558753dd712a50f34768623fe56be32d6a9ae20f216ce93b4af8bd8d4"
+    },
+    {
+      "Path": "no.png",
+      "Sha256": "299f79c45c58df9c1ee680b77ddca9830a360428b46347ace4fdbade78760245"
+    },
+    {
+      "Path": "np.png",
+      "Sha256": "52ce4af502965261d2194ebe2a40de8db3147759471561899dd9ae2a4d87871a"
+    },
+    {
+      "Path": "nr.png",
+      "Sha256": "b0a55e44d830dafb3c30a113d53219fa5a872e0f6708c84e33edc95c3d3babca"
+    },
+    {
+      "Path": "nu.png",
+      "Sha256": "15dbef98197b56bca3743a53fd1628c6f657ace3cb4f744c2b9ff693426be886"
+    },
+    {
+      "Path": "nz.png",
+      "Sha256": "d4d557d5e3d8e1c6fa60fe61aea44526c5431e6412a752b6a7570c72b399ad61"
+    },
+    {
+      "Path": "om.png",
+      "Sha256": "c510a79a879c1f57fd3fbc8315b483a8560620fd6df6d2611a9dc68e37e7ecc1"
+    },
+    {
+      "Path": "pa.png",
+      "Sha256": "685dacba3cafe0915dae6779a4c82ecc8f5493cf899b37743350d34b42b41a12"
+    },
+    {
+      "Path": "pe.png",
+      "Sha256": "1c066ca2d8f43069b7e7e03539b371a995c3a1f5e181f61e22ee1baae45637ff"
+    },
+    {
+      "Path": "pf.png",
+      "Sha256": "eadb1b14f163e45cbf3857819b1f207540721b283bc9faa663737aa011895682"
+    },
+    {
+      "Path": "pg.png",
+      "Sha256": "7d7318812c56c485e5cb9d859f5348f5540815e17697d41d774ad207f361536f"
+    },
+    {
+      "Path": "ph.png",
+      "Sha256": "ceaa44cacd6a0626f753efd74cbb34fcdde82f601f9e8303e549e3a09a6b07fd"
+    },
+    {
+      "Path": "pk.png",
+      "Sha256": "45d301fd6f713e18dcabd8c144a62f13f01f97cf694c220b00bb9fde40df9b7e"
+    },
+    {
+      "Path": "pl.png",
+      "Sha256": "06df9e35861d6fadbdad8668ac352a84dfcf60a47a8edbcec722ac7eb099e519"
+    },
+    {
+      "Path": "pm.png",
+      "Sha256": "1e8b4275c34d79d6ba435eb11796fea523cc8787de616bbd4a6e9e33058a3713"
+    },
+    {
+      "Path": "pn.png",
+      "Sha256": "b2cfa62d14d1282243c1e87307130bf93424bd36fc8b2beb9641f19a3dd1089a"
+    },
+    {
+      "Path": "pr.png",
+      "Sha256": "47fcfc5ba6a8d504b5df53a7e1b3f17dce45b12c061728b977a9fc11f60c5ca9"
+    },
+    {
+      "Path": "ps.png",
+      "Sha256": "56f8f5cb9315e1ddd045170ef6821c33c58d101282aa5db331313818232b1e62"
+    },
+    {
+      "Path": "pt.png",
+      "Sha256": "f181c45a041070b632635b884f19f29e02bbc94eacc5bf8020269ce5e62fdbd2"
+    },
+    {
+      "Path": "pw.png",
+      "Sha256": "a96d9d54ae58ae75e52b53dd2d1160643ef927dbe02ae944cc97f010fa5aa048"
+    },
+    {
+      "Path": "py.png",
+      "Sha256": "5edc9071f5c7fa362e556be9be7cc7ce0f36ccf8d509492f618cd52c42362014"
+    },
+    {
+      "Path": "qa.png",
+      "Sha256": "b56ace2490ca768ab6e65023f5bde4693f56c265209ddbbdae68c2b6e02317c4"
+    },
+    {
+      "Path": "re.png",
+      "Sha256": "8cca9cb2a4c25766f65fe9775fd93ab915ba1562c48472ed9f4c2840d44661f0"
+    },
+    {
+      "Path": "ro.png",
+      "Sha256": "fe901dea2cb9352ef1f95b5dbf6820b1087df57312b94b577b3803746fcaf86f"
+    },
+    {
+      "Path": "rs.png",
+      "Sha256": "171f2e5debd55ee912ecdb51f30424dca6c038cd8306e08ea441c7c52856e7bf"
+    },
+    {
+      "Path": "ru.png",
+      "Sha256": "3f5b2499914481232f95d67c4264322724e68867e500f3c2c4e957a6f9871f65"
+    },
+    {
+      "Path": "rw.png",
+      "Sha256": "0035f5a3ce44807393367d3fd493a92c7b19b51cc5aa56ae5f2d130e161cd1b1"
+    },
+    {
+      "Path": "sa.png",
+      "Sha256": "3975f7397e7245947868c3654494842fe4160f7f68127817dbb3b8548e5104a8"
+    },
+    {
+      "Path": "sb.png",
+      "Sha256": "2572504ca8dd7baa94d3bd0be6248c8535a7952bc6558252592629f345184286"
+    },
+    {
+      "Path": "sc.png",
+      "Sha256": "8d941e96bb7b540525a22bcdf46c9afac17f6b170ba8ff95302d935483da2ad4"
+    },
+    {
+      "Path": "sd.png",
+      "Sha256": "d6a3ae7c883f8a1826abc00009adea1d7da5896fb3fef1482d50c55c9122f365"
+    },
+    {
+      "Path": "se.png",
+      "Sha256": "8533bb419076105224955a54881e5714d28c1f867be3d06d6e77d260927f892c"
+    },
+    {
+      "Path": "sg.png",
+      "Sha256": "6fc703614d2a41555ff90d7528fcda39c7bcf6b5e3ce492c2f76d67c938bc161"
+    },
+    {
+      "Path": "sh.png",
+      "Sha256": "f7041da676a9b2c340c0ab83bfeb377ed14d3eefabede7d0f3a94e14290d852b"
+    },
+    {
+      "Path": "si.png",
+      "Sha256": "6b5584c3ed46e120bff84fc8b554e649f2ebe06b46922b7662397b845aaecb2d"
+    },
+    {
+      "Path": "sj.png",
+      "Sha256": "299f79c45c58df9c1ee680b77ddca9830a360428b46347ace4fdbade78760245"
+    },
+    {
+      "Path": "sk.png",
+      "Sha256": "b0dd0d7dceb029f35f52dcbc1571b20113495baaa6009bc846ea15f3f4775eb7"
+    },
+    {
+      "Path": "sl.png",
+      "Sha256": "e8c8ce90f0d1cf10c233984eb84f5573a81cf4966293d7e9f8ffd5cc16005959"
+    },
+    {
+      "Path": "sm.png",
+      "Sha256": "273392378700c1060ddcae82e318e74a743169f5a41dccaf83c99a0704ce4171"
+    },
+    {
+      "Path": "sn.png",
+      "Sha256": "2313399dbdbc67ece1877fdb2f678c7d97c104b974a43df4d33a35af76d80056"
+    },
+    {
+      "Path": "so.png",
+      "Sha256": "11d73d6a7ca7f9285e17a96b1c851c0124ef5ae2e818d85a5f052f0b1dffe6a0"
+    },
+    {
+      "Path": "sr.png",
+      "Sha256": "33cffb5177678be48eb3d6d0abbd04f262a3f42ee1f67d1f9cf5fbe2f9af51f9"
+    },
+    {
+      "Path": "ss.png",
+      "Sha256": "8d1e15e35e04bd078f80b6062be0a85a8c51c445b8467852751beee50a0cce1a"
+    },
+    {
+      "Path": "st.png",
+      "Sha256": "e013dd9a80c1a5cf2431d4803915ff12a0d8e25d42034223277964ec33b78dd0"
+    },
+    {
+      "Path": "sv.png",
+      "Sha256": "e66254d71eb15ce3018a431f73ef85176f9632e3230c7f3c15e73d6d88e5a786"
+    },
+    {
+      "Path": "sx.png",
+      "Sha256": "6812491b78d25ff66565d5226403c68bbbf70bee6148248e303dbaf5286a78a5"
+    },
+    {
+      "Path": "sy.png",
+      "Sha256": "ad28fc51bdaf55ae39a6a993fe08931fa75fe5070eed894f7be5bff365548638"
+    },
+    {
+      "Path": "sz.png",
+      "Sha256": "f7ff3f09f3d42f63b5fe4e4df1729af85628727373d5a6ed87aaaacaf8fe6571"
+    },
+    {
+      "Path": "tc.png",
+      "Sha256": "f341187de152a0564312b8ad45231733c396671bf43ed9e7fab2f44793823335"
+    },
+    {
+      "Path": "td.png",
+      "Sha256": "24a26af9403327a7d3122e9fb0c1162718b0a9d7f389c9424f9d8e6a3c23e752"
+    },
+    {
+      "Path": "tf.png",
+      "Sha256": "ef054f15e7a049e5779fbe7a072d7ab064e32f905c795b2173a6979ebddb58a9"
+    },
+    {
+      "Path": "tg.png",
+      "Sha256": "179f6f44331ab76c677adb804629e5e53cd41e110d865686335ae998b48dafba"
+    },
+    {
+      "Path": "th.png",
+      "Sha256": "6c2ecd77b37083aa53cfd6339c99e380e7155e35609d1bf7123573d947681a1f"
+    },
+    {
+      "Path": "tj.png",
+      "Sha256": "2cf6db51f84b50cae8899d87cffdd9245042dae6208420061b4cbe065d22f66f"
+    },
+    {
+      "Path": "tk.png",
+      "Sha256": "51a755c8af435fba2ee515b48d64bf8206ca03fe3eab391fa6da364d522e4afe"
+    },
+    {
+      "Path": "tl.png",
+      "Sha256": "70d2792eda126af0c1807824817da093d885673552a0af326a2c36f1907ce033"
+    },
+    {
+      "Path": "tm.png",
+      "Sha256": "fe6cd1fdee7d81e33e6f44861e9b4f754631a760a052b10557eb33c2efc66173"
+    },
+    {
+      "Path": "tn.png",
+      "Sha256": "ab1add6e8b524d1d6b973ab9d0d1b5892049ade0c6d7faf545eccea2abd98b62"
+    },
+    {
+      "Path": "to.png",
+      "Sha256": "60a66d841be7fbfced95c4762b65b141718dc99df852a14ca66a494d422a092a"
+    },
+    {
+      "Path": "tr.png",
+      "Sha256": "b6e2a52640a4660e853995e2900d6349679aace2add82ce389b54aecab141b4c"
+    },
+    {
+      "Path": "tt.png",
+      "Sha256": "326e5b1f4e197d2d1c2e9414b8f71d3590273a6a48fce773853ebaa4c79a41d7"
+    },
+    {
+      "Path": "tv.png",
+      "Sha256": "79f9d85cf403a80435821a96c3f4efbeed507a5343c40db7d673ba5bfb373db1"
+    },
+    {
+      "Path": "tw.png",
+      "Sha256": "ba53aa3ebbdbdbcd6bedbeb89524dd59a6e77b28055bfd8b89b809899d0ac790"
+    },
+    {
+      "Path": "tz.png",
+      "Sha256": "4e3013d09edf3cd5853f268ac7af5b4b0245c5fa028a25559256b25cdbd1d9cd"
+    },
+    {
+      "Path": "ua.png",
+      "Sha256": "b23a5033c063a1564993cfb7961444fab4966daae0185718eeca190f3c8c2304"
+    },
+    {
+      "Path": "ug.png",
+      "Sha256": "ab057f84c98bac343acadc421ea72aca7cbfccfe2c67dcab98471c941fd3d2f0"
+    },
+    {
+      "Path": "um.png",
+      "Sha256": "bb1d77351f006b1ca0fc414314388da9f8cb7bd940a4d59770328e8ca03e8439"
+    },
+    {
+      "Path": "us.png",
+      "Sha256": "bb1d77351f006b1ca0fc414314388da9f8cb7bd940a4d59770328e8ca03e8439"
+    },
+    {
+      "Path": "uy.png",
+      "Sha256": "e4fad72251fec694e4c687b6df16bb66f0c2d9de1031c8129dfa50662c8f01c8"
+    },
+    {
+      "Path": "uz.png",
+      "Sha256": "9b989fbbd9f825f1756e780b8b4e16b2b5000e22faff3f20888acfbf51b9e8f1"
+    },
+    {
+      "Path": "va.png",
+      "Sha256": "e51452c8148867425dfd1c89c4aefda5f1408dfb584988490f36ff839818bf98"
+    },
+    {
+      "Path": "vc.png",
+      "Sha256": "9577aee81710436317efe10b3e70e5b7ecb5a6ae019ef4021b495084f6c9328e"
+    },
+    {
+      "Path": "ve.png",
+      "Sha256": "d21c43bdfd8fc3c65460adc7592c5d050ba67a902440bfc64255ac72c2b4c3a7"
+    },
+    {
+      "Path": "vg.png",
+      "Sha256": "77500cb5685d7e6b676a7921fcb124c1c60bfef112f966a792d17bd960a68c76"
+    },
+    {
+      "Path": "vi.png",
+      "Sha256": "c34d77a03a58e120ffb100fcc2ed535296174e16706ac79fa5d091c5fe17633a"
+    },
+    {
+      "Path": "vn.png",
+      "Sha256": "17e698788b0c5af74387cc61ef2fe4baa88436949693d9ae7b3ce51b81ec8d39"
+    },
+    {
+      "Path": "vu.png",
+      "Sha256": "55b3e3e75467374927d99074e85c8dcde2b5f6a4269f56d1f58d9806b791f015"
+    },
+    {
+      "Path": "wf.png",
+      "Sha256": "37952194794a4b940f7837d60dca8784a7d3e78c79b36d0c62a63a8fd1401ec4"
+    },
+    {
+      "Path": "ws.png",
+      "Sha256": "10568a14079f4213ce676adcb9fddbdd91f58fb59abfbfa52d258970e1f67903"
+    },
+    {
+      "Path": "xk.png",
+      "Sha256": "c4c0f96324e793befc15e8c177bb4cfdaa70a775035204b8976578db9b755c0c"
+    },
+    {
+      "Path": "ye.png",
+      "Sha256": "67afc6a29676d3f3717e2bff19f5c192ba13a1d8f358786b1471d90407287382"
+    },
+    {
+      "Path": "yt.png",
+      "Sha256": "f4d3bb8f37c9146d466bc47cdb33783b88eadafe3444e77a93cb0e3c66e82a1a"
+    },
+    {
+      "Path": "za.png",
+      "Sha256": "00fc7f59f30aac85d10e43e7627bb9db27c5b29eb67677b45440e5a5b4f06315"
+    },
+    {
+      "Path": "zm.png",
+      "Sha256": "bfcc8c58c26c1b04d3abd162470b09826db00ac3d5a3d3743ee8acc1937ee997"
+    },
+    {
+      "Path": "zw.png",
+      "Sha256": "1159be05f5e89abd0ca6f011d6b4a26828dcaecbac361cd2c3414448e93112b7"
+    }
+  ]
+}

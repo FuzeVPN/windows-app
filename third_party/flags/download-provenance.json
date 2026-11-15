@@ -1,0 +1,11 @@
+[
+  {
+    "Name": "w160.zip",
+    "Source": "https://flagcdn.com/w160.zip",
+    "Sha256": "37b432035a82b551f83ca8b614d3bc19b68917213d552aa95728a2da39f0f850",
+    "VendorDigestVerified": false,
+    "DigestSource": "Computed locally from the downloaded archive; no independently published digest was checked",
+    "Bytes": 255483,
+    "Downloaded": "2026-11-12"
+  }
+]

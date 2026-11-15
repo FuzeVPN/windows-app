@@ -82,4 +82,20 @@ bool IsNetworkProtectionObservationCurrent(const NetworkProtectionObservation& o
 // during a prepared migration; callers must verify the adapter is still up.
 std::uint64_t NetworkProtectionBootstrapTunnelLuid();
 
+// Read-only view of the durable intent a previous runtime left in BFE, for a
+// process that owns no WFP state: the unprivileged UI when no privileged
+// runtime exists (reboot before the delayed service starts, portable relaunch,
+// stopped service). It opens its own bounded query session, takes no policy
+// lock, and never adds, changes or removes a WFP object.
+enum class PersistedNetworkProtection { absent, present, unknown };
+// `absent` only when BFE positively reports that no intent filter exists.
+// Every failure (engine unavailable, access denied, lock timeout, damaged or
+// unsupported intent) is `unknown`: never guess present or absent. The outputs
+// are written only for `present`. `user` receives the SID of the Windows
+// account that armed the policy, the only one allowed to release it: compare
+// it, never display or log it.
+PersistedNetworkProtection ReadPersistedNetworkProtection(
+    NetworkProtectionOwner* owner, bool* kill_switch,
+    std::string* user = nullptr);
+
 #endif  // RUNNER_NETWORK_PROTECTION_H_

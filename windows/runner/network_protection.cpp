@@ -899,3 +899,37 @@ std::uint64_t NetworkProtectionBootstrapTunnelLuid() {
   std::lock_guard<std::mutex> lock(protection_mutex);
   return VerifyFiltersLocked() ? protected_tunnel_luid : 0;
 }
+
+PersistedNetworkProtection ReadPersistedNetworkProtection(
+    NetworkProtectionOwner* owner, bool* kill_switch, std::string* user) {
+  // Deliberately independent of CanManageNetworkProtection(), protection_mutex
+  // and this process's own sessions: the caller is the unprivileged UI with no
+  // runtime to ask. The intent filter's descriptor grants read access to every
+  // account (network_protection_persistence.h); nothing here can write.
+  // The UI calls this on its platform thread, several times per status poll:
+  // bound the wait for BFE's transaction lock instead of inheriting the engine
+  // default. A timeout is reported as unknown and the next poll reads again.
+  constexpr UINT32 kLockWaitMs = 1000;
+  FWPM_SESSION0 session{};
+  session.txnWaitTimeoutInMSec = kLockWaitMs;
+  HANDLE query = nullptr;
+  DWORD status = FwpmEngineOpen0(nullptr, RPC_C_AUTHN_WINNT, nullptr, &session, &query);
+  fuzevpn_network_persistence::Intent intent;
+  bool present = false;
+  if (status == ERROR_SUCCESS) {
+    status = fuzevpn_network_persistence::Read(query, &intent, &present);
+    // Not CloseEngine(): this session never entered the policy bookkeeping.
+    FwpmEngineClose0(query);
+  }
+  if (status != ERROR_SUCCESS) {
+    // Engine unavailable, access denied, lock timeout, or an intent this build
+    // cannot decode. Something may be enforced: never answer absent.
+    SetLastError(status);
+    return PersistedNetworkProtection::unknown;
+  }
+  if (!present) return PersistedNetworkProtection::absent;
+  if (owner) *owner = intent.wireguard ? NetworkProtectionOwner::wire_guard : NetworkProtectionOwner::open_vpn;
+  if (kill_switch) *kill_switch = intent.kill_switch;
+  if (user) *user = intent.user;
+  return PersistedNetworkProtection::present;
+}
