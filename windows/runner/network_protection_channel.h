@@ -17,18 +17,24 @@ inline flutter::EncodableValue NetworkProtectionFailureDetails() {
   return flutter::EncodableValue(details);
 }
 
-inline flutter::EncodableValue NetworkProtectionStatusValue(
-    NetworkProtectionOwner owner) {
-  const auto status = GetNetworkProtectionStatus(owner);
+// The three keys every status reply carries, whoever computed the status.
+inline flutter::EncodableMap NetworkProtectionStatusMap(
+    const NetworkProtectionStatus& status) {
   const char* phase = status.phase == NetworkProtectionStatus::Phase::tunnel
                           ? "tunnel"
                           : status.phase == NetworkProtectionStatus::Phase::prepared
                                 ? "prepared" : "inactive";
-  return flutter::EncodableValue(flutter::EncodableMap{
+  return flutter::EncodableMap{
       {flutter::EncodableValue("active"), flutter::EncodableValue(status.active)},
       {flutter::EncodableValue("killSwitch"), flutter::EncodableValue(status.kill_switch)},
       {flutter::EncodableValue("phase"), flutter::EncodableValue(phase)},
-  });
+  };
+}
+
+inline flutter::EncodableValue NetworkProtectionStatusValue(
+    NetworkProtectionOwner owner) {
+  return flutter::EncodableValue(
+      NetworkProtectionStatusMap(GetNetworkProtectionStatus(owner)));
 }
 
 #endif

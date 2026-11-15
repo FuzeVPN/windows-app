@@ -28,6 +28,47 @@ WindowsUpdateRelease _msiRelease(String version, {int? minWindowsBuild}) =>
     });
 
 void main() {
+  for (final mode in WindowsInstallationMode.values) {
+    test('the installation mode can be read without an update check '
+        '(${mode.name})', () async {
+      final bridge = _Bridge()..installationMode = mode;
+      final controller = WindowsUpdateController(api: _Api(), bridge: bridge);
+      addTearDown(controller.dispose);
+      var notifications = 0;
+      controller.addListener(() => notifications++);
+      expect(controller.installationModeKnown, isFalse);
+      expect(controller.isPortable, isFalse);
+
+      await controller.ensureInstallationMode();
+      expect(controller.installationModeKnown, isTrue);
+      expect(controller.isPortable, mode == WindowsInstallationMode.portable);
+      expect(notifications, 1);
+
+      // Read once only.
+      await controller.ensureInstallationMode();
+      expect(bridge.environmentReads, 1);
+      expect(notifications, 1);
+    });
+  }
+
+  test('a failed installation-mode read leaves it unknown and can be '
+      'retried', () async {
+    final bridge = _Bridge()
+      ..installationMode = WindowsInstallationMode.portable
+      ..environmentFailure = StateError('bridge unavailable');
+    final controller = WindowsUpdateController(api: _Api(), bridge: bridge);
+    addTearDown(controller.dispose);
+
+    await controller.ensureInstallationMode();
+    expect(controller.installationModeKnown, isFalse);
+    expect(controller.isPortable, isFalse);
+
+    bridge.environmentFailure = null;
+    await controller.ensureInstallationMode();
+    expect(controller.installationModeKnown, isTrue);
+    expect(controller.isPortable, isTrue);
+  });
+
   test('successful MSI checks expose fixed local acceptance codes', () async {
     final trace = <({String area, String event, String? code})>[];
     final stop = DiagnosticLog.observe((area, event, code) {
@@ -866,14 +907,21 @@ class _Bridge extends WindowsUpdateBridge {
   Object? installFailure;
   Object? prepareFailure;
   final discarded = <String>[];
+  Object? environmentFailure;
+  int environmentReads = 0;
   @override
-  Future<WindowsUpdateEnvironment> getEnvironment() async =>
-      WindowsUpdateEnvironment(
-        version: WindowsUpdateVersion.parse(currentVersion),
-        windowsBuild: 19045,
-        arch: arch,
-        installationMode: installationMode,
-      );
+  Future<WindowsUpdateEnvironment> getEnvironment() async {
+    environmentReads++;
+    final error = environmentFailure;
+    if (error != null) throw error;
+    return WindowsUpdateEnvironment(
+      version: WindowsUpdateVersion.parse(currentVersion),
+      windowsBuild: 19045,
+      arch: arch,
+      installationMode: installationMode,
+    );
+  }
+
   @override
   Future<String> prepareUpdate(WindowsUpdateRelease release) async {
     preparations++;

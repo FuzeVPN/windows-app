@@ -17,6 +17,7 @@
 #ifndef FUZEVPN_SERVICE_PROCESS
 #include <flutter/method_channel.h>
 #include <flutter/standard_method_codec.h>
+#include "runtime_absent_channel.h"
 #endif
 
 namespace {
@@ -273,21 +274,14 @@ void RegisterOpenVpnChannel(flutter::FlutterEngine* engine) {
         call.method_name() == "reconnect" ||
         call.method_name() == "disconnect" ||
         call.method_name() == "suspendForMigration") {
-      bool detection_failed = false;
-      const auto presence = PrivilegedRuntimePresence(&detection_failed);
-      if (!presence) {
-        CompleteRuntimeStatusFailure(std::move(result), detection_failed);
-        return;
-      }
-      if (!*presence) {
-        if (call.method_name() == "disconnect" ||
-            call.method_name() == "suspendForMigration") result->Success();
-        else if (call.method_name() == "networkProtectionStatus")
-          result->Success(NetworkProtectionStatusValue(NetworkProtectionOwner::open_vpn));
-        else result->Success(flutter::EncodableValue(false));
-        return;
-      }
-      ForwardPrivilegedCall("openvpn", call, std::move(result), false);
+      // With a runtime these are asked passively. With no runtime process no
+      // OpenVPN engine runs, but a kill switch persisted by an earlier runtime
+      // may still block the network: status reads report that durable policy
+      // and never start a runtime. Only an explicit Disconnect does, the same
+      // way a connect would, because releasing the policy needs the runtime
+      // that restores and then removes it.
+      fuzevpn_runtime_absent::RouteStatusOrStop(
+          "openvpn", NetworkProtectionOwner::open_vpn, call, std::move(result));
       return;
     }
     if (call.method_name() == "isAvailable") {

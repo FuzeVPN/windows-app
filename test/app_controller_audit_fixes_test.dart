@@ -485,6 +485,126 @@ void main() {
         );
       },
     );
+
+    test(
+      'the OpenVPN renewal marker shares the record without disturbing it',
+      () async {
+        final store = SecureStore();
+        // Clearing an absent marker writes nothing.
+        await store.clearOpenVpnRenewalDeviceId();
+        expect(calls.where((call) => call.method == 'write'), isEmpty);
+
+        // Its first write commits the legacy migration it would hide.
+        await store.saveOpenVpnRenewalDeviceId('device-1');
+        expect(await store.openVpnRenewalDeviceId(), 'device-1');
+        expect((await store.locationMigration())?.migrationId, 'legacy-1');
+        final record = jsonDecode(disk['location_migration_state']!) as Map;
+        expect(record.keys.toSet(), {
+          'version',
+          'migration',
+          'openvpn_renewal_device',
+        });
+        // Only the device id is kept: nothing secret.
+        expect(record['openvpn_renewal_device'], 'device-1');
+
+        await store.saveLocationMigration(_marker);
+        expect(await store.openVpnRenewalDeviceId(), 'device-1');
+        expect((await store.locationMigration())?.migrationId, 'migration-1');
+        await store.clearLocationMigration();
+        expect(await store.openVpnRenewalDeviceId(), 'device-1');
+        expect(await store.locationMigration(), isNull);
+
+        await store.clearOpenVpnRenewalDeviceId();
+        expect(await store.openVpnRenewalDeviceId(), isNull);
+        expect(await store.locationMigration(), isNull);
+        expect(jsonDecode(disk['location_migration_state']!), {
+          'version': 1,
+          'migration': null,
+        });
+      },
+    );
+
+    test(
+      'an unreadable record is never replaced by the renewal marker',
+      () async {
+        disk['location_migration_state'] = '{"version":2}';
+        final store = SecureStore();
+        await expectLater(
+          store.saveOpenVpnRenewalDeviceId('device-1'),
+          throwsA(isA<FormatException>()),
+        );
+        await expectLater(
+          store.clearOpenVpnRenewalDeviceId(),
+          throwsA(isA<FormatException>()),
+        );
+        expect(disk['location_migration_state'], '{"version":2}');
+        // A later migration write still replaces it, as before.
+        await store.saveLocationMigration(_marker);
+        expect((await store.locationMigration())?.migrationId, 'migration-1');
+      },
+    );
+
+    test('the pending CSR fingerprint shares the record without disturbing '
+        'the migration', () async {
+      final store = SecureStore();
+      final pending = 'a' * 64;
+      await store.saveOpenVpnRenewalDeviceId('device-1', csrSha256: pending);
+      // The first write commits the legacy migration it would hide.
+      expect((await store.locationMigration())?.migrationId, 'legacy-1');
+      expect(await store.openVpnRenewalDeviceId(), 'device-1');
+      expect(await store.openVpnRenewalCsrSha256(), pending);
+      // Identifiers and fingerprints only.
+      final record = jsonDecode(disk['location_migration_state']!) as Map;
+      expect(record.keys.toSet(), {
+        'version',
+        'migration',
+        'openvpn_renewal_device',
+        'openvpn_renewal_csr_sha256',
+      });
+
+      // Migration writes keep the marker and its fingerprint.
+      await store.saveLocationMigration(_marker);
+      await store.clearLocationMigration();
+      expect(await store.locationMigration(), isNull);
+      expect(await store.openVpnRenewalCsrSha256(), pending);
+
+      // Clearing the marker drops its fingerprint too.
+      await store.clearOpenVpnRenewalDeviceId();
+      expect(await store.openVpnRenewalDeviceId(), isNull);
+      expect(await store.openVpnRenewalCsrSha256(), isNull);
+      expect(jsonDecode(disk['location_migration_state']!), {
+        'version': 1,
+        'migration': null,
+      });
+    });
+
+    test('a record holding entries this version no longer reads stays '
+        'readable, and the next write drops them', () async {
+      final pending = 'a' * 64;
+      disk['location_migration_state'] = jsonEncode({
+        'version': 1,
+        'migration': null,
+        'openvpn_renewal_device': 'device-1',
+        'openvpn_renewal_csr_sha256': pending,
+        'openvpn_signed_device': 'device-1',
+        'openvpn_signed_csr_sha256': 'b' * 64,
+      });
+      final store = SecureStore();
+      expect(await store.openVpnRenewalDeviceId(), 'device-1');
+      expect(await store.openVpnRenewalCsrSha256(), pending);
+      expect(await store.locationMigration(), isNull);
+
+      await store.saveLocationMigration(_marker);
+      expect((await store.locationMigration())?.migrationId, 'migration-1');
+      expect(await store.openVpnRenewalCsrSha256(), pending);
+      final record = jsonDecode(disk['location_migration_state']!) as Map;
+      expect(record.keys.toSet(), {
+        'version',
+        'migration',
+        'openvpn_renewal_device',
+        'openvpn_renewal_csr_sha256',
+      });
+    });
   });
 }
 

@@ -12,6 +12,9 @@ import 'models.dart';
 import 'vpn_notification_policy.dart';
 import 'window_bridge.dart';
 
+/// What the menu's connection item does, as decided when that menu was built.
+enum _ConnectionItemIntent { connect, stop, retryVerification }
+
 class TrayController with tray.TrayListener, WidgetsBindingObserver {
   TrayController(
     this._controller, {
@@ -27,6 +30,10 @@ class TrayController with tray.TrayListener, WidgetsBindingObserver {
   int _generation = 0;
   Future<void> _menuRefreshQueue = Future<void>.value();
   VpnStatus _previousStatus = VpnStatus.disconnected;
+  // The intent of the connection item in the menu Windows currently holds.
+  // A click acts on it, never on a toggle evaluated at click time: a menu
+  // that went stale can then neither start nor stop the VPN the wrong way.
+  _ConnectionItemIntent _connectionItemIntent = _ConnectionItemIntent.connect;
 
   Future<void> initialize() async {
     if (!Platform.isWindows) return;
@@ -170,7 +177,19 @@ class TrayController with tray.TrayListener, WidgetsBindingObserver {
 
   Future<void> _applyMenuRefresh(int generation) async {
     if (!_isReady || generation != _generation) return;
-    final requiresDisconnect = _controller.requiresExplicitDisconnect;
+    final verificationPending = _controller.runtimeVerificationPending;
+    // A running connection, reconnection or renewal can be stopped from
+    // here too; any other busy cause keeps the item off.
+    final canCancel = _controller.canCancelConnection;
+    final stops = canCancel || _controller.requiresExplicitDisconnect;
+    final intent = verificationPending
+        ? _ConnectionItemIntent.retryVerification
+        : stops
+        ? _ConnectionItemIntent.stop
+        : _ConnectionItemIntent.connect;
+    // The unknown state keeps its passive retry and adds the explicit stop.
+    final offersForcedStop =
+        verificationPending && _controller.canDisconnectVpn;
     final isBusy = _controller.isConnectionBusy;
     final signedIn = _controller.profile != null;
     final trayLanguage = _controller.language == AppLanguage.system
@@ -179,9 +198,13 @@ class TrayController with tray.TrayListener, WidgetsBindingObserver {
           )
         : _controller.language;
     final strings = AppStrings.forLanguage(trayLanguage);
-    final status = _controller.runtimeVerificationPending
+    // The startup resume runs before the controller is initialized: its
+    // live state is shown, as in the window.
+    final status = verificationPending
         ? strings.text('État VPN inconnu')
-        : !_controller.isInitialized
+        : !(_controller.isInitialized ||
+              _controller.isConnectionCommandRunning ||
+              _controller.isStoppingVpn)
         ? strings.text('VPN : vérification en cours')
         : switch (_controller.vpnStatus) {
             VpnStatus.connected => strings.text('VPN : protégé'),
@@ -198,6 +221,9 @@ class TrayController with tray.TrayListener, WidgetsBindingObserver {
     await tray.trayManager.setToolTip('FuzeVPN — $status');
     if (!_isReady || generation != _generation) return;
 
+    // Recorded in the same turn as the menu it describes replaces the
+    // previous one: clicks are resolved against that menu.
+    _connectionItemIntent = intent;
     await tray.trayManager.setContextMenu(
       tray.Menu(
         items: [
@@ -206,15 +232,24 @@ class TrayController with tray.TrayListener, WidgetsBindingObserver {
           tray.MenuItem.separator(),
           tray.MenuItem(
             key: 'connection',
-            label: _controller.runtimeVerificationPending
-                ? strings.text('Réessayer')
-                : requiresDisconnect
-                ? strings.text('Déconnecter')
-                : signedIn
-                ? strings.text('Connexion rapide')
-                : strings.text('Se connecter'),
-            disabled: isBusy || _controller.runtimeOwnedByAnotherUser,
+            label: switch (intent) {
+              _ConnectionItemIntent.retryVerification => strings.text(
+                'Réessayer',
+              ),
+              _ConnectionItemIntent.stop => strings.text('Déconnecter'),
+              _ConnectionItemIntent.connect =>
+                signedIn
+                    ? strings.text('Connexion rapide')
+                    : strings.text('Se connecter'),
+            },
+            disabled:
+                (isBusy && !canCancel) || _controller.runtimeOwnedByAnotherUser,
           ),
+          if (offersForcedStop)
+            tray.MenuItem(
+              key: 'disconnect',
+              label: strings.text('Déconnecter'),
+            ),
           tray.MenuItem(
             key: 'locations',
             label: strings.text('Choisir un emplacement'),
@@ -267,7 +302,10 @@ class TrayController with tray.TrayListener, WidgetsBindingObserver {
         unawaited(_show(AppSection.connection));
         break;
       case 'connection':
-        unawaited(_handleConnection());
+        unawaited(_handleConnection(_connectionItemIntent));
+        break;
+      case 'disconnect':
+        unawaited(_handleConnection(_ConnectionItemIntent.stop));
         break;
       case 'locations':
         unawaited(_show(AppSection.locations));
@@ -289,9 +327,20 @@ class TrayController with tray.TrayListener, WidgetsBindingObserver {
     await _window.show();
   }
 
-  Future<void> _handleConnection() async {
+  Future<void> _handleConnection(_ConnectionItemIntent intent) async {
     await _show(AppSection.connection);
-    await _controller.quickConnect();
+    switch (intent) {
+      case _ConnectionItemIntent.stop:
+        await _controller.disconnectVpn();
+      case _ConnectionItemIntent.retryVerification:
+        // Passive, and a no-op once the state is known again.
+        await _controller.retryRuntimeVerification();
+      case _ConnectionItemIntent.connect:
+        // Meanwhile a tunnel came up or a protection was retained: an item
+        // that offered to connect never disconnects.
+        if (_controller.requiresExplicitDisconnect) return;
+        await _controller.quickConnect();
+    }
   }
 
   Future<void> _quit() async {

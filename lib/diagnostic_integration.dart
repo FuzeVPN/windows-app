@@ -912,6 +912,8 @@ extension AppDiagnostics on AppController {
         initialState: vpnStatus == VpnStatus.disconnected
             ? VpnStatus.preparing
             : VpnStatus.disconnecting,
+        // This cleanup only disconnects: an explicit stop joins it.
+        cancellable: false,
       );
     } finally {
       diagnosticRepairRunning = false;
@@ -971,7 +973,13 @@ extension AppDiagnostics on AppController {
 
   void _observeDiagnosticEvent(String area, String event, String? code) {
     if (_disposed || (area != 'openvpn' && area != 'wireguard')) return;
-    final stage = event.contains('disconnect')
+    // OpenVPN's generic events are its certificate renewal's steps.
+    final renewalStep =
+        area == 'openvpn' &&
+        const {'started', 'completed', 'attempt_failed'}.contains(event);
+    final stage = renewalStep
+        ? 'certificate_renewal'
+        : event.contains('disconnect')
         ? 'disconnect'
         : event.contains('protection')
         ? 'guard_verify'
@@ -995,6 +1003,12 @@ extension AppDiagnostics on AppController {
     }.contains(code);
     final outcome = cancelled
         ? 'cancelled'
+        : renewalStep
+        ? switch (event) {
+            'started' => 'begin',
+            'attempt_failed' => 'retry',
+            _ => 'end',
+          }
         : failed
         ? 'error'
         : event.endsWith('_started')

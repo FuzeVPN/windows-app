@@ -110,8 +110,10 @@ std::optional<Map> ParseLine(std::string_view line) {
       if (value.size() > 80) return std::nullopt;
       result[Value("event")] = Value(std::string(value));
     } else if (key == "code") {
-      if (const auto number = Number(value)) result[Value("code")] = Value(*number);
-      else if (ErrorCode(value)) result[Value("code")] = Value(std::string(value));
+      // A raw PlatformException code keeps only its support spelling.
+      const auto code = fuzevpn::OpenVpnDiagnosticCode(value);
+      if (const auto number = Number(code)) result[Value("code")] = Value(*number);
+      else if (ErrorCode(code)) result[Value("code")] = Value(std::string(code));
       else result[Value("code")] = Value("unknown_error");
     } else if (Is(key, {"peer_ready", "send_attempts", "send_ok", "send_failed", "received",
         "reconnects", "command_failed", "success", "engine_connect_ms", "setup_commands_ms",
@@ -125,7 +127,8 @@ std::optional<Map> ParseLine(std::string_view line) {
       if (Is(value, {"starting", "adapter_open", "peer_ready", "packet_received", "tls_active",
           "assign_ip", "add_routes", "connected"})) result[Value("stage")] = Value(std::string(value));
     } else if (Is(key, {"first_error", "last_error", "failure_before_stop"})) {
-      result[Value(std::string(key))] = Value(ErrorCode(value) ? std::string(value) : "unknown_error");
+      const auto code = fuzevpn::OpenVpnDiagnosticCode(value);
+      result[Value(std::string(key))] = Value(ErrorCode(code) ? std::string(code) : "unknown_error");
     } else if (Is(key, {"first_failed_action", "last_action"})) {
       result[Value(std::string(key))] = Value(Action(value) ? std::string(value) : "unknown");
     } else if (key == "last_event") {

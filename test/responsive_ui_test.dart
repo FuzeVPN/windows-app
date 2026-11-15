@@ -164,8 +164,9 @@ class _DisconnectWithoutSessionController extends _ResponsiveController {
   @override
   bool takeSignInPrompt() => true;
 
+  // The Disconnect button sends the explicit stop, never a toggle.
   @override
-  Future<void> quickConnect() async {
+  Future<void> disconnectVpn() async {
     disconnectRequests++;
   }
 }

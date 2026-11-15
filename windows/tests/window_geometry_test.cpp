@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MPL-2.0
 #include "../runner/window_geometry.h"
+#include "../runner/window_close_policy.h"
 
 #include <cstdlib>
 #include <iostream>
@@ -51,5 +52,16 @@ int main() {
   Require(Inside(InitialBounds(RECT{0, 0, 1, 1}, 1080, 680, 192),
                  RECT{0, 0, 1, 1}));
   Require(Same(InitialBounds(desktop, 1080, 680, 0), initial));
+
+  // The close button never quits. With a tray icon it hides the window;
+  // without one it keeps the window and asks Dart for the Quit dialog, or a
+  // user with no tray would have neither a way back in nor a way out.
+  using fuzevpn_window::CloseAction;
+  using fuzevpn_window::DecideClose;
+  volatile bool tray_available = true;
+  Require(DecideClose(tray_available) == CloseAction::hide_to_tray);
+  tray_available = false;
+  Require(DecideClose(tray_available) == CloseAction::keep_window_and_ask_to_quit);
+  Require(CloseAction::hide_to_tray != CloseAction::keep_window_and_ask_to_quit);
   std::cout << "Window geometry checks passed\n";
 }

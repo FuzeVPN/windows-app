@@ -9,10 +9,17 @@ import 'connection_ux_test.dart' show ConnectionUxController;
 
 class _ConnectionLayoutController extends ConnectionUxController {
   int connectionRequests = 0;
+  int stopRequests = 0;
 
   @override
   Future<void> quickConnect() async {
     connectionRequests++;
+  }
+
+  // The primary action sends the explicit stop when it says Disconnect.
+  @override
+  Future<void> disconnectVpn() async {
+    stopRequests++;
   }
 }
 
@@ -39,7 +46,11 @@ void main() {
       }
       await tester.tap(primary);
       await tester.pump();
-      expect(app.connectionRequests, 1, reason: status.name);
+      // One request per tap: a stop from a state that requires an explicit
+      // Disconnect, a connection otherwise, never both.
+      final stops = app.requiresExplicitDisconnect;
+      expect(app.stopRequests, stops ? 1 : 0, reason: status.name);
+      expect(app.connectionRequests, stops ? 0 : 1, reason: status.name);
       await tester.tap(chooseLocation);
       await tester.pumpAndSettle();
       expect(app.section, AppSection.locations, reason: status.name);

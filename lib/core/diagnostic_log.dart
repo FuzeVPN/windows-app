@@ -148,7 +148,15 @@ class DiagnosticLog {
   }) {
     final safeArea = _sanitize(area);
     final safeEvent = _sanitize(event);
-    final safeCode = code == null ? null : _sanitize(code);
+    // Local-only references take their reportable category here, so no trace
+    // line (and no support timeline built from it) ever carries them.
+    final safeCode = code == null
+        ? null
+        : _sanitize(
+            openVpnClientCertificateTraceCodes.contains(code)
+                ? diagnosticCode(code)
+                : code,
+          );
     for (final observer in _observers.toList(growable: false)) {
       try {
         observer(safeArea, safeEvent, safeCode);
@@ -201,6 +209,7 @@ class DiagnosticLog {
     int? connectionId,
     int? attempt,
     String? family,
+    int? count,
   }) {
     String code = 'unexpected_error';
     String kind = 'unexpected';
@@ -308,6 +317,7 @@ class DiagnosticLog {
       family: family,
       errorKind: kind,
       reason: reason,
+      count: count,
     );
   }
 
@@ -318,6 +328,7 @@ class DiagnosticLog {
       diagnosticCodes.contains(value) ||
       browserAuthTraceCodes.contains(value) ||
       deviceEnrollmentTraceCodes.contains(value) ||
+      openVpnClientCertificateTraceCodes.contains(value) ||
       const {
         'api_resolver_invalid_response',
         'runtime_detection_failed',

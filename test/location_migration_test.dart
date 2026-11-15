@@ -829,7 +829,8 @@ class MigrationApi extends ApiClient {
     serverName: 'frankfurt-01.openvpn.internal',
     remoteCertTlsServer: true,
     ciphers: const ['AES-256-GCM'],
-    notAfter: DateTime.utc(2026, 9, 1),
+    // Far from expiry: an activation due for renewal would be renewed first.
+    notAfter: DateTime.utc(2099),
   );
 }
 
@@ -863,6 +864,19 @@ class _CapacityRejectionWireGuard extends MigrationWireGuard {
 }
 
 class MigrationStore extends SecureStore {
+  // Like every store call the controller makes, the renewal marker stays
+  // in this fake: an unmocked channel would never answer in a widget test.
+  @override
+  Future<String?> openVpnRenewalDeviceId() async => null;
+  @override
+  Future<void> saveOpenVpnRenewalDeviceId(
+    String deviceId, {
+    String? csrSha256,
+  }) async {}
+  @override
+  Future<void> clearOpenVpnRenewalDeviceId() async {}
+  @override
+  Future<String?> openVpnRenewalCsrSha256() async => null;
   MigrationStore({this.marker});
   StoredLocationMigration? marker;
   bool failMigrationSave = false;

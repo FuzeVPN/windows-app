@@ -7,6 +7,7 @@ import 'app_shell.dart';
 import 'app_theme.dart';
 import 'brand_config.dart';
 import 'core/tray_controller.dart';
+import 'core/window_bridge.dart';
 import 'l10n/app_localizations.dart';
 import 'l10n/framework_localizations.dart';
 
@@ -14,13 +15,16 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final controller = AppController();
   final navigatorKey = GlobalKey<NavigatorState>();
-  await TrayController(
-    controller,
-    onQuitRequested: () async {
-      final context = navigatorKey.currentContext;
-      if (context != null) await requestAppExit(context, controller);
-    },
-  ).initialize();
+  Future<void> confirmExit() async {
+    final context = navigatorKey.currentContext;
+    if (context != null) await requestAppExit(context, controller);
+  }
+
+  // Without a notification-area icon, closing the window cannot hide it:
+  // Windows keeps it open and this opens the same Quit confirmation, so that
+  // a way to quit always exists.
+  const WindowBridge().setCloseRequestHandler(confirmExit);
+  await TrayController(controller, onQuitRequested: confirmExit).initialize();
   runApp(FuzeVpnApp(controller: controller, navigatorKey: navigatorKey));
 }
 

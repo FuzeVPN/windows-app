@@ -133,7 +133,7 @@ void main() {
         serverName: 'frankfurt-01.openvpn.fuzevpn.internal',
         remoteCertTlsServer: true,
         ciphers: const ['AES-256-GCM'],
-        notAfter: DateTime.utc(2027),
+        notAfter: DateTime.utc(2099),
         addresses: const ['10.10.0.2/24', 'fd00::2/128'],
         allowedIps: const ['0.0.0.0/0', '::/0'],
         ipFamilies: dualStackIpFamilies,
@@ -609,6 +609,19 @@ void main() {
 }
 
 class _ProtectionStore extends SecureStore {
+  // Like every store call the controller makes, the renewal marker stays
+  // in this fake: an unmocked channel would never answer in a widget test.
+  @override
+  Future<String?> openVpnRenewalDeviceId() async => null;
+  @override
+  Future<void> saveOpenVpnRenewalDeviceId(
+    String deviceId, {
+    String? csrSha256,
+  }) async {}
+  @override
+  Future<void> clearOpenVpnRenewalDeviceId() async {}
+  @override
+  Future<String?> openVpnRenewalCsrSha256() async => null;
   bool? killSwitchValue;
   bool? dnsProtectionValue;
   bool? webRtcProtectionValue;
@@ -637,6 +650,19 @@ class _ProtectionStore extends SecureStore {
 }
 
 class _FailingProtectionStore extends SecureStore {
+  // Like every store call the controller makes, the renewal marker stays
+  // in this fake: an unmocked channel would never answer in a widget test.
+  @override
+  Future<String?> openVpnRenewalDeviceId() async => null;
+  @override
+  Future<void> saveOpenVpnRenewalDeviceId(
+    String deviceId, {
+    String? csrSha256,
+  }) async {}
+  @override
+  Future<void> clearOpenVpnRenewalDeviceId() async {}
+  @override
+  Future<String?> openVpnRenewalCsrSha256() async => null;
   @override
   Future<void> saveSecuritySettings(SecuritySettings value) =>
       Future.error(StateError('storage unavailable'));

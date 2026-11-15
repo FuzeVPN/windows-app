@@ -46,6 +46,26 @@ class WindowsUpdateController extends ChangeNotifier {
   WindowsUpdateEnvironment? get environment => _environment;
   bool get isPortable =>
       _environment?.installationMode == WindowsInstallationMode.portable;
+
+  /// Whether [isPortable] reflects the installation, read by an update check
+  /// or by [ensureInstallationMode].
+  bool get installationModeKnown => _environment != null;
+
+  /// Reads the installation mode when no update check has loaded it yet: the
+  /// Quit dialog needs it, because a portable copy stops the VPN before it
+  /// closes. A failure leaves it unknown.
+  Future<void> ensureInstallationMode() async {
+    if (installationModeKnown) return;
+    try {
+      final value = await _bridge.getEnvironment();
+      if (_disposed || _environment != null) return;
+      _environment = value;
+      notifyListeners();
+    } catch (_) {
+      // Still unknown: the Quit dialog then stops before closing.
+    }
+  }
+
   bool get canUseInstaller =>
       _environment?.installationMode == WindowsInstallationMode.installed;
   bool get canUpdate => canUseInstaller || isPortable;

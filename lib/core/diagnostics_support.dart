@@ -167,7 +167,12 @@ class DiagnosticSupport {
       'event': event,
     };
     for (final entry in raw.entries) {
-      final key = entry.key, value = entry.value;
+      final key = entry.key;
+      // A local-only reference takes its reportable category: the backend
+      // rejects a whole report for one value outside its vocabulary.
+      final value = openVpnClientCertificateTraceCodes.contains(entry.value)
+          ? diagnosticCode(entry.value as String)
+          : entry.value;
       if (const {'timestamp', 'area', 'event'}.contains(key)) continue;
       if (key == 'code') {
         if (value is int && value >= 0 && value <= 0xffffffff ||

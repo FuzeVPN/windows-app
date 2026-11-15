@@ -33,6 +33,10 @@ flutter:
   assets:
     - assets/branding/fuzevpn-emblem-512.png
     - assets/fonts/Archivo-OFL.txt
+    # One PNG per two-letter country code and nothing else: every file of this
+    # directory ships in the application (test/country_flag_test.dart).
+    # Provenance and licence: third_party/flags/NOTICE.md.
+    - assets/flags/
   fonts:
     - family: Archivo
       fonts:

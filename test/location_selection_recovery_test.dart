@@ -631,6 +631,19 @@ class _Api extends ApiClient {
 }
 
 class _Store extends SecureStore {
+  // Like every store call the controller makes, the renewal marker stays
+  // in this fake: an unmocked channel would never answer in a widget test.
+  @override
+  Future<String?> openVpnRenewalDeviceId() async => null;
+  @override
+  Future<void> saveOpenVpnRenewalDeviceId(
+    String deviceId, {
+    String? csrSha256,
+  }) async {}
+  @override
+  Future<void> clearOpenVpnRenewalDeviceId() async {}
+  @override
+  Future<String?> openVpnRenewalCsrSha256() async => null;
   StoredLocationMigration? marker;
   bool failMarkerClear = false;
   Completer<void>? selectedWriteGate;

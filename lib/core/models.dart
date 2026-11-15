@@ -25,12 +25,19 @@ class NetworkProtectionStatus {
     required this.killSwitch,
     required this.phase,
     this.ownedByAnotherUser = false,
+    this.runtimeAbsent = false,
   });
 
   final bool active;
   final bool killSwitch;
   final String phase;
   final bool ownedByAnotherUser;
+
+  /// No privileged runtime process exists: the interface read this policy
+  /// itself from what a previous runtime persisted in Windows. Nothing can
+  /// reconnect a tunnel under it, and only an explicit Disconnect, which
+  /// starts a runtime, releases it.
+  final bool runtimeAbsent;
   bool get blocksTraffic => active && killSwitch;
 
   factory NetworkProtectionStatus.fromMap(Map<Object?, Object?> value) {
@@ -38,10 +45,12 @@ class NetworkProtectionStatus {
     final killSwitch = value['killSwitch'];
     final phase = value['phase'];
     final ownedByAnotherUser = value['ownedByAnotherUser'] ?? false;
+    final runtimeAbsent = value['runtimeAbsent'] ?? false;
     if (active is! bool ||
         killSwitch is! bool ||
         phase is! String ||
         ownedByAnotherUser is! bool ||
+        runtimeAbsent is! bool ||
         !{'inactive', 'prepared', 'tunnel'}.contains(phase) ||
         active != (phase != 'inactive')) {
       throw const FormatException('État de protection réseau invalide.');
@@ -51,6 +60,7 @@ class NetworkProtectionStatus {
       killSwitch: killSwitch,
       phase: phase,
       ownedByAnotherUser: ownedByAnotherUser,
+      runtimeAbsent: runtimeAbsent,
     );
   }
 }
@@ -534,7 +544,10 @@ class DeviceProfiles {
 
 /// Activation data is intentionally short-lived. It is handed straight to
 /// the Windows OpenVPN bridge and is never displayed, logged or persisted by
-/// Dart. The native bridge encrypts its own copy with DPAPI.
+/// Dart, which keeps only [notAfter]: at the next connection it decides
+/// whether the certificate is renewed first. Natively, only the
+/// private key and CSR are persisted (DPAPI); the certificate lives solely in
+/// the broker's in-memory reconnect cache.
 class OpenVpnActivation {
   const OpenVpnActivation({
     required this.deviceId,

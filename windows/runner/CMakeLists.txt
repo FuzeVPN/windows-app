@@ -712,6 +712,20 @@ set_target_properties(fuzevpn_window_geometry_test PROPERTIES
   RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/native-tests")
 fuzevpn_add_native_test(window_geometry fuzevpn_window_geometry_test)
 
+# UI-channel answers while no privileged runtime process exists. The persisted
+# intent read, the Windows account and the Flutter reply are in-memory doubles.
+add_executable(fuzevpn_runtime_absent_channel_test EXCLUDE_FROM_ALL
+  "../tests/runtime_absent_channel_test.cpp")
+apply_standard_settings(fuzevpn_runtime_absent_channel_test)
+target_compile_features(fuzevpn_runtime_absent_channel_test PRIVATE cxx_std_20)
+target_compile_definitions(fuzevpn_runtime_absent_channel_test PRIVATE NOMINMAX WIN32_LEAN_AND_MEAN)
+target_include_directories(fuzevpn_runtime_absent_channel_test PRIVATE
+  "${CMAKE_CURRENT_SOURCE_DIR}" "${FUZEVPN_FLUTTER_WRAPPER_DIR}/include")
+set_target_properties(fuzevpn_runtime_absent_channel_test PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/native-tests")
+fuzevpn_add_native_test(runtime_absent_channel fuzevpn_runtime_absent_channel_test)
+set_tests_properties(runtime_absent_channel PROPERTIES TIMEOUT 10)
+
 # Manually invoked passive Flutter bridge probe; never part of CTest/INSTALL.
 # It loads a separate diagnostic Dart AOT entrypoint, not the application.
 get_target_property(FUZEVPN_STARTUP_PROBE_SOURCES ${BINARY_NAME} SOURCES)

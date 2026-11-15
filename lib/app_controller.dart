@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -244,6 +245,8 @@ class AppController extends ChangeNotifier {
             },
             initialState: VpnStatus.disconnecting,
             allowDuringUpdate: true,
+            // This cleanup is itself the stop: nothing may interrupt it.
+            cancellable: false,
           );
           if (!confirmed) throw PlatformException(code: 'update_busy');
         },
@@ -284,6 +287,11 @@ class AppController extends ChangeNotifier {
   VpnProtocol? _retainedProtectionProtocol;
   final Map<VpnProtocol, NetworkProtectionStatus?> _nativeProtectionStates = {};
   final Map<VpnProtocol, bool?> _nativeProtectionPresence = {};
+  // The last protection status that answered was the interface's own reading
+  // of the persisted policy: no privileged runtime process existed. A read
+  // that fails afterwards proves nothing, so this holds until a runtime
+  // answers or a tunnel state is confirmed.
+  bool _runtimeAbsentObserved = false;
   DateTime? _connectedAt;
   final Stopwatch _connectedClock = Stopwatch();
   Duration _connectedOffset = Duration.zero;
@@ -307,6 +315,18 @@ class AppController extends ChangeNotifier {
   final VpnConnectionStateMachine _connectionStateMachine =
       VpnConnectionStateMachine();
   Future<void>? _connectionCommand;
+  // Whether an explicit stop may interrupt the running command. A command
+  // that only disconnects is joined instead.
+  bool _connectionCommandCancellable = false;
+  // The explicit stop in progress: the window, the notification-area menu
+  // and the Quit dialog all share it.
+  Future<void>? _stopRequest;
+  // The user stopped the VPN: until the user connects again, nothing in this
+  // session connects or reconnects on its own.
+  bool _userStoppedVpn = false;
+  // The passive runtime observation in flight, which a stop lets finish
+  // before it starts its own disconnect.
+  Future<void>? _runtimeVerificationRun;
   Future<DeviceRevocationResult>? _deviceRevocationCommand;
   bool _isRevokingCurrentDevice = false;
   int _experiencePreferenceWritesPending = 0;
@@ -322,12 +342,58 @@ class AppController extends ChangeNotifier {
       _isInstallingUpdate ||
       _runtimeVerificationInProgress ||
       _connectionCommand != null ||
+      // Between the command a stop cancelled and its own disconnect.
+      _stopRequest != null ||
       _isRevokingCurrentDevice ||
       _experiencePreferenceWritesPending > 0 ||
       _securityPreferenceWritesPending > 0;
+
+  /// A command runs, whatever started it: the startup resume included, which
+  /// runs before [isInitialized].
+  bool get isConnectionCommandRunning => _connectionCommand != null;
+
+  /// An explicit stop is in progress (see [disconnectVpn]).
+  bool get isStoppingVpn => _stopRequest != null;
+
+  /// The running command connects, reconnects or renews, and
+  /// [disconnectVpn] may interrupt it. Never true for a command that only
+  /// disconnects, during an update installation, a sign-out or the
+  /// revocation of this device, which stop the VPN themselves.
+  bool get canCancelConnection =>
+      !_disposed &&
+      !_isSigningOut &&
+      !_isInstallingUpdate &&
+      !_isRevokingCurrentDevice &&
+      !runtimeOwnedByAnotherUser &&
+      _stopRequest == null &&
+      _connectionCommand != null &&
+      _connectionCommandCancellable;
+
+  /// [disconnectVpn] has something to stop right now: a running command it
+  /// may cancel, or, with nothing else running, a tunnel, a retained
+  /// protection or a runtime whose state is unknown.
+  bool get canDisconnectVpn =>
+      canCancelConnection ||
+      (!isConnectionBusy &&
+          !runtimeOwnedByAnotherUser &&
+          (requiresExplicitDisconnect || _runtimeVerificationPending));
+
+  /// No tunnel is up while a protection of ours may still block the network.
+  bool get retainsBlockingProtection =>
+      vpnStatus != VpnStatus.connected &&
+      (_retainedProtectionProtocol != null || vpnStatus == VpnStatus.blocked);
   bool get runtimeOwnedByAnotherUser => _nativeProtectionStates.values.any(
     (status) => status?.ownedByAnotherUser ?? false,
   );
+
+  /// No privileged runtime process exists, and the protection one persisted
+  /// before it stopped is still applied by Windows (after a reboot before
+  /// the installed service has started, a portable relaunch, a stopped
+  /// service). Only an explicit Disconnect starts a runtime to release it:
+  /// nothing automatic may, so every automatic reconnect waits until a
+  /// runtime is observed again.
+  bool get _retainedProtectionRuntimeAbsent =>
+      _retainedProtectionProtocol != null && _runtimeAbsentObserved;
   static const _otherSessionMessage =
       'Le VPN est utilisé par une autre session Windows. Fermez-le depuis cette session pour continuer.';
   static const _openVpnPreparationProgressMessage =
@@ -366,6 +432,11 @@ class AppController extends ChangeNotifier {
     _invalidateDeviceSnapshots();
     // A forgotten or replaced binding no longer owes a protected-store write.
     if (value != _unsavedDeviceId) _unsavedDeviceId = null;
+    // Another device can never replay this one's pending renewal.
+    final requested = _openVpnRenewalRequestedDeviceId;
+    if (value != null && requested != null && requested != value) {
+      unawaited(_forgetOpenVpnRenewalRequest());
+    }
     _currentDeviceId = value;
   }
 
@@ -416,6 +487,12 @@ class AppController extends ChangeNotifier {
   bool _automaticReconnectInProgress = false;
   int _automaticReconnectAttempts = 0;
   static const _reconnectDelays = [3, 6, 12, 24, 48];
+  // The times a connectivity hint restarted the attempt cycle since the
+  // episode began: the adapter events of a failed attempt would otherwise
+  // restart it without end. A successful connection, an explicit user
+  // action, a system resume and a fresh tunnel drop each open a new episode.
+  int _connectivityCycleRestarts = 0;
+  static const _connectivityCycleRestartLimit = 5;
   bool _sessionValidationPending = false;
   bool _sessionStorageUnavailable = false;
   String? _savedSessionVerificationErrorMessage;
@@ -483,10 +560,47 @@ class AppController extends ChangeNotifier {
   bool _tunnelHealthUnconfirmed = false;
   ({int operationId, String code})? _nativeConnectionFailure;
 
+  // Until it expires, creating the OpenVPN profile again returns the same
+  // certificate, and the servers re-verify it at every TLS renegotiation, so
+  // expiry also ends an established tunnel. A connection renews it first
+  // when it expires within this window.
+  static const _openVpnRenewalWindow = Duration(days: 14);
+  // Native codes for a server that refused this device's certificate, and
+  // the renewal trigger each one gives the next attempt.
+  static const _openVpnCertificateRefusals = {
+    'openvpn_certificate_expired': 'openvpn_certificate_expired',
+    'openvpn_client_certificate_rejected': 'certificate_invalid',
+  };
+  // Dates only: the certificate itself never enters Dart memory beyond
+  // import. Known from the last activation the control plane returned.
+  ({String deviceId, DateTime notAfter})? _openVpnCertificate;
+  // The server refused that certificate when a tunnel used it.
+  ({String deviceId, String trigger})? _openVpnCertificateRefusal;
+  // The device whose renewal was requested and whose renewed certificate has
+  // not connected yet, with the SHA-256 of the pending CSR it was requested
+  // for. Persisted before /renew: the server may issue the certificate (and
+  // revoke the previous one) without its answer ever arriving, and replaying
+  // the same pending CSR is free.
+  String? _openVpnRenewalRequestedDeviceId;
+  String? _openVpnRenewalCsrSha256;
+  // The server's Retry-After after a 429: no OpenVPN creation or renewal
+  // for that device is sent before this instant.
+  ({String deviceId, DateTime until})? _openVpnRequestsBlocked;
+
+  /// [cancellable] is false for a command that only disconnects: an explicit
+  /// stop joins it instead of interrupting it. It cannot be derived from
+  /// [initialState], since a location change starts by disconnecting and
+  /// then reconnects. [fromStop] marks the disconnect of an explicit stop,
+  /// the only command that may start while that stop is in progress or while
+  /// the runtime state is unknown. [userConnect] marks a connection the user
+  /// asked for, which ends what an earlier explicit stop suspended.
   Future<void> _runConnectionCommand(
     Future<void> Function(int operationId) action, {
     VpnStatus? initialState,
     bool allowDuringUpdate = false,
+    bool cancellable = true,
+    bool fromStop = false,
+    bool userConnect = false,
   }) {
     if (_disposed ||
         (_isInstallingUpdate && !allowDuringUpdate) ||
@@ -496,16 +610,24 @@ class AppController extends ChangeNotifier {
         _securityPreferenceWritesPending > 0) {
       return Future<void>.value();
     }
+    // Nothing else may start between the command a stop cancelled and the
+    // disconnect of that stop.
+    final stopping = _stopRequest;
+    if (stopping != null && !fromStop) return stopping;
     if (runtimeOwnedByAnotherUser) {
       errorMessage = _otherSessionMessage;
       notifyListeners();
       return Future<void>.value();
     }
     _deferredStartupAutoConnect = false;
-    if (_runtimeVerificationPending) return retryRuntimeVerification();
+    if (_runtimeVerificationPending && !fromStop) {
+      return retryRuntimeVerification();
+    }
     final running = _connectionCommand;
     if (running != null) return running;
 
+    // The user connects again: automatic connections resume with it.
+    if (userConnect) _userStoppedVpn = false;
     final firstState =
         initialState ??
         (requiresExplicitDisconnect
@@ -522,6 +644,7 @@ class AppController extends ChangeNotifier {
     _nativeConnectionFailure = null;
     final completion = Completer<void>();
     _connectionCommand = completion.future;
+    _connectionCommandCancellable = cancellable;
     notifyListeners();
     unawaited(_executeConnectionCommand(operationId, action, completion));
     return completion.future;
@@ -545,6 +668,7 @@ class AppController extends ChangeNotifier {
       _connectionStateMachine.finish(operationId);
       if (identical(_connectionCommand, completion.future)) {
         _connectionCommand = null;
+        _connectionCommandCancellable = false;
         _connectionTargetLocation = null;
         if (_bootstrapInvalidationDeferred) {
           _bootstrapInvalidationDeferred = false;
@@ -752,6 +876,7 @@ class AppController extends ChangeNotifier {
       _store.currentDeviceId(),
       stage: 'stored_device_binding',
     );
+    await _loadOpenVpnRenewalRequest();
     final startupSessionEpoch = _sessionEpoch;
     bool currentStartupSession() =>
         !_disposed && !_isSigningOut && startupSessionEpoch == _sessionEpoch;
@@ -789,11 +914,17 @@ class AppController extends ChangeNotifier {
         vpnStatus == VpnStatus.blocked &&
         retainedProtocol != null) {
       _automaticReconnectIntent = retainedProtocol;
-      await _runConnectionCommand(
-        (operationId) =>
-            _performAutomaticReconnect(operationId, protocol: retainedProtocol),
-        initialState: VpnStatus.preparing,
-      );
+      // With no runtime process, the resume would start one: the intent
+      // waits for the tunnel monitor to observe a runtime instead.
+      if (!_retainedProtectionRuntimeAbsent) {
+        await _runConnectionCommand(
+          (operationId) => _performAutomaticReconnect(
+            operationId,
+            protocol: retainedProtocol,
+          ),
+          initialState: VpnStatus.preparing,
+        );
+      }
     }
     if (vpnStatus != VpnStatus.blocked &&
         !_disconnectUnconfirmed &&
@@ -830,6 +961,7 @@ class AppController extends ChangeNotifier {
     unawaited(updates.checkForUpdates());
     if (currentStartupSession() &&
         autoConnectOnLaunch &&
+        !_userStoppedVpn &&
         profile != null &&
         vpnStatus == VpnStatus.disconnected &&
         !isLocationMigrationActive &&
@@ -1015,6 +1147,7 @@ class AppController extends ChangeNotifier {
     if (!_isCurrentConnectionGeneration(generation)) return null;
     _nativeProtectionStates[protocol] = status;
     _nativeProtectionPresence[protocol] = active;
+    if (status != null) _runtimeAbsentObserved = status.runtimeAbsent;
     if (active == true) _runtimeInteractionStarted = true;
     return active;
   }
@@ -1959,8 +2092,18 @@ class AppController extends ChangeNotifier {
     });
   }
 
-  Future<void> _loadTunnelState({bool observationOnly = false}) async {
+  /// [expectedGeneration] makes a passive observation give way to any command
+  /// that began meanwhile: its state writes are not scoped to an operation.
+  Future<void> _loadTunnelState({
+    bool observationOnly = false,
+    int? expectedGeneration,
+  }) async {
     final sessionEpoch = _sessionEpoch;
+    bool superseded() =>
+        _disposed ||
+        sessionEpoch != _sessionEpoch ||
+        (expectedGeneration != null &&
+            !_isCurrentConnectionGeneration(expectedGeneration));
     _collectingStartupState = true;
     var stage = 'startup_wireguard_connected';
     final queryClock = Stopwatch()..start();
@@ -1973,7 +2116,7 @@ class AppController extends ChangeNotifier {
         wireGuardConnected,
         durationMs: queryClock.elapsedMilliseconds,
       );
-      if (_disposed || sessionEpoch != _sessionEpoch) return;
+      if (superseded()) return;
       if (wireGuardConnected) {
         _runtimeInteractionStarted = true;
         activeProtocol = VpnProtocol.wireGuard;
@@ -1987,7 +2130,7 @@ class AppController extends ChangeNotifier {
         openVpnConnected,
         durationMs: queryClock.elapsedMilliseconds,
       );
-      if (_disposed || sessionEpoch != _sessionEpoch) return;
+      if (superseded()) return;
       if (openVpnConnected) {
         _runtimeInteractionStarted = true;
         activeProtocol ??= VpnProtocol.openVpn;
@@ -2007,7 +2150,7 @@ class AppController extends ChangeNotifier {
       final protectionOwner = await _networkProtectionOwner(
         tracePrefix: 'startup',
       );
-      if (_disposed || sessionEpoch != _sessionEpoch) return;
+      if (superseded()) return;
       if (activeProtocol == null &&
           protectionOwner == null &&
           VpnProtocol.values.any(
@@ -2057,7 +2200,7 @@ class AppController extends ChangeNotifier {
       if (runtimeOwnedByAnotherUser) errorMessage = _otherSessionMessage;
       notifyListeners();
     } catch (error) {
-      if (_disposed || sessionEpoch != _sessionEpoch) return;
+      if (superseded()) return;
       _traceNativeStateFailure(
         stage,
         error,
@@ -2130,7 +2273,10 @@ class AppController extends ChangeNotifier {
     if (_disposed ||
         _isSigningOut ||
         !_runtimeVerificationPending ||
-        _runtimeVerificationInProgress) {
+        _runtimeVerificationInProgress ||
+        // An explicit stop is disconnecting and will confirm the state by
+        // itself: an observation must not write in the middle of it.
+        _stopRequest != null) {
       return;
     }
     if (!automatic) {
@@ -2141,9 +2287,16 @@ class AppController extends ChangeNotifier {
     final epoch = _sessionEpoch;
     _runtimeVerificationInProgress = true;
     notifyListeners();
+    // Only the observation itself is kept: an explicit stop waits for its
+    // unscoped state writes, never for the requests that follow it.
+    final observation = _loadTunnelState(observationOnly: true);
+    _runtimeVerificationRun = observation;
     try {
-      await _loadTunnelState(observationOnly: true);
+      await observation;
     } finally {
+      if (identical(_runtimeVerificationRun, observation)) {
+        _runtimeVerificationRun = null;
+      }
       _runtimeVerificationInProgress = false;
       if (!_disposed && epoch == _sessionEpoch) {
         _scheduleRuntimeVerificationRetry();
@@ -2169,6 +2322,8 @@ class AppController extends ChangeNotifier {
   Future<void> _resumeDeferredStartupAutoConnect() async {
     if (!_deferredStartupAutoConnect || _disposed || _isSigningOut) return;
     if (!autoConnectOnLaunch ||
+        // An explicit stop outlives the launch request it interrupted.
+        _userStoppedVpn ||
         runtimeOwnedByAnotherUser ||
         requiresExplicitDisconnect ||
         vpnStatus == VpnStatus.connected ||
@@ -2325,8 +2480,57 @@ class AppController extends ChangeNotifier {
     _tunnelHealthTimer?.cancel();
     _tunnelHealthTimer = Timer.periodic(
       const Duration(seconds: 4),
-      (_) => unawaited(_checkTunnelHealth()),
+      (_) => unawaited(_monitorTunnel()),
     );
+  }
+
+  Future<void> _monitorTunnel() async {
+    // Checked first, in the same turn: the health check below starts at
+    // once whenever a runtime exists.
+    if (_observesProtectionWithoutRuntime) {
+      await _observeProtectionWithoutRuntime();
+    }
+    await _checkTunnelHealth();
+  }
+
+  bool get _observesProtectionWithoutRuntime =>
+      !_disposed &&
+      isInitialized &&
+      _retainedProtectionRuntimeAbsent &&
+      !runtimeOwnedByAnotherUser &&
+      !_runtimeVerificationPending &&
+      !_tunnelHealthCheckInProgress &&
+      !isConnectionBusy;
+
+  /// While no runtime process exists under a persisted protection, nothing
+  /// publishes a change: the state is read again, passively, so that the
+  /// window follows the service once Windows starts it. No call made here
+  /// starts a runtime. The automatic reconnect that waited for one is
+  /// scheduled as soon as a runtime answers under the same protection.
+  Future<void> _observeProtectionWithoutRuntime() async {
+    if (!_observesProtectionWithoutRuntime) return;
+    _tunnelHealthCheckInProgress = true;
+    final generation = _connectionStateMachine.generation;
+    try {
+      await _loadTunnelState(
+        observationOnly: true,
+        expectedGeneration: generation,
+      );
+    } finally {
+      _tunnelHealthCheckInProgress = false;
+    }
+    if (!_isCurrentConnectionGeneration(generation) ||
+        isConnectionBusy ||
+        _retainedProtectionRuntimeAbsent) {
+      return;
+    }
+    if (_retainedProtectionProtocol == null) {
+      // The protection is gone as well: the saved session, left unverified
+      // under it, can be validated now.
+      _scheduleSavedSessionVerificationRetry();
+      return;
+    }
+    _scheduleAutomaticReconnect();
   }
 
   Future<void> _checkTunnelHealth() async {
@@ -2383,6 +2587,8 @@ class AppController extends ChangeNotifier {
       if (automaticReconnectEnabled && profile != null) {
         _automaticReconnectIntent = protocol;
         _automaticReconnectAttempts = 0;
+        // A fresh tunnel drop opens a new episode.
+        _connectivityCycleRestarts = 0;
         _ignoreConnectivityEventsUntil = _now();
       }
       final retainedProtection = await _restoreRetainedNetworkProtection(
@@ -2439,7 +2645,10 @@ class AppController extends ChangeNotifier {
   }
 
   @visibleForTesting
-  Future<void> checkTunnelHealthNow() => _checkTunnelHealth();
+  Future<void> checkTunnelHealthNow() => _monitorTunnel();
+
+  @visibleForTesting
+  Future<void> loadOpenVpnRenewalMarkerNow() => _loadOpenVpnRenewalRequest();
 
   /// Resolves the real server location before the UI asks the user to confirm
   /// an asynchronous move. It never makes the target appear active early.
@@ -2515,6 +2724,7 @@ class AppController extends ChangeNotifier {
       initialState: wasConnected
           ? VpnStatus.disconnecting
           : VpnStatus.preparing,
+      userConnect: true,
     );
   }
 
@@ -2635,6 +2845,7 @@ class AppController extends ChangeNotifier {
       initialState: wasConnected
           ? VpnStatus.disconnecting
           : VpnStatus.preparing,
+      userConnect: true,
     );
   }
 
@@ -3382,12 +3593,18 @@ class AppController extends ChangeNotifier {
     _automaticReconnectTimer = null;
     _automaticReconnectIntent = null;
     _automaticReconnectAttempts = 0;
+    _connectivityCycleRestarts = 0;
   }
 
   void _scheduleAutomaticReconnect({Duration? delay}) {
     if (_disposed ||
         _isInstallingUpdate ||
         _isSigningOut ||
+        // After an explicit stop, only the user connects again.
+        _userStoppedVpn ||
+        // An attempt would start the runtime that does not exist: the tunnel
+        // monitor schedules it once a runtime answers.
+        _retainedProtectionRuntimeAbsent ||
         runtimeOwnedByAnotherUser ||
         !automaticReconnectEnabled ||
         _automaticReconnectIntent == null ||
@@ -3495,7 +3712,9 @@ class AppController extends ChangeNotifier {
     }
     unawaited(_resumeDiagnostics());
     if (_isInstallingUpdate) return;
-    await _recoverSavedSession();
+    // After an explicit stop the saved session is still validated, but the
+    // launch connection it could start is not.
+    await _recoverSavedSession(allowAutoConnect: !_userStoppedVpn);
     if (_disposed || _isSigningOut || runtimeOwnedByAnotherUser) return;
     if (!automaticReconnectEnabled ||
         (profile == null &&
@@ -3509,8 +3728,21 @@ class AppController extends ChangeNotifier {
     }
     if (_automaticReconnectIntent == null ||
         _automaticReconnectInProgress ||
-        isConnectionBusy) {
+        isConnectionBusy ||
+        // Nothing can be scheduled while no runtime exists: the hint must
+        // not use up the restarts of the cycle that follows.
+        _retainedProtectionRuntimeAbsent) {
       return;
+    }
+    if (event == WindowsConnectivityEvent.systemResumed) {
+      _connectivityCycleRestarts = 0;
+    } else if (_connectivityCycleRestarts >= _connectivityCycleRestartLimit) {
+      // The cycle already restarted that many times in this episode: the
+      // attempts left in it still run, then the retained state waits for
+      // the user.
+      return;
+    } else {
+      _connectivityCycleRestarts++;
     }
     _automaticReconnectTimer?.cancel();
     _automaticReconnectTimer = null;
@@ -3530,7 +3762,14 @@ class AppController extends ChangeNotifier {
         (selectedLocation == null &&
             _knownTunnelLocationIds[protocol] == null &&
             _retainedProtectionProtocol == null) ||
-        _automaticReconnectInProgress) {
+        _automaticReconnectInProgress ||
+        // Whatever armed this timer, nothing reconnects after an explicit
+        // stop.
+        _userStoppedVpn ||
+        // No runtime process exists: the attempt would start one. The
+        // intent is kept, and the tunnel monitor schedules the attempt
+        // again once a runtime answers.
+        _retainedProtectionRuntimeAbsent) {
       return;
     }
     if (isConnectionBusy) {
@@ -3560,61 +3799,96 @@ class AppController extends ChangeNotifier {
       if (protectionBeforeReconnect != null) {
         _retainedProtectionProtocol = protectionBeforeReconnect;
       }
-      if (!await _prepareConnectionNetworkProtection(
-        protocol,
-        operationId: operationId,
-      )) {
+      if (_retainedProtectionRuntimeAbsent) {
+        // The runtime stopped since this attempt was scheduled. Preparing
+        // the protection would start one: the retained state is shown
+        // again and the attempt waits for the tunnel monitor.
+        if (!await _restoreRetainedNetworkProtection(
+              operationId: operationId,
+              message:
+                  'La connexion VPN s’est interrompue. Le kill switch bloque toujours le trafic réseau.',
+            ) &&
+            vpnStatus == VpnStatus.preparing) {
+          // Nothing is retained any more: the attempt must still end in a
+          // state the next command can begin from.
+          _transitionConnection(operationId, VpnStatus.error);
+          errorMessage ??=
+              'La reconnexion automatique n’a pas pu être terminée. Réessayez.';
+        }
         return;
       }
-      // Native resume can repair a protected tunnel even while WFP prevents
-      // this GUI from contacting the API. No tunnel material enters Dart.
-      if (!_transitionConnection(operationId, VpnStatus.connecting)) return;
-      final restored = protocol == VpnProtocol.wireGuard
-          ? await _wireguard.reconnect()
-          : await _openVpn.reconnect();
-      if (!_acceptConnectionOperation(operationId)) return;
-      if (restored) {
-        _markNativeConnected(protocol, operationId: operationId, cached: true);
-      } else {
-        final protectionNow = await _networkProtectionOwner();
-        if (!_acceptConnectionOperation(operationId)) return;
-        if (protectionBeforeReconnect != null || protectionNow != null) {
-          _retainedProtectionProtocol =
-              protectionNow ?? protectionBeforeReconnect;
-          _transitionConnection(
-            operationId,
-            _retainedProtectionBlocksTraffic
-                ? VpnStatus.blocked
-                : VpnStatus.error,
-          );
-          activeProtocol = null;
-          tunnelLocationId = null;
-          connectedAt = null;
-          errorMessage = _retainedProtectionBlocksTraffic
-              ? 'La configuration locale de reprise est indisponible. Le kill switch bloque toujours le trafic réseau. Déconnectez-vous avant de réessayer.'
-              : _partialProtectionMessage;
-          return;
-        }
-        // Missing/failed status reads are not permission to send API traffic.
-        final protectionStates = await Future.wait([
-          _safe<bool>(_wireguard.isNetworkProtectionActive()),
-          _safe<bool>(_openVpn.isNetworkProtectionActive()),
-        ]);
-        if (!_acceptConnectionOperation(operationId)) return;
-        if (protectionStates.any((active) => active != false)) {
-          _disconnectUnconfirmed = true;
-          _transitionConnection(operationId, VpnStatus.error);
-          errorMessage =
-              'L’état de la protection réseau ne peut pas être confirmé. Déconnectez-vous avant de réessayer.';
-          return;
-        }
-        _transitionConnection(operationId, VpnStatus.disconnected);
-        _transitionConnection(operationId, VpnStatus.preparing);
+      if (protocol == VpnProtocol.openVpn && _openVpnRenewalDueForReconnect) {
+        // The broker would replay its cached certificate without any date
+        // check: one due for renewal is renewed through the control plane
+        // first. Like [retryConnection], this never disconnects first: the
+        // native prepare rebuilds a retained kill switch candidate-first, so
+        // traffic stays blocked until the new tunnel is up.
         await _startDeviceConnection(
           identityWasReset: false,
-          forcedProtocol: protocol,
+          forcedProtocol: VpnProtocol.openVpn,
           operationId: operationId,
         );
+      } else {
+        if (!await _prepareConnectionNetworkProtection(
+          protocol,
+          operationId: operationId,
+        )) {
+          return;
+        }
+        // Native resume can repair a protected tunnel even while WFP prevents
+        // this GUI from contacting the API. No tunnel material enters Dart.
+        if (!_transitionConnection(operationId, VpnStatus.connecting)) return;
+        final restored = protocol == VpnProtocol.wireGuard
+            ? await _wireguard.reconnect()
+            : await _openVpn.reconnect();
+        if (!_acceptConnectionOperation(operationId)) return;
+        if (restored) {
+          _markNativeConnected(
+            protocol,
+            operationId: operationId,
+            cached: true,
+          );
+        } else {
+          final protectionNow = await _networkProtectionOwner();
+          if (!_acceptConnectionOperation(operationId)) return;
+          if (protectionBeforeReconnect != null || protectionNow != null) {
+            _retainedProtectionProtocol =
+                protectionNow ?? protectionBeforeReconnect;
+            _transitionConnection(
+              operationId,
+              _retainedProtectionBlocksTraffic
+                  ? VpnStatus.blocked
+                  : VpnStatus.error,
+            );
+            activeProtocol = null;
+            tunnelLocationId = null;
+            connectedAt = null;
+            errorMessage = _retainedProtectionBlocksTraffic
+                ? 'La configuration locale de reprise est indisponible. Le kill switch bloque toujours le trafic réseau. Déconnectez-vous avant de réessayer.'
+                : _partialProtectionMessage;
+            return;
+          }
+          // Missing/failed status reads are not permission to send API traffic.
+          final protectionStates = await Future.wait([
+            _safe<bool>(_wireguard.isNetworkProtectionActive()),
+            _safe<bool>(_openVpn.isNetworkProtectionActive()),
+          ]);
+          if (!_acceptConnectionOperation(operationId)) return;
+          if (protectionStates.any((active) => active != false)) {
+            _disconnectUnconfirmed = true;
+            _transitionConnection(operationId, VpnStatus.error);
+            errorMessage =
+                'L’état de la protection réseau ne peut pas être confirmé. Déconnectez-vous avant de réessayer.';
+            return;
+          }
+          _transitionConnection(operationId, VpnStatus.disconnected);
+          _transitionConnection(operationId, VpnStatus.preparing);
+          await _startDeviceConnection(
+            identityWasReset: false,
+            forcedProtocol: protocol,
+            operationId: operationId,
+          );
+        }
       }
       if (vpnStatus == VpnStatus.connected && activeProtocol == protocol) {
         _automaticReconnectIntent = null;
@@ -3651,12 +3925,27 @@ class AppController extends ChangeNotifier {
           message:
               'La reconnexion automatique a échoué. Le kill switch bloque toujours le trafic réseau.',
         )) {
+          // With no retained protection, the attempt must still end in a
+          // state the next command can begin from.
+          if (vpnStatus == VpnStatus.preparing ||
+              vpnStatus == VpnStatus.connecting) {
+            _transitionConnection(operationId, VpnStatus.error);
+          }
           errorMessage ??=
               'La reconnexion automatique n’a pas pu être terminée. Réessayez.';
         }
+        // Every request would get the same answer: only the card's action
+        // replaces a revoked profile.
+        if (deviceEnrollmentIssue?.kind ==
+            DeviceEnrollmentIssueKind.openVpnProfileRevoked) {
+          _cancelAutomaticReconnect();
+        }
       }
-    } catch (_) {
+    } catch (error) {
       if (!_acceptConnectionOperation(operationId)) return;
+      if (protocol == VpnProtocol.openVpn && error is PlatformException) {
+        _rememberOpenVpnCertificateRefusal(error.code);
+      }
       await _restoreNetworkStateAfterFailedDisconnect(
         protocol,
         operationId: operationId,
@@ -4105,6 +4394,8 @@ class AppController extends ChangeNotifier {
     return _runConnectionCommand(
       (operationId) => _toggleConnection(operationId, disconnect: disconnect),
       initialState: disconnect ? VpnStatus.disconnecting : VpnStatus.preparing,
+      cancellable: !disconnect,
+      userConnect: !disconnect,
     );
   }
 
@@ -4112,37 +4403,193 @@ class AppController extends ChangeNotifier {
     int operationId, {
     required bool disconnect,
   }) async {
-    _cancelAutomaticReconnect();
-    _ignoreConnectivityEvents(const Duration(seconds: 12));
     if (disconnect) {
-      // Releasing a prepared kill switch is an explicit cancellation of any
-      // delayed OpenVPN reconnect. The remote migration may keep progressing,
-      // but it must not silently re-arm the tunnel afterwards.
-      _migrationReconnectProtocol = null;
-      try {
-        await _disconnectActiveTunnel();
-        _markNativeDisconnected(operationId: operationId);
-      } catch (error) {
-        await _restoreNetworkStateAfterFailedDisconnect(
-          activeProtocol ?? _retainedProtectionProtocol,
-          operationId: operationId,
-        );
-        if (error is PlatformException &&
-            error.code == 'openvpn_cleanup_failed' &&
-            _acceptConnectionOperation(operationId) &&
-            requiresExplicitDisconnect &&
-            !runtimeOwnedByAnotherUser) {
-          errorMessage = _openVpnPlatformErrorMessage(error.code);
-        }
-      }
-      if (_disposed || !_acceptConnectionOperation(operationId)) return;
-      notifyListeners();
+      await _explicitDisconnect(operationId);
       return;
     }
+    _cancelAutomaticReconnect();
+    _ignoreConnectivityEvents(const Duration(seconds: 12));
     await _startDeviceConnection(
       identityWasReset: false,
       operationId: operationId,
     );
+  }
+
+  /// The explicit Disconnect: the only path that releases the protections.
+  /// With [confirmIdle] (after a cancelled command, or from an unknown
+  /// runtime state), the disconnected state is published only once native
+  /// reads show both tunnels and both protections absent; otherwise the
+  /// native truth is restored, as after any failed disconnect.
+  ///
+  /// It leaves an OpenVPN renewal as it stands: the marker and its CSR
+  /// fingerprint, the known certificate date and any server refusal are
+  /// kept, so the next connection replays the same pending CSR or renews as
+  /// needed.
+  Future<void> _explicitDisconnect(
+    int operationId, {
+    bool confirmIdle = false,
+  }) async {
+    _cancelAutomaticReconnect();
+    _ignoreConnectivityEvents(const Duration(seconds: 12));
+    // Nothing connects on its own after this for the rest of the session.
+    _userStoppedVpn = true;
+    // Releasing a prepared kill switch is an explicit cancellation of any
+    // delayed OpenVPN reconnect. The remote migration may keep progressing,
+    // but it must not silently re-arm the tunnel afterwards.
+    _migrationReconnectProtocol = null;
+    try {
+      await _disconnectActiveTunnel();
+      if (confirmIdle) {
+        // A command cancelled mid-flight may have left a tunnel or a policy
+        // this window never recorded: an acknowledged disconnect is not
+        // proof enough.
+        final states = await Future.wait([
+          _safe<bool>(_wireguard.isConnected()),
+          _safe<bool>(_openVpn.isConnected()),
+          _nativeProtectionActive(VpnProtocol.wireGuard),
+          _nativeProtectionActive(VpnProtocol.openVpn),
+        ]);
+        if (!states.every((value) => value == false)) {
+          throw PlatformException(code: 'vpn_cleanup_unconfirmed');
+        }
+      }
+      _markNativeDisconnected(operationId: operationId);
+    } catch (error) {
+      await _restoreNetworkStateAfterFailedDisconnect(
+        activeProtocol ?? _retainedProtectionProtocol,
+        operationId: operationId,
+      );
+      if (error is PlatformException &&
+          error.code == 'openvpn_cleanup_failed' &&
+          _acceptConnectionOperation(operationId) &&
+          requiresExplicitDisconnect &&
+          !runtimeOwnedByAnotherUser) {
+        errorMessage = _openVpnPlatformErrorMessage(error.code);
+      }
+    }
+    if (_disposed || !_acceptConnectionOperation(operationId)) return;
+    notifyListeners();
+  }
+
+  /// Stops the VPN on the user's request, from the window, the
+  /// notification-area menu or the Quit dialog: a running connection,
+  /// reconnection or renewal is cancelled, then both tunnels are stopped and
+  /// the protections released, exactly as Disconnect does.
+  ///
+  /// Nothing aborts a native call or a request already in flight: the
+  /// cancelled command ends at its next checkpoint, when that one call
+  /// returns, and the disconnect is sent only then, so that it runs after a
+  /// connection that completed late. The state is `disconnecting` meanwhile.
+  /// After a cancellation, or from an unknown runtime state, the
+  /// disconnected state is shown only once native reads confirm it; a
+  /// failure leaves the native truth and the protections in place.
+  ///
+  /// Requests are single-flight. A command that already only disconnects is
+  /// joined. Nothing happens during an update installation, a sign-out or
+  /// the revocation of this device, which stop the VPN themselves, nor
+  /// while another Windows session owns the runtime.
+  Future<void> disconnectVpn() {
+    if (_disposed ||
+        _isSigningOut ||
+        _isInstallingUpdate ||
+        _isRevokingCurrentDevice ||
+        runtimeOwnedByAnotherUser) {
+      return Future<void>.value();
+    }
+    final stopping = _stopRequest;
+    if (stopping != null) return stopping;
+    final running = _connectionCommand;
+    final cancelRunning = running != null && _connectionCommandCancellable;
+    if (running != null && !cancelRunning) return running;
+    if (!cancelRunning &&
+        !requiresExplicitDisconnect &&
+        !_runtimeVerificationPending) {
+      return Future<void>.value();
+    }
+    final completion = Completer<void>();
+    _stopRequest = completion.future;
+    unawaited(() async {
+      var confirmed = false;
+      try {
+        confirmed = await _stopVpn(cancelRunning: cancelRunning);
+      } catch (_) {
+        // The state already tells the outcome; a stop never throws.
+      } finally {
+        _stopRequest = null;
+        completion.complete();
+        if (!_disposed) notifyListeners();
+      }
+      // The saved session could not be validated under the protection just
+      // released. It is now, without the launch connection.
+      if (confirmed &&
+          !_disposed &&
+          !_isSigningOut &&
+          savedSessionVerificationPending) {
+        unawaited(_safe<void>(_recoverSavedSession(allowAutoConnect: false)));
+      }
+    }());
+    return completion.future;
+  }
+
+  /// Returns whether the disconnected state was confirmed.
+  Future<bool> _stopVpn({required bool cancelRunning}) async {
+    final stateUnknown = _runtimeVerificationPending;
+    _deferredStartupAutoConnect = false;
+    _userStoppedVpn = true;
+    // Before the invalidation: the cancelled command then finds no intent
+    // to schedule another attempt from, nor a migration to reconnect after.
+    _cancelAutomaticReconnect();
+    _migrationReconnectProtocol = null;
+    if (cancelRunning || stateUnknown) {
+      // The cancelled command may have prepared or connected either
+      // protocol without recording it: the disconnect addresses both.
+      _disconnectUnconfirmed = true;
+    }
+    final running = cancelRunning
+        ? _invalidateConnectionOperation(state: VpnStatus.disconnecting)
+        : null;
+    notifyListeners();
+    // The native layer is strictly first in, first out: waiting for the
+    // call in flight puts the disconnect behind a late connection.
+    if (running != null) await _safe<void>(running);
+    // A passive observation writes its state outside any command.
+    final observation = _runtimeVerificationRun;
+    if (observation != null) await _safe<void>(observation);
+    // A preference being saved refuses every command for that short write.
+    await _safe<void>(_securitySettingsWriteQueue);
+    await _safe<void>(_experienceSettingsWriteQueue);
+    // A sign-out performs its own stop.
+    if (_disposed || _isSigningOut) return false;
+    // So does the removal of this device, but only once the server has
+    // accepted it: when that request fails, the stop asked for here is
+    // still owed, and the cancelled state must not be left behind.
+    final revocation = _deviceRevocationCommand;
+    if (_isRevokingCurrentDevice && revocation != null) {
+      await _safe<DeviceRevocationResult>(revocation);
+      if (_disposed || _isSigningOut) return false;
+    }
+    if (cancelRunning || stateUnknown) _disconnectUnconfirmed = true;
+    await _safe<void>(
+      _runConnectionCommand(
+        (operationId) => _explicitDisconnect(
+          operationId,
+          confirmIdle: cancelRunning || stateUnknown,
+        ),
+        initialState: VpnStatus.disconnecting,
+        cancellable: false,
+        fromStop: true,
+      ),
+    );
+    if (_disposed || _isSigningOut || _isRevokingCurrentDevice) return false;
+    if (_connectionCommand == null && vpnStatus == VpnStatus.disconnecting) {
+      // The disconnect could not even start: never leave the transient
+      // state behind, and never claim a release. The native truth decides.
+      await _restoreNetworkStateAfterFailedDisconnect(null);
+      if (_disposed) return false;
+    }
+    return vpnStatus == VpnStatus.disconnected &&
+        !requiresExplicitDisconnect &&
+        !_runtimeVerificationPending;
   }
 
   /// Connects with the selected compatible location. A first compatible
@@ -4153,6 +4600,8 @@ class AppController extends ChangeNotifier {
     return _runConnectionCommand(
       (operationId) => _quickConnect(operationId, disconnect: disconnect),
       initialState: disconnect ? VpnStatus.disconnecting : VpnStatus.preparing,
+      cancellable: !disconnect,
+      userConnect: !disconnect,
     );
   }
 
@@ -4503,6 +4952,7 @@ class AppController extends ChangeNotifier {
     return _runConnectionCommand(
       _retryConnection,
       initialState: VpnStatus.preparing,
+      userConnect: true,
     );
   }
 
@@ -4530,6 +4980,7 @@ class AppController extends ChangeNotifier {
   Future<void> retryAfterIdentityReset() => _runConnectionCommand(
     _retryAfterIdentityReset,
     initialState: VpnStatus.preparing,
+    userConnect: true,
   );
 
   Future<void> _retryAfterIdentityReset(int operationId) async {
@@ -5015,6 +5466,9 @@ class AppController extends ChangeNotifier {
       await _disconnectProtocol(VpnProtocol.openVpn);
       await _api.revokeOpenVpnProfile(token: token, deviceId: deviceId);
       await _openVpn.deleteProfile();
+      // The pending key goes with the profile: nothing remains to replay.
+      await _forgetOpenVpnRenewalRequest();
+      _forgetOpenVpnCertificate();
       await DiagnosticLog.record(
         area: 'wireguard',
         event: 'openvpn_profile_release_completed',
@@ -5241,25 +5695,16 @@ class AppController extends ChangeNotifier {
       if (logicalDevice == null) return;
       final deviceId = logicalDevice.deviceId;
       if (!_acceptConnectionOperation(operationId)) return;
-      final csrPem = await _openVpn.getOrCreateCsr(
-        accountId: profile!.userId,
-        deviceId: deviceId,
-      );
-      if (!_acceptConnectionOperation(operationId)) return;
-      await DiagnosticLog.record(
-        area: 'openvpn',
-        event: 'local_identity_ready',
-      );
-      final activation = await _createReadyOpenVpnProfile(
+      final prepared = await _openVpnActivationForConnection(
         token: token,
         deviceId: deviceId,
-        csrPem: csrPem,
         ipFamilies: logicalDevice.profileIpFamilies,
         operationId: operationId,
       );
-      if (activation == null || !_acceptConnectionOperation(operationId)) {
+      if (prepared == null || !_acceptConnectionOperation(operationId)) {
         return;
       }
+      final activation = prepared.activation;
       await DiagnosticLog.record(
         area: 'openvpn',
         event: 'api_activation_received',
@@ -5280,6 +5725,10 @@ class AppController extends ChangeNotifier {
       // Do not turn that confirmation into a false GUI error with an immediate
       // second IPC query while the broker is rotating its pipe instance.
       _markNativeConnected(VpnProtocol.openVpn, operationId: operationId);
+      // A renewed certificate connected: its pending key is the active one.
+      // A tunnel started with the current certificate after a failed renewal
+      // keeps the pending CSR for the next attempt.
+      if (prepared.renewed) await _forgetOpenVpnRenewalRequest();
       await DiagnosticLog.record(
         area: 'openvpn',
         event: 'native_connect_acknowledged',
@@ -5302,6 +5751,7 @@ class AppController extends ChangeNotifier {
         // identity. Remove the old OpenVPN material before creating the new
         // device and CSR, then retry the same protocol once.
         await _safe<void>(_openVpn.deleteProfile());
+        await _forgetOpenVpnRenewalRequest();
         await _enrollAndConnectOpenVpn(
           token,
           identityWasReset: true,
@@ -5329,6 +5779,7 @@ class AppController extends ChangeNotifier {
         return;
       }
       if (!_acceptConnectionOperation(operationId)) return;
+      _rememberOpenVpnCertificateRefusal(error.code);
       _recordNativeConnectionFailure(operationId, error.code);
       await DiagnosticLog.recordFailure(
         area: 'openvpn',
@@ -5361,6 +5812,382 @@ class AppController extends ChangeNotifier {
     }
   }
 
+  /// Returns the activation this connection imports, and whether it is a
+  /// renewed one. A certificate that expires within [_openVpnRenewalWindow],
+  /// has expired, was refused by the server or still has a renewal pending is
+  /// renewed first, and the tunnel starts with the renewed one. Otherwise
+  /// creating the profile with the active key replays the stored certificate
+  /// for free, and its date decides. When a renewal that was only due fails
+  /// without saying anything against the current certificate (no answer, a
+  /// server error, the hourly limit, a node still applying), the tunnel
+  /// starts with that certificate while it is still valid; the pending CSR
+  /// stays for the next attempt.
+  Future<({OpenVpnActivation activation, bool renewed})?>
+  _openVpnActivationForConnection({
+    required String token,
+    required String deviceId,
+    List<IpFamily>? ipFamilies,
+    int? operationId,
+  }) async {
+    String? pendingCsr;
+    if (_openVpnRenewalRequestedDeviceId == deviceId) {
+      pendingCsr = await _openVpn.renewCsr(
+        accountId: profile!.userId,
+        deviceId: deviceId,
+      );
+      if (!_acceptConnectionOperation(operationId)) return null;
+      final marked = _openVpnRenewalCsrSha256;
+      if (marked != null && marked != _csrSha256(pendingCsr)) {
+        // The marked key is gone: a connection this window did not see
+        // promoted it, or it was lost. Nothing is left to replay.
+        await _forgetOpenVpnRenewalRequest();
+        if (!_acceptConnectionOperation(operationId)) return null;
+      }
+    }
+    var trigger = _openVpnRenewalTrigger(deviceId);
+    OpenVpnActivation? current;
+    // False once the server refused the active key's creation: its
+    // certificate is no longer one to fall back on.
+    var currentUsable = true;
+    if (trigger == null) {
+      try {
+        current = await _currentOpenVpnActivation(
+          token: token,
+          deviceId: deviceId,
+          ipFamilies: ipFamilies,
+          operationId: operationId,
+        );
+        if (current == null || !_acceptConnectionOperation(operationId)) {
+          return null;
+        }
+        trigger = _openVpnRenewalTrigger(deviceId);
+        if (trigger == null) return (activation: current, renewed: false);
+      } on ApiException catch (error) {
+        // The server no longer recovers an expired certificate for its own
+        // CSR, or keeps the profile for a key this device lost, and refuses
+        // the creation: only a renewal replaces that certificate.
+        if (error.statusCode != HttpStatus.conflict ||
+            error.errorCode != 'openvpn_profile_exists' ||
+            !_acceptConnectionOperation(operationId)) {
+          rethrow;
+        }
+        trigger = 'automatic';
+        currentUsable = false;
+      }
+    }
+    final operationBefore = _diagnosticOperation;
+    try {
+      final renewed = await _requestOpenVpnRenewal(
+        token: token,
+        deviceId: deviceId,
+        trigger: trigger,
+        csrPem: pendingCsr,
+        operationId: operationId,
+      );
+      return renewed == null ? null : (activation: renewed, renewed: true);
+    } catch (error) {
+      // Only a renewal that was due, not one of an expired or refused
+      // certificate, and only a failure that leaves the current certificate
+      // as it was.
+      if (trigger != 'automatic' ||
+          !currentUsable ||
+          !_openVpnRenewalFailureTransient(error) ||
+          !_acceptConnectionOperation(operationId)) {
+        rethrow;
+      }
+      // Only the readiness wait answers a pending renewal with Retry-After,
+      // once the server has stored the pending CSR and revoked the current
+      // certificate: nothing is left to fall back on.
+      final pendingStored =
+          error is ApiException &&
+          error.errorCode == 'openvpn_operation_pending' &&
+          error.retryAfterSeconds != null;
+      // Known only while the active key is the one whose certificate was
+      // read in this process: a renewal that replaced the local identity
+      // forgot it.
+      if (pendingStored || !_openVpnCertificateKnownValid(deviceId)) rethrow;
+      OpenVpnActivation? fallback = current;
+      if (fallback == null) {
+        // A renewal left pending by an earlier attempt was tried first:
+        // creating the profile with the active key replays its certificate
+        // for free while the server still holds it. If the server stored the
+        // renewal meanwhile, it refuses, and the renewal's failure stands.
+        try {
+          fallback = await _currentOpenVpnActivation(
+            token: token,
+            deviceId: deviceId,
+            ipFamilies: ipFamilies,
+            operationId: operationId,
+          );
+        } catch (_) {
+          fallback = null;
+        }
+        if (!_acceptConnectionOperation(operationId)) return null;
+      }
+      if (fallback == null || !fallback.notAfter.isAfter(_now())) rethrow;
+      // The renewal's failure is not this connection's outcome: a native
+      // failure of the tunnel that follows is reported as itself.
+      _diagnosticCandidate = null;
+      _diagnosticOperation = operationBefore;
+      return (activation: fallback, renewed: false);
+    }
+  }
+
+  /// Creates the profile with the active key, which replays its stored
+  /// certificate for free, and records that certificate's date.
+  Future<OpenVpnActivation?> _currentOpenVpnActivation({
+    required String token,
+    required String deviceId,
+    List<IpFamily>? ipFamilies,
+    int? operationId,
+  }) async {
+    final csrPem = await _openVpn.getOrCreateCsr(
+      accountId: profile!.userId,
+      deviceId: deviceId,
+    );
+    if (!_acceptConnectionOperation(operationId)) return null;
+    await DiagnosticLog.record(area: 'openvpn', event: 'local_identity_ready');
+    final created = await _createReadyOpenVpnProfile(
+      token: token,
+      deviceId: deviceId,
+      csrPem: csrPem,
+      ipFamilies: ipFamilies,
+      operationId: operationId,
+    );
+    if (created == null || !_acceptConnectionOperation(operationId)) {
+      return null;
+    }
+    _openVpnCertificate = (deviceId: deviceId, notAfter: created.notAfter);
+    return created;
+  }
+
+  /// A renewal failure that says nothing against the current certificate:
+  /// no answer, a server error, the hourly limit (from the server or still
+  /// running here) or a node still applying an earlier change.
+  static bool _openVpnRenewalFailureTransient(Object error) {
+    if (error is IOException || error is TimeoutException) return true;
+    if (error is! ApiException) return false;
+    final status = error.statusCode;
+    return error.observedHttpStatus == null ||
+        status >= HttpStatus.internalServerError ||
+        status == HttpStatus.tooManyRequests ||
+        (status == HttpStatus.conflict &&
+            error.errorCode == 'openvpn_operation_pending');
+  }
+
+  /// Why [deviceId]'s certificate is renewed before a tunnel uses it, in the
+  /// support report's vocabulary, or null when it need not be.
+  String? _openVpnRenewalTrigger(String deviceId) {
+    final refusal = _openVpnCertificateRefusal;
+    if (refusal != null && refusal.deviceId == deviceId) {
+      return refusal.trigger;
+    }
+    final notAfter = _knownOpenVpnNotAfter(deviceId);
+    if (notAfter != null && !notAfter.isAfter(_now())) {
+      return 'certificate_expired';
+    }
+    if ((notAfter != null &&
+            !notAfter.isAfter(_now().add(_openVpnRenewalWindow))) ||
+        _openVpnRenewalRequestedDeviceId == deviceId) {
+      return 'automatic';
+    }
+    return null;
+  }
+
+  /// The certificate the broker would replay must be renewed first, which
+  /// only the control plane can do.
+  bool get _openVpnRenewalDueForReconnect {
+    final deviceId = currentDeviceId;
+    return profile != null &&
+        deviceId != null &&
+        _openVpnRenewalTrigger(deviceId) != null;
+  }
+
+  DateTime? _knownOpenVpnNotAfter(String? deviceId) {
+    final certificate = _openVpnCertificate;
+    return certificate != null && certificate.deviceId == deviceId
+        ? certificate.notAfter
+        : null;
+  }
+
+  bool _openVpnCertificateKnownValid(String deviceId) =>
+      _knownOpenVpnNotAfter(deviceId)?.isAfter(_now()) ?? false;
+
+  // Whole days of validity left: the only certificate detail ever traced.
+  int? _validityDays(DateTime? notAfter) {
+    if (notAfter == null) return null;
+    final remaining = notAfter.difference(_now());
+    return remaining.isNegative ? 0 : remaining.inDays;
+  }
+
+  static String _csrSha256(String csrPem) =>
+      sha256.convert(utf8.encode(csrPem)).toString();
+
+  /// A server that refused this device's certificate makes the next attempt
+  /// renew it instead of using it again.
+  void _rememberOpenVpnCertificateRefusal(String code) {
+    final trigger = _openVpnCertificateRefusals[code];
+    final deviceId = currentDeviceId;
+    if (trigger != null && deviceId != null) {
+      _openVpnCertificateRefusal = (deviceId: deviceId, trigger: trigger);
+    }
+  }
+
+  /// The local identity is gone: nothing known of its certificate applies.
+  void _forgetOpenVpnCertificate() {
+    _openVpnCertificate = null;
+    _openVpnCertificateRefusal = null;
+  }
+
+  Future<void> _loadOpenVpnRenewalRequest() async {
+    final stored = await _safe(_store.openVpnRenewalDeviceId());
+    if (_disposed || stored == null) return;
+    final deviceId = currentDeviceId;
+    if (deviceId != null && deviceId != stored) {
+      unawaited(_safe<void>(_store.clearOpenVpnRenewalDeviceId()));
+      return;
+    }
+    final csrSha256 = await _safe(_store.openVpnRenewalCsrSha256());
+    if (_disposed ||
+        _openVpnRenewalRequestedDeviceId != null ||
+        (currentDeviceId != null && currentDeviceId != stored)) {
+      return;
+    }
+    _openVpnRenewalRequestedDeviceId = stored;
+    _openVpnRenewalCsrSha256 = csrSha256;
+  }
+
+  // A failed write keeps the marker in memory, which still covers this run.
+  Future<void> _rememberOpenVpnRenewalRequest(
+    String deviceId,
+    String csrSha256,
+  ) async {
+    _openVpnRenewalRequestedDeviceId = deviceId;
+    _openVpnRenewalCsrSha256 = csrSha256;
+    await _safe<void>(
+      _store.saveOpenVpnRenewalDeviceId(deviceId, csrSha256: csrSha256),
+    );
+  }
+
+  Future<void> _forgetOpenVpnRenewalRequest() async {
+    if (_openVpnRenewalRequestedDeviceId == null) return;
+    _openVpnRenewalRequestedDeviceId = null;
+    _openVpnRenewalCsrSha256 = null;
+    await _safe<void>(_store.clearOpenVpnRenewalDeviceId());
+  }
+
+  /// Requests a certificate for the pending key ([csrPem] when already read).
+  /// The native layer promotes that key only once a tunnel using the
+  /// certificate reports CONNECTED; until then a repeated request sends the
+  /// same pending CSR, which the server answers for free. The marker is
+  /// persisted before the request. When the server answers that the
+  /// certificate it issued for that key has expired, the local identity is
+  /// replaced and a single renewal with a new key follows. [trigger] is set
+  /// for automatic renewals only. Failures are rethrown, with the marker and
+  /// the active identity kept for the next attempt.
+  Future<OpenVpnActivation?> _requestOpenVpnRenewal({
+    required String token,
+    required String deviceId,
+    String? trigger,
+    String? csrPem,
+    int? operationId,
+  }) async {
+    final previousOperation = _diagnosticOperation;
+    _diagnosticOperation = 'renew';
+    final notAfter = _knownOpenVpnNotAfter(deviceId);
+    await DiagnosticLog.record(
+      area: 'openvpn',
+      event: 'started',
+      code: trigger,
+      stage: 'certificate_renewal',
+      count: _validityDays(notAfter),
+    );
+    try {
+      for (var attempt = 1; ; attempt++) {
+        final pendingCsr =
+            csrPem ??
+            await _openVpn.renewCsr(
+              accountId: profile!.userId,
+              deviceId: deviceId,
+            );
+        csrPem = null;
+        if (!_acceptConnectionOperation(operationId)) return null;
+        // Recorded before the request: the server may issue the certificate,
+        // and revoke the previous one, without its answer ever arriving.
+        await _rememberOpenVpnRenewalRequest(deviceId, _csrSha256(pendingCsr));
+        if (!_acceptConnectionOperation(operationId)) return null;
+        try {
+          final renewed = await _openVpnProfileWithPendingRetries(
+            token: token,
+            deviceId: deviceId,
+            csrPem: pendingCsr,
+            renew: true,
+            operationId: operationId,
+          );
+          if (renewed == null || !_acceptConnectionOperation(operationId)) {
+            return null;
+          }
+          _openVpnCertificate = (
+            deviceId: deviceId,
+            notAfter: renewed.notAfter,
+          );
+          _openVpnCertificateRefusal = null;
+          _diagnosticOperation = previousOperation;
+          await DiagnosticLog.record(
+            area: 'openvpn',
+            event: 'completed',
+            code: trigger,
+            stage: 'certificate_renewal',
+            count: _validityDays(renewed.notAfter),
+          );
+          return renewed;
+        } on ApiException catch (error) {
+          if (attempt > 1 ||
+              error.statusCode != HttpStatus.conflict ||
+              error.errorCode != 'openvpn_renewal_expired' ||
+              !_acceptConnectionOperation(operationId)) {
+            rethrow;
+          }
+          await DiagnosticLog.recordFailure(
+            area: 'openvpn',
+            event: 'attempt_failed',
+            error: error,
+            stage: 'certificate_renewal',
+            attempt: attempt,
+          );
+          // The certificate issued for this pending key expired before any
+          // tunnel used it, and the server only signs it again: both local
+          // keys are discarded so that a new one obtains a certificate.
+          await _openVpn.deleteProfile();
+          _forgetOpenVpnCertificate();
+          await _forgetOpenVpnRenewalRequest();
+          if (!_acceptConnectionOperation(operationId)) return null;
+        }
+      }
+    } on ApiException catch (error) {
+      if (_acceptConnectionOperation(operationId)) {
+        await DiagnosticLog.recordFailure(
+          area: 'openvpn',
+          event: 'certificate_renewal_failed',
+          error: error,
+          stage: 'certificate_renewal',
+          count: _validityDays(notAfter),
+        );
+        _diagnosticCandidate = _apiFailureDiagnostic(
+          error,
+          operation: 'renew',
+          stage: 'certificate_renewal',
+        );
+        if (error.observedHttpStatus == HttpStatus.notFound) {
+          // No profile is left to renew: the next attempt creates one.
+          await _forgetOpenVpnRenewalRequest();
+          _forgetOpenVpnCertificate();
+        }
+      }
+      rethrow;
+    }
+  }
+
   /// The target OpenVPN agent polls periodically. If the API has committed the
   /// profile but has not received the target acknowledgement yet, retry the
   /// exact same CSR a bounded number of times. This is idempotent and never
@@ -5373,7 +6200,7 @@ class AppController extends ChangeNotifier {
     int? operationId,
   }) async {
     try {
-      return await _createOpenVpnProfileWithPendingRetries(
+      return await _openVpnProfileWithPendingRetries(
         token: token,
         deviceId: deviceId,
         csrPem: csrPem,
@@ -5392,7 +6219,7 @@ class AppController extends ChangeNotifier {
         event: 'ipv6_profile_fallback',
         code: 'ipv6_unavailable',
       );
-      return _createOpenVpnProfileWithPendingRetries(
+      return _openVpnProfileWithPendingRetries(
         token: token,
         deviceId: deviceId,
         csrPem: csrPem,
@@ -5401,11 +6228,15 @@ class AppController extends ChangeNotifier {
     }
   }
 
-  Future<OpenVpnActivation?> _createOpenVpnProfileWithPendingRetries({
+  /// Creates the profile, or with [renew] renews its certificate. A server
+  /// that answered 429 with Retry-After is sent neither before that instant:
+  /// the attempt fails at once with the same answer.
+  Future<OpenVpnActivation?> _openVpnProfileWithPendingRetries({
     required String token,
     required String deviceId,
     required String csrPem,
     List<IpFamily>? ipFamilies,
+    bool renew = false,
     int? operationId,
   }) async {
     // The server holds each request for several seconds while it waits for
@@ -5419,16 +6250,50 @@ class AppController extends ChangeNotifier {
     try {
       for (var attempt = 1; ; attempt++) {
         if (!_acceptConnectionOperation(operationId)) return null;
-        try {
-          return await _api.createOpenVpnProfile(
-            token: token,
-            deviceId: deviceId,
-            csrPem: csrPem,
-            ipFamilies: ipFamilies,
+        final blocked = _openVpnRequestsBlocked;
+        // Creating the profile of a certificate known to be valid replays it,
+        // which the server never counts or limits.
+        if (blocked != null &&
+            blocked.deviceId == deviceId &&
+            _now().isBefore(blocked.until) &&
+            (renew || !_openVpnCertificateKnownValid(deviceId))) {
+          throw ApiException(
+            statusCode: HttpStatus.tooManyRequests,
+            errorCode: 'rate_limited',
+            retryAfterSeconds:
+                (blocked.until.difference(_now()).inMilliseconds / 1000).ceil(),
           );
+        }
+        try {
+          return await (renew
+              ? _api.renewOpenVpnProfile(
+                  token: token,
+                  deviceId: deviceId,
+                  csrPem: csrPem,
+                )
+              : _api.createOpenVpnProfile(
+                  token: token,
+                  deviceId: deviceId,
+                  csrPem: csrPem,
+                  ipFamilies: ipFamilies,
+                ));
         } on ApiException catch (error) {
+          final retryAfter = error.retryAfterSeconds;
+          if (error.statusCode == HttpStatus.tooManyRequests &&
+              retryAfter != null) {
+            _openVpnRequestsBlocked = (
+              deviceId: deviceId,
+              until: _now().add(Duration(seconds: retryAfter)),
+            );
+          }
           if (error.statusCode != HttpStatus.conflict ||
-              error.errorCode != 'openvpn_operation_pending') {
+              error.errorCode != 'openvpn_operation_pending' ||
+              // A request is pending for free only in the readiness wait,
+              // which always sends Retry-After, or (a creation with
+              // ip_families) in the IPv6 configuration before the server
+              // counts it. Otherwise another operation of this device refused
+              // it after the server counted it, and would count it again.
+              (retryAfter == null && (renew || ipFamilies == null))) {
             rethrow;
           }
           if (!_acceptConnectionOperation(operationId)) return null;
@@ -5458,8 +6323,9 @@ class AppController extends ChangeNotifier {
           if (!progressShown &&
               killSwitchEnabled &&
               _retainedProtectionProtocol == VpnProtocol.openVpn) {
-            // Traffic is already blocked and the hero is disabled while busy:
-            // say that the preparation continues instead of appearing stuck.
+            // Traffic is already blocked and the only action left is
+            // Disconnect, which cancels this wait: say that the preparation
+            // continues instead of appearing stuck.
             progressShown = true;
             errorMessage = _openVpnPreparationProgressMessage;
             notifyListeners();
@@ -5470,7 +6336,8 @@ class AppController extends ChangeNotifier {
     } finally {
       // The activation, the failure or the restored kill switch states the
       // outcome. No other command can own this notice while this one runs,
-      // and an interruption (sign-out, expiry) must not leave it behind.
+      // and an interruption (an explicit stop, a sign-out, an expiry) must
+      // not leave it behind.
       if (progressShown && errorMessage == _openVpnPreparationProgressMessage) {
         errorMessage = null;
       }
@@ -5484,6 +6351,7 @@ class AppController extends ChangeNotifier {
       initialState: wasConnected
           ? VpnStatus.disconnecting
           : VpnStatus.preparing,
+      userConnect: true,
     );
   }
 
@@ -5498,65 +6366,26 @@ class AppController extends ChangeNotifier {
       notifyListeners();
       return;
     }
-    final protocolToStop = activeProtocol ?? _retainedProtectionProtocol;
     var nativeConnectAttempted = false;
     try {
-      // Renewal is another connection attempt: arm the OpenVPN-owned policy
-      // before stopping an existing tunnel or contacting the control plane.
-      // When OpenVPN already owns WFP, suspend its runtime without releasing
-      // the freshly prepared filters. A WireGuard stop cannot release them
-      // after the atomic owner transfer to OpenVPN.
-      if (!await _prepareConnectionNetworkProtection(
-        VpnProtocol.openVpn,
-        operationId: operationId,
-      )) {
-        return;
-      }
-      if (killSwitchEnabled) {
-        if (protocolToStop == VpnProtocol.wireGuard) {
-          await _disconnectProtocol(VpnProtocol.wireGuard);
-        } else if (protocolToStop == VpnProtocol.openVpn) {
-          await _openVpn.suspendForMigration();
-        }
-      } else {
-        await _disconnectActiveTunnel();
-      }
-      if (!_acceptConnectionOperation(operationId)) return;
-      if (!_transitionConnection(operationId, VpnStatus.disconnected)) return;
-      activeProtocol = null;
-      tunnelLocationId = null;
-      connectedAt = null;
-      if (!_transitionConnection(operationId, VpnStatus.preparing)) return;
-      final csrPem = await _openVpn.renewCsr(
-        accountId: profile!.userId,
-        deviceId: deviceId,
-      );
-      if (!_acceptConnectionOperation(operationId)) return;
-      final activation = await _api.renewOpenVpnProfile(
+      if (!await _suspendForOpenVpnRenewal(operationId)) return;
+      final activation = await _requestOpenVpnRenewal(
         token: token,
         deviceId: deviceId,
-        csrPem: csrPem,
+        operationId: operationId,
       );
-      if (!_acceptConnectionOperation(operationId)) return;
+      if (activation == null || !_acceptConnectionOperation(operationId)) {
+        return;
+      }
       nativeConnectAttempted = true;
       if (!_transitionConnection(operationId, VpnStatus.connecting)) return;
       _knownTunnelLocationIds.remove(VpnProtocol.openVpn);
       await _openVpn.importAndConnect(activation);
       if (!_acceptConnectionOperation(operationId)) return;
       _markNativeConnected(VpnProtocol.openVpn, operationId: operationId);
+      await _forgetOpenVpnRenewalRequest();
     } on ApiException catch (error) {
       if (!_acceptConnectionOperation(operationId)) return;
-      await DiagnosticLog.recordFailure(
-        area: 'openvpn',
-        event: 'certificate_renewal_failed',
-        error: error,
-        stage: 'certificate_renewal',
-      );
-      _diagnosticCandidate = _apiFailureDiagnostic(
-        error,
-        operation: 'renew',
-        stage: 'certificate_renewal',
-      );
       await _handleOpenVpnError(error, operationId: operationId);
     } on PlatformException catch (error) {
       if (nativeConnectAttempted &&
@@ -5573,11 +6402,7 @@ class AppController extends ChangeNotifier {
         event: 'certificate_renewal_failed',
         error: error,
       );
-      errorMessage = error.code == 'runtime_owned_by_another_user'
-          ? _otherSessionMessage
-          : error.code == 'openvpn_signer_unavailable'
-          ? 'Le composant OpenVPN sécurisé n’est pas disponible.'
-          : 'Le profil OpenVPN n’a pas pu être renouvelé.';
+      errorMessage = _openVpnRenewalFailureMessage(error.code);
     } catch (_) {
       if (nativeConnectAttempted &&
           await _recoverNativeConnection(
@@ -5592,17 +6417,136 @@ class AppController extends ChangeNotifier {
         event: 'certificate_renewal_failed',
         code: 'unexpected_error',
       );
-      errorMessage = 'Le profil OpenVPN n’a pas pu être renouvelé.';
+      errorMessage = _openVpnRenewalFailureMessage(null);
     } finally {
       if (_acceptConnectionOperation(operationId) &&
           vpnStatus != VpnStatus.connected) {
         await _restoreRetainedNetworkProtection(
           operationId: operationId,
-          message:
-              'Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.',
+          message: _openVpnRenewalKillSwitchMessage,
         );
       }
       notifyListeners();
+    }
+  }
+
+  static const _openVpnRenewalKillSwitchMessage =
+      'Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.';
+
+  String _openVpnRenewalFailureMessage(String? code) => switch (code) {
+    'runtime_owned_by_another_user' => _otherSessionMessage,
+    'openvpn_signer_unavailable' =>
+      'Le composant OpenVPN sécurisé n’est pas disponible.',
+    _ => 'Le profil OpenVPN n’a pas pu être renouvelé.',
+  };
+
+  /// A renewal is another connection attempt: arm the OpenVPN-owned policy
+  /// before stopping an existing tunnel or contacting the control plane.
+  /// When OpenVPN already owns WFP, suspend its runtime without releasing
+  /// the freshly prepared filters. A WireGuard stop cannot release them
+  /// after the atomic owner transfer to OpenVPN.
+  Future<bool> _suspendForOpenVpnRenewal(int operationId) async {
+    final protocolToStop = activeProtocol ?? _retainedProtectionProtocol;
+    if (!await _prepareConnectionNetworkProtection(
+      VpnProtocol.openVpn,
+      operationId: operationId,
+    )) {
+      return false;
+    }
+    if (killSwitchEnabled) {
+      if (protocolToStop == VpnProtocol.wireGuard) {
+        await _disconnectProtocol(VpnProtocol.wireGuard);
+      } else if (protocolToStop == VpnProtocol.openVpn) {
+        await _openVpn.suspendForMigration();
+      }
+    } else {
+      await _disconnectActiveTunnel();
+    }
+    if (!_acceptConnectionOperation(operationId)) return false;
+    if (!_transitionConnection(operationId, VpnStatus.disconnected)) {
+      return false;
+    }
+    activeProtocol = null;
+    tunnelLocationId = null;
+    connectedAt = null;
+    return _transitionConnection(operationId, VpnStatus.preparing);
+  }
+
+  /// Renewal is offered under the same conditions as a retry, except that a
+  /// connected tunnel is acceptable: the renewal suspends it under its kill
+  /// switch before connecting with the new certificate.
+  bool get canRenewOpenVpnProfile =>
+      profile != null &&
+      currentDeviceId != null &&
+      !isConnectionBusy &&
+      !_disconnectUnconfirmed &&
+      !_runtimeVerificationPending &&
+      !runtimeOwnedByAnotherUser &&
+      !isLocationMigrationActive &&
+      (_retainedProtectionProtocol == null || _retainedProtectionBlocksTraffic);
+
+  /// Answers a revoked OpenVPN profile, which the server refuses to renew:
+  /// the local identity (active and pending keys) is deleted and a new one
+  /// enrolls through a normal connection, as after a device identity
+  /// revocation.
+  Future<void> replaceRevokedOpenVpnProfile() {
+    if (!canRenewOpenVpnProfile) return Future<void>.value();
+    return _runConnectionCommand(
+      _replaceRevokedOpenVpnProfile,
+      initialState: vpnStatus == VpnStatus.connected
+          ? VpnStatus.disconnecting
+          : VpnStatus.preparing,
+      userConnect: true,
+    );
+  }
+
+  Future<void> _replaceRevokedOpenVpnProfile(int operationId) async {
+    _cancelAutomaticReconnect();
+    _ignoreConnectivityEvents(const Duration(seconds: 12));
+    if (profile == null || currentDeviceId == null) {
+      _transitionConnection(operationId, VpnStatus.error);
+      errorMessage = 'Connectez-vous avant de renouveler le profil OpenVPN.';
+      notifyListeners();
+      return;
+    }
+    try {
+      if (activeProtocol != null &&
+          !await _suspendForOpenVpnRenewal(operationId)) {
+        return;
+      }
+      await _openVpn.deleteProfile();
+    } catch (error) {
+      if (!_transitionConnection(operationId, VpnStatus.error)) return;
+      await DiagnosticLog.recordFailure(
+        area: 'openvpn',
+        event: 'certificate_renewal_failed',
+        error: error,
+        stage: 'certificate_renewal',
+      );
+      errorMessage = _openVpnRenewalFailureMessage(
+        error is PlatformException ? error.code : null,
+      );
+      await _restoreRetainedNetworkProtection(
+        operationId: operationId,
+        message: _openVpnRenewalKillSwitchMessage,
+      );
+      return;
+    }
+    if (!_acceptConnectionOperation(operationId)) return;
+    await _forgetOpenVpnRenewalRequest();
+    _forgetOpenVpnCertificate();
+    await _startDeviceConnection(
+      identityWasReset: false,
+      forcedProtocol: VpnProtocol.openVpn,
+      operationId: operationId,
+    );
+    // As after a retry: never leave an idle state over blocked traffic.
+    if (_acceptConnectionOperation(operationId) &&
+        activeProtocol == null &&
+        (vpnStatus == VpnStatus.disconnected ||
+            vpnStatus == VpnStatus.preparing) &&
+        _retainedProtectionProtocol != null) {
+      await _restoreRetainedNetworkProtection(operationId: operationId);
     }
   }
 
@@ -5615,6 +6559,8 @@ class AppController extends ChangeNotifier {
     _runtimeInteractionStarted = true;
     _clearRuntimeVerification();
     _disconnectUnconfirmed = false;
+    // A tunnel is up: a runtime holds it.
+    _runtimeAbsentObserved = false;
     activeProtocol = protocol;
     _retainedProtectionProtocol = null;
     if (!cached && _requestedLocation != null) {
@@ -5624,6 +6570,7 @@ class AppController extends ChangeNotifier {
     _consecutiveDisconnectedChecks = 0;
     _consecutiveHealthFailures = 0;
     _tunnelHealthUnconfirmed = false;
+    _connectivityCycleRestarts = 0;
     connectedAt = _now();
     _recordRecentLocation(tunnelLocationId);
     errorMessage = null;
@@ -5682,6 +6629,11 @@ class AppController extends ChangeNotifier {
       'Le profil OpenVPN reçu est invalide sur cet ordinateur.',
     'openvpn_certificate_validation_failed' =>
       'Le certificat du serveur OpenVPN n’a pas pu être vérifié.',
+    // Both concern this device's certificate, never the server's: no renewal
+    // has been tried yet, and the next attempt, which this message asks for,
+    // renews it.
+    'openvpn_certificate_expired' || 'openvpn_client_certificate_rejected' =>
+      'Le certificat VPN n’est pas confirmé. Réessayez la connexion VPN, puis contactez l’assistance si le problème persiste.',
     'openvpn_tls_handshake_failed' =>
       'La négociation sécurisée avec le serveur OpenVPN a échoué.',
     'openvpn_no_server_response' =>
@@ -5734,6 +6686,9 @@ class AppController extends ChangeNotifier {
     _runtimeInteractionStarted = false;
     activeProtocol = null;
     _retainedProtectionProtocol = null;
+    // Nothing is retained: whether a runtime exists no longer matters, and
+    // the next protection status says it again.
+    _runtimeAbsentObserved = false;
     _disconnectUnconfirmed = false;
     _tunnelHealthUnconfirmed = false;
     _consecutiveDisconnectedChecks = 0;
@@ -6062,6 +7017,10 @@ class AppController extends ChangeNotifier {
     int expectedEpoch,
   ) async {
     await _safe<void>(running);
+    // An explicit stop in progress disconnects and confirms on its own: the
+    // observation reads what it leaves, never a state in the middle of it.
+    final stopping = _stopRequest;
+    if (stopping != null) await _safe<void>(stopping);
     if (_disposed || _isSigningOut || expectedEpoch != _sessionEpoch) return;
     await _loadTunnelState(observationOnly: true);
     if (!_disposed && expectedEpoch == _sessionEpoch) notifyListeners();

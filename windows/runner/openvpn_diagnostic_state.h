@@ -22,12 +22,22 @@ struct OpenVpnDiagnosticSnapshot {
   const char* last_error = "none";
 };
 
+// openvpn_client_certificate_rejected is a PlatformException code for Dart
+// only. The closed support vocabulary, where one unknown value rejects a whole
+// report, calls that server verdict certificate_invalid, so every native
+// diagnostic writer and reader uses that spelling.
+inline std::string_view OpenVpnDiagnosticCode(std::string_view code) {
+  return code == "openvpn_client_certificate_rejected" ? std::string_view("certificate_invalid") : code;
+}
+
 inline const char* SafeOpenVpnFailure(std::string_view value) {
+  value = OpenVpnDiagnosticCode(value);
   for (const char* known : {
       "none",
       "openvpn_connection_failed", "openvpn_transport_started", "openvpn_adapter_opened",
       "openvpn_adapter_failed", "openvpn_transport_failed", "openvpn_profile_crypto_failed",
       "openvpn_local_identity_mismatch", "openvpn_local_identity_failed", "openvpn_certificate_validation_failed",
+      "openvpn_certificate_expired", "certificate_invalid",
       "openvpn_tls_handshake_failed", "openvpn_client_config_failed",
       "openvpn_dns_configuration_failed", "openvpn_network_configuration_failed",
       "openvpn_dco_profile_incompatible", "network_protection_failed",
