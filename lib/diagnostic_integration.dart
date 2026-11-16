@@ -263,8 +263,25 @@ extension AppDiagnostics on AppController {
       !diagnosticRunning &&
       !diagnosticRepairRunning &&
       !diagnosticExportRunning &&
+      !diagnosticSendRunning &&
       !_completeDiagnosticRunning &&
       !_isSigningOut;
+
+  /// The current complete diagnostic was collected while automatic sending was
+  /// off, for the signed-in account, and has not been handed to delivery yet.
+  bool get hasUnsentCompleteDiagnostic {
+    final report = preparedDiagnosticReport;
+    final account = profile?.userId;
+    return report != null &&
+        account != null &&
+        report.reportId == _unsentCompleteDiagnosticId &&
+        account == _unsentCompleteDiagnosticAccount &&
+        !diagnostics.pendingReports.any((r) => r.reportId == report.reportId) &&
+        !diagnostics.receipts.any((r) => r.clientReportId == report.reportId);
+  }
+
+  bool get canSendCompleteDiagnostic =>
+      hasUnsentCompleteDiagnostic && canRunCompleteDiagnostic;
 
   Future<String> collectLocalDiagnosticExport() {
     final existing = _diagnosticExport;
@@ -317,6 +334,8 @@ extension AppDiagnostics on AppController {
   Future<void> _runCompleteDiagnostic() async {
     final account = profile?.userId;
     final sessionEpoch = _sessionEpoch;
+    _unsentCompleteDiagnosticId = null;
+    _unsentCompleteDiagnosticAccount = null;
     await collectLocalDiagnosticExport();
     if (_disposed ||
         _isSigningOut ||
@@ -330,28 +349,71 @@ extension AppDiagnostics on AppController {
     } else if (account == null) {
       diagnosticMessage =
           'Diagnostic complet collecté. Connectez-vous à votre compte pour l’envoyer.';
+    } else if (!diagnostics.automaticConsent) {
+      // Without automatic sending, the report stays on this device until the
+      // user explicitly sends it.
+      _unsentCompleteDiagnosticId = report.reportId;
+      _unsentCompleteDiagnosticAccount = account;
+      diagnosticMessage =
+          'Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.';
     } else {
       diagnosticExportRunning = true;
       _notifyDiagnosticView();
       try {
-        final received = await diagnostics.sendPreparedReport(report);
-        if (_disposed ||
-            sessionEpoch != _sessionEpoch ||
-            account != profile?.userId) {
-          return;
-        }
-        diagnosticMessage = received
-            ? 'Diagnostic complet transmis à l’assistance.'
-            : diagnostics.pendingReports.any(
-                (r) => r.reportId == report.reportId && r.terminalCode == null,
-              )
-            ? 'Diagnostic complet conservé, en attente d’envoi.'
-            : 'Le diagnostic complet n’a pas pu être transmis. Consultez le code d’erreur.';
+        await _deliverCompleteDiagnostic(
+          report,
+          account: account,
+          sessionEpoch: sessionEpoch,
+        );
       } finally {
         diagnosticExportRunning = false;
       }
     }
     _notifyDiagnosticView();
+  }
+
+  /// Sends, once, a complete diagnostic which was collected while automatic
+  /// sending was off. A new diagnostic run is required to send again.
+  Future<void> sendCompleteDiagnostic() async {
+    if (!canSendCompleteDiagnostic) return;
+    final report = preparedDiagnosticReport!;
+    final account = profile!.userId;
+    final sessionEpoch = _sessionEpoch;
+    _unsentCompleteDiagnosticId = null;
+    _unsentCompleteDiagnosticAccount = null;
+    diagnosticSendRunning = true;
+    _notifyDiagnosticView();
+    try {
+      await _deliverCompleteDiagnostic(
+        report,
+        account: account,
+        sessionEpoch: sessionEpoch,
+      );
+    } finally {
+      diagnosticSendRunning = false;
+      _notifyDiagnosticView();
+    }
+  }
+
+  Future<void> _deliverCompleteDiagnostic(
+    FrozenDiagnosticReport report, {
+    required String account,
+    required int sessionEpoch,
+  }) async {
+    final received = await diagnostics.sendPreparedReport(report);
+    if (_disposed ||
+        sessionEpoch != _sessionEpoch ||
+        account != profile?.userId ||
+        !identical(preparedDiagnosticReport, report)) {
+      return;
+    }
+    diagnosticMessage = received
+        ? 'Diagnostic complet transmis à l’assistance.'
+        : diagnostics.pendingReports.any(
+            (r) => r.reportId == report.reportId && r.terminalCode == null,
+          )
+        ? 'Diagnostic complet conservé, en attente d’envoi.'
+        : 'Le diagnostic complet n’a pas pu être transmis. Consultez le code d’erreur.';
   }
 
   Future<Map<String, Object?>> _collectCompleteSupport({

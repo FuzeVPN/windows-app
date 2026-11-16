@@ -614,5 +614,9 @@
   "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch blokkerer fortsatt nettverkstrafikken. Prøv å koble fra på nytt.",
   "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPN-tunnelen er fortsatt aktiv. Prøv å koble fra på nytt.",
   "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN kunne ikke starte fordi instanslåsen er utilgjengelig eller ingen eksisterende FuzeVPN-vinduer kunne aktiveres.\n\nVent til FuzeVPN er ferdig med å starte, og prøv igjen.",
-  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Den portable oppdateringen kunne ikke brukes. Den forrige versjonen ligger i den opprinnelige mappen eller i sikkerhetskopien for gjenoppretting."
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Den portable oppdateringen kunne ikke brukes. Den forrige versjonen ligger i den opprinnelige mappen eller i sikkerhetskopien for gjenoppretting.",
+  "Copier": "Kopier",
+  "Envoyer": "Send",
+  "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "Fullstendig diagnostikk samlet inn på denne enheten. Du kan kopiere den eller sende den til kundestøtte.",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Knappen Diagnostikk samler kontroller, tjenestens status og tekniske logger. Hvis automatisk sending er slått på, sendes de til FuzeVPN-kundestøtte, ellers bare når du klikker på «Send». Hemmeligheter og nettleserhistorikk tas ikke med. Lagring på serveren: 30 dager."
 }

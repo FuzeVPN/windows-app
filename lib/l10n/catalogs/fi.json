@@ -614,5 +614,9 @@
   "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch estää edelleen verkkoliikennettä. Yritä katkaista yhteys uudelleen.",
   "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPN-tunneli on edelleen aktiivinen. Yritä katkaista yhteys uudelleen.",
   "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN ei voinut käynnistyä, koska sen instanssilukko ei ole käytettävissä tai mitään olemassa olevaa FuzeVPN-ikkunaa ei voitu aktivoida.\n\nOdota, että FuzeVPN on käynnistynyt, ja yritä sitten uudelleen.",
-  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Siirrettävän version päivitystä ei voitu asentaa. Aiempi versiosi on alkuperäisessä kansiossa tai palautusvarmuuskopiossa."
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Siirrettävän version päivitystä ei voitu asentaa. Aiempi versiosi on alkuperäisessä kansiossa tai palautusvarmuuskopiossa.",
+  "Copier": "Kopioi",
+  "Envoyer": "Lähetä",
+  "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "Täydellinen diagnostiikka kerättiin tällä laitteella. Voit kopioida sen tai lähettää sen tukeen.",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Diagnostiikkapainike kerää tarkistukset, palvelun tilan ja tekniset lokit. Jos automaattinen lähetys on käytössä, ne lähetetään FuzeVPN-tukeen; muuten vain, kun painat ”Lähetä”. Salaisuudet ja selaushistoria jätetään pois. Säilytys palvelimella: 30 päivää."
 }

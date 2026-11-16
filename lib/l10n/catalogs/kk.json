@@ -614,5 +614,9 @@
   "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch әлі де желі трафигін бұғаттауда. Қайта ажыратып көріңіз.",
   "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPN туннелі әлі белсенді. Қайта ажыратып көріңіз.",
   "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN іске қосылмады, себебі оның дана құлпы қолжетімсіз немесе бар FuzeVPN терезелерінің ешқайсысын белсендіру мүмкін болмады.\n\nFuzeVPN іске қосылып болғанша күтіп, қайталап көріңіз.",
-  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Портативті нұсқаның жаңартуын қолдану мүмкін болмады. Алдыңғы нұсқа бастапқы қалтасында немесе қалпына келтіруге арналған сақтық көшірмеде орналасқан."
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Портативті нұсқаның жаңартуын қолдану мүмкін болмады. Алдыңғы нұсқа бастапқы қалтасында немесе қалпына келтіруге арналған сақтық көшірмеде орналасқан.",
+  "Copier": "Көшіру",
+  "Envoyer": "Жіберу",
+  "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "Толық диагностика осы құрылғыда жиналды. Оны көшіруге немесе қолдау қызметіне жіберуге болады.",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Диагностика түймесі тексерулерді, қызмет күйін және техникалық журналдарды жинайды. Автоматты жіберу қосулы болса, олар FuzeVPN қолдау қызметіне жіберіледі; әйтпесе тек «Жіберу» түймесін басқанда ғана. Құпия деректер мен шолу тарихы қамтылмайды. Серверде 30 күн сақталады."
 }

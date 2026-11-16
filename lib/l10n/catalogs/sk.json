@@ -614,5 +614,9 @@
   "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Núdzové odpojenie stále blokuje sieťovú prevádzku. Skúste sa odpojiť znova.",
   "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "Tunel VPN je stále aktívny. Skúste sa odpojiť znova.",
   "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN sa nepodarilo spustiť, pretože zámok jeho inštancie nie je dostupný alebo sa nepodarilo aktivovať žiadne existujúce okno FuzeVPN.\n\nPočkajte, kým sa FuzeVPN spustí, a skúste to znova.",
-  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Aktualizáciu prenosnej verzie sa nepodarilo použiť. Predchádzajúca verzia sa nachádza v pôvodnom priečinku alebo v zálohe na obnovenie."
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Aktualizáciu prenosnej verzie sa nepodarilo použiť. Predchádzajúca verzia sa nachádza v pôvodnom priečinku alebo v zálohe na obnovenie.",
+  "Copier": "Kopírovať",
+  "Envoyer": "Odoslať",
+  "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "Úplná diagnostika bola zhromaždená v tomto zariadení. Môžete ju skopírovať alebo odoslať podpore.",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Tlačidlo Diagnostika zhromaždí kontroly, stav služieb a technické záznamy. Ak je zapnuté automatické odosielanie, odošlú sa podpore FuzeVPN; inak len po stlačení tlačidla „Odoslať“. Tajné údaje a história prehliadania sú vylúčené. Uchovávanie na serveri: 30 dní."
 }

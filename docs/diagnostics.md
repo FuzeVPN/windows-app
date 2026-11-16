@@ -36,7 +36,11 @@ tokens, keys, tunnel configurations or raw API bodies. On Windows it lives in
 From version **1.0.7**, **Diagnostics** has one **Diagnostic** action. It runs
 available checks, reads the bounded current and rotated application trace,
 collects the sanitized native trace, and queries the Windows Service Control
-Manager directly. It prepares and sends one complete report using the active
+Manager directly. It prepares one complete report. The **Diagnostics** tab also
+holds the automatic error report switch. When that switch is on, the complete
+report is sent with the active account as soon as it is collected; otherwise it
+stays on the device until the user presses **Send**, once per collected report.
+**Copy** places the complete document on the clipboard, with or without an
 account. The service observation remains available when the broker is broken;
 it does not start a service, elevate, disconnect or repair the VPN. During a VPN
 operation, checks that cannot safely run are explicitly marked as unavailable,

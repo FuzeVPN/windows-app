@@ -614,5 +614,9 @@
   "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Аварійний вимикач досі блокує мережевий трафік. Повторіть спробу відключення.",
   "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "Тунель VPN досі активний. Повторіть спробу відключення.",
   "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "Не вдалося запустити FuzeVPN, оскільки блокування екземпляра недоступне або не вдалося активувати жодне з наявних вікон FuzeVPN.\n\nДочекайтеся завершення запуску FuzeVPN та повторіть спробу.",
-  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Не вдалося застосувати оновлення портативної версії. Попередня версія знаходиться у вихідній папці або в резервній копії для відновлення."
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Не вдалося застосувати оновлення портативної версії. Попередня версія знаходиться у вихідній папці або в резервній копії для відновлення.",
+  "Copier": "Копіювати",
+  "Envoyer": "Надіслати",
+  "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "Повну діагностику зібрано на цьому пристрої. Її можна скопіювати або надіслати до підтримки.",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Кнопка «Діагностика» збирає перевірки, стан служби та технічні журнали. Якщо автоматичне надсилання ввімкнено, вони надсилаються до підтримки FuzeVPN; інакше — лише після натискання «Надіслати». Секретні дані й історія перегляду виключаються. Зберігання на сервері: 30 днів."
 }

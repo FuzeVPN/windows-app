@@ -614,5 +614,9 @@
   "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "終止開關仍在封鎖網路流量。請再次嘗試中斷連線。",
   "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPN 通道仍處於啟用狀態。請再次嘗試中斷連線。",
   "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN 無法啟動，因為執行個體鎖定無法使用，或無法啟用任何現有的 FuzeVPN 視窗。\n\n請等待 FuzeVPN 啟動完成後重試。",
-  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "無法套用可攜版更新。您的舊版本仍位於原始資料夾或復原備份中。"
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "無法套用可攜版更新。您的舊版本仍位於原始資料夾或復原備份中。",
+  "Copier": "複製",
+  "Envoyer": "傳送",
+  "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "已在此裝置上收集完整診斷。您可以複製它或傳送給支援團隊。",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "診斷按鈕會收集檢查結果、服務狀態和技術記錄。如果已開啟自動傳送，這些資訊會傳送給 FuzeVPN 支援團隊；否則，僅在您點選「傳送」時傳送。其中不包含秘密資訊和瀏覽歷程。伺服器保留時間：30 天。"
 }

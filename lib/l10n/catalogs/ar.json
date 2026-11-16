@@ -614,5 +614,9 @@
   "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "لا يزال مفتاح الإيقاف يحظر حركة مرور الشبكة. حاول قطع الاتصال مرة أخرى.",
   "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "لا يزال نفق VPN نشطًا. حاول قطع الاتصال مرة أخرى.",
   "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "تعذّر بدء تشغيل FuzeVPN لأن قفل المثيل غير متاح أو تعذّر تنشيط أي نافذة FuzeVPN موجودة.\n\nانتظر حتى يكتمل بدء تشغيل FuzeVPN، ثم أعد المحاولة.",
-  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "تعذّر تطبيق تحديث النسخة المحمولة. يوجد الإصدار السابق في مجلده الأصلي أو في النسخة الاحتياطية للاسترداد."
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "تعذّر تطبيق تحديث النسخة المحمولة. يوجد الإصدار السابق في مجلده الأصلي أو في النسخة الاحتياطية للاسترداد.",
+  "Copier": "نسخ",
+  "Envoyer": "إرسال",
+  "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "جُمع التشخيص الكامل على هذا الجهاز. يمكنك نسخه أو إرساله إلى الدعم.",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "يجمع زر التشخيص الفحوصات وحالة الخدمة والسجلات التقنية. إذا كان الإرسال التلقائي مفعّلًا، تُرسل إلى دعم FuzeVPN؛ وإلا فلا تُرسل إلا عند الضغط على «إرسال». تُستبعد الأسرار وسجل التصفح. مدة الاحتفاظ على الخادم: 30 يومًا."
 }

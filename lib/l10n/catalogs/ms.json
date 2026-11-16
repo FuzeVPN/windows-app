@@ -614,5 +614,9 @@
   "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch masih menyekat trafik rangkaian. Cuba putuskan sambungan semula.",
   "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "Terowong VPN masih aktif. Cuba putuskan sambungan semula.",
   "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN tidak dapat dimulakan kerana kunci instansnya tidak tersedia atau tiada tetingkap FuzeVPN sedia ada yang dapat diaktifkan.\n\nTunggu sehingga FuzeVPN selesai dimulakan, kemudian cuba lagi.",
-  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Kemas kini mudah alih tidak dapat digunakan. Versi terdahulu anda berada dalam folder asalnya atau dalam sandaran pemulihan."
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Kemas kini mudah alih tidak dapat digunakan. Versi terdahulu anda berada dalam folder asalnya atau dalam sandaran pemulihan.",
+  "Copier": "Salin",
+  "Envoyer": "Hantar",
+  "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "Diagnostik lengkap dikumpulkan pada peranti ini. Anda boleh menyalinnya atau menghantarnya kepada sokongan.",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Butang Diagnostik mengumpulkan semakan, status perkhidmatan dan log teknikal. Jika penghantaran automatik dihidupkan, semuanya dihantar kepada sokongan FuzeVPN; jika tidak, hanya apabila anda menekan “Hantar”. Maklumat rahsia dan sejarah pelayaran dikecualikan. Penyimpanan pada pelayan: 30 hari."
 }

@@ -614,5 +614,9 @@
   "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch ende bllokon trafikun e rrjetit. Provoni ta shkëputni përsëri.",
   "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "Tuneli VPN është ende aktiv. Provoni ta shkëputni përsëri.",
   "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN nuk mund të nisej, sepse kyçja e instancës së tij nuk është e disponueshme ose nuk mund të aktivizohej asnjë dritare ekzistuese e FuzeVPN.\n\nPrisni derisa FuzeVPN të përfundojë nisjen, pastaj provoni përsëri.",
-  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Përditësimi i versionit portativ nuk mund të zbatohej. Versioni juaj i mëparshëm ndodhet në dosjen fillestare ose në kopjen rezervë për rikuperim."
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Përditësimi i versionit portativ nuk mund të zbatohej. Versioni juaj i mëparshëm ndodhet në dosjen fillestare ose në kopjen rezervë për rikuperim.",
+  "Copier": "Kopjo",
+  "Envoyer": "Dërgo",
+  "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "Diagnostikimi i plotë u mblodh në këtë pajisje. Mund ta kopjoni ose ta dërgoni te mbështetja.",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Butoni i diagnostikimit mbledh kontrollet, gjendjen e shërbimit dhe regjistrat teknikë. Nëse dërgimi automatik është aktiv, ato dërgohen te mbështetja FuzeVPN; përndryshe, vetëm kur shtypni «Dërgo». Sekretet dhe historia e shfletimit përjashtohen. Ruajtja në server: 30 ditë."
 }

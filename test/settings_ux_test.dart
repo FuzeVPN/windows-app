@@ -85,16 +85,24 @@ void main() {
       'Kill switch',
       'Protection DNS',
       'Protection WebRTC',
-      'Envoyer automatiquement les rapports d’erreurs importants',
     ]) {
       expect(find.widgetWithText(SwitchListTile, label), findsOneWidget);
     }
+    // The diagnostic consent lives in the Diagnostics tab, not in Settings.
+    expect(
+      find.widgetWithText(
+        SwitchListTile,
+        'Envoyer automatiquement les rapports d’erreurs importants',
+      ),
+      findsNothing,
+    );
     expect(
       find.text(
         'Codes d’erreur et contexte technique liés à votre compte. Conservation sur le serveur : 30 jours. Aucun journal brut ni historique de navigation.',
       ),
-      findsOneWidget,
+      findsNothing,
     );
+    expect(find.text('Rapports techniques facultatifs.'), findsNothing);
     await _select(tester, 'updates');
     expect(find.byType(WindowsUpdatePanel), findsOneWidget);
     final content = find.byKey(const ValueKey('settings-content-updates'));

@@ -614,5 +614,9 @@
   "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "kill switch এখনও নেটওয়ার্ক ট্রাফিক ব্লক করছে। আবার সংযোগ বিচ্ছিন্ন করার চেষ্টা করুন।",
   "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPN টানেলটি এখনও সক্রিয়। আবার সংযোগ বিচ্ছিন্ন করার চেষ্টা করুন।",
   "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN চালু হতে পারেনি, কারণ এর ইনস্ট্যান্স লক উপলভ্য নয় অথবা আগে থেকে খোলা কোনো FuzeVPN উইন্ডো সক্রিয় করা যায়নি।\n\nFuzeVPN চালু হওয়া শেষ হওয়া পর্যন্ত অপেক্ষা করে আবার চেষ্টা করুন।",
-  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "পোর্টেবল আপডেটটি প্রয়োগ করা যায়নি। আপনার আগের সংস্করণটি তার মূল ফোল্ডারে অথবা পুনরুদ্ধারের ব্যাকআপে রয়েছে।"
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "পোর্টেবল আপডেটটি প্রয়োগ করা যায়নি। আপনার আগের সংস্করণটি তার মূল ফোল্ডারে অথবা পুনরুদ্ধারের ব্যাকআপে রয়েছে।",
+  "Copier": "কপি করুন",
+  "Envoyer": "পাঠান",
+  "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "সম্পূর্ণ ডায়াগনস্টিক এই ডিভাইসে সংগ্রহ করা হয়েছে। আপনি এটি কপি করতে বা সহায়তা দলকে পাঠাতে পারেন।",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "ডায়াগনস্টিক বোতাম পরীক্ষার ফল, পরিষেবার অবস্থা ও প্রযুক্তিগত লগ সংগ্রহ করে। স্বয়ংক্রিয় পাঠানো চালু থাকলে এগুলো FuzeVPN সহায়তা দলকে পাঠানো হয়; অন্যথায় কেবল আপনি “পাঠান” চাপলে। গোপন তথ্য ও ব্রাউজিং ইতিহাস বাদ দেওয়া হয়। সার্ভারে সংরক্ষণ: ৩০ দিন।"
 }

@@ -614,5 +614,9 @@
   "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch ağ trafiğini engellemeye devam ediyor. Bağlantıyı kesmeyi tekrar deneyin.",
   "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPN tüneli hâlâ etkin. Bağlantıyı kesmeyi tekrar deneyin.",
   "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN, örnek kilidi kullanılamadığı veya mevcut FuzeVPN pencerelerinden hiçbiri etkinleştirilemediği için başlatılamadı.\n\nFuzeVPN’in başlatılmasının tamamlanmasını bekleyip tekrar deneyin.",
-  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Taşınabilir güncelleme uygulanamadı. Önceki sürümünüz özgün klasöründe veya kurtarma yedeğinde bulunuyor."
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Taşınabilir güncelleme uygulanamadı. Önceki sürümünüz özgün klasöründe veya kurtarma yedeğinde bulunuyor.",
+  "Copier": "Kopyala",
+  "Envoyer": "Gönder",
+  "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "Tam tanılama bu cihazda toplandı. Kopyalayabilir veya desteğe gönderebilirsiniz.",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Tanılama düğmesi kontrolleri, hizmet durumunu ve teknik günlükleri toplar. Otomatik gönderme açıksa bunlar FuzeVPN desteğine gönderilir; aksi takdirde yalnızca “Gönder” düğmesine bastığınızda gönderilir. Gizli bilgiler ve tarama geçmişi dahil edilmez. Sunucuda saklama: 30 gün."
 }

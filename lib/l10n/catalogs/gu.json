@@ -614,5 +614,9 @@
   "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch હજી નેટવર્ક ટ્રાફિક અવરોધે છે. ડિસકનેક્ટ કરવાનો ફરી પ્રયાસ કરો.",
   "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPN ટનલ હજી સક્રિય છે. ડિસકનેક્ટ કરવાનો ફરી પ્રયાસ કરો.",
   "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN શરૂ થઈ શક્યું નથી, કારણ કે તેનો ઇન્સ્ટન્સ લોક ઉપલબ્ધ નથી અથવા FuzeVPNની કોઈપણ હાલની વિન્ડો સક્રિય કરી શકાઈ નથી.\n\nFuzeVPN શરૂ થવાનું પૂર્ણ થાય ત્યાં સુધી રાહ જુઓ, પછી ફરી પ્રયાસ કરો.",
-  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "પોર્ટેબલ અપડેટ લાગુ કરી શકાયું નથી. તમારું અગાઉનું વર્ઝન તેના મૂળ ફોલ્ડરમાં અથવા પુનઃપ્રાપ્તિ બેકઅપમાં છે."
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "પોર્ટેબલ અપડેટ લાગુ કરી શકાયું નથી. તમારું અગાઉનું વર્ઝન તેના મૂળ ફોલ્ડરમાં અથવા પુનઃપ્રાપ્તિ બેકઅપમાં છે.",
+  "Copier": "નકલ કરો",
+  "Envoyer": "મોકલો",
+  "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "સંપૂર્ણ નિદાન આ ઉપકરણ પર એકત્ર થયું. તમે તેની નકલ કરી શકો છો અથવા તેને સપોર્ટને મોકલી શકો છો.",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "નિદાન બટન તપાસો, સેવાની સ્થિતિ અને તકનીકી લોગ એકત્ર કરે છે. આપમેળે મોકલવાનું ચાલુ હોય, તો તે FuzeVPN સપોર્ટને મોકલવામાં આવે છે; નહીં તો ફક્ત તમે “મોકલો” દબાવો ત્યારે જ. ગુપ્ત માહિતી અને બ્રાઉઝિંગ ઇતિહાસ સામેલ નથી. સર્વર પર સંગ્રહ: 30 દિવસ."
 }

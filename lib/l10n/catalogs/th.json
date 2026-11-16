@@ -614,5 +614,9 @@
   "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch ยังคงบล็อกการรับส่งข้อมูลเครือข่ายอยู่ ลองตัดการเชื่อมต่ออีกครั้ง",
   "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "อุโมงค์ VPN ยังคงทำงานอยู่ ลองตัดการเชื่อมต่ออีกครั้ง",
   "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "ไม่สามารถเริ่ม FuzeVPN ได้ เนื่องจากล็อกอินสแตนซ์ไม่พร้อมใช้งาน หรือไม่สามารถเปิดใช้งานหน้าต่าง FuzeVPN ที่มีอยู่ได้\n\nรอให้ FuzeVPN เริ่มทำงานเสร็จแล้วลองอีกครั้ง",
-  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "ไม่สามารถใช้การอัปเดตเวอร์ชันพกพาได้ เวอร์ชันก่อนหน้ายังคงอยู่ในโฟลเดอร์เดิมหรือในข้อมูลสำรองสำหรับการกู้คืน"
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "ไม่สามารถใช้การอัปเดตเวอร์ชันพกพาได้ เวอร์ชันก่อนหน้ายังคงอยู่ในโฟลเดอร์เดิมหรือในข้อมูลสำรองสำหรับการกู้คืน",
+  "Copier": "คัดลอก",
+  "Envoyer": "ส่ง",
+  "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "รวบรวมการวินิจฉัยทั้งหมดบนอุปกรณ์นี้แล้ว คุณสามารถคัดลอกหรือส่งให้ฝ่ายสนับสนุนได้",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "ปุ่มการวินิจฉัยรวบรวมผลการตรวจสอบ สถานะบริการ และบันทึกทางเทคนิค หากเปิดการส่งอัตโนมัติ ข้อมูลจะถูกส่งให้ฝ่ายสนับสนุน FuzeVPN มิฉะนั้นจะส่งเมื่อคุณกด “ส่ง” เท่านั้น โดยไม่รวมข้อมูลลับและประวัติการท่องเว็บ จัดเก็บบนเซิร์ฟเวอร์เป็นเวลา 30 วัน"
 }

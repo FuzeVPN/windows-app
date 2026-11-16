@@ -614,5 +614,9 @@
   "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Funkce kill switch stále blokuje síťový provoz. Zkuste se znovu odpojit.",
   "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "Tunel VPN je stále aktivní. Zkuste se znovu odpojit.",
   "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN se nepodařilo spustit, protože zámek jeho instance není dostupný nebo se nepodařilo aktivovat žádné stávající okno FuzeVPN.\n\nPočkejte, až se FuzeVPN spustí, a zkuste to znovu.",
-  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Aktualizaci přenosné verze se nepodařilo použít. Předchozí verze zůstává v původní složce nebo v záloze pro obnovení."
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Aktualizaci přenosné verze se nepodařilo použít. Předchozí verze zůstává v původní složce nebo v záloze pro obnovení.",
+  "Copier": "Kopírovat",
+  "Envoyer": "Odeslat",
+  "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "Úplná diagnostika byla shromážděna v tomto zařízení. Můžete ji zkopírovat nebo odeslat podpoře.",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Tlačítko Diagnostika shromáždí kontroly, stav služby a technické protokoly. Pokud je zapnuté automatické odesílání, odešlou se podpoře FuzeVPN; jinak jen po stisknutí tlačítka „Odeslat“. Tajné údaje a historie prohlížení jsou vyloučeny. Uchovávání na serveru: 30 dní."
 }

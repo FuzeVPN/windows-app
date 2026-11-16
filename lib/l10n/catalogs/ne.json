@@ -614,5 +614,9 @@
   "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "kill switch ले अझै नेटवर्क ट्राफिक रोकिरहेको छ। फेरि विच्छेद गर्ने प्रयास गर्नुहोस्।",
   "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPN टनेल अझै सक्रिय छ। फेरि विच्छेद गर्ने प्रयास गर्नुहोस्।",
   "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN सुरु हुन सकेन, किनकि यसको इन्स्ट्यान्स लक उपलब्ध छैन वा पहिल्यै खुला कुनै FuzeVPN सञ्झ्याल सक्रिय गर्न सकिएन।\n\nFuzeVPN को सुरुवात पूरा नभएसम्म पर्खनुहोस्, अनि फेरि प्रयास गर्नुहोस्।",
-  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "पोर्टेबल अद्यावधिक लागू गर्न सकिएन। तपाईंको अघिल्लो संस्करण यसको मूल फोल्डरमा वा पुनःप्राप्ति ब्याकअपमा छ।"
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "पोर्टेबल अद्यावधिक लागू गर्न सकिएन। तपाईंको अघिल्लो संस्करण यसको मूल फोल्डरमा वा पुनःप्राप्ति ब्याकअपमा छ।",
+  "Copier": "प्रतिलिपि गर्नुहोस्",
+  "Envoyer": "पठाउनुहोस्",
+  "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "पूर्ण निदान यस यन्त्रमा सङ्कलन भयो। तपाईं यसलाई प्रतिलिपि गर्न वा सहयोग केन्द्रमा पठाउन सक्नुहुन्छ।",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "निदान बटनले जाँचहरू, सेवाको स्थिति र प्राविधिक लगहरू सङ्कलन गर्छ। स्वचालित पठाउने सुविधा सक्रिय भए यी FuzeVPN सहयोग केन्द्रमा पठाइन्छन्; अन्यथा तपाईंले “पठाउनुहोस्” थिच्दा मात्र पठाइन्छन्। गोप्य जानकारी र ब्राउजिङ इतिहास समावेश हुँदैन। सर्भरमा ३० दिन राखिन्छ।"
 }

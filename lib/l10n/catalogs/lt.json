@@ -614,5 +614,9 @@
   "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Apsaugos jungiklis vis dar blokuoja tinklo srautą. Pabandykite atjungti dar kartą.",
   "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPN tunelis vis dar aktyvus. Pabandykite atjungti dar kartą.",
   "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN nepavyko paleisti, nes nepasiekiamas jos egzemplioriaus užraktas arba nepavyko suaktyvinti nė vieno jau atverto FuzeVPN lango.\n\nPalaukite, kol FuzeVPN baigs paleidimą, ir bandykite dar kartą.",
-  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Nepavyko pritaikyti nešiojamosios versijos naujinimo. Ankstesnė versija yra pradiniame aplanke arba atkūrimo atsarginėje kopijoje."
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Nepavyko pritaikyti nešiojamosios versijos naujinimo. Ankstesnė versija yra pradiniame aplanke arba atkūrimo atsarginėje kopijoje.",
+  "Copier": "Kopijuoti",
+  "Envoyer": "Siųsti",
+  "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "Išsami diagnostika surinkta šiame įrenginyje. Galite ją nukopijuoti arba išsiųsti pagalbos tarnybai.",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Diagnostikos mygtukas surenka patikrų rezultatus, tarnybos būseną ir techninius žurnalus. Jei automatinis siuntimas įjungtas, jie siunčiami FuzeVPN pagalbos tarnybai; kitu atveju – tik paspaudus „Siųsti“. Slapta informacija ir naršymo istorija neįtraukiamos. Serveryje saugoma 30 dienų."
 }

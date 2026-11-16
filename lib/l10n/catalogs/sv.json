@@ -614,5 +614,9 @@
   "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch blockerar fortfarande nätverkstrafik. Försök koppla från igen.",
   "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPN-tunneln är fortfarande aktiv. Försök koppla från igen.",
   "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN kunde inte starta eftersom instanslåset inte är tillgängligt eller inget befintligt FuzeVPN-fönster kunde aktiveras.\n\nVänta tills FuzeVPN har startat klart och försök sedan igen.",
-  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Den portabla uppdateringen kunde inte tillämpas. Din tidigare version finns i den ursprungliga mappen eller i återställningskopian."
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Den portabla uppdateringen kunde inte tillämpas. Din tidigare version finns i den ursprungliga mappen eller i återställningskopian.",
+  "Copier": "Kopiera",
+  "Envoyer": "Skicka",
+  "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "Fullständig diagnostik insamlad på den här enheten. Du kan kopiera den eller skicka den till supporten.",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Knappen Diagnostik samlar kontroller, tjänstens status och tekniska loggar. Om automatisk sändning är på skickas de till FuzeVPN-supporten, annars bara när du klickar på ”Skicka”. Hemligheter och webbhistorik ingår inte. Lagring på servern: 30 dagar."
 }
