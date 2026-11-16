@@ -614,5 +614,9 @@
   "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "The kill switch is still blocking network traffic. Try disconnecting again.",
   "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "The VPN tunnel is still active. Try disconnecting again.",
   "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN could not start because its instance lock is unavailable or no existing FuzeVPN window could be activated.\n\nWait for FuzeVPN to finish starting, then try again.",
-  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "The portable update could not be applied. Your previous version is in its original folder or in the recovery backup."
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "The portable update could not be applied. Your previous version is in its original folder or in the recovery backup.",
+  "Copier": "Copy",
+  "Envoyer": "Send",
+  "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "Complete diagnostic collected on this device. You can copy it or send it to support.",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "The Diagnostic button collects checks, service status and technical logs. If automatic sending is on, they are sent to FuzeVPN support; otherwise, only when you click “Send”. Secrets and browsing history are excluded. Server retention: 30 days."
 }

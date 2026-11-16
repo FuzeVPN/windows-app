@@ -614,5 +614,9 @@
   "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch ka na-egbochi okporo ụzọ netwọkụ. Gbalịa ịkwụsị njikọ ọzọ.",
   "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "Ọwa VPN ka na-arụ ọrụ. Gbalịa ịkwụsị njikọ ọzọ.",
   "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN enweghị ike ịmalite n’ihi na mkpọchi nke mbipụta ya na-arụ ọrụ adịghị ma ọ bụ enweghị ike ime ka windo FuzeVPN dị adị rụọ ọrụ.\n\nChere ka FuzeVPN malite kpamkpam, wee gbalịa ọzọ.",
-  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Enweghị ike itinye mmelite ụdị a na-ebugharị. Ụdị gị gara aga dị na folda mbụ ya ma ọ bụ na nnomi ndabere maka iweghachi."
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Enweghị ike itinye mmelite ụdị a na-ebugharị. Ụdị gị gara aga dị na folda mbụ ya ma ọ bụ na nnomi ndabere maka iweghachi.",
+  "Copier": "Detuo",
+  "Envoyer": "Ziga",
+  "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "Anakọtara nchọpụta nsogbu zuru oke na ngwaọrụ a. Ị nwere ike idetuo ya ma ọ bụ ziga ya na enyemaka.",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Bọtịnụ Nchọpụta nsogbu na-anakọta nlele, ọnọdụ ọrụ na ndekọ teknụzụ. Ọ bụrụ na ịziga na-akpaghị aka gbanyere, a na-eziga ha na enyemaka FuzeVPN; ma ọ bụghị ya, naanị mgbe ị pịrị “Ziga”. A naghị etinye ihe nzuzo na akụkọ nchọgharị. Nchekwa na ihe nkesa: ụbọchị 30."
 }

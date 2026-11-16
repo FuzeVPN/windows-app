@@ -614,5 +614,9 @@
   "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch ਅਜੇ ਵੀ ਨੈੱਟਵਰਕ ਟ੍ਰੈਫਿਕ ਰੋਕ ਰਿਹਾ ਹੈ। ਡਿਸਕਨੈਕਟ ਕਰਨ ਦੀ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
   "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPN ਟਨਲ ਅਜੇ ਵੀ ਸਰਗਰਮ ਹੈ। ਡਿਸਕਨੈਕਟ ਕਰਨ ਦੀ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
   "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN ਸ਼ੁਰੂ ਨਹੀਂ ਹੋ ਸਕਿਆ, ਕਿਉਂਕਿ ਇਸ ਦਾ ਇੰਸਟੈਂਸ ਲਾਕ ਉਪਲਬਧ ਨਹੀਂ ਹੈ ਜਾਂ FuzeVPN ਦੀ ਕਿਸੇ ਮੌਜੂਦਾ ਵਿੰਡੋ ਨੂੰ ਸਰਗਰਮ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਿਆ।\n\nFuzeVPN ਦੇ ਸ਼ੁਰੂ ਹੋਣ ਤੱਕ ਉਡੀਕ ਕਰੋ, ਫਿਰ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
-  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "ਪੋਰਟੇਬਲ ਅੱਪਡੇਟ ਲਾਗੂ ਨਹੀਂ ਹੋ ਸਕਿਆ। ਤੁਹਾਡਾ ਪਿਛਲਾ ਵਰਜਨ ਆਪਣੇ ਮੂਲ ਫੋਲਡਰ ਜਾਂ ਰਿਕਵਰੀ ਬੈਕਅੱਪ ਵਿੱਚ ਮੌਜੂਦ ਹੈ।"
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "ਪੋਰਟੇਬਲ ਅੱਪਡੇਟ ਲਾਗੂ ਨਹੀਂ ਹੋ ਸਕਿਆ। ਤੁਹਾਡਾ ਪਿਛਲਾ ਵਰਜਨ ਆਪਣੇ ਮੂਲ ਫੋਲਡਰ ਜਾਂ ਰਿਕਵਰੀ ਬੈਕਅੱਪ ਵਿੱਚ ਮੌਜੂਦ ਹੈ।",
+  "Copier": "ਕਾਪੀ ਕਰੋ",
+  "Envoyer": "ਭੇਜੋ",
+  "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "ਪੂਰੀ ਜਾਂਚ ਇਸ ਡਿਵਾਈਸ 'ਤੇ ਇਕੱਠੀ ਹੋ ਗਈ। ਤੁਸੀਂ ਇਸਨੂੰ ਕਾਪੀ ਕਰ ਸਕਦੇ ਹੋ ਜਾਂ ਸਹਾਇਤਾ ਨੂੰ ਭੇਜ ਸਕਦੇ ਹੋ।",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "ਜਾਂਚ ਬਟਨ ਜਾਂਚਾਂ, ਸੇਵਾ ਦੀ ਸਥਿਤੀ ਅਤੇ ਤਕਨੀਕੀ ਲੌਗ ਇਕੱਠੇ ਕਰਦਾ ਹੈ। ਜੇ ਆਪਣੇ ਆਪ ਭੇਜਣਾ ਚਾਲੂ ਹੈ, ਤਾਂ ਇਹ FuzeVPN ਸਹਾਇਤਾ ਨੂੰ ਭੇਜੇ ਜਾਂਦੇ ਹਨ; ਨਹੀਂ ਤਾਂ ਸਿਰਫ਼ ਉਦੋਂ, ਜਦੋਂ ਤੁਸੀਂ “ਭੇਜੋ” ਦਬਾਉਂਦੇ ਹੋ। ਗੁਪਤ ਜਾਣਕਾਰੀ ਅਤੇ ਬ੍ਰਾਊਜ਼ਿੰਗ ਇਤਿਹਾਸ ਸ਼ਾਮਲ ਨਹੀਂ ਹਨ। ਸਰਵਰ 'ਤੇ ਰੱਖਣ ਦੀ ਮਿਆਦ: 30 ਦਿਨ।"
 }

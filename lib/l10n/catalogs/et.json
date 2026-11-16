@@ -614,5 +614,9 @@
   "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Hädaseiskamine blokeerib endiselt võrguliiklust. Proovige ühendus uuesti katkestada.",
   "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPN-tunnel on endiselt aktiivne. Proovige ühendus uuesti katkestada.",
   "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN ei saanud käivituda, sest selle eksemplari lukk pole saadaval või ühtegi olemasolevat FuzeVPN akent ei saanud aktiveerida.\n\nOodake, kuni FuzeVPN on käivitunud, ja proovige uuesti.",
-  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Kaasaskantava versiooni värskendust ei saanud rakendada. Eelmine versioon asub algses kaustas või taastamise varukoopias."
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Kaasaskantava versiooni värskendust ei saanud rakendada. Eelmine versioon asub algses kaustas või taastamise varukoopias.",
+  "Copier": "Kopeeri",
+  "Envoyer": "Saada",
+  "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "Täielik diagnostika koguti selles seadmes. Saate selle kopeerida või kasutajatoele saata.",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Diagnostika nupp kogub kontrollid, teenuse oleku ja tehnilised logid. Kui automaatne saatmine on sisse lülitatud, saadetakse need FuzeVPN-i kasutajatoele; muul juhul ainult siis, kui vajutate „Saada“. Saladused ja sirvimisajalugu jäetakse välja. Säilitamine serveris: 30 päeva."
 }

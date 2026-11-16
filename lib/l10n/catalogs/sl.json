@@ -614,5 +614,9 @@
   "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch še vedno blokira omrežni promet. Znova poskusite prekiniti povezavo.",
   "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "Predor VPN je še vedno aktiven. Znova poskusite prekiniti povezavo.",
   "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN se ni mogel zagnati, ker zaklep njegovega primerka ni na voljo ali ni bilo mogoče aktivirati nobenega obstoječega okna FuzeVPN.\n\nPočakajte, da se FuzeVPN zažene, nato poskusite znova.",
-  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Posodobitve prenosne različice ni bilo mogoče uveljaviti. Prejšnja različica je v prvotni mapi ali v varnostni kopiji za obnovitev."
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Posodobitve prenosne različice ni bilo mogoče uveljaviti. Prejšnja različica je v prvotni mapi ali v varnostni kopiji za obnovitev.",
+  "Copier": "Kopiraj",
+  "Envoyer": "Pošlji",
+  "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "Celotna diagnostika je zbrana v tej napravi. Lahko jo kopirate ali pošljete podpori.",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Gumb Diagnostika zbere preverjanja, stanje storitve in tehnične dnevnike. Če je samodejno pošiljanje vklopljeno, se pošljejo podpori FuzeVPN; sicer le, ko pritisnete »Pošlji«. Zaupni podatki in zgodovina brskanja so izključeni. Hramba na strežniku: 30 dni."
 }

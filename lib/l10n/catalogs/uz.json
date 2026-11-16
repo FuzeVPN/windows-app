@@ -614,5 +614,9 @@
   "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch tarmoq trafigini bloklashda davom etmoqda. Ulanishni qayta uzib ko‘ring.",
   "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPN tunneli hali ham faol. Ulanishni qayta uzib ko‘ring.",
   "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN ishga tushmadi, chunki uning nusxa qulfi mavjud emas yoki mavjud FuzeVPN oynalaridan hech birini faollashtirib bo‘lmadi.\n\nFuzeVPN ishga tushishi tugaguncha kuting, so‘ng qayta urinib ko‘ring.",
-  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Portativ yangilanishni qo‘llab bo‘lmadi. Oldingi versiyangiz o‘zining asl papkasida yoki tiklash uchun zaxira nusxasida joylashgan."
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Portativ yangilanishni qo‘llab bo‘lmadi. Oldingi versiyangiz o‘zining asl papkasida yoki tiklash uchun zaxira nusxasida joylashgan.",
+  "Copier": "Nusxalash",
+  "Envoyer": "Yuborish",
+  "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "To‘liq diagnostika shu qurilmada to‘plandi. Uni nusxalashingiz yoki yordam xizmatiga yuborishingiz mumkin.",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Diagnostika tugmasi tekshiruvlar, xizmat holati va texnik jurnallarni to‘playdi. Avtomatik yuborish yoqilgan bo‘lsa, ular FuzeVPN yordam xizmatiga yuboriladi; aks holda faqat “Yuborish” tugmasini bosganingizda. Maxfiy ma’lumotlar va ko‘rish tarixi kiritilmaydi. Serverda saqlash muddati: 30 kun."
 }

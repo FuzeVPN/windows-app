@@ -614,5 +614,9 @@
   "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "מתג הניתוק עדיין חוסם את תעבורת הרשת. יש לנסות להתנתק שוב.",
   "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "מנהרת ה-VPN עדיין פעילה. יש לנסות להתנתק שוב.",
   "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "לא ניתן היה להפעיל את FuzeVPN משום שנעילת המופע שלו אינה זמינה, או שלא ניתן היה להפעיל אף חלון קיים של FuzeVPN.\n\nיש להמתין לסיום ההפעלה של FuzeVPN ולנסות שוב.",
-  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "לא ניתן היה להחיל את עדכון הגרסה הניידת. הגרסה הקודמת נמצאת בתיקייה המקורית שלה או בגיבוי לשחזור."
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "לא ניתן היה להחיל את עדכון הגרסה הניידת. הגרסה הקודמת נמצאת בתיקייה המקורית שלה או בגיבוי לשחזור.",
+  "Copier": "העתקה",
+  "Envoyer": "שליחה",
+  "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "האבחון המלא נאסף במכשיר זה. אפשר להעתיק אותו או לשלוח אותו לתמיכה.",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "כפתור האבחון אוסף בדיקות, מצב שירות ויומנים טכניים. אם השליחה האוטומטית פעילה, הם נשלחים לתמיכת FuzeVPN; אחרת, רק לאחר לחיצה על \"שליחה\". סודות והיסטוריית גלישה אינם נכללים. הנתונים נשמרים בשרת למשך 30 ימים."
 }

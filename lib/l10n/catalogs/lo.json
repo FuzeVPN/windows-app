@@ -614,5 +614,9 @@
   "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "ສະວິດຕັດການເຊື່ອມຕໍ່ຍັງບລັອກການຮັບສົ່ງຂໍ້ມູນເຄືອຂ່າຍ. ລອງຕັດການເຊື່ອມຕໍ່ອີກຄັ້ງ.",
   "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "ອຸໂມງ VPN ຍັງເຮັດວຽກຢູ່. ລອງຕັດການເຊື່ອມຕໍ່ອີກຄັ້ງ.",
   "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "ບໍ່ສາມາດເລີ່ມ FuzeVPN ໄດ້ ເພາະຕົວລັອກອິນສະແຕນຊ໌ຂອງມັນບໍ່ພ້ອມໃຊ້ງານ ຫຼືບໍ່ສາມາດເປີດໃຊ້ໜ້າຕ່າງ FuzeVPN ທີ່ມີຢູ່ໄດ້.\n\nລໍຖ້າໃຫ້ FuzeVPN ເລີ່ມເຮັດວຽກສຳເລັດ ແລ້ວລອງອີກຄັ້ງ.",
-  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "ບໍ່ສາມາດນຳໃຊ້ການອັບເດດເວີຊັນແບບພົກພາໄດ້. ເວີຊັນກ່ອນຂອງທ່ານຍັງຢູ່ໃນໂຟນເດີເດີມ ຫຼືໃນສຳເນົາສຳຮອງສຳລັບການກູ້ຄືນ."
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "ບໍ່ສາມາດນຳໃຊ້ການອັບເດດເວີຊັນແບບພົກພາໄດ້. ເວີຊັນກ່ອນຂອງທ່ານຍັງຢູ່ໃນໂຟນເດີເດີມ ຫຼືໃນສຳເນົາສຳຮອງສຳລັບການກູ້ຄືນ.",
+  "Copier": "ຄັດລອກ",
+  "Envoyer": "ສົ່ງ",
+  "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "ລວບລວມຜົນວິນິດໄສສົມບູນໃນອຸປະກອນນີ້ແລ້ວ. ທ່ານສາມາດຄັດລອກ ຫຼື ສົ່ງໃຫ້ຝ່າຍຊ່ວຍເຫຼືອໄດ້.",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "ປຸ່ມວິນິດໄສຈະລວບລວມຜົນກວດສອບ, ສະຖານະບໍລິການ ແລະ ບັນທຶກທາງເຕັກນິກ. ຖ້າເປີດການສົ່ງອັດຕະໂນມັດ, ຂໍ້ມູນຈະຖືກສົ່ງໃຫ້ຝ່າຍຊ່ວຍເຫຼືອ FuzeVPN; ຖ້າບໍ່ດັ່ງນັ້ນ, ຈະສົ່ງສະເພາະເມື່ອທ່ານກົດ “ສົ່ງ” ເທົ່ານັ້ນ. ບໍ່ລວມຂໍ້ມູນລັບ ແລະ ປະຫວັດການທ່ອງເວັບ. ເກັບໄວ້ໃນເຊີບເວີ 30 ວັນ."
 }

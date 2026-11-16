@@ -614,5 +614,9 @@
   "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch ఇప్పటికీ నెట్‌వర్క్ ట్రాఫిక్‌ను నిరోధిస్తోంది. మళ్లీ డిస్‌కనెక్ట్ చేయడానికి ప్రయత్నించండి.",
   "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPN టన్నెల్ ఇప్పటికీ సక్రియంగా ఉంది. మళ్లీ డిస్‌కనెక్ట్ చేయడానికి ప్రయత్నించండి.",
   "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPNను ప్రారంభించలేకపోయాము. దాని ఇన్‌స్టాన్స్ లాక్ అందుబాటులో లేదు లేదా ఇప్పటికే ఉన్న FuzeVPN విండోను సక్రియం చేయలేకపోయాము.\n\nFuzeVPN ప్రారంభం పూర్తయ్యే వరకు వేచి ఉండి, మళ్లీ ప్రయత్నించండి.",
-  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "పోర్టబుల్ అప్‌డేట్‌ను వర్తింపజేయలేకపోయాము. మీ మునుపటి వెర్షన్ దాని అసలు ఫోల్డర్‌లో లేదా రికవరీ బ్యాకప్‌లో ఉంది."
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "పోర్టబుల్ అప్‌డేట్‌ను వర్తింపజేయలేకపోయాము. మీ మునుపటి వెర్షన్ దాని అసలు ఫోల్డర్‌లో లేదా రికవరీ బ్యాకప్‌లో ఉంది.",
+  "Copier": "కాపీ చేయి",
+  "Envoyer": "పంపు",
+  "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "పూర్తి నిర్ధారణ ఈ పరికరంలో సేకరించబడింది. మీరు దాన్ని కాపీ చేయవచ్చు లేదా సహాయ బృందానికి పంపవచ్చు.",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "నిర్ధారణ బటన్ తనిఖీలు, సేవ స్థితి మరియు సాంకేతిక లాగ్‌లను సేకరిస్తుంది. స్వయంచాలక పంపడం ఆన్‌లో ఉంటే, అవి FuzeVPN సహాయ బృందానికి పంపబడతాయి; లేకపోతే, మీరు “పంపు” నొక్కినప్పుడు మాత్రమే. రహస్యాలు మరియు బ్రౌజింగ్ చరిత్ర చేర్చబడవు. సర్వర్‌లో నిల్వ: 30 రోజులు."
 }

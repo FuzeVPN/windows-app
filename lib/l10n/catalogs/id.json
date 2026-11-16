@@ -614,5 +614,9 @@
   "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch masih memblokir lalu lintas jaringan. Coba putuskan koneksi lagi.",
   "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "Terowongan VPN masih aktif. Coba putuskan koneksi lagi.",
   "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN tidak dapat dimulai karena kunci instansinya tidak tersedia atau tidak ada jendela FuzeVPN yang sudah terbuka yang dapat diaktifkan.\n\nTunggu hingga FuzeVPN selesai dimulai, lalu coba lagi.",
-  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Pembaruan versi portabel tidak dapat diterapkan. Versi sebelumnya berada di folder aslinya atau dalam cadangan pemulihan."
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Pembaruan versi portabel tidak dapat diterapkan. Versi sebelumnya berada di folder aslinya atau dalam cadangan pemulihan.",
+  "Copier": "Salin",
+  "Envoyer": "Kirim",
+  "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "Diagnostik lengkap dikumpulkan di perangkat ini. Anda dapat menyalinnya atau mengirimkannya ke dukungan.",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Tombol Diagnostik mengumpulkan pemeriksaan, status layanan, dan log teknis. Jika pengiriman otomatis aktif, semuanya dikirim ke dukungan FuzeVPN; jika tidak, hanya saat Anda menekan “Kirim”. Rahasia dan riwayat penelusuran tidak disertakan. Penyimpanan di server: 30 hari."
 }

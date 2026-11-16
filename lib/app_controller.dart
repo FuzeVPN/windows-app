@@ -148,6 +148,11 @@ class AppController extends ChangeNotifier {
   Map<String, Object?>? _diagnosticSupport;
   Future<String>? _diagnosticExport;
   bool _completeDiagnosticRunning = false;
+  bool diagnosticSendRunning = false;
+  // A complete diagnostic collected without automatic consent waits here
+  // until one explicit send action; any new run replaces or clears it.
+  String? _unsentCompleteDiagnosticId;
+  String? _unsentCompleteDiagnosticAccount;
   String? diagnosticMessage;
   int _diagnosticGeneration = 0;
   DiagnosticError? _diagnosticCandidate;

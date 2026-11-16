@@ -22,6 +22,9 @@ class _Bridge extends DiagnosticsBridge {
 
 class _Delivery extends DiagnosticsController {
   FrozenDiagnosticReport? sent;
+  // The complete report is sent by the diagnostic itself only with consent.
+  @override
+  bool get automaticConsent => true;
   @override
   Future<Map<String, Object?>?> runChecks() async => {
     'protocol': 'wireguard',

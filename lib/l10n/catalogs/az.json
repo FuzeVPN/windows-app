@@ -614,5 +614,9 @@
   "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch şəbəkə trafikini bloklamağa davam edir. Bağlantını yenidən kəsməyə cəhd edin.",
   "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPN tuneli hələ də aktivdir. Bağlantını yenidən kəsməyə cəhd edin.",
   "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN başlaya bilmədi, çünki onun instansiya kilidi əlçatan deyil və ya mövcud FuzeVPN pəncərələrindən heç biri aktivləşdirilə bilmədi.\n\nFuzeVPN tam başlayana qədər gözləyin, sonra yenidən cəhd edin.",
-  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Portativ versiyanın yeniləməsi tətbiq edilə bilmədi. Əvvəlki versiyanız ilkin qovluğunda və ya bərpa üçün ehtiyat nüsxədədir."
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Portativ versiyanın yeniləməsi tətbiq edilə bilmədi. Əvvəlki versiyanız ilkin qovluğunda və ya bərpa üçün ehtiyat nüsxədədir.",
+  "Copier": "Kopyalayın",
+  "Envoyer": "Göndərin",
+  "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "Tam diaqnostika bu cihazda toplandı. Onu kopyalaya və ya dəstək xidmətinə göndərə bilərsiniz.",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Diaqnostika düyməsi yoxlamaları, xidmətin vəziyyətini və texniki jurnalları toplayır. Avtomatik göndərmə aktivdirsə, onlar FuzeVPN dəstək xidmətinə göndərilir; əks halda yalnız “Göndərin” düyməsini basdığınız zaman. Məxfi məlumatlar və baxış tarixçəsi daxil edilmir. Serverdə saxlanma müddəti: 30 gün."
 }

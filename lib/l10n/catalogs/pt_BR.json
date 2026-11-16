@@ -614,5 +614,9 @@
   "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "O kill switch continua bloqueando o tráfego de rede. Tente desconectar novamente.",
   "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "O túnel VPN continua ativo. Tente desconectar novamente.",
   "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "Não foi possível iniciar o FuzeVPN porque o bloqueio de instância está indisponível ou nenhuma janela existente do FuzeVPN pôde ser ativada.\n\nAguarde o FuzeVPN terminar de iniciar e tente novamente.",
-  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Não foi possível aplicar a atualização portátil. Sua versão anterior está na pasta original ou no backup de recuperação."
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Não foi possível aplicar a atualização portátil. Sua versão anterior está na pasta original ou no backup de recuperação.",
+  "Copier": "Copiar",
+  "Envoyer": "Enviar",
+  "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "Diagnóstico completo coletado neste dispositivo. Você pode copiá-lo ou enviá-lo ao suporte.",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "O botão Diagnóstico coleta as verificações, o estado do serviço e os registros técnicos. Se o envio automático estiver ativado, eles são enviados ao suporte da FuzeVPN; caso contrário, somente quando você clicar em “Enviar”. Segredos e histórico de navegação são excluídos. Retenção no servidor: 30 dias."
 }

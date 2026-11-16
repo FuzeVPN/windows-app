@@ -71,7 +71,12 @@ class _Bridge extends DiagnosticsBridge {
 }
 
 class _Delivery extends DiagnosticsController {
+  _Delivery({this.consent = true});
   final sent = <FrozenDiagnosticReport>[];
+  bool consent;
+  bool receive = true;
+  @override
+  bool get automaticConsent => consent;
   @override
   Future<Map<String, Object?>?> runChecks() async => {
     'protocol': 'wireguard',
@@ -83,9 +88,12 @@ class _Delivery extends DiagnosticsController {
   @override
   Future<bool> sendPreparedReport(FrozenDiagnosticReport report) async {
     sent.add(FrozenDiagnosticReport.fromBytes(report.bytes));
-    return true;
+    return receive;
   }
 }
+
+const _localOnlyMessage =
+    'Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.';
 
 class _BusyController extends AppController {
   _BusyController(_Bridge bridge, _Delivery delivery)
@@ -258,6 +266,99 @@ void main() {
         'Diagnostic complet transmis à l’assistance.',
       );
       expect(bridge.nativeCalls, 1);
+      // Automatic consent already sent this report: no explicit send remains.
+      expect(controller.hasUnsentCompleteDiagnostic, isFalse);
+      await controller.sendCompleteDiagnostic();
+      expect(delivery.sent, hasLength(1));
+    },
+  );
+
+  test(
+    'without automatic consent the complete diagnostic stays local until one explicit send',
+    () async {
+      final delivery = _Delivery(consent: false);
+      final controller = app(_Bridge(), delivery: delivery, signedIn: true);
+      await controller.runCompleteDiagnostic();
+      final first = controller.preparedDiagnosticReport!;
+      expect(delivery.sent, isEmpty);
+      expect(controller.diagnostics.pendingReports, isEmpty);
+      expect(controller.diagnosticMessage, _localOnlyMessage);
+      expect(controller.hasUnsentCompleteDiagnostic, isTrue);
+      expect(controller.canSendCompleteDiagnostic, isTrue);
+      expect(jsonDecode(controller.diagnosticLocalExport), first.json);
+
+      await controller.sendCompleteDiagnostic();
+      expect(delivery.sent.single.reportId, first.reportId);
+      expect(delivery.sent.single.json, first.json);
+      expect(
+        controller.diagnosticMessage,
+        'Diagnostic complet transmis à l’assistance.',
+      );
+      expect(controller.diagnosticSendRunning, isFalse);
+      expect(controller.hasUnsentCompleteDiagnostic, isFalse);
+      await controller.sendCompleteDiagnostic();
+      expect(delivery.sent, hasLength(1));
+
+      await controller.runCompleteDiagnostic();
+      final second = controller.preparedDiagnosticReport!;
+      expect(second.reportId, isNot(first.reportId));
+      expect(delivery.sent, hasLength(1));
+      expect(controller.diagnosticMessage, _localOnlyMessage);
+      expect(controller.hasUnsentCompleteDiagnostic, isTrue);
+      await controller.sendCompleteDiagnostic();
+      expect(delivery.sent.map((report) => report.reportId), [
+        first.reportId,
+        second.reportId,
+      ]);
+    },
+  );
+
+  test(
+    'an explicit send keeps the delivery outcome messages and is not offered again',
+    () async {
+      final delivery = _Delivery(consent: false)..receive = false;
+      final controller = app(_Bridge(), delivery: delivery, signedIn: true);
+      await controller.runCompleteDiagnostic();
+      await controller.sendCompleteDiagnostic();
+      expect(delivery.sent, hasLength(1));
+      expect(
+        controller.diagnosticMessage,
+        'Le diagnostic complet n’a pas pu être transmis. Consultez le code d’erreur.',
+      );
+      expect(controller.hasUnsentCompleteDiagnostic, isFalse);
+      await controller.sendCompleteDiagnostic();
+      expect(delivery.sent, hasLength(1));
+    },
+  );
+
+  test(
+    'signed-out collection and account changes never offer an explicit send',
+    () async {
+      final delivery = _Delivery();
+      final signedOut = app(_Bridge(), delivery: delivery);
+      await signedOut.runCompleteDiagnostic();
+      expect(signedOut.preparedDiagnosticReport, isNotNull);
+      expect(
+        signedOut.diagnosticMessage,
+        'Diagnostic complet collecté. Connectez-vous à votre compte pour l’envoyer.',
+      );
+      expect(signedOut.hasUnsentCompleteDiagnostic, isFalse);
+      await signedOut.sendCompleteDiagnostic();
+      expect(delivery.sent, isEmpty);
+
+      final local = _Delivery(consent: false);
+      final switched = app(_Bridge(), delivery: local, signedIn: true);
+      await switched.runCompleteDiagnostic();
+      expect(switched.hasUnsentCompleteDiagnostic, isTrue);
+      switched.profile = const UserProfile(
+        userId: 'second-synthetic-account',
+        email: 'second@example.invalid',
+        firstName: 'Second',
+        emailVerified: true,
+      );
+      expect(switched.hasUnsentCompleteDiagnostic, isFalse);
+      await switched.sendCompleteDiagnostic();
+      expect(local.sent, isEmpty);
     },
   );
 

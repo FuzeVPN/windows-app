@@ -614,5 +614,9 @@
   "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch vẫn đang chặn lưu lượng mạng. Thử ngắt kết nối lại.",
   "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "Đường hầm VPN vẫn đang hoạt động. Thử ngắt kết nối lại.",
   "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "Không thể khởi động FuzeVPN vì khóa phiên chạy của ứng dụng không khả dụng hoặc không thể kích hoạt bất kỳ cửa sổ FuzeVPN hiện có nào.\n\nĐợi FuzeVPN khởi động xong rồi thử lại.",
-  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Không thể áp dụng bản cập nhật cho phiên bản không cần cài đặt. Phiên bản trước của bạn nằm trong thư mục ban đầu hoặc trong bản sao lưu khôi phục."
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Không thể áp dụng bản cập nhật cho phiên bản không cần cài đặt. Phiên bản trước của bạn nằm trong thư mục ban đầu hoặc trong bản sao lưu khôi phục.",
+  "Copier": "Sao chép",
+  "Envoyer": "Gửi",
+  "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "Đã thu thập chẩn đoán đầy đủ trên thiết bị này. Bạn có thể sao chép hoặc gửi đến bộ phận hỗ trợ.",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Nút Chẩn đoán thu thập các kiểm tra, trạng thái dịch vụ và nhật ký kỹ thuật. Nếu tính năng tự động gửi được bật, chúng sẽ được gửi đến bộ phận hỗ trợ FuzeVPN; nếu không, chỉ khi bạn nhấn “Gửi”. Thông tin bí mật và lịch sử duyệt web bị loại trừ. Lưu giữ trên máy chủ: 30 ngày."
 }

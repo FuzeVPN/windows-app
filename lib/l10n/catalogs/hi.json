@@ -614,5 +614,9 @@
   "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "kill switch अभी भी नेटवर्क ट्रैफ़िक रोक रहा है। फिर से डिस्कनेक्ट करने का प्रयास करें।",
   "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPN टनल अभी भी सक्रिय है। फिर से डिस्कनेक्ट करने का प्रयास करें।",
   "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN शुरू नहीं हो सका क्योंकि उसका इंस्टेंस लॉक उपलब्ध नहीं है या FuzeVPN की किसी मौजूदा विंडो को सक्रिय नहीं किया जा सका।\n\nFuzeVPN के शुरू होने तक प्रतीक्षा करें, फिर दोबारा प्रयास करें।",
-  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "पोर्टेबल अपडेट लागू नहीं किया जा सका। आपका पिछला संस्करण अपने मूल फ़ोल्डर में या रिकवरी बैकअप में मौजूद है।"
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "पोर्टेबल अपडेट लागू नहीं किया जा सका। आपका पिछला संस्करण अपने मूल फ़ोल्डर में या रिकवरी बैकअप में मौजूद है।",
+  "Copier": "कॉपी करें",
+  "Envoyer": "भेजें",
+  "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "पूरा निदान इस डिवाइस पर एकत्र किया गया। आप इसे कॉपी कर सकते हैं या सहायता को भेज सकते हैं।",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "निदान बटन जाँच, सेवा की स्थिति और तकनीकी लॉग एकत्र करता है। स्वचालित भेजना चालू होने पर ये FuzeVPN सहायता को भेजे जाते हैं; अन्यथा केवल तब, जब आप “भेजें” दबाते हैं। गोपनीय जानकारी और ब्राउज़िंग इतिहास शामिल नहीं होते। सर्वर पर प्रतिधारण: 30 दिन।"
 }

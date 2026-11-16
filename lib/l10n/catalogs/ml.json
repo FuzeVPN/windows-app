@@ -614,5 +614,9 @@
   "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "കിൽ സ്വിച്ച് ഇപ്പോഴും നെറ്റ്‌വർക്ക് ട്രാഫിക് തടയുന്നു. വിച്ഛേദിക്കാൻ വീണ്ടും ശ്രമിക്കുക.",
   "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPN ടണൽ ഇപ്പോഴും സജീവമാണ്. വിച്ഛേദിക്കാൻ വീണ്ടും ശ്രമിക്കുക.",
   "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN ആരംഭിക്കാനായില്ല, കാരണം അതിന്റെ ഇൻസ്റ്റൻസ് ലോക്ക് ലഭ്യമല്ല അല്ലെങ്കിൽ നിലവിലുള്ള ഒരു FuzeVPN വിൻഡോയും സജീവമാക്കാനായില്ല.\n\nFuzeVPN ആരംഭിക്കുന്നത് പൂർത്തിയാകുന്നതുവരെ കാത്തിരുന്ന് വീണ്ടും ശ്രമിക്കുക.",
-  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "പോർട്ടബിൾ അപ്‌ഡേറ്റ് പ്രയോഗിക്കാനായില്ല. നിങ്ങളുടെ മുൻ പതിപ്പ് അതിന്റെ യഥാർത്ഥ ഫോൾഡറിലോ വീണ്ടെടുക്കൽ ബാക്കപ്പിലോ ഉണ്ട്."
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "പോർട്ടബിൾ അപ്‌ഡേറ്റ് പ്രയോഗിക്കാനായില്ല. നിങ്ങളുടെ മുൻ പതിപ്പ് അതിന്റെ യഥാർത്ഥ ഫോൾഡറിലോ വീണ്ടെടുക്കൽ ബാക്കപ്പിലോ ഉണ്ട്.",
+  "Copier": "പകർത്തുക",
+  "Envoyer": "അയയ്ക്കുക",
+  "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "പൂർണ്ണ പരിശോധന ഈ ഉപകരണത്തിൽ ശേഖരിച്ചു. നിങ്ങൾക്ക് അത് പകർത്താനോ പിന്തുണയ്ക്ക് അയയ്ക്കാനോ കഴിയും.",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "പരിശോധന ബട്ടൺ പരിശോധനകളും സേവന നിലയും സാങ്കേതിക ലോഗുകളും ശേഖരിക്കുന്നു. സ്വയമേവ അയയ്ക്കൽ ഓണാണെങ്കിൽ, അവ FuzeVPN പിന്തുണയ്ക്ക് അയയ്ക്കും; അല്ലെങ്കിൽ, നിങ്ങൾ “അയയ്ക്കുക” അമർത്തുമ്പോൾ മാത്രം. രഹസ്യങ്ങളും ബ്രൗസിംഗ് ചരിത്രവും ഉൾപ്പെടുത്തില്ല. സെർവറിൽ സൂക്ഷിക്കുന്ന കാലാവധി: 30 ദിവസം."
 }

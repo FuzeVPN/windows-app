@@ -614,5 +614,9 @@
   "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "Kill switch joprojām bloķē tīkla datplūsmu. Mēģiniet atvienoties vēlreiz.",
   "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPN tunelis joprojām ir aktīvs. Mēģiniet atvienoties vēlreiz.",
   "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "FuzeVPN nevarēja palaist, jo tā instances bloķētājs nav pieejams vai nevarēja aktivizēt nevienu esošu FuzeVPN logu.\n\nPagaidiet, līdz FuzeVPN pabeidz palaišanu, un mēģiniet vēlreiz.",
-  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Portatīvās versijas atjauninājumu neizdevās lietot. Iepriekšējā versija atrodas sākotnējā mapē vai atkopšanas rezerves kopijā."
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "Portatīvās versijas atjauninājumu neizdevās lietot. Iepriekšējā versija atrodas sākotnējā mapē vai atkopšanas rezerves kopijā.",
+  "Copier": "Kopēt",
+  "Envoyer": "Nosūtīt",
+  "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "Pilna diagnostika apkopota šajā ierīcē. Varat to kopēt vai nosūtīt atbalsta dienestam.",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Diagnostikas poga apkopo pārbaužu rezultātus, pakalpojuma statusu un tehniskos žurnālus. Ja automātiskā nosūtīšana ir ieslēgta, tie tiek nosūtīti FuzeVPN atbalsta dienestam; pretējā gadījumā – tikai tad, kad nospiežat “Nosūtīt”. Noslēpumi un pārlūkošanas vēsture nav iekļauti. Glabāšana serverī: 30 dienas."
 }

@@ -232,13 +232,6 @@ class _SettingsPageState extends State<_SettingsPage> {
                 ),
             ],
           ),
-          _SettingsPanel(
-            icon: Icons.fact_check_outlined,
-            title: 'Diagnostic',
-            subtitle: 'Rapports techniques facultatifs.',
-            edgeToEdge: true,
-            children: [_DiagnosticsConsentControl(controller: controller)],
-          ),
         ];
 
         final connection = <Widget>[
@@ -560,89 +553,6 @@ class _SettingsPageState extends State<_SettingsPage> {
       },
     ),
   );
-}
-
-class _DiagnosticsConsentControl extends StatefulWidget {
-  const _DiagnosticsConsentControl({required this.controller});
-  final AppController controller;
-  @override
-  State<_DiagnosticsConsentControl> createState() =>
-      _DiagnosticsConsentControlState();
-}
-
-class _DiagnosticsConsentControlState
-    extends State<_DiagnosticsConsentControl> {
-  bool _saving = false;
-  bool _saveFailed = false;
-  String? _account;
-  int _revision = 0;
-
-  Future<void> _change(bool value) async {
-    final account = widget.controller.profile?.userId;
-    final revision = ++_revision;
-    setState(() {
-      _saving = true;
-      _saveFailed = false;
-    });
-    final saved = await widget.controller.setDiagnosticAutomaticConsent(value);
-    if (!mounted ||
-        revision != _revision ||
-        account != widget.controller.profile?.userId) {
-      return;
-    }
-    setState(() {
-      _saving = false;
-      _saveFailed = !saved;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final controller = widget.controller;
-    final account = controller.profile?.userId;
-    if (account != _account) {
-      _revision++;
-      _account = account;
-      _saving = false;
-      _saveFailed = false;
-    }
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        SwitchListTile(
-          secondary: const Icon(Icons.description_outlined),
-          title: Text(
-            context.tr(
-              'Envoyer automatiquement les rapports d’erreurs importants',
-            ),
-          ),
-          subtitle: Text(
-            context.tr(
-              'Codes d’erreur et contexte technique liés à votre compte. Conservation sur le serveur : 30 jours. Aucun journal brut ni historique de navigation.',
-            ),
-          ),
-          value: controller.diagnostics.automaticConsent,
-          onChanged:
-              account == null || !controller.diagnostics.hasSession || _saving
-              ? null
-              : _change,
-        ),
-        if (_saveFailed)
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-            child: Semantics(
-              liveRegion: true,
-              child: Text(
-                context.tr(
-                  'Ce choix n’a pas pu être enregistré. Il pourrait être perdu au redémarrage. Réessayez.',
-                ),
-                style: TextStyle(color: Theme.of(context).colorScheme.error),
-              ),
-            ),
-          ),
-      ],
-    );
-  }
 }
 
 class _SettingsPanel extends StatelessWidget {

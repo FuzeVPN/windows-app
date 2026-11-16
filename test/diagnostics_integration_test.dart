@@ -579,7 +579,12 @@ void main() {
       'Diagnostic',
       'Diagnostic complet',
       'Diagnostic complet collecté. Connectez-vous à votre compte pour l’envoyer.',
-      'Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques, puis les transmet à l’assistance FuzeVPN. Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.',
+      'Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.',
+      'Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.',
+      'Copier',
+      'Envoyer',
+      'Diagnostic local copié.',
+      'Le diagnostic local n’a pas pu être copié. Réessayez.',
       'En cas d’échec d’envoi, le rapport reste chiffré en attente pendant 24 heures au maximum. Vous pouvez annuler les tentatives restantes.',
       'Cette action réessaie l’arrêt du VPN et son nettoyage. Si elle réussit, le tunnel et ses protections sont retirés. Votre connexion Internet habituelle peut reprendre.',
     ];
@@ -597,6 +602,20 @@ void main() {
         );
         expect(AppStrings.forLanguage(language).text(key), translated);
       }
+    }
+    // The description names the explicit send button by its own label.
+    for (final language in AppLanguage.values) {
+      final strings = AppStrings.forLanguage(language);
+      expect(
+        strings.text(messages[4]),
+        contains(strings.text('Envoyer')),
+        reason: language.name,
+      );
+      expect(
+        strings.text(messages[4]),
+        contains('FuzeVPN'),
+        reason: language.name,
+      );
     }
   });
 

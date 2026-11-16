@@ -614,5 +614,9 @@
   "Le kill switch bloque toujours le trafic réseau. Réessayez la déconnexion.": "キルスイッチが引き続きネットワーク通信をブロックしています。もう一度切断してください。",
   "Le tunnel VPN est toujours actif. Réessayez la déconnexion.": "VPNトンネルはまだ有効です。もう一度切断してください。",
   "FuzeVPN n’a pas pu démarrer, car son verrou d’instance est indisponible ou aucune fenêtre FuzeVPN existante n’a pu être activée.\n\nAttendez la fin du démarrage de FuzeVPN, puis réessayez.": "インスタンスロックを利用できないか、既存のFuzeVPNウィンドウをアクティブにできなかったため、FuzeVPNを起動できませんでした。\n\nFuzeVPNの起動が完了するまで待ってから、もう一度お試しください。",
-  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "ポータブル版の更新を適用できませんでした。以前のバージョンは元のフォルダーまたは復旧用バックアップにあります。"
+  "La mise à jour portable n’a pas pu être appliquée. Votre version précédente se trouve dans son dossier d’origine ou dans la sauvegarde de récupération.": "ポータブル版の更新を適用できませんでした。以前のバージョンは元のフォルダーまたは復旧用バックアップにあります。",
+  "Copier": "コピー",
+  "Envoyer": "送信",
+  "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "このデバイスで診断全体を収集しました。コピーするか、サポートに送信できます。",
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "診断ボタンは確認結果、サービスの状態、技術ログを収集します。自動送信がオンの場合は FuzeVPN サポートに送信され、オフの場合は「送信」を押したときにのみ送信されます。秘密情報と閲覧履歴は含まれません。サーバーでの保存期間：30日間。"
 }

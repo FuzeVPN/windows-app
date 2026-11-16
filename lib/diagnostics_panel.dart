@@ -61,8 +61,30 @@ class _DiagnosticsPanel extends StatefulWidget {
 
 class _DiagnosticsPanelState extends State<_DiagnosticsPanel> {
   AppController get controller => widget.controller;
+  // Copy feedback belongs to the report that was copied; a new diagnostic
+  // replaces the report and therefore hides an earlier confirmation.
+  String? _copiedReportId;
+  bool _copyFailed = false;
 
   Future<void> _run() => controller.runCompleteDiagnostic();
+
+  Future<void> _copy() async {
+    final reportId = controller.preparedDiagnosticReport?.reportId;
+    if (reportId == null) return;
+    var failed = false;
+    try {
+      await Clipboard.setData(
+        ClipboardData(text: controller.diagnosticLocalExport),
+      );
+    } catch (_) {
+      failed = true;
+    }
+    if (!mounted) return;
+    setState(() {
+      _copiedReportId = reportId;
+      _copyFailed = failed;
+    });
+  }
 
   Future<void> _repair() async {
     final accepted = await showDialog<bool>(
@@ -96,10 +118,16 @@ class _DiagnosticsPanelState extends State<_DiagnosticsPanel> {
 
   @override
   Widget build(BuildContext context) {
-    final busy =
+    final collecting =
         controller.diagnosticRunning ||
         controller.diagnosticRepairRunning ||
         controller.diagnosticExportRunning;
+    final sending = controller.diagnosticSendRunning;
+    final busy = collecting || sending;
+    final reportId = controller.preparedDiagnosticReport?.reportId;
+    final canCopy = reportId != null && !collecting;
+    final showSend = sending || controller.hasUnsentCompleteDiagnostic;
+    final copyFeedback = canCopy && _copiedReportId == reportId;
     final checks = controller.diagnosticChecks;
     final passedChecks = checks
         .where((check) => check.result == 'passed')
@@ -118,13 +146,15 @@ class _DiagnosticsPanelState extends State<_DiagnosticsPanel> {
             children: [
               Text(
                 context.tr(
-                  'Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques, puis les transmet à l’assistance FuzeVPN. Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.',
+                  'Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.',
                 ),
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 12),
+              _DiagnosticsConsentControl(controller: controller),
+              const SizedBox(height: 16),
               Wrap(
                 spacing: 12,
                 runSpacing: 12,
@@ -135,9 +165,29 @@ class _DiagnosticsPanelState extends State<_DiagnosticsPanel> {
                         : null,
                     icon: const Icon(Icons.fact_check_outlined),
                     label: Text(
-                      context.tr(busy ? 'Diagnostic en cours…' : 'Diagnostic'),
+                      context.tr(
+                        collecting ? 'Diagnostic en cours…' : 'Diagnostic',
+                      ),
                     ),
                   ),
+                  if (canCopy)
+                    OutlinedButton.icon(
+                      key: const ValueKey('diagnostic-copy'),
+                      onPressed: _copy,
+                      icon: const Icon(Icons.copy_outlined),
+                      label: Text(context.tr('Copier')),
+                    ),
+                  if (showSend)
+                    FilledButton.tonalIcon(
+                      key: const ValueKey('diagnostic-send'),
+                      onPressed: controller.canSendCompleteDiagnostic
+                          ? controller.sendCompleteDiagnostic
+                          : null,
+                      icon: const Icon(Icons.send_outlined),
+                      label: Text(
+                        context.tr(sending ? 'Envoi en cours…' : 'Envoyer'),
+                      ),
+                    ),
                 ],
               ),
               if (busy) ...[
@@ -151,10 +201,23 @@ class _DiagnosticsPanelState extends State<_DiagnosticsPanel> {
                   child: _DiagnosticNotice(text: message),
                 ),
               ],
+              if (copyFeedback) ...[
+                const SizedBox(height: 12),
+                Semantics(
+                  liveRegion: true,
+                  child: _DiagnosticNotice(
+                    key: const ValueKey('diagnostic-copy-feedback'),
+                    text: _copyFailed
+                        ? 'Le diagnostic local n’a pas pu être copié. Réessayez.'
+                        : 'Diagnostic local copié.',
+                    isError: _copyFailed,
+                  ),
+                ),
+              ],
             ],
           ),
         ),
-        if (controller.diagnosticMessage != null && !busy) ...[
+        if (controller.diagnosticMessage != null && !collecting) ...[
           const SizedBox(height: 20),
           Card(
             clipBehavior: Clip.antiAlias,
@@ -297,6 +360,100 @@ class _DiagnosticsPanelState extends State<_DiagnosticsPanel> {
   }
 }
 
+class _DiagnosticsConsentControl extends StatefulWidget {
+  const _DiagnosticsConsentControl({required this.controller});
+  final AppController controller;
+  @override
+  State<_DiagnosticsConsentControl> createState() =>
+      _DiagnosticsConsentControlState();
+}
+
+class _DiagnosticsConsentControlState
+    extends State<_DiagnosticsConsentControl> {
+  bool _saving = false;
+  bool _saveFailed = false;
+  String? _account;
+  int _revision = 0;
+
+  Future<void> _change(bool value) async {
+    final account = widget.controller.profile?.userId;
+    final revision = ++_revision;
+    setState(() {
+      _saving = true;
+      _saveFailed = false;
+    });
+    final saved = await widget.controller.setDiagnosticAutomaticConsent(value);
+    if (!mounted ||
+        revision != _revision ||
+        account != widget.controller.profile?.userId) {
+      return;
+    }
+    setState(() {
+      _saving = false;
+      _saveFailed = !saved;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = widget.controller;
+    final account = controller.profile?.userId;
+    if (account != _account) {
+      _revision++;
+      _account = account;
+      _saving = false;
+      _saveFailed = false;
+    }
+    final theme = Theme.of(context);
+    return ListTileTheme(
+      data: ListTileTheme.of(context).copyWith(
+        iconColor: theme.colorScheme.onSurfaceVariant,
+        titleTextStyle: theme.textTheme.titleSmall,
+        subtitleTextStyle: theme.textTheme.bodyMedium?.copyWith(
+          color: theme.colorScheme.onSurfaceVariant,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SwitchListTile(
+            contentPadding: EdgeInsets.zero,
+            secondary: const Icon(Icons.description_outlined),
+            title: Text(
+              context.tr(
+                'Envoyer automatiquement les rapports d’erreurs importants',
+              ),
+            ),
+            subtitle: Text(
+              context.tr(
+                'Codes d’erreur et contexte technique liés à votre compte. Conservation sur le serveur : 30 jours. Aucun journal brut ni historique de navigation.',
+              ),
+            ),
+            value: controller.diagnostics.automaticConsent,
+            onChanged:
+                account == null || !controller.diagnostics.hasSession || _saving
+                ? null
+                : _change,
+          ),
+          if (_saveFailed)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Semantics(
+                liveRegion: true,
+                child: Text(
+                  context.tr(
+                    'Ce choix n’a pas pu être enregistré. Il pourrait être perdu au redémarrage. Réessayez.',
+                  ),
+                  style: TextStyle(color: theme.colorScheme.error),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
 class _DiagnosticSurface extends StatelessWidget {
   const _DiagnosticSurface({
     required this.icon,
@@ -346,7 +503,11 @@ class _DiagnosticSurface extends StatelessWidget {
 }
 
 class _DiagnosticNotice extends StatelessWidget {
-  const _DiagnosticNotice({required this.text, this.isError = false});
+  const _DiagnosticNotice({
+    super.key,
+    required this.text,
+    this.isError = false,
+  });
 
   final String text;
   final bool isError;
