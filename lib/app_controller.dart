@@ -22,6 +22,7 @@ import 'core/location_directory.dart';
 import 'core/models.dart';
 import 'core/openvpn_bridge.dart';
 import 'core/secure_store.dart';
+import 'core/session_renewal.dart';
 import 'core/wireguard_bridge.dart';
 import 'core/window_bridge.dart';
 import 'core/windows_update_controller.dart';
@@ -106,6 +107,8 @@ class AppController extends ChangeNotifier {
        updates = updates ?? WindowsUpdateController(),
        _now = now ?? DateTime.now {
     this.updates.addListener(_onUpdateChanged);
+    _sessions = SessionRenewal(api: _api, store: _store, now: _now);
+    _api.retryTokenAfterUnauthorized = _sessions.retryToken;
     _diagnosticsBridge = diagnosticsBridge ?? DiagnosticsBridge();
     this.diagnostics =
         diagnostics ??
@@ -120,6 +123,9 @@ class AppController extends ChangeNotifier {
 
   final ApiClient _api;
   final SecureStore _store;
+  // Converts, renews and ends the stored session; it also stores and
+  // removes it, so that none of these overlap.
+  late final SessionRenewal _sessions;
   final WireGuardBridge _wireguard;
   final OpenVpnBridge _openVpn;
   final WindowBridge _window;
@@ -1423,7 +1429,7 @@ class AppController extends ChangeNotifier {
     }
 
     final token = await _traceOptionalLoad(
-      _store.token(),
+      _accessToken(),
       stage: 'device_catalogue_session_storage',
       area: 'storage',
     );
@@ -1579,7 +1585,7 @@ class AppController extends ChangeNotifier {
         _isCurrentSession(epoch, userId) &&
         generation == _subscriptionGeneration;
     try {
-      final token = await _store.token();
+      final token = await _accessToken();
       if (!current()) return;
       if (token == null || token.isEmpty) {
         _traceControllerPhase(
@@ -1895,7 +1901,11 @@ class AppController extends ChangeNotifier {
     }
     _traceControllerPhase('account', 'session_validation', 'begin');
     try {
-      final loaded = await _api.me(token);
+      // A pending request is resumed, a classic session converted and a
+      // renewable one renewed when due before the saved session is checked.
+      final loaded = await _api.me(
+        await _sessions.current(token, upgrade: true),
+      );
       if (_disposed || _isSigningOut || sessionEpoch != _sessionEpoch) {
         _traceControllerPhase(
           'account',
@@ -1977,7 +1987,7 @@ class AppController extends ChangeNotifier {
     // account expiry. A newer login must never be erased by an older deletion.
     _isExpiringSession = true;
     try {
-      await _store.clearToken();
+      await _sessions.clear();
     } catch (_) {
       if (!_disposed && expectedEpoch == _sessionEpoch) {
         errorMessage =
@@ -1986,6 +1996,23 @@ class AppController extends ChangeNotifier {
     } finally {
       _isExpiringSession = false;
     }
+  }
+
+  /// The token of every authenticated API call: a renewable session is
+  /// renewed first when its access expires within five minutes.
+  Future<String?> _accessToken() => _sessions.accessToken();
+
+  /// The window is back in the foreground: renew the session now if its
+  /// access expires within five minutes, as before an authenticated call.
+  void renewSessionIfDue() {
+    if (_disposed ||
+        _isSigningOut ||
+        profile == null ||
+        vpnStatus == VpnStatus.blocked ||
+        _subscriptionApiBlocked) {
+      return;
+    }
+    unawaited(_safe(_accessToken()));
   }
 
   Future<String?> _readSavedSessionToken() async {
@@ -2694,7 +2721,7 @@ class AppController extends ChangeNotifier {
       notifyListeners();
       return LocationChangePreparation.selectedLocally;
     }
-    final token = await _safe(_store.token());
+    final token = await _safe(_accessToken());
     if (profile == null || token == null || currentDeviceId == null) {
       await selectLocation(target);
       return LocationChangePreparation.selectedLocally;
@@ -2861,7 +2888,7 @@ class AppController extends ChangeNotifier {
     VpnProtocol? destinationProtocol,
   }) async {
     final target = pendingTargetLocation;
-    final token = await _safe(_store.token());
+    final token = await _safe(_accessToken());
     final activeProfile = profile;
     final deviceId = currentDeviceId;
     if (target == null ||
@@ -2959,7 +2986,7 @@ class AppController extends ChangeNotifier {
     final epoch = _migrationEpoch;
     final sessionEpoch = _sessionEpoch;
     final activeProfile = profile;
-    final token = await _safe(_store.token());
+    final token = await _safe(_accessToken());
     final marker = await _safe(_store.locationMigration());
     if (activeProfile == null ||
         token == null ||
@@ -3085,7 +3112,7 @@ class AppController extends ChangeNotifier {
     isPollingLocationMigration = true;
     notifyListeners();
     try {
-      final token = await _safe(_store.token());
+      final token = await _safe(_accessToken());
       final migration = locationMigration;
       if (token == null ||
           migration == null ||
@@ -4251,7 +4278,7 @@ class AppController extends ChangeNotifier {
       if (!current()) return false;
       _clearSubscriptionState();
       signInStage = 'saved_session_storage';
-      final writing = _store.saveToken(session.accessToken);
+      final writing = _sessions.save(session.accessToken);
       _sessionTokenWrite = writing;
       try {
         await writing;
@@ -4276,6 +4303,8 @@ class AppController extends ChangeNotifier {
       errorMessage = null;
       deviceEnrollmentIssue = null;
       notifyListeners();
+      // The completed sign-in converts its session into a renewable one.
+      unawaited(_safe(_sessions.current(session.accessToken, upgrade: true)));
       return true;
     } on BrowserAuthException catch (error) {
       if (!current()) return false;
@@ -4997,7 +5026,7 @@ class AppController extends ChangeNotifier {
       return;
     }
     final activeProfile = profile;
-    final token = await _safe(_store.token());
+    final token = await _safe(_accessToken());
     if (activeProfile == null || token == null || _requestedLocation == null) {
       _transitionConnection(operationId, VpnStatus.error);
       errorMessage = 'Connectez-vous à votre compte avant de vous connecter.';
@@ -5060,7 +5089,7 @@ class AppController extends ChangeNotifier {
     int? operationId,
   }) async {
     _ignoreConnectivityEvents(const Duration(seconds: 12));
-    final token = await _safe(_store.token());
+    final token = await _safe(_accessToken());
     if (!_acceptConnectionOperation(operationId)) return;
     // A location switch may begin by stopping the previous tunnel. Its
     // enrollment/recovery result belongs to the new connection attempt.
@@ -6361,7 +6390,7 @@ class AppController extends ChangeNotifier {
   }
 
   Future<void> _renewOpenVpnProfile(int operationId) async {
-    final token = await _safe(_store.token());
+    final token = await _safe(_accessToken());
     if (!_acceptConnectionOperation(operationId)) return;
     _diagnosticOperation = 'renew';
     final deviceId = currentDeviceId;
@@ -6998,7 +7027,7 @@ class AppController extends ChangeNotifier {
       try {
         final writing = _sessionTokenWrite;
         if (writing != null) await _safe<void>(writing);
-        await _store.clearToken();
+        await _sessions.clear();
       } catch (_) {
         cleanupFailed = true;
       }
@@ -7062,7 +7091,7 @@ class AppController extends ChangeNotifier {
   Future<DeviceRevocationResult> _revokeDevice(VpnDevice device) async {
     final sessionEpoch = _sessionEpoch;
     final userId = profile?.userId;
-    final token = await _safe(_store.token());
+    final token = await _safe(_accessToken());
     if (!_isCurrentSession(sessionEpoch, userId)) {
       return DeviceRevocationResult.failed;
     }
@@ -7207,7 +7236,8 @@ class AppController extends ChangeNotifier {
         // sign-out clear. Otherwise its late completion could restore a token.
         final writing = _sessionTokenWrite;
         if (writing != null) await _safe<void>(writing);
-        await _store.clearToken();
+        // A renewable session is also ended on the server, best effort.
+        await _sessions.signOut();
       } catch (_) {
         errorMessage =
             'La session enregistrée n’a pas pu être effacée. Réessayez la déconnexion du compte.';
@@ -7334,6 +7364,7 @@ class AppController extends ChangeNotifier {
     diagnostics.dispose();
     updates.removeListener(_onUpdateChanged);
     updates.dispose();
+    _sessions.close();
     _api.close();
     _invalidateConnectionOperation(state: VpnStatus.disconnected);
     _tunnelHealthTimer?.cancel();

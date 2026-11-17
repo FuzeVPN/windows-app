@@ -734,6 +734,133 @@ class AuthSession {
   }
 }
 
+bool _isSessionToken(Object? value) =>
+    value is String &&
+    RegExp(r'^[\x21-\x7e]{1,8192}$').stringMatch(value) == value;
+
+DateTime? _sessionDate(Object? value) {
+  if (value is! String || value.length > 64) return null;
+  final date = DateTime.tryParse(value);
+  // Only a date with its zone is an API UTC instant.
+  return date != null && date.isUtc ? date : null;
+}
+
+/// The token pair of a renewable session and the API's UTC expiries, as the
+/// upgrade and refresh routes return them.
+class SessionTokens {
+  const SessionTokens({
+    required this.accessToken,
+    required this.expiresAt,
+    required this.refreshToken,
+    required this.refreshExpiresAt,
+  });
+
+  final String accessToken;
+  final DateTime expiresAt;
+  final String refreshToken;
+  final DateTime refreshExpiresAt;
+
+  factory SessionTokens.fromJson(Map<String, dynamic> json) {
+    final accessToken = json['access_token'];
+    final refreshToken = json['refresh_token'];
+    final expiresAt = _sessionDate(json['expires_at']);
+    final refreshExpiresAt = _sessionDate(json['refresh_expires_at']);
+    if (!_isSessionToken(accessToken) ||
+        !_isSessionToken(refreshToken) ||
+        expiresAt == null ||
+        refreshExpiresAt == null) {
+      // Never repeats a value.
+      throw const FormatException('Session renouvelable invalide.');
+    }
+    return SessionTokens(
+      accessToken: accessToken as String,
+      expiresAt: expiresAt,
+      refreshToken: refreshToken as String,
+      refreshExpiresAt: refreshExpiresAt,
+    );
+  }
+
+  Map<String, String> toJson() => {
+    'access_token': accessToken,
+    'expires_at': expiresAt.toUtc().toIso8601String(),
+    'refresh_token': refreshToken,
+    'refresh_expires_at': refreshExpiresAt.toUtc().toIso8601String(),
+  };
+}
+
+/// A conversion ([upgrade]) or renewal that may have reached the server
+/// without its answer. It is only ever sent again as it is: same route,
+/// same presented [token], same [requestId].
+class PendingSessionRequest {
+  const PendingSessionRequest({
+    required this.upgrade,
+    required this.token,
+    required this.requestId,
+  });
+
+  final bool upgrade;
+  final String token;
+  final String requestId;
+}
+
+/// The stored renewable session with its pending request, in one record so
+/// that a single replacement stores a new pair and drops the request it
+/// answers. [tokens] is null only while the first conversion is pending,
+/// when the classic token is still the access token.
+class RenewableSession {
+  const RenewableSession({this.tokens, this.pending})
+    : assert(tokens != null || pending != null);
+
+  final SessionTokens? tokens;
+  final PendingSessionRequest? pending;
+
+  String get accessToken => tokens?.accessToken ?? pending!.token;
+
+  String encode() => jsonEncode({
+    'version': 1,
+    ...?tokens?.toJson(),
+    if (pending case final pending?)
+      'pending': {
+        'route': pending.upgrade ? 'upgrade' : 'refresh',
+        'token': pending.token,
+        'request_id': pending.requestId,
+      },
+  });
+
+  factory RenewableSession.decode(String value) {
+    try {
+      final json = jsonDecode(value) as Map<String, dynamic>;
+      final stored = json['pending'] as Map<String, dynamic>?;
+      final pending = stored == null
+          ? null
+          : PendingSessionRequest(
+              upgrade: switch (stored['route']) {
+                'upgrade' => true,
+                'refresh' => false,
+                _ => throw const FormatException(),
+              },
+              token: stored['token'] as String,
+              requestId: stored['request_id'] as String,
+            );
+      final tokens = json.containsKey('access_token')
+          ? SessionTokens.fromJson(json)
+          : null;
+      if (json['version'] == 1 &&
+          (tokens != null || pending?.upgrade == true) &&
+          (pending == null ||
+              (_isSessionToken(pending.token) &&
+                  RegExp(
+                    r'^[A-Za-z0-9_-]{43}$',
+                  ).hasMatch(pending.requestId)))) {
+        return RenewableSession(tokens: tokens, pending: pending);
+      }
+    } catch (_) {
+      // Falls through: the error never repeats the stored value.
+    }
+    throw const FormatException('Session enregistrée illisible.');
+  }
+}
+
 class UserProfile {
   const UserProfile({
     required this.userId,

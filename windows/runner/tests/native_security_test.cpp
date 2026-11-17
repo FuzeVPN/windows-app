@@ -361,6 +361,7 @@ void HandleOpenVpnPrivilegedCall(
   if (test_openvpn_exception == 2) throw 17;
   result->Success(flutter::EncodableValue(false));
 }
+bool TestProtectedStoreAllowedKeys();
 bool TestProtectedStoreTokenRouting();
 bool TestProtectedDiagnosticRouting();
 bool TestProtectedStoreReadFailures();
@@ -1526,6 +1527,8 @@ int main() {
   TestWireGuardCandidates();
   TestWireGuardHandshakeWait();
   TestNativeDiagnosticIdentifiers();
+  Check(TestProtectedStoreAllowedKeys(),
+        "the protected-store channel accepts the renewable session record and no other new key");
   Check(TestProtectedStoreTokenRouting(),
         "protected storage explicitly routes and restores the user's folder token");
   Check(TestProtectedDiagnosticRouting(),

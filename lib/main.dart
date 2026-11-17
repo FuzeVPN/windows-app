@@ -58,6 +58,11 @@ class _FuzeVpnAppState extends State<FuzeVpnApp> with WidgetsBindingObserver {
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) _controller.renewSessionIfDue();
+  }
+
+  @override
   void didChangeLocales(List<Locale>? locales) {
     if (_controller.language == AppLanguage.system) setState(() {});
   }

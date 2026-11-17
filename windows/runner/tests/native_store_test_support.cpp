@@ -482,6 +482,16 @@ bool TestProtectedStoreWriteFailures() {
   return passed;
 }
 
+// The Flutter channel accepts only its fixed key list. The renewable session
+// is one record so that a single replacement stores the new pair and drops
+// the pending request.
+bool TestProtectedStoreAllowedKeys() {
+  return IsAllowedKey("access_token") && IsAllowedKey("renewable_session") &&
+         IsAllowedKey("location_migration_state") &&
+         !IsAllowedKey("refresh_token") && !IsAllowedKey("renewable_session_") &&
+         !IsAllowedKey("wireguard_private_key") && !IsAllowedKey("");
+}
+
 bool TestProtectedStoreTokenRouting() {
   const auto first = reinterpret_cast<HANDLE>(static_cast<ULONG_PTR>(101));
   const auto second = reinterpret_cast<HANDLE>(static_cast<ULONG_PTR>(102));

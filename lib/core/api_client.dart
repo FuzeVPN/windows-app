@@ -340,6 +340,10 @@ class ApiClient {
   Stopwatch? _addressAge;
   int _addressGeneration = 0;
   final Duration Function()? windowsUpdateClock;
+
+  /// Asked once when an authenticated request is answered 401 unauthorized:
+  /// a token it returns is used for a single retry of that request.
+  Future<String?> Function(String rejectedToken)? retryTokenAfterUnauthorized;
   final Stopwatch _windowsUpdateLifetime = Stopwatch()..start();
   final _windowsUpdateCaches = <String, _WindowsUpdateCache>{};
 
@@ -1011,6 +1015,49 @@ class ApiClient {
           .contains('no-store') ??
       false;
 
+  /// Converts a classic session ([upgrade], with its access token) or renews
+  /// a renewable one (with its refresh token). Every retry of one operation
+  /// sends the same [requestId].
+  Future<SessionTokens> rotateSession({
+    required bool upgrade,
+    required String token,
+    required String requestId,
+  }) async {
+    final response = await _request(
+      'POST',
+      upgrade ? '/v1/auth/session/upgrade' : '/v1/auth/session/refresh',
+      token: token,
+      body: {'request_id': requestId},
+      retryUnauthorized: false,
+    );
+    try {
+      return SessionTokens.fromJson(await _readJsonObject(response));
+    } on FormatException {
+      throw ApiException(
+        statusCode: HttpStatus.badGateway,
+        errorCode: 'invalid_api_response',
+        observedHttpStatus: response.statusCode,
+      );
+    } on TypeError {
+      throw ApiException(
+        statusCode: HttpStatus.badGateway,
+        errorCode: 'invalid_api_response',
+        observedHttpStatus: response.statusCode,
+      );
+    }
+  }
+
+  /// Ends a renewable session with its refresh token: no body, idempotent.
+  Future<void> logout(String refreshToken) async {
+    final response = await _request(
+      'POST',
+      '/v1/auth/logout',
+      token: refreshToken,
+      retryUnauthorized: false,
+    );
+    await _readResponseBody(response);
+  }
+
   Future<UserProfile> me(String token) async {
     final response = await _request('GET', '/v1/me', token: token);
     final body = await _readJsonObject(response);
@@ -1081,6 +1128,7 @@ class ApiClient {
     String cacheControl = 'no-store',
     String? ifNoneMatch,
     bool allowNotModified = false,
+    bool retryUnauthorized = true,
   }) {
     final traceId = DiagnosticLog.nextRequestId();
     final timer = Stopwatch()..start();
@@ -1106,18 +1154,35 @@ class ApiClient {
         stage: 'request',
         requestId: traceId,
       );
+      Future<HttpClientResponse> send(String? bearer) => _requestImpl(
+        method,
+        path,
+        token: bearer,
+        body: body,
+        bodyBytes: bodyBytes,
+        cancellation: cancellation,
+        cacheControl: cacheControl,
+        ifNoneMatch: ifNoneMatch,
+        allowNotModified: allowNotModified,
+      );
       try {
-        final response = await _requestImpl(
-          method,
-          path,
-          token: token,
-          body: body,
-          bodyBytes: bodyBytes,
-          cancellation: cancellation,
-          cacheControl: cacheControl,
-          ifNoneMatch: ifNoneMatch,
-          allowNotModified: allowNotModified,
-        );
+        HttpClientResponse response;
+        try {
+          response = await send(token);
+        } on ApiException catch (error) {
+          final retryToken = retryUnauthorized
+              ? retryTokenAfterUnauthorized
+              : null;
+          final retry =
+              token != null &&
+                  retryToken != null &&
+                  error.isUnauthorized &&
+                  error.observedHttpStatus == HttpStatus.unauthorized
+              ? await retryToken(token)
+              : null;
+          if (retry == null) rethrow;
+          response = await send(retry);
+        }
         DiagnosticLog.record(
           area: 'api_request',
           event: 'headers_completed',
