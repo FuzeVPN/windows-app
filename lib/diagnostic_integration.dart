@@ -608,7 +608,7 @@ extension AppDiagnostics on AppController {
               profile?.userId != account) {
             return null;
           }
-          final token = await _store.token();
+          final token = await _accessToken();
           return _disposed ||
                   _isSigningOut ||
                   epoch != _sessionEpoch ||

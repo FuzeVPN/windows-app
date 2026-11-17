@@ -75,6 +75,7 @@ class SecuritySettings {
 
 class SecureStore {
   static const _token = 'access_token';
+  static const _renewableSession = 'renewable_session';
   static const _selectedLocation = 'selected_location';
   static const _themeMode = 'theme_mode';
   static const _vpnProtocol = 'vpn_protocol';
@@ -103,9 +104,34 @@ class SecureStore {
   static const _channel = MethodChannel('com.fuzevpn/windows_secure_store');
   // Serializes the record's read-modify-write updates.
   Future<void> _migrationStateUpdates = Future.value();
-  Future<String?> token() => _read(_token);
-  Future<void> saveToken(String value) => _write(_token, value);
-  Future<void> clearToken() => _delete(_token);
+
+  /// The renewable session's access token when one is stored, else the
+  /// classic session token.
+  Future<String?> token() async =>
+      (await renewableSession())?.accessToken ?? await _read(_token);
+
+  /// Stores a classic session, which replaces any renewable one.
+  Future<void> saveToken(String value) async {
+    await _delete(_renewableSession);
+    await _write(_token, value);
+  }
+
+  Future<void> clearToken() async {
+    await _delete(_renewableSession);
+    await _delete(_token);
+  }
+
+  Future<RenewableSession?> renewableSession() async {
+    final value = await _read(_renewableSession);
+    return value == null ? null : RenewableSession.decode(value);
+  }
+
+  /// One atomic replacement of the record (see secure_store_channel.cpp).
+  Future<void> saveRenewableSession(RenewableSession value) =>
+      _write(_renewableSession, value.encode());
+
+  /// Returns to the classic session, whose token stays stored.
+  Future<void> clearRenewableSession() => _delete(_renewableSession);
   Future<String?> selectedLocation() => _read(_selectedLocation);
   Future<void> saveSelectedLocation(String value) =>
       _write(_selectedLocation, value);

@@ -91,7 +91,8 @@ bool RetryTransient(const Operation& operation, DWORD* error, int* attempts) {
 }
 
 bool IsAllowedKey(const std::string& key) {
-  return key == "access_token" || key == "selected_location" ||
+  return key == "access_token" || key == "renewable_session" ||
+         key == "selected_location" ||
          key == "theme_mode" || key == "vpn_protocol" ||
          key == "app_language" || key == "kill_switch" ||
          key == "dns_protection" || key == "ipv6_protection" ||
