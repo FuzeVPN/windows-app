@@ -618,5 +618,6 @@
   "Copier": "คัดลอก",
   "Envoyer": "ส่ง",
   "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "รวบรวมการวินิจฉัยทั้งหมดบนอุปกรณ์นี้แล้ว คุณสามารถคัดลอกหรือส่งให้ฝ่ายสนับสนุนได้",
-  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "ปุ่มการวินิจฉัยรวบรวมผลการตรวจสอบ สถานะบริการ และบันทึกทางเทคนิค หากเปิดการส่งอัตโนมัติ ข้อมูลจะถูกส่งให้ฝ่ายสนับสนุน FuzeVPN มิฉะนั้นจะส่งเมื่อคุณกด “ส่ง” เท่านั้น โดยไม่รวมข้อมูลลับและประวัติการท่องเว็บ จัดเก็บบนเซิร์ฟเวอร์เป็นเวลา 30 วัน"
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "ปุ่มการวินิจฉัยรวบรวมผลการตรวจสอบ สถานะบริการ และบันทึกทางเทคนิค หากเปิดการส่งอัตโนมัติ ข้อมูลจะถูกส่งให้ฝ่ายสนับสนุน FuzeVPN มิฉะนั้นจะส่งเมื่อคุณกด “ส่ง” เท่านั้น โดยไม่รวมข้อมูลลับและประวัติการท่องเว็บ จัดเก็บบนเซิร์ฟเวอร์เป็นเวลา 30 วัน",
+  "P2P autorisé": "อนุญาต P2P"
 }

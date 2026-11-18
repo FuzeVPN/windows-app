@@ -618,5 +618,6 @@
   "Copier": "Копиране",
   "Envoyer": "Изпращане",
   "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "Пълната диагностика е събрана на това устройство. Можете да я копирате или да я изпратите на поддръжката.",
-  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Бутонът „Диагностика“ събира проверки, състояние на услугата и технически журнали. Ако автоматичното изпращане е включено, те се изпращат на поддръжката на FuzeVPN; в противен случай – само когато натиснете „Изпращане“. Тайните и историята на сърфирането са изключени. Съхранение на сървъра: 30 дни."
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Бутонът „Диагностика“ събира проверки, състояние на услугата и технически журнали. Ако автоматичното изпращане е включено, те се изпращат на поддръжката на FuzeVPN; в противен случай – само когато натиснете „Изпращане“. Тайните и историята на сърфирането са изключени. Съхранение на сървъра: 30 дни.",
+  "P2P autorisé": "P2P е разрешен"
 }

@@ -618,5 +618,6 @@
   "Copier": "کاپی کریں",
   "Envoyer": "بھیجیں",
   "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "مکمل تشخیص اس آلے پر جمع کر لی گئی۔ آپ اسے کاپی کر سکتے ہیں یا سپورٹ کو بھیج سکتے ہیں۔",
-  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "تشخیص بٹن جانچ، سروس کی حالت اور تکنیکی لاگ جمع کرتا ہے۔ اگر خودکار بھیجنا آن ہو تو یہ FuzeVPN سپورٹ کو بھیجے جاتے ہیں؛ ورنہ صرف اس وقت جب آپ ”بھیجیں“ دبائیں۔ خفیہ معلومات اور براؤزنگ کی تاریخ شامل نہیں ہوتی۔ سرور پر رکھنے کی مدت: 30 دن۔"
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "تشخیص بٹن جانچ، سروس کی حالت اور تکنیکی لاگ جمع کرتا ہے۔ اگر خودکار بھیجنا آن ہو تو یہ FuzeVPN سپورٹ کو بھیجے جاتے ہیں؛ ورنہ صرف اس وقت جب آپ ”بھیجیں“ دبائیں۔ خفیہ معلومات اور براؤزنگ کی تاریخ شامل نہیں ہوتی۔ سرور پر رکھنے کی مدت: 30 دن۔",
+  "P2P autorisé": "P2P کی اجازت"
 }

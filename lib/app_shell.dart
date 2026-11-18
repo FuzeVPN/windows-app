@@ -866,7 +866,7 @@ class _LocationRow extends StatelessWidget {
     enabled: onTap != null,
     selected: selected,
     label:
-        '${location.displayName}, ${location.city}, ${_countryName(context, location.countryCode)}${favorite ? ', ${context.tr('Favori')}' : ''}${recent ? ', ${context.tr('Récent')}' : ''}${selected ? ', ${context.tr('Sélectionné')}' : ''}',
+        '${location.displayName}, ${location.city}, ${_countryName(context, location.countryCode)}${location.p2pAllowed ? ', ${context.tr('P2P autorisé')}' : ''}${favorite ? ', ${context.tr('Favori')}' : ''}${recent ? ', ${context.tr('Récent')}' : ''}${selected ? ', ${context.tr('Sélectionné')}' : ''}',
     child: LayoutBuilder(
       builder: (context, constraints) {
         final showRecent =
@@ -927,6 +927,11 @@ class _LocationRow extends StatelessWidget {
                       ],
                     ),
                   ),
+                  if (location.p2pAllowed)
+                    const Padding(
+                      padding: EdgeInsetsDirectional.only(start: 8, end: 8),
+                      child: _P2pBadge(),
+                    ),
                   if (showRecent)
                     Padding(
                       padding: const EdgeInsetsDirectional.only(end: 8),
@@ -985,6 +990,39 @@ class _LocationTag extends StatelessWidget {
       ),
     ],
   );
+}
+
+/// Gold outline marking a server where P2P (torrent) traffic is allowed. The
+/// row's semantic label already says so; the tooltip explains it on hover.
+class _P2pBadge extends StatelessWidget {
+  const _P2pBadge();
+
+  @override
+  Widget build(BuildContext context) {
+    final gold = AppTheme.premiumFor(context);
+    return Tooltip(
+      message: context.tr('P2P autorisé'),
+      excludeFromSemantics: true,
+      child: ExcludeSemantics(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+          decoration: BoxDecoration(
+            color: gold.withValues(alpha: 0.08),
+            border: Border.all(color: gold, width: 1.2),
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: Text(
+            'P2P',
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: gold,
+              fontWeight: FontWeight.w800,
+              letterSpacing: AppTheme.tracking(context, 0.6),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 Future<void> _requestLocationChange(

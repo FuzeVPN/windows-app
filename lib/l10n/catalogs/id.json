@@ -618,5 +618,6 @@
   "Copier": "Salin",
   "Envoyer": "Kirim",
   "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "Diagnostik lengkap dikumpulkan di perangkat ini. Anda dapat menyalinnya atau mengirimkannya ke dukungan.",
-  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Tombol Diagnostik mengumpulkan pemeriksaan, status layanan, dan log teknis. Jika pengiriman otomatis aktif, semuanya dikirim ke dukungan FuzeVPN; jika tidak, hanya saat Anda menekan “Kirim”. Rahasia dan riwayat penelusuran tidak disertakan. Penyimpanan di server: 30 hari."
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Tombol Diagnostik mengumpulkan pemeriksaan, status layanan, dan log teknis. Jika pengiriman otomatis aktif, semuanya dikirim ke dukungan FuzeVPN; jika tidak, hanya saat Anda menekan “Kirim”. Rahasia dan riwayat penelusuran tidak disertakan. Penyimpanan di server: 30 hari.",
+  "P2P autorisé": "P2P diizinkan"
 }

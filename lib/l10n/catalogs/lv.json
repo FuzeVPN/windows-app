@@ -618,5 +618,6 @@
   "Copier": "Kopēt",
   "Envoyer": "Nosūtīt",
   "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "Pilna diagnostika apkopota šajā ierīcē. Varat to kopēt vai nosūtīt atbalsta dienestam.",
-  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Diagnostikas poga apkopo pārbaužu rezultātus, pakalpojuma statusu un tehniskos žurnālus. Ja automātiskā nosūtīšana ir ieslēgta, tie tiek nosūtīti FuzeVPN atbalsta dienestam; pretējā gadījumā – tikai tad, kad nospiežat “Nosūtīt”. Noslēpumi un pārlūkošanas vēsture nav iekļauti. Glabāšana serverī: 30 dienas."
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Diagnostikas poga apkopo pārbaužu rezultātus, pakalpojuma statusu un tehniskos žurnālus. Ja automātiskā nosūtīšana ir ieslēgta, tie tiek nosūtīti FuzeVPN atbalsta dienestam; pretējā gadījumā – tikai tad, kad nospiežat “Nosūtīt”. Noslēpumi un pārlūkošanas vēsture nav iekļauti. Glabāšana serverī: 30 dienas.",
+  "P2P autorisé": "P2P atļauts"
 }

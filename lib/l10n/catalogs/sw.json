@@ -618,5 +618,6 @@
   "Copier": "Nakili",
   "Envoyer": "Tuma",
   "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "Uchunguzi kamili umekusanywa kwenye kifaa hiki. Unaweza kuunakili au kuutuma kwa msaada.",
-  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Kitufe cha Uchunguzi hukusanya ukaguzi, hali ya huduma na kumbukumbu za kiufundi. Ikiwa utumaji kiotomatiki umewashwa, hutumwa kwa msaada wa FuzeVPN; vinginevyo, ni pale tu unapobofya “Tuma”. Siri na historia ya kuvinjari hazijumuishwi. Huhifadhiwa kwenye seva kwa siku 30."
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Kitufe cha Uchunguzi hukusanya ukaguzi, hali ya huduma na kumbukumbu za kiufundi. Ikiwa utumaji kiotomatiki umewashwa, hutumwa kwa msaada wa FuzeVPN; vinginevyo, ni pale tu unapobofya “Tuma”. Siri na historia ya kuvinjari hazijumuishwi. Huhifadhiwa kwenye seva kwa siku 30.",
+  "P2P autorisé": "P2P inaruhusiwa"
 }

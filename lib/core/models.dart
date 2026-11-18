@@ -247,6 +247,7 @@ class Location {
     required this.displayName,
     this.supportedProtocols = const {VpnProtocol.wireGuard},
     this.supportedIpFamilies = const {IpFamily.ipv4},
+    this.p2pAllowed = false,
   });
   final String id;
   final String city;
@@ -254,6 +255,10 @@ class Location {
   final String displayName;
   final Set<VpnProtocol> supportedProtocols;
   final Set<IpFamily> supportedIpFamilies;
+
+  /// The owner allows P2P (torrent) traffic on this node. The API sends
+  /// `p2p_allowed`; absent or anything but `true` means blocked.
+  final bool p2pAllowed;
 
   bool get supportsIpv6 => supportedIpFamilies.contains(IpFamily.ipv6);
 
@@ -277,6 +282,7 @@ class Location {
           ? const {VpnProtocol.wireGuard}
           : protocols,
       supportedIpFamilies: families.isEmpty ? const {IpFamily.ipv4} : families,
+      p2pAllowed: json['p2p_allowed'] == true,
     );
   }
 }

@@ -618,5 +618,6 @@
   "Copier": "Nuqul ka samee",
   "Envoyer": "Dir",
   "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "Ogaanshaha dhammaystiran waxaa lagu ururiyay qalabkan. Waad nuqul ka samayn kartaa ama u diri kartaa taageerada.",
-  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Badhanka Ogaanshuhu wuxuu ururiyaa hubinnada, xaaladda adeegga iyo diiwaannada farsamada. Haddii dirista tooska ahi shidan tahay, waxaa loo diraa taageerada FuzeVPN; haddii kale, kaliya marka aad riixdo “Dir”. Siro iyo taariikhda daalacashada kuma jiraan. Server-ka waxaa lagu hayaa 30 maalmood."
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Badhanka Ogaanshuhu wuxuu ururiyaa hubinnada, xaaladda adeegga iyo diiwaannada farsamada. Haddii dirista tooska ahi shidan tahay, waxaa loo diraa taageerada FuzeVPN; haddii kale, kaliya marka aad riixdo “Dir”. Siro iyo taariikhda daalacashada kuma jiraan. Server-ka waxaa lagu hayaa 30 maalmood.",
+  "P2P autorisé": "P2P waa la oggol yahay"
 }

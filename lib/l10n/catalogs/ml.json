@@ -618,5 +618,6 @@
   "Copier": "പകർത്തുക",
   "Envoyer": "അയയ്ക്കുക",
   "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "പൂർണ്ണ പരിശോധന ഈ ഉപകരണത്തിൽ ശേഖരിച്ചു. നിങ്ങൾക്ക് അത് പകർത്താനോ പിന്തുണയ്ക്ക് അയയ്ക്കാനോ കഴിയും.",
-  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "പരിശോധന ബട്ടൺ പരിശോധനകളും സേവന നിലയും സാങ്കേതിക ലോഗുകളും ശേഖരിക്കുന്നു. സ്വയമേവ അയയ്ക്കൽ ഓണാണെങ്കിൽ, അവ FuzeVPN പിന്തുണയ്ക്ക് അയയ്ക്കും; അല്ലെങ്കിൽ, നിങ്ങൾ “അയയ്ക്കുക” അമർത്തുമ്പോൾ മാത്രം. രഹസ്യങ്ങളും ബ്രൗസിംഗ് ചരിത്രവും ഉൾപ്പെടുത്തില്ല. സെർവറിൽ സൂക്ഷിക്കുന്ന കാലാവധി: 30 ദിവസം."
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "പരിശോധന ബട്ടൺ പരിശോധനകളും സേവന നിലയും സാങ്കേതിക ലോഗുകളും ശേഖരിക്കുന്നു. സ്വയമേവ അയയ്ക്കൽ ഓണാണെങ്കിൽ, അവ FuzeVPN പിന്തുണയ്ക്ക് അയയ്ക്കും; അല്ലെങ്കിൽ, നിങ്ങൾ “അയയ്ക്കുക” അമർത്തുമ്പോൾ മാത്രം. രഹസ്യങ്ങളും ബ്രൗസിംഗ് ചരിത്രവും ഉൾപ്പെടുത്തില്ല. സെർവറിൽ സൂക്ഷിക്കുന്ന കാലാവധി: 30 ദിവസം.",
+  "P2P autorisé": "P2P അനുവദനീയം"
 }

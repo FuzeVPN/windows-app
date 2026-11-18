@@ -618,5 +618,6 @@
   "Copier": "कॉपी करें",
   "Envoyer": "भेजें",
   "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "पूरा निदान इस डिवाइस पर एकत्र किया गया। आप इसे कॉपी कर सकते हैं या सहायता को भेज सकते हैं।",
-  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "निदान बटन जाँच, सेवा की स्थिति और तकनीकी लॉग एकत्र करता है। स्वचालित भेजना चालू होने पर ये FuzeVPN सहायता को भेजे जाते हैं; अन्यथा केवल तब, जब आप “भेजें” दबाते हैं। गोपनीय जानकारी और ब्राउज़िंग इतिहास शामिल नहीं होते। सर्वर पर प्रतिधारण: 30 दिन।"
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "निदान बटन जाँच, सेवा की स्थिति और तकनीकी लॉग एकत्र करता है। स्वचालित भेजना चालू होने पर ये FuzeVPN सहायता को भेजे जाते हैं; अन्यथा केवल तब, जब आप “भेजें” दबाते हैं। गोपनीय जानकारी और ब्राउज़िंग इतिहास शामिल नहीं होते। सर्वर पर प्रतिधारण: 30 दिन।",
+  "P2P autorisé": "P2P की अनुमति"
 }

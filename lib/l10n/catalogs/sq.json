@@ -618,5 +618,6 @@
   "Copier": "Kopjo",
   "Envoyer": "Dërgo",
   "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "Diagnostikimi i plotë u mblodh në këtë pajisje. Mund ta kopjoni ose ta dërgoni te mbështetja.",
-  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Butoni i diagnostikimit mbledh kontrollet, gjendjen e shërbimit dhe regjistrat teknikë. Nëse dërgimi automatik është aktiv, ato dërgohen te mbështetja FuzeVPN; përndryshe, vetëm kur shtypni «Dërgo». Sekretet dhe historia e shfletimit përjashtohen. Ruajtja në server: 30 ditë."
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Butoni i diagnostikimit mbledh kontrollet, gjendjen e shërbimit dhe regjistrat teknikë. Nëse dërgimi automatik është aktiv, ato dërgohen te mbështetja FuzeVPN; përndryshe, vetëm kur shtypni «Dërgo». Sekretet dhe historia e shfletimit përjashtohen. Ruajtja në server: 30 ditë.",
+  "P2P autorisé": "P2P i lejuar"
 }

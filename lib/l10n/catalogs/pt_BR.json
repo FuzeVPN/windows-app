@@ -618,5 +618,6 @@
   "Copier": "Copiar",
   "Envoyer": "Enviar",
   "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "Diagnóstico completo coletado neste dispositivo. Você pode copiá-lo ou enviá-lo ao suporte.",
-  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "O botão Diagnóstico coleta as verificações, o estado do serviço e os registros técnicos. Se o envio automático estiver ativado, eles são enviados ao suporte da FuzeVPN; caso contrário, somente quando você clicar em “Enviar”. Segredos e histórico de navegação são excluídos. Retenção no servidor: 30 dias."
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "O botão Diagnóstico coleta as verificações, o estado do serviço e os registros técnicos. Se o envio automático estiver ativado, eles são enviados ao suporte da FuzeVPN; caso contrário, somente quando você clicar em “Enviar”. Segredos e histórico de navegação são excluídos. Retenção no servidor: 30 dias.",
+  "P2P autorisé": "P2P permitido"
 }

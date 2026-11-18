@@ -618,5 +618,6 @@
   "Copier": "Detuo",
   "Envoyer": "Ziga",
   "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "Anakọtara nchọpụta nsogbu zuru oke na ngwaọrụ a. Ị nwere ike idetuo ya ma ọ bụ ziga ya na enyemaka.",
-  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Bọtịnụ Nchọpụta nsogbu na-anakọta nlele, ọnọdụ ọrụ na ndekọ teknụzụ. Ọ bụrụ na ịziga na-akpaghị aka gbanyere, a na-eziga ha na enyemaka FuzeVPN; ma ọ bụghị ya, naanị mgbe ị pịrị “Ziga”. A naghị etinye ihe nzuzo na akụkọ nchọgharị. Nchekwa na ihe nkesa: ụbọchị 30."
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Bọtịnụ Nchọpụta nsogbu na-anakọta nlele, ọnọdụ ọrụ na ndekọ teknụzụ. Ọ bụrụ na ịziga na-akpaghị aka gbanyere, a na-eziga ha na enyemaka FuzeVPN; ma ọ bụghị ya, naanị mgbe ị pịrị “Ziga”. A naghị etinye ihe nzuzo na akụkọ nchọgharị. Nchekwa na ihe nkesa: ụbọchị 30.",
+  "P2P autorisé": "Ekwere P2P"
 }

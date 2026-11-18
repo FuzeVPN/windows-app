@@ -618,5 +618,6 @@
   "Copier": "Salin",
   "Envoyer": "Hantar",
   "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "Diagnostik lengkap dikumpulkan pada peranti ini. Anda boleh menyalinnya atau menghantarnya kepada sokongan.",
-  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Butang Diagnostik mengumpulkan semakan, status perkhidmatan dan log teknikal. Jika penghantaran automatik dihidupkan, semuanya dihantar kepada sokongan FuzeVPN; jika tidak, hanya apabila anda menekan “Hantar”. Maklumat rahsia dan sejarah pelayaran dikecualikan. Penyimpanan pada pelayan: 30 hari."
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Butang Diagnostik mengumpulkan semakan, status perkhidmatan dan log teknikal. Jika penghantaran automatik dihidupkan, semuanya dihantar kepada sokongan FuzeVPN; jika tidak, hanya apabila anda menekan “Hantar”. Maklumat rahsia dan sejarah pelayaran dikecualikan. Penyimpanan pada pelayan: 30 hari.",
+  "P2P autorisé": "P2P dibenarkan"
 }

@@ -618,5 +618,6 @@
   "Copier": "Nusxalash",
   "Envoyer": "Yuborish",
   "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "To‘liq diagnostika shu qurilmada to‘plandi. Uni nusxalashingiz yoki yordam xizmatiga yuborishingiz mumkin.",
-  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Diagnostika tugmasi tekshiruvlar, xizmat holati va texnik jurnallarni to‘playdi. Avtomatik yuborish yoqilgan bo‘lsa, ular FuzeVPN yordam xizmatiga yuboriladi; aks holda faqat “Yuborish” tugmasini bosganingizda. Maxfiy ma’lumotlar va ko‘rish tarixi kiritilmaydi. Serverda saqlash muddati: 30 kun."
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Diagnostika tugmasi tekshiruvlar, xizmat holati va texnik jurnallarni to‘playdi. Avtomatik yuborish yoqilgan bo‘lsa, ular FuzeVPN yordam xizmatiga yuboriladi; aks holda faqat “Yuborish” tugmasini bosganingizda. Maxfiy ma’lumotlar va ko‘rish tarixi kiritilmaydi. Serverda saqlash muddati: 30 kun.",
+  "P2P autorisé": "P2P ruxsat etilgan"
 }

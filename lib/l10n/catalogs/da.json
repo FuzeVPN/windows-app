@@ -618,5 +618,6 @@
   "Copier": "Kopiér",
   "Envoyer": "Send",
   "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "Fuld diagnostik indsamlet på denne enhed. Du kan kopiere den eller sende den til supporten.",
-  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Knappen Diagnostik indsamler kontroller, tjenestens status og tekniske logfiler. Hvis automatisk afsendelse er slået til, sendes de til FuzeVPN-supporten, ellers kun når du klikker på »Send«. Hemmeligheder og browserhistorik medtages ikke. Opbevaring på serveren: 30 dage."
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Knappen Diagnostik indsamler kontroller, tjenestens status og tekniske logfiler. Hvis automatisk afsendelse er slået til, sendes de til FuzeVPN-supporten, ellers kun når du klikker på »Send«. Hemmeligheder og browserhistorik medtages ikke. Opbevaring på serveren: 30 dage.",
+  "P2P autorisé": "P2P tilladt"
 }

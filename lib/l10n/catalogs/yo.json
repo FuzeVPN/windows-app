@@ -618,5 +618,6 @@
   "Copier": "Da kọ",
   "Envoyer": "Fi ránṣẹ́",
   "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "A ti kó àyẹ̀wò pípé jọ lórí ẹ̀rọ yìí. O lè da á kọ tàbí fi ránṣẹ́ sí ìtìlẹ́yìn.",
-  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Bọ́tìnnì Àyẹ̀wò ń kó àwọn àyẹ̀wò, ipò iṣẹ́ àti àkọsílẹ̀ ìmọ̀ ẹ̀rọ jọ. Bí fífiránṣẹ́ láìfọwọ́ṣe bá wà ní títàn, a ó fi wọ́n ránṣẹ́ sí ìtìlẹ́yìn FuzeVPN; bí bẹ́ẹ̀ kọ́, nígbà tí o bá tẹ “Fi ránṣẹ́” nìkan. A kò fi àwọn àṣírí àti ìtàn ìṣàwárí kún un. Ìpamọ́ olupèsè: ọjọ́ 30."
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Bọ́tìnnì Àyẹ̀wò ń kó àwọn àyẹ̀wò, ipò iṣẹ́ àti àkọsílẹ̀ ìmọ̀ ẹ̀rọ jọ. Bí fífiránṣẹ́ láìfọwọ́ṣe bá wà ní títàn, a ó fi wọ́n ránṣẹ́ sí ìtìlẹ́yìn FuzeVPN; bí bẹ́ẹ̀ kọ́, nígbà tí o bá tẹ “Fi ránṣẹ́” nìkan. A kò fi àwọn àṣírí àti ìtàn ìṣàwárí kún un. Ìpamọ́ olupèsè: ọjọ́ 30.",
+  "P2P autorisé": "A gba P2P láàyè"
 }

@@ -15,6 +15,8 @@ class _LocationsPageState extends State<_LocationsPage> {
   final _scrollController = ScrollController();
   String _query = '';
   bool _favoritesOnly = false;
+  // Combined with the favorites filter: both on shows P2P favorites.
+  bool _p2pOnly = false;
   String? _countryCode;
   String? _city;
 
@@ -140,14 +142,16 @@ class _LocationsPageState extends State<_LocationsPage> {
         .firstOrNull;
     final query = _query.trim().toLowerCase();
     final searching = query.isNotEmpty;
-    final filtering = searching || _favoritesOnly;
+    final filtering = searching || _favoritesOnly || _p2pOnly;
     final favoriteCount = ordered.where(controller.isFavoriteLocation).length;
+    final p2pCount = ordered.where((location) => location.p2pAllowed).length;
     final matches = filtering
         ? ordered
               .where(
                 (location) =>
                     (!_favoritesOnly ||
                         controller.isFavoriteLocation(location)) &&
+                    (!_p2pOnly || location.p2pAllowed) &&
                     (location.displayName.toLowerCase().contains(query) ||
                         location.city.toLowerCase().contains(query) ||
                         location.countryCode.toLowerCase().contains(query) ||
@@ -313,6 +317,25 @@ class _LocationsPageState extends State<_LocationsPage> {
                           _scrollToTop();
                         },
                       );
+                      final gold = AppTheme.premiumFor(context);
+                      final p2pFilter = FilterChip(
+                        key: const ValueKey('location-filter-p2p'),
+                        selected: _p2pOnly,
+                        showCheckmark: false,
+                        tooltip: context.tr('P2P autorisé'),
+                        side: BorderSide(
+                          color: _p2pOnly ? gold : scheme.outlineVariant,
+                        ),
+                        avatar: Icon(Icons.swap_vert, size: 18, color: gold),
+                        label: Text(
+                          'P2P · $p2pCount',
+                          style: theme.textTheme.labelLarge,
+                        ),
+                        onSelected: (selected) {
+                          setState(() => _p2pOnly = selected);
+                          _scrollToTop();
+                        },
+                      );
                       final inline =
                           constraints.maxWidth >= 640 &&
                           MediaQuery.textScalerOf(context).scale(14) <= 18;
@@ -322,6 +345,8 @@ class _LocationsPageState extends State<_LocationsPage> {
                                 Expanded(child: search),
                                 const SizedBox(width: 16),
                                 favoriteFilter,
+                                const SizedBox(width: 8),
+                                p2pFilter,
                               ],
                             )
                           : Column(
@@ -329,7 +354,11 @@ class _LocationsPageState extends State<_LocationsPage> {
                               children: [
                                 search,
                                 const SizedBox(height: 8),
-                                Wrap(children: [favoriteFilter]),
+                                Wrap(
+                                  spacing: 8,
+                                  runSpacing: 8,
+                                  children: [favoriteFilter, p2pFilter],
+                                ),
                               ],
                             );
                     },

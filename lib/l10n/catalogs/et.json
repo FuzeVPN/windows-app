@@ -618,5 +618,6 @@
   "Copier": "Kopeeri",
   "Envoyer": "Saada",
   "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "Täielik diagnostika koguti selles seadmes. Saate selle kopeerida või kasutajatoele saata.",
-  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Diagnostika nupp kogub kontrollid, teenuse oleku ja tehnilised logid. Kui automaatne saatmine on sisse lülitatud, saadetakse need FuzeVPN-i kasutajatoele; muul juhul ainult siis, kui vajutate „Saada“. Saladused ja sirvimisajalugu jäetakse välja. Säilitamine serveris: 30 päeva."
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Diagnostika nupp kogub kontrollid, teenuse oleku ja tehnilised logid. Kui automaatne saatmine on sisse lülitatud, saadetakse need FuzeVPN-i kasutajatoele; muul juhul ainult siis, kui vajutate „Saada“. Saladused ja sirvimisajalugu jäetakse välja. Säilitamine serveris: 30 päeva.",
+  "P2P autorisé": "P2P lubatud"
 }
