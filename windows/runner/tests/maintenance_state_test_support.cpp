@@ -158,6 +158,30 @@ BOOL WINAPI MaintenanceConfig2(SC_HANDLE, DWORD, LPVOID) {
   if (config_denied) { SetLastError(ERROR_ACCESS_DENIED); return FALSE; }
   return TRUE;
 }
+unsigned security_calls = 0;
+bool security_denied = false;
+bool security_grants_user_start = false;
+BOOL WINAPI MaintenanceSetSecurity(SC_HANDLE, SECURITY_INFORMATION information,
+                                   PSECURITY_DESCRIPTOR descriptor) {
+  ++security_calls;
+  security_grants_user_start = false;
+  BOOL present = FALSE, defaulted = FALSE;
+  PACL dacl = nullptr;
+  if (information == DACL_SECURITY_INFORMATION &&
+      GetSecurityDescriptorDacl(descriptor, &present, &dacl, &defaulted) && present && dacl) {
+    for (DWORD i = 0; i < dacl->AceCount; ++i) {
+      void* raw = nullptr;
+      if (!GetAce(dacl, i, &raw)) continue;
+      const auto* ace = static_cast<ACCESS_ALLOWED_ACE*>(raw);
+      if (ace->Header.AceType == ACCESS_ALLOWED_ACE_TYPE &&
+          IsWellKnownSid(const_cast<DWORD*>(&ace->SidStart), WinBuiltinUsersSid) &&
+          (ace->Mask & SERVICE_START) != 0 && (ace->Mask & (SERVICE_STOP | WRITE_DAC)) == 0)
+        security_grants_user_start = true;
+    }
+  }
+  if (security_denied) { SetLastError(ERROR_ACCESS_DENIED); return FALSE; }
+  return TRUE;
+}
 BOOL WINAPI MaintenanceStart(SC_HANDLE, DWORD, LPCWSTR*) {
   ++start_calls;
   if (replace_gate_during_start) { gate_exists = true; gate_token = other_token; }
@@ -213,6 +237,7 @@ void ResetMaintenance() {
   replace_gate_during_start = protected_creation = false;
   fixture_start_error = ERROR_SUCCESS; start_type = SERVICE_DISABLED; clean_stop = 1;
   start_calls = disable_calls = writes = 0;
+  security_calls = 0; security_denied = security_grants_user_start = false;
   fixture_service_exists = fixture_lock_available = true;
   fixture_wireguard_running = false;
   fixture_network_error = fixture_status_error = ERROR_SUCCESS;
@@ -283,6 +308,7 @@ DWORD MaintenanceRemoveNetwork() { ++filter_cleanup_calls; return fixture_filter
 #define ChangeServiceConfigW MaintenanceConfig
 #define ChangeServiceConfig2W MaintenanceConfig2
 #define StartServiceW MaintenanceStart
+#define SetServiceObjectSecurity MaintenanceSetSecurity
 #define QueryServiceStatusEx MaintenanceStatusEx
 #define QueryServiceStatus MaintenanceStatus
 #define ControlService MaintenanceStop
@@ -314,6 +340,12 @@ bool TestMaintenanceRecovery() {
   ResetMaintenance();
   if (!VerifyMaintenance(finish() && attempted && start_calls == 1 &&
       !gate_exists && start_type == SERVICE_AUTO_START, "successful relaunch")) return false;
+  if (!VerifyMaintenance(security_calls == 1 && security_grants_user_start,
+      "commit rewrites the service ACL so users may start it, never stop or change it")) return false;
+  ResetMaintenance(); security_denied = true;
+  if (!VerifyMaintenance(finish() && attempted && start_calls == 1 && security_calls == 1 &&
+      !gate_exists && start_type == SERVICE_AUTO_START,
+      "a refused ACL rewrite never fails the commit")) return false;
   ResetMaintenance(); fixture_start_error = ERROR_SERVICE_REQUEST_TIMEOUT;
   if (!VerifyMaintenance(!finish() && attempted && error == ERROR_SERVICE_REQUEST_TIMEOUT &&
       gate_exists && gate_token == fixture_token && gate_directory == fixture_directory && clean_stop == 0 &&
