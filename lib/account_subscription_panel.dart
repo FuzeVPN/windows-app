@@ -127,6 +127,14 @@ class _SubscriptionDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final renews =
+        subscription.renewsAutomatically && !subscription.cancelAtPeriodEnd;
+    // A renewing period ends on its next charge: show that date once, unless
+    // that charge date is missing or the payment is overdue.
+    final expiryIsNextCharge =
+        renews &&
+        subscription.nextChargeAt != null &&
+        subscription.status != SubscriptionStatus.pastDue;
     final facts = [
       _SubscriptionFact(
         icon: subscription.status == SubscriptionStatus.unknown
@@ -146,16 +154,17 @@ class _SubscriptionDetails extends StatelessWidget {
             ? AppTheme.successFor(context)
             : Theme.of(context).colorScheme.onSurfaceVariant,
       ),
-      _SubscriptionFact(
-        icon: Icons.event_outlined,
-        label: context.tr('Expiration'),
-        value: _subscriptionDate(context, subscription.expiresAt),
-        semanticValue: _subscriptionDate(
-          context,
-          subscription.expiresAt,
-          accessible: true,
+      if (!expiryIsNextCharge)
+        _SubscriptionFact(
+          icon: Icons.event_outlined,
+          label: context.tr('Expiration'),
+          value: _subscriptionDate(context, subscription.expiresAt),
+          semanticValue: _subscriptionDate(
+            context,
+            subscription.expiresAt,
+            accessible: true,
+          ),
         ),
-      ),
       _SubscriptionFact(
         icon: Icons.autorenew,
         label: context.tr('Renouvellement'),
@@ -167,7 +176,7 @@ class _SubscriptionDetails extends StatelessWidget {
               : 'Désactivé',
         ),
       ),
-      if (subscription.renewsAutomatically && !subscription.cancelAtPeriodEnd)
+      if (renews)
         _SubscriptionFact(
           icon: Icons.calendar_month_outlined,
           label: context.tr('Prochaine échéance'),
@@ -196,25 +205,19 @@ class _SubscriptionDetails extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(child: facts[0]),
-                const SizedBox(width: 16),
-                Expanded(child: facts[1]),
-              ],
-            ),
-            const SizedBox(height: 14),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(child: facts[2]),
-                if (facts.length == 4) ...[
-                  const SizedBox(width: 16),
-                  Expanded(child: facts[3]),
+            for (var i = 0; i < facts.length; i += 2) ...[
+              if (i != 0) const SizedBox(height: 14),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(child: facts[i]),
+                  if (i + 1 < facts.length) ...[
+                    const SizedBox(width: 16),
+                    Expanded(child: facts[i + 1]),
+                  ],
                 ],
-              ],
-            ),
+              ),
+            ],
           ],
         );
       },
@@ -328,7 +331,10 @@ class _SubscriptionFact extends StatelessWidget {
     final theme = Theme.of(context);
     return Semantics(
       excludeSemantics: true,
-      label: '$label : ${semanticValue ?? value}',
+      label: context
+          .tr('{label} : {value}')
+          .replaceAll('{label}', label)
+          .replaceAll('{value}', semanticValue ?? value),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

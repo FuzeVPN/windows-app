@@ -247,8 +247,24 @@ void main() {
       expect(check.httpStatus, isNull);
       expect(check.windowsError, item.windowsError);
       expect(check.tlsReason, item.tlsReason);
+      // Only a network-level failure disproves Internet access.
+      final networkFailure = item.code == 'network_unreachable';
+      final internet = app.diagnosticChecks.singleWhere(
+        (value) => value.id == 'connectivity',
+      );
+      expect(internet.result, networkFailure ? 'failed' : 'skipped');
       await _mount(tester, app);
       expect(find.text(item.message), findsOneWidget);
+      expect(
+        find.text(
+          'Vérifiez votre connexion Internet, puis relancez le diagnostic. Le tunnel peut fonctionner même si l’API ne répond pas.',
+        ),
+        networkFailure ? findsOneWidget : findsNothing,
+      );
+      expect(
+        find.text('Code d’erreur : network_error'),
+        networkFailure ? findsOneWidget : findsNothing,
+      );
       expect(find.text('Connexion de l’application'), findsOneWidget);
       expect(find.text('Accès aux services FuzeVPN'), findsNothing);
       expect(find.text('Code d’erreur : ${item.code}'), findsOneWidget);

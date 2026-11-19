@@ -60,6 +60,28 @@ class _Snapshot extends DiagnosticsBridge {
   }
 }
 
+// The native encoder's result for this user's idle runtime with readable
+// filters and no FuzeVPN protection.
+class _DisconnectedSnapshot extends _Snapshot {
+  @override
+  Future<Map<String, Object?>> collectSnapshot() async {
+    calls++;
+    return {
+      'runtime': {
+        'presence': 'present',
+        'owned_by_another_user': false,
+        'cleanup_eligible': false,
+      },
+      'checks': [
+        {'id': 'service_availability', 'result': 'passed', 'age_ms': 3},
+        {'id': 'kill_switch', 'result': 'skipped', 'age_ms': 3},
+        {'id': 'tunnel_connection', 'result': 'skipped', 'age_ms': 3},
+        {'id': 'driver_availability', 'result': 'skipped', 'age_ms': 3},
+      ],
+    };
+  }
+}
+
 class _UiController extends AppController {
   _UiController(_Snapshot snapshot)
     : super(
@@ -315,7 +337,7 @@ void main() {
         app.diagnosticChecks
             .firstWhere((c) => c.label == 'Accès Internet')
             .result,
-        'skipped',
+        'passed',
       );
       expect(wg.connectCalls, 0);
       expect(wg.disconnectCalls, 0);
@@ -324,6 +346,58 @@ void main() {
       expect(app.vpnStatus, VpnStatus.disconnected);
     },
   );
+
+  for (final offline in [false, true]) {
+    test(
+      'disconnected diagnostics give reasons instead of unknowns ($offline)',
+      () async {
+        final app = AppController(
+          api: fixtures.ProbeApi()..offline = offline,
+          store: fixtures.ProbeStore(),
+          window: fixtures.ProbeWindow(),
+          wireguard: fixtures.ProbeWireGuard(),
+          openVpn: fixtures.ProbeOpenVpn(),
+          diagnosticsBridge: _DisconnectedSnapshot(),
+        );
+        addTearDown(app.dispose);
+        await app.runUserDiagnostic();
+        final checks = {
+          for (final check in app.diagnosticChecks) check.id: check,
+        };
+        expect(checks.values.where((c) => c.result == 'unknown'), isEmpty);
+        expect(checks['service_availability']!.result, 'passed');
+        expect(
+          checks['api_reachability']!.result,
+          offline ? 'failed' : 'passed',
+        );
+        expect(
+          checks['tunnel_connection']!.note,
+          'Aucun tunnel VPN n’est actif.',
+        );
+        for (final id in ['driver_availability', 'kill_switch']) {
+          expect(checks[id]!.result, 'skipped');
+          expect(checks[id]!.note, 'Nécessite une connexion VPN active.');
+        }
+        // Internet access needs neither an account nor a VPN connection.
+        final internet = checks['connectivity']!;
+        expect(internet.label, 'Accès Internet');
+        expect(internet.result, offline ? 'failed' : 'passed');
+        expect(internet.code, offline ? 'network_error' : isNull);
+        expect(internet.note, isNull);
+        expect(
+          (app.preparedDiagnosticReport!.json['checks'] as List).firstWhere(
+            (check) => (check as Map)['id'] == 'connectivity',
+          ),
+          {
+            'id': 'connectivity',
+            'result': offline ? 'failed' : 'passed',
+            if (offline) 'code': 'network_error',
+          },
+        );
+        expect(app.profile, isNull);
+      },
+    );
+  }
 
   test(
     'sign out invalidates a slow collection and cannot leave a sendable report',

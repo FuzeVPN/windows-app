@@ -32,7 +32,7 @@ void main() {
       'Changer d’emplacement interrompra le VPN pendant la reconnexion.',
       "Vérifications réussies ({count})",
       "Vérifications non exécutées ({count})",
-      'Confidentialité',
+      'Sécurité',
       'Connexion et reconnexion automatiques.',
       'Mon compte',
       'Se déconnecter du compte',

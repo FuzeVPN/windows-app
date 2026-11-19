@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fuzevpn_windows/app_controller.dart';
 import 'package:fuzevpn_windows/core/models.dart';
+import 'package:fuzevpn_windows/l10n/app_localizations.dart';
 import 'package:fuzevpn_windows/main.dart';
 
 import 'connection_ux_test.dart' show ConnectionUxController;
@@ -75,6 +76,23 @@ void main() {
     expect(find.text('Frankfurt 2'), findsNothing);
     expect(find.text('Protocole VPN : OpenVPN'), findsOneWidget);
     expect(find.textContaining('Durée de connexion :'), findsOneWidget);
+    await tester.pumpWidget(const SizedBox.shrink());
+    app.dispose();
+  });
+
+  testWidgets('connected summary uses the language label separator', (
+    tester,
+  ) async {
+    final app = _ConnectionLayoutController()
+      ..language = AppLanguage.english
+      ..vpnStatus = VpnStatus.connected
+      ..tunnelLocationId = 'de-1'
+      ..activeProtocol = VpnProtocol.openVpn
+      ..connectedAt = DateTime.now().subtract(const Duration(minutes: 2));
+    await tester.pumpWidget(FuzeVpnApp(controller: app));
+    await tester.pumpAndSettle();
+    expect(find.text('VPN protocol: OpenVPN'), findsOneWidget);
+    expect(find.textContaining('Connection time: '), findsOneWidget);
     await tester.pumpWidget(const SizedBox.shrink());
     app.dispose();
   });

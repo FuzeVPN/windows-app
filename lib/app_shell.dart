@@ -640,7 +640,8 @@ class _AccountBlockState extends State<_AccountBlock> {
                       children: [
                         Text(
                           label,
-                          maxLines: 1,
+                          // Status labels wrap; a name or email stays on one.
+                          maxLines: signedIn ? 1 : 2,
                           overflow: TextOverflow.ellipsis,
                           style: theme.textTheme.labelLarge?.copyWith(
                             color: foreground,
@@ -752,81 +753,7 @@ class _PageLayout extends StatelessWidget {
                   : MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                LayoutBuilder(
-                  builder: (context, headerConstraints) {
-                    final heading = Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: 3,
-                          height: 36,
-                          margin: const EdgeInsetsDirectional.only(
-                            end: 16,
-                            top: 2,
-                          ),
-                          color: AppTheme.signal,
-                        ),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                context.tr(title),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headlineMedium
-                                    ?.copyWith(
-                                      fontWeight: FontWeight.w700,
-                                      letterSpacing: AppTheme.tracking(
-                                        context,
-                                        -0.8,
-                                      ),
-                                    ),
-                              ),
-                              if (subtitle != null) ...[
-                                const SizedBox(height: 4),
-                                Text(
-                                  context.tr(subtitle!),
-                                  style: Theme.of(context).textTheme.bodyMedium
-                                      ?.copyWith(
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.onSurfaceVariant,
-                                      ),
-                                ),
-                              ],
-                            ],
-                          ),
-                        ),
-                      ],
-                    );
-                    if (action == null) return heading;
-                    final inline =
-                        headerConstraints.maxWidth >=
-                        (action is IconButton ? 360 : 640) *
-                            math.max(
-                              1,
-                              MediaQuery.textScalerOf(context).scale(14) / 14,
-                            );
-                    return inline
-                        ? Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Expanded(child: heading),
-                              const SizedBox(width: 24),
-                              action!,
-                            ],
-                          )
-                        : Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              heading,
-                              const SizedBox(height: 12),
-                              action!,
-                            ],
-                          );
-                  },
-                ),
+                _PageHeading(title: title, subtitle: subtitle, action: action),
                 const SizedBox(height: 20),
                 child,
               ],
@@ -835,6 +762,74 @@ class _PageLayout extends StatelessWidget {
         ),
       ),
     ),
+  );
+}
+
+/// Page title behind the signal accent bar, shared by every page. [action]
+/// sits beside the title when it fits and below it otherwise.
+class _PageHeading extends StatelessWidget {
+  const _PageHeading({required this.title, this.subtitle, this.action});
+
+  final String title;
+  final String? subtitle;
+  final Widget? action;
+
+  @override
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, constraints) {
+      final heading = Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 3,
+            height: 36,
+            margin: const EdgeInsetsDirectional.only(end: 16, top: 2),
+            color: AppTheme.signal,
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  context.tr(title),
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: AppTheme.tracking(context, -0.8),
+                  ),
+                ),
+                if (subtitle != null) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    context.tr(subtitle!),
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
+      );
+      if (action == null) return heading;
+      final inline =
+          constraints.maxWidth >=
+          (action is IconButton ? 360 : 640) *
+              math.max(1, MediaQuery.textScalerOf(context).scale(14) / 14);
+      return inline
+          ? Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(child: heading),
+                const SizedBox(width: 24),
+                action!,
+              ],
+            )
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [heading, const SizedBox(height: 12), action!],
+            );
+    },
   );
 }
 
@@ -881,85 +876,101 @@ class _LocationRow extends StatelessWidget {
           color: selected
               ? Theme.of(context).colorScheme.primaryContainer
               : Colors.transparent,
-          child: InkWell(
-            onTap: onTap,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
-              child: Row(
-                children: [
-                  ExcludeSemantics(
-                    child: _CountryFlag(
-                      countryCode: location.countryCode,
-                      width: 36,
-                      height: 24,
-                    ),
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          title ?? location.displayName,
-                          style: Theme.of(context).textTheme.titleMedium
-                              ?.copyWith(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 15,
-                                color: unavailableReason == null
-                                    ? null
-                                    : Theme.of(
-                                        context,
-                                      ).colorScheme.onSurfaceVariant,
-                              ),
-                        ),
-                        const SizedBox(height: 3),
-                        Text(
-                          unavailableReason ??
-                              (title == null
-                                  ? '${location.city} · ${_countryName(context, location.countryCode)}'
-                                  : location.displayName),
-                          style: TextStyle(
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.onSurfaceVariant,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  if (location.p2pAllowed)
-                    const Padding(
-                      padding: EdgeInsetsDirectional.only(start: 8, end: 8),
-                      child: _P2pBadge(),
-                    ),
-                  if (showRecent)
-                    Padding(
-                      padding: const EdgeInsetsDirectional.only(end: 8),
-                      child: _LocationTag(
-                        icon: Icons.history,
-                        label: context.tr('Récent'),
+          // Same selection marking as the country and city rows.
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              border: BorderDirectional(
+                start: BorderSide(
+                  color: selected ? AppTheme.signal : Colors.transparent,
+                  width: 3,
+                ),
+              ),
+            ),
+            child: InkWell(
+              onTap: onTap,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 15,
+                ),
+                child: Row(
+                  children: [
+                    ExcludeSemantics(
+                      child: _CountryFlag(
+                        countryCode: location.countryCode,
+                        width: 36,
+                        height: 24,
                       ),
                     ),
-                  IconButton(
-                    tooltip: context.tr(
-                      favorite ? 'Retirer des favoris' : 'Ajouter aux favoris',
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            title ?? location.displayName,
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 15,
+                                  color: unavailableReason == null
+                                      ? null
+                                      : Theme.of(
+                                          context,
+                                        ).colorScheme.onSurfaceVariant,
+                                ),
+                          ),
+                          const SizedBox(height: 3),
+                          Text(
+                            unavailableReason ??
+                                (title == null
+                                    ? '${location.city} · ${_countryName(context, location.countryCode)}'
+                                    : location.displayName),
+                            style: TextStyle(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    onPressed: onToggleFavorite,
-                    icon: Icon(
-                      favorite ? Icons.star : Icons.star_border,
-                      color: favorite
-                          ? AppTheme.warningFor(context)
-                          : Theme.of(context).colorScheme.onSurfaceVariant,
+                    if (location.p2pAllowed)
+                      const Padding(
+                        padding: EdgeInsetsDirectional.only(start: 8, end: 8),
+                        child: _P2pBadge(),
+                      ),
+                    if (showRecent)
+                      Padding(
+                        padding: const EdgeInsetsDirectional.only(end: 8),
+                        child: _LocationTag(
+                          icon: Icons.history,
+                          label: context.tr('Récent'),
+                        ),
+                      ),
+                    IconButton(
+                      tooltip: context.tr(
+                        favorite
+                            ? 'Retirer des favoris'
+                            : 'Ajouter aux favoris',
+                      ),
+                      onPressed: onToggleFavorite,
+                      icon: Icon(
+                        favorite ? Icons.star : Icons.star_border,
+                        color: favorite
+                            ? AppTheme.warningFor(context)
+                            : Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                     ),
-                  ),
-                  if (selected) ...[
-                    const SizedBox(width: 4),
-                    Icon(
-                      Icons.check_circle,
-                      color: AppTheme.successFor(context),
-                    ),
+                    if (selected) ...[
+                      const SizedBox(width: 4),
+                      Icon(
+                        Icons.check_circle,
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                      ),
+                    ],
                   ],
-                ],
+                ),
               ),
             ),
           ),

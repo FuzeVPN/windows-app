@@ -312,6 +312,13 @@ void main() {
               : 'Moteur VPN',
         );
         expect(check.windowsError, 5);
+        // A local failure leaves Internet access unmeasured.
+        expect(
+          controller.diagnosticChecks
+              .firstWhere((c) => c.id == 'connectivity')
+              .result,
+          'skipped',
+        );
         expect(
           controller.preparedDiagnosticReport!.json.toString(),
           isNot(contains('win32_error')),
@@ -351,6 +358,13 @@ void main() {
         (c) => c.id == 'api_reachability',
       );
       expect(check.result, 'failed');
+      // Any HTTP reply proves Internet access.
+      expect(
+        controller.diagnosticChecks
+            .firstWhere((c) => c.id == 'connectivity')
+            .result,
+        'passed',
+      );
       await _pump(tester, controller);
       expect(
         find.text(

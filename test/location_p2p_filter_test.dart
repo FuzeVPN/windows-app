@@ -39,6 +39,13 @@ const _london = Location(
   countryCode: 'GB',
   displayName: 'London 1',
 );
+const _chisinau = Location(
+  id: 'md-chisinau',
+  city: 'Chisinau',
+  countryCode: 'MD',
+  displayName: 'chisinau-01',
+  p2pAllowed: true,
+);
 
 class _P2pController extends ConnectionUxController {
   _P2pController() {
@@ -65,6 +72,14 @@ Finder _badgeIn(String serverId) => find.descendant(
   of: _key('location-server-$serverId'),
   matching: find.text('P2P'),
 );
+
+Finder _countryBadge(String countryCode) => find.descendant(
+  of: _key('location-select-country-$countryCode'),
+  matching: find.text('P2P'),
+);
+
+String? _label(WidgetTester tester, String key) =>
+    tester.widget<Text>(_key(key)).data;
 
 Future<void> _tap(WidgetTester tester, String key) async {
   await tester.ensureVisible(_key(key));
@@ -105,52 +120,113 @@ void main() {
     expect(parse(1).p2pAllowed, isFalse);
   });
 
-  testWidgets('the P2P chip counts and filters allowed servers only', (
+  testWidgets('the P2P choice counts and filters allowed servers only', (
     tester,
   ) async {
     final controller = _P2pController();
     await _pump(tester, controller);
-    expect(
-      find.descendant(
-        of: _key('location-filter-p2p'),
-        matching: find.text('P2P · 2'),
-      ),
-      findsOneWidget,
-    );
+    expect(_label(tester, 'location-filter-all'), 'Tous · 4');
+    expect(_label(tester, 'location-filter-favorites'), 'Favoris · 0');
+    expect(_label(tester, 'location-list-title'), 'Tous les pays');
+    expect(_label(tester, 'location-filter-p2p'), 'P2P · 2');
     expect(_visibleServers(tester), isEmpty);
 
     await _tap(tester, 'location-filter-p2p');
     expect(_visibleServers(tester), ['de-1', 'fr-paris']);
+    expect(_label(tester, 'location-list-title'), 'P2P');
     expect(_badgeIn('de-1'), findsOneWidget);
     expect(_badgeIn('fr-paris'), findsOneWidget);
 
+    // A single choice: tapping the selected filter again keeps it.
     await _tap(tester, 'location-filter-p2p');
+    expect(_visibleServers(tester), ['de-1', 'fr-paris']);
+
+    await _tap(tester, 'location-filter-all');
     expect(_visibleServers(tester), isEmpty);
     expect(_key('location-open-country-DE'), findsOneWidget);
     expect(controller.selectedLocation, _berlin);
+
+    // Choosing a filter inside a country returns Tous to all countries.
+    await _tap(tester, 'location-open-country-DE');
+    expect(_key('location-back-countries'), findsOneWidget);
+    await _tap(tester, 'location-filter-p2p');
+    await _tap(tester, 'location-filter-all');
+    expect(_key('location-back-countries'), findsNothing);
+    expect(_key('location-open-country-FR'), findsOneWidget);
   });
 
-  testWidgets('favorites and P2P combine, and search narrows both', (
+  testWidgets('filters are exclusive and search narrows the chosen one', (
     tester,
   ) async {
     final controller = _P2pController()
       ..favoriteLocationIds = {'de-1', 'de-berlin'};
+    final semantics = tester.ensureSemantics();
+    try {
+      await _pump(tester, controller);
+
+      await _tap(tester, 'location-filter-favorites');
+      expect(_visibleServers(tester), ['de-1', 'de-berlin']);
+      expect(_label(tester, 'location-list-title'), 'Favoris');
+      await _tap(tester, 'location-filter-p2p');
+      expect(_visibleServers(tester), ['de-1', 'fr-paris']);
+      expect(
+        tester.getSemantics(_key('location-filter-p2p')),
+        isSemantics(isInMutuallyExclusiveGroup: true, isSelected: true),
+      );
+      expect(
+        tester.getSemantics(_key('location-filter-favorites')),
+        isSemantics(isInMutuallyExclusiveGroup: true, isSelected: false),
+      );
+
+      await tester.enterText(_key('location-search'), 'Paris');
+      await tester.pumpAndSettle();
+      expect(_visibleServers(tester), ['fr-paris']);
+      await tester.enterText(_key('location-search'), 'Berlin');
+      await tester.pumpAndSettle();
+      expect(_visibleServers(tester), isEmpty);
+      expect(find.text('Aucun emplacement trouvé'), findsOneWidget);
+
+      // The empty state offers the way back to every server.
+      await tester.tap(find.text('Tous'));
+      await tester.pumpAndSettle();
+      expect(_visibleServers(tester), ['de-berlin']);
+      expect(_label(tester, 'location-list-title'), 'Tous les pays');
+      expect(
+        tester.getSemantics(_key('location-filter-all')),
+        isSemantics(isInMutuallyExclusiveGroup: true, isSelected: true),
+      );
+    } finally {
+      semantics.dispose();
+    }
+  });
+
+  testWidgets('country rows name every country and badge a P2P choice', (
+    tester,
+  ) async {
+    final controller = _P2pController()
+      ..locations = [_frankfurt, _berlin, _paris, _london, _chisinau];
     await _pump(tester, controller);
 
-    await _tap(tester, 'location-filter-favorites');
-    expect(_visibleServers(tester), ['de-1', 'de-berlin']);
-    await _tap(tester, 'location-filter-p2p');
-    expect(_visibleServers(tester), ['de-1']);
+    expect(find.textContaining('Moldavie'), findsOneWidget);
+    expect(find.text('MD'), findsNothing);
+    // Berlin is selected, so Germany would keep a server without P2P.
+    expect(_countryBadge('DE'), findsNothing);
+    expect(_countryBadge('FR'), findsOneWidget);
+    expect(_countryBadge('MD'), findsOneWidget);
+    expect(_countryBadge('GB'), findsNothing);
 
-    await _tap(tester, 'location-filter-favorites');
-    expect(_visibleServers(tester), ['de-1', 'fr-paris']);
-    await tester.enterText(_key('location-search'), 'Paris');
+    controller
+      ..selectedLocation = _frankfurt
+      ..notifyListeners();
     await tester.pumpAndSettle();
-    expect(_visibleServers(tester), ['fr-paris']);
-    await tester.enterText(_key('location-search'), 'Berlin');
+    expect(_countryBadge('DE'), findsOneWidget);
+
+    controller
+      ..language = AppLanguage.english
+      ..notifyListeners();
     await tester.pumpAndSettle();
-    expect(_visibleServers(tester), isEmpty);
-    expect(find.text('Aucun emplacement trouvé'), findsOneWidget);
+    expect(find.textContaining('Moldova'), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('only allowed servers carry the badge and its spoken label', (
@@ -244,6 +320,7 @@ void main() {
     for (final theme in [ThemeMode.light, ThemeMode.dark]) {
       final controller = _P2pController()
         ..themeMode = theme
+        ..locations = [_frankfurt, _berlin, _paris, _london, _chisinau]
         ..favoriteLocationIds = {'de-1'};
       final boundaryKey = GlobalKey();
       await tester.pumpWidget(
@@ -252,8 +329,6 @@ void main() {
           child: FuzeVpnApp(controller: controller),
         ),
       );
-      await tester.pumpAndSettle();
-      await tester.enterText(_key('location-search'), '1');
       await tester.pumpAndSettle();
       Future<void> capture(String name) async {
         final boundary =
@@ -274,6 +349,9 @@ void main() {
         });
       }
 
+      await capture('countries-${theme.name}');
+      await tester.enterText(_key('location-search'), '1');
+      await tester.pumpAndSettle();
       await capture('p2p-all-${theme.name}');
       await _tap(tester, 'location-filter-p2p');
       await capture('p2p-filter-${theme.name}');

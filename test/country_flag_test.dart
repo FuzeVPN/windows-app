@@ -121,7 +121,7 @@ void main() {
       expect(image.fit, BoxFit.cover);
       expect(image.filterQuality, FilterQuality.medium);
       expect(image.excludeFromSemantics, isTrue);
-      expect(_semanticsLabel(tester, flag), 'Drapeau : RU');
+      expect(_semanticsLabel(tester, flag), 'Drapeau : Russie');
       expect(_within(flag, find.byType(CustomPaint)), findsNothing);
       expect(_within(flag, find.byIcon(Icons.flag_outlined)), findsNothing);
 
@@ -134,7 +134,7 @@ void main() {
       expect(decoration.border, isNotNull);
 
       final semantics = tester.ensureSemantics();
-      expect(find.bySemanticsLabel('Drapeau : RU'), findsOneWidget);
+      expect(find.bySemanticsLabel('Drapeau : Russie'), findsOneWidget);
       semantics.dispose();
     });
 
@@ -162,7 +162,7 @@ void main() {
           'assets/flags/ru.png',
           reason: '"$code"',
         );
-        expect(_semanticsLabel(tester, flag), 'Drapeau : RU');
+        expect(_semanticsLabel(tester, flag), 'Drapeau : Russie');
         await tester.pumpWidget(const SizedBox.shrink());
       }
     });

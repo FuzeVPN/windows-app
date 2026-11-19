@@ -352,7 +352,7 @@ class _SettingsPageState extends State<_SettingsPage> {
             context.tr(switch (category) {
               _SettingsCategory.general => 'Général',
               _SettingsCategory.connection => 'Connexion',
-              _SettingsCategory.privacy => 'Confidentialité',
+              _SettingsCategory.privacy => 'Sécurité',
               _SettingsCategory.updates => 'Mises à jour',
             });
         IconData categoryIcon(_SettingsCategory category) => switch (category) {
@@ -389,25 +389,7 @@ class _SettingsPageState extends State<_SettingsPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          context.tr('Réglages'),
-                          style: Theme.of(context).textTheme.headlineMedium,
-                        ),
-                      ),
-                      if (constraints.maxWidth >= 760)
-                        Icon(
-                          Icons.tune_outlined,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                          size: 24,
-                        ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  const Divider(height: 1),
+                  const _PageHeading(title: 'Réglages'),
                   const SizedBox(height: 20),
                   if (wide)
                     Expanded(
@@ -651,11 +633,15 @@ class _SettingsSegmentedControl<T> extends StatelessWidget {
     required this.segments,
     required this.selected,
     required this.onSelectionChanged,
+    this.showSelectedIcon = false,
   });
 
   final List<ButtonSegment<T>> segments;
   final Set<T> selected;
   final ValueChanged<Set<T>>? onSelectionChanged;
+
+  /// Replaces the selected segment's icon with a check mark.
+  final bool showSelectedIcon;
 
   @override
   Widget build(BuildContext context) => LayoutBuilder(
@@ -681,7 +667,7 @@ class _SettingsSegmentedControl<T> extends StatelessWidget {
       painter.dispose();
       final vertical = constraints.maxWidth < segmentWidth * segments.length;
       return SegmentedButton<T>(
-        showSelectedIcon: false,
+        showSelectedIcon: showSelectedIcon,
         direction: vertical ? Axis.vertical : Axis.horizontal,
         expandedInsets: vertical ? null : EdgeInsets.zero,
         segments: segments,
