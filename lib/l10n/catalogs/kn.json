@@ -618,5 +618,6 @@
   "Copier": "ನಕಲಿಸಿ",
   "Envoyer": "ಕಳುಹಿಸಿ",
   "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "ಸಂಪೂರ್ಣ ದೋಷನಿರ್ಣಯವನ್ನು ಈ ಸಾಧನದಲ್ಲಿ ಸಂಗ್ರಹಿಸಲಾಗಿದೆ. ನೀವು ಅದನ್ನು ನಕಲಿಸಬಹುದು ಅಥವಾ ಬೆಂಬಲಕ್ಕೆ ಕಳುಹಿಸಬಹುದು.",
-  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "ದೋಷನಿರ್ಣಯ ಬಟನ್ ಪರಿಶೀಲನೆಗಳು, ಸೇವೆಯ ಸ್ಥಿತಿ ಮತ್ತು ತಾಂತ್ರಿಕ ದಾಖಲೆಗಳನ್ನು ಸಂಗ್ರಹಿಸುತ್ತದೆ. ಸ್ವಯಂಚಾಲಿತ ಕಳುಹಿಸುವಿಕೆ ಆನ್ ಆಗಿದ್ದರೆ, ಅವುಗಳನ್ನು FuzeVPN ಬೆಂಬಲಕ್ಕೆ ಕಳುಹಿಸಲಾಗುತ್ತದೆ; ಇಲ್ಲದಿದ್ದರೆ, ನೀವು “ಕಳುಹಿಸಿ” ಒತ್ತಿದಾಗ ಮಾತ್ರ. ರಹಸ್ಯಗಳು ಮತ್ತು ಬ್ರೌಸಿಂಗ್ ಇತಿಹಾಸವನ್ನು ಹೊರತುಪಡಿಸಲಾಗುತ್ತದೆ. ಸರ್ವರ್‌ನಲ್ಲಿ ಸಂಗ್ರಹಿಸುವ ಅವಧಿ: 30 ದಿನಗಳು."
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "ದೋಷನಿರ್ಣಯ ಬಟನ್ ಪರಿಶೀಲನೆಗಳು, ಸೇವೆಯ ಸ್ಥಿತಿ ಮತ್ತು ತಾಂತ್ರಿಕ ದಾಖಲೆಗಳನ್ನು ಸಂಗ್ರಹಿಸುತ್ತದೆ. ಸ್ವಯಂಚಾಲಿತ ಕಳುಹಿಸುವಿಕೆ ಆನ್ ಆಗಿದ್ದರೆ, ಅವುಗಳನ್ನು FuzeVPN ಬೆಂಬಲಕ್ಕೆ ಕಳುಹಿಸಲಾಗುತ್ತದೆ; ಇಲ್ಲದಿದ್ದರೆ, ನೀವು “ಕಳುಹಿಸಿ” ಒತ್ತಿದಾಗ ಮಾತ್ರ. ರಹಸ್ಯಗಳು ಮತ್ತು ಬ್ರೌಸಿಂಗ್ ಇತಿಹಾಸವನ್ನು ಹೊರತುಪಡಿಸಲಾಗುತ್ತದೆ. ಸರ್ವರ್‌ನಲ್ಲಿ ಸಂಗ್ರಹಿಸುವ ಅವಧಿ: 30 ದಿನಗಳು.",
+  "P2P autorisé": "P2P ಅನುಮತಿಸಲಾಗಿದೆ"
 }

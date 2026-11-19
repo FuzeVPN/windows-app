@@ -618,5 +618,6 @@
   "Copier": "Kwafi",
   "Envoyer": "Aika",
   "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "An tattara cikakken binciken matsala a wannan na'ura. Kana iya kwafa shi ko aika shi zuwa tallafi.",
-  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Maɓallin Binciken matsala yana tattara bincike, matsayin sabis da bayanan fasaha. Idan aikawa ta atomatik tana kunne, ana aika su zuwa tallafin FuzeVPN; in ba haka ba, sai lokacin da ka danna “Aika” kawai. Ba a haɗa sirri da tarihin bincike ba. Ana adanawa a sabar na kwanaki 30."
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Maɓallin Binciken matsala yana tattara bincike, matsayin sabis da bayanan fasaha. Idan aikawa ta atomatik tana kunne, ana aika su zuwa tallafin FuzeVPN; in ba haka ba, sai lokacin da ka danna “Aika” kawai. Ba a haɗa sirri da tarihin bincike ba. Ana adanawa a sabar na kwanaki 30.",
+  "P2P autorisé": "An yarda da P2P"
 }

@@ -618,5 +618,6 @@
   "Copier": "ຄັດລອກ",
   "Envoyer": "ສົ່ງ",
   "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "ລວບລວມຜົນວິນິດໄສສົມບູນໃນອຸປະກອນນີ້ແລ້ວ. ທ່ານສາມາດຄັດລອກ ຫຼື ສົ່ງໃຫ້ຝ່າຍຊ່ວຍເຫຼືອໄດ້.",
-  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "ປຸ່ມວິນິດໄສຈະລວບລວມຜົນກວດສອບ, ສະຖານະບໍລິການ ແລະ ບັນທຶກທາງເຕັກນິກ. ຖ້າເປີດການສົ່ງອັດຕະໂນມັດ, ຂໍ້ມູນຈະຖືກສົ່ງໃຫ້ຝ່າຍຊ່ວຍເຫຼືອ FuzeVPN; ຖ້າບໍ່ດັ່ງນັ້ນ, ຈະສົ່ງສະເພາະເມື່ອທ່ານກົດ “ສົ່ງ” ເທົ່ານັ້ນ. ບໍ່ລວມຂໍ້ມູນລັບ ແລະ ປະຫວັດການທ່ອງເວັບ. ເກັບໄວ້ໃນເຊີບເວີ 30 ວັນ."
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "ປຸ່ມວິນິດໄສຈະລວບລວມຜົນກວດສອບ, ສະຖານະບໍລິການ ແລະ ບັນທຶກທາງເຕັກນິກ. ຖ້າເປີດການສົ່ງອັດຕະໂນມັດ, ຂໍ້ມູນຈະຖືກສົ່ງໃຫ້ຝ່າຍຊ່ວຍເຫຼືອ FuzeVPN; ຖ້າບໍ່ດັ່ງນັ້ນ, ຈະສົ່ງສະເພາະເມື່ອທ່ານກົດ “ສົ່ງ” ເທົ່ານັ້ນ. ບໍ່ລວມຂໍ້ມູນລັບ ແລະ ປະຫວັດການທ່ອງເວັບ. ເກັບໄວ້ໃນເຊີບເວີ 30 ວັນ.",
+  "P2P autorisé": "ອະນຸຍາດ P2P"
 }

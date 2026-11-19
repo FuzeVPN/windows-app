@@ -618,5 +618,6 @@
   "Copier": "コピー",
   "Envoyer": "送信",
   "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "このデバイスで診断全体を収集しました。コピーするか、サポートに送信できます。",
-  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "診断ボタンは確認結果、サービスの状態、技術ログを収集します。自動送信がオンの場合は FuzeVPN サポートに送信され、オフの場合は「送信」を押したときにのみ送信されます。秘密情報と閲覧履歴は含まれません。サーバーでの保存期間：30日間。"
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "診断ボタンは確認結果、サービスの状態、技術ログを収集します。自動送信がオンの場合は FuzeVPN サポートに送信され、オフの場合は「送信」を押したときにのみ送信されます。秘密情報と閲覧履歴は含まれません。サーバーでの保存期間：30日間。",
+  "P2P autorisé": "P2P 利用可"
 }

@@ -618,5 +618,6 @@
   "Copier": "ចម្លង",
   "Envoyer": "ផ្ញើ",
   "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "បានប្រមូលការវិនិច្ឆ័យពេញលេញនៅលើឧបករណ៍នេះ។ អ្នកអាចចម្លងវា ឬផ្ញើវាទៅជំនួយ។",
-  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "ប៊ូតុង វិនិច្ឆ័យ ប្រមូលការពិនិត្យ ស្ថានភាពសេវាកម្ម និងកំណត់ហេតុបច្ចេកទេស។ ប្រសិនបើការផ្ញើស្វ័យប្រវត្តិត្រូវបានបើក វានឹងត្រូវបានផ្ញើទៅជំនួយ FuzeVPN; បើមិនដូច្នោះទេ វានឹងត្រូវបានផ្ញើតែនៅពេលអ្នកចុច «ផ្ញើ» ប៉ុណ្ណោះ។ អាថ៌កំបាំង និងប្រវត្តិរុករកមិនត្រូវបានរួមបញ្ចូលទេ។ រក្សាទុកលើម៉ាស៊ីនមេ៖ 30 ថ្ងៃ។"
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "ប៊ូតុង វិនិច្ឆ័យ ប្រមូលការពិនិត្យ ស្ថានភាពសេវាកម្ម និងកំណត់ហេតុបច្ចេកទេស។ ប្រសិនបើការផ្ញើស្វ័យប្រវត្តិត្រូវបានបើក វានឹងត្រូវបានផ្ញើទៅជំនួយ FuzeVPN; បើមិនដូច្នោះទេ វានឹងត្រូវបានផ្ញើតែនៅពេលអ្នកចុច «ផ្ញើ» ប៉ុណ្ណោះ។ អាថ៌កំបាំង និងប្រវត្តិរុករកមិនត្រូវបានរួមបញ្ចូលទេ។ រក្សាទុកលើម៉ាស៊ីនមេ៖ 30 ថ្ងៃ។",
+  "P2P autorisé": "អនុញ្ញាត P2P"
 }

@@ -618,5 +618,6 @@
   "Copier": "Copiază",
   "Envoyer": "Trimite",
   "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "Diagnosticul complet a fost colectat pe acest dispozitiv. Îl poți copia sau trimite către asistență.",
-  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Butonul Diagnostic colectează verificările, starea serviciului și jurnalele tehnice. Dacă trimiterea automată este activată, acestea sunt trimise către asistența FuzeVPN; altfel, doar când apeși „Trimite”. Secretele și istoricul de navigare sunt excluse. Păstrare pe server: 30 de zile."
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Butonul Diagnostic colectează verificările, starea serviciului și jurnalele tehnice. Dacă trimiterea automată este activată, acestea sunt trimise către asistența FuzeVPN; altfel, doar când apeși „Trimite”. Secretele și istoricul de navigare sunt excluse. Păstrare pe server: 30 de zile.",
+  "P2P autorisé": "P2P permis"
 }

@@ -618,5 +618,6 @@
   "Copier": "Kopírovat",
   "Envoyer": "Odeslat",
   "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "Úplná diagnostika byla shromážděna v tomto zařízení. Můžete ji zkopírovat nebo odeslat podpoře.",
-  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Tlačítko Diagnostika shromáždí kontroly, stav služby a technické protokoly. Pokud je zapnuté automatické odesílání, odešlou se podpoře FuzeVPN; jinak jen po stisknutí tlačítka „Odeslat“. Tajné údaje a historie prohlížení jsou vyloučeny. Uchovávání na serveru: 30 dní."
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Tlačítko Diagnostika shromáždí kontroly, stav služby a technické protokoly. Pokud je zapnuté automatické odesílání, odešlou se podpoře FuzeVPN; jinak jen po stisknutí tlačítka „Odeslat“. Tajné údaje a historie prohlížení jsou vyloučeny. Uchovávání na serveru: 30 dní.",
+  "P2P autorisé": "P2P povoleno"
 }

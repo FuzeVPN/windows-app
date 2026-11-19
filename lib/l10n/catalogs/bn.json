@@ -618,5 +618,6 @@
   "Copier": "কপি করুন",
   "Envoyer": "পাঠান",
   "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "সম্পূর্ণ ডায়াগনস্টিক এই ডিভাইসে সংগ্রহ করা হয়েছে। আপনি এটি কপি করতে বা সহায়তা দলকে পাঠাতে পারেন।",
-  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "ডায়াগনস্টিক বোতাম পরীক্ষার ফল, পরিষেবার অবস্থা ও প্রযুক্তিগত লগ সংগ্রহ করে। স্বয়ংক্রিয় পাঠানো চালু থাকলে এগুলো FuzeVPN সহায়তা দলকে পাঠানো হয়; অন্যথায় কেবল আপনি “পাঠান” চাপলে। গোপন তথ্য ও ব্রাউজিং ইতিহাস বাদ দেওয়া হয়। সার্ভারে সংরক্ষণ: ৩০ দিন।"
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "ডায়াগনস্টিক বোতাম পরীক্ষার ফল, পরিষেবার অবস্থা ও প্রযুক্তিগত লগ সংগ্রহ করে। স্বয়ংক্রিয় পাঠানো চালু থাকলে এগুলো FuzeVPN সহায়তা দলকে পাঠানো হয়; অন্যথায় কেবল আপনি “পাঠান” চাপলে। গোপন তথ্য ও ব্রাউজিং ইতিহাস বাদ দেওয়া হয়। সার্ভারে সংরক্ষণ: ৩০ দিন।",
+  "P2P autorisé": "P2P অনুমোদিত"
 }

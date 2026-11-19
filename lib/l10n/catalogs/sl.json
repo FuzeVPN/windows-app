@@ -618,5 +618,6 @@
   "Copier": "Kopiraj",
   "Envoyer": "Pošlji",
   "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "Celotna diagnostika je zbrana v tej napravi. Lahko jo kopirate ali pošljete podpori.",
-  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Gumb Diagnostika zbere preverjanja, stanje storitve in tehnične dnevnike. Če je samodejno pošiljanje vklopljeno, se pošljejo podpori FuzeVPN; sicer le, ko pritisnete »Pošlji«. Zaupni podatki in zgodovina brskanja so izključeni. Hramba na strežniku: 30 dni."
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Gumb Diagnostika zbere preverjanja, stanje storitve in tehnične dnevnike. Če je samodejno pošiljanje vklopljeno, se pošljejo podpori FuzeVPN; sicer le, ko pritisnete »Pošlji«. Zaupni podatki in zgodovina brskanja so izključeni. Hramba na strežniku: 30 dni.",
+  "P2P autorisé": "P2P dovoljen"
 }

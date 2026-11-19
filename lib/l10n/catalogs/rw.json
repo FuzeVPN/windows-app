@@ -618,5 +618,6 @@
   "Copier": "Koporora",
   "Envoyer": "Ohereza",
   "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "Isuzuma ryuzuye ryakusanyijwe kuri iki gikoresho. Ushobora kurikoporora cyangwa kuryohereza ku bufasha.",
-  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Akabuto k'Isuzuma gakoranya igenzura, uko serivisi zihagaze n'inyandiko za tekiniki. Iyo kohereza byikora bifunguye, byoherezwa ku bufasha bwa FuzeVPN; bitabaye ibyo, byoherezwa gusa iyo ukanze “Ohereza”. Amabanga n'amateka yo gushakisha ntibirimo. Bibikwa kuri seriveri iminsi 30."
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Akabuto k'Isuzuma gakoranya igenzura, uko serivisi zihagaze n'inyandiko za tekiniki. Iyo kohereza byikora bifunguye, byoherezwa ku bufasha bwa FuzeVPN; bitabaye ibyo, byoherezwa gusa iyo ukanze “Ohereza”. Amabanga n'amateka yo gushakisha ntibirimo. Bibikwa kuri seriveri iminsi 30.",
+  "P2P autorisé": "P2P iremewe"
 }

@@ -618,5 +618,6 @@
   "Copier": "کاپي کړئ",
   "Envoyer": "ولېږئ",
   "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "بشپړ تشخیص په دې وسیله کې راټول شو. تاسو کولی شئ هغه کاپي کړئ یا یې ملاتړ ته ولېږئ.",
-  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "د تشخیص تڼۍ ارزونې، د خدمت حالت او تخنیکي ثبتونه راټولوي. که اتومات لېږل فعال وي، د FuzeVPN ملاتړ ته لېږل کېږي؛ که نه، یوازې هغه وخت چې تاسو «ولېږئ» کېکاږئ. رازونه او د لټون تاریخ پکې نه شاملېږي. په سرور کې د ساتلو موده: ۳۰ ورځې."
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "د تشخیص تڼۍ ارزونې، د خدمت حالت او تخنیکي ثبتونه راټولوي. که اتومات لېږل فعال وي، د FuzeVPN ملاتړ ته لېږل کېږي؛ که نه، یوازې هغه وخت چې تاسو «ولېږئ» کېکاږئ. رازونه او د لټون تاریخ پکې نه شاملېږي. په سرور کې د ساتلو موده: ۳۰ ورځې.",
+  "P2P autorisé": "P2P ته اجازه شته"
 }

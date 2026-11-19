@@ -618,5 +618,6 @@
   "Copier": "Kopyala",
   "Envoyer": "Gönder",
   "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "Tam tanılama bu cihazda toplandı. Kopyalayabilir veya desteğe gönderebilirsiniz.",
-  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Tanılama düğmesi kontrolleri, hizmet durumunu ve teknik günlükleri toplar. Otomatik gönderme açıksa bunlar FuzeVPN desteğine gönderilir; aksi takdirde yalnızca “Gönder” düğmesine bastığınızda gönderilir. Gizli bilgiler ve tarama geçmişi dahil edilmez. Sunucuda saklama: 30 gün."
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "Tanılama düğmesi kontrolleri, hizmet durumunu ve teknik günlükleri toplar. Otomatik gönderme açıksa bunlar FuzeVPN desteğine gönderilir; aksi takdirde yalnızca “Gönder” düğmesine bastığınızda gönderilir. Gizli bilgiler ve tarama geçmişi dahil edilmez. Sunucuda saklama: 30 gün.",
+  "P2P autorisé": "P2P izinli"
 }

@@ -618,5 +618,6 @@
   "Copier": "复制",
   "Envoyer": "发送",
   "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "已在此设备上收集完整诊断。您可以复制它或发送给支持团队。",
-  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "诊断按钮会收集检查结果、服务状态和技术日志。如果已开启自动发送，这些信息会发送给 FuzeVPN 支持团队；否则，仅在您点击“发送”时发送。其中不包含秘密信息和浏览历史记录。服务器保留时间：30 天。"
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "诊断按钮会收集检查结果、服务状态和技术日志。如果已开启自动发送，这些信息会发送给 FuzeVPN 支持团队；否则，仅在您点击“发送”时发送。其中不包含秘密信息和浏览历史记录。服务器保留时间：30 天。",
+  "P2P autorisé": "允许 P2P"
 }

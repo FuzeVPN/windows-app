@@ -618,5 +618,6 @@
   "Copier": "ቅዳ",
   "Envoyer": "ላክ",
   "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "ሙሉ ምርመራው በዚህ መሣሪያ ላይ ተሰብስቧል። ሊቀዱት ወይም ለድጋፍ ሊልኩት ይችላሉ።",
-  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "የምርመራ ቁልፉ ማረጋገጫዎችን፣ የአገልግሎቱን ሁኔታ እና የቴክኒክ ምዝግቦችን ይሰበስባል። ራስ-ሰር መላክ ከበራ ለ FuzeVPN ድጋፍ ይላካሉ፤ ካልሆነ ግን «ላክ»ን ሲጫኑ ብቻ ይላካሉ። ሚስጥሮች እና የአሰሳ ታሪክ አይካተቱም። በአገልጋዩ ላይ ለ30 ቀናት ይቀመጣል።"
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "የምርመራ ቁልፉ ማረጋገጫዎችን፣ የአገልግሎቱን ሁኔታ እና የቴክኒክ ምዝግቦችን ይሰበስባል። ራስ-ሰር መላክ ከበራ ለ FuzeVPN ድጋፍ ይላካሉ፤ ካልሆነ ግን «ላክ»ን ሲጫኑ ብቻ ይላካሉ። ሚስጥሮች እና የአሰሳ ታሪክ አይካተቱም። በአገልጋዩ ላይ ለ30 ቀናት ይቀመጣል።",
+  "P2P autorisé": "P2P ተፈቅዷል"
 }

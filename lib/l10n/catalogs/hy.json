@@ -618,5 +618,6 @@
   "Copier": "Պատճենել",
   "Envoyer": "Ուղարկել",
   "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "Ամբողջական ախտորոշումը հավաքվել է այս սարքում։ Կարող եք պատճենել այն կամ ուղարկել աջակցությանը։",
-  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "«Ախտորոշում» կոճակը հավաքում է ստուգումները, ծառայության կարգավիճակը և տեխնիկական մատյանները։ Եթե ավտոմատ ուղարկումը միացված է, դրանք ուղարկվում են FuzeVPN-ի աջակցությանը, հակառակ դեպքում՝ միայն երբ սեղմում եք «Ուղարկել»։ Գաղտնի տվյալներն ու զննարկման պատմությունը չեն ներառվում։ Սերվերում պահվում է 30 օր։"
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "«Ախտորոշում» կոճակը հավաքում է ստուգումները, ծառայության կարգավիճակը և տեխնիկական մատյանները։ Եթե ավտոմատ ուղարկումը միացված է, դրանք ուղարկվում են FuzeVPN-ի աջակցությանը, հակառակ դեպքում՝ միայն երբ սեղմում եք «Ուղարկել»։ Գաղտնի տվյալներն ու զննարկման պատմությունը չեն ներառվում։ Սերվերում պահվում է 30 օր։",
+  "P2P autorisé": "P2P-ն թույլատրված է"
 }

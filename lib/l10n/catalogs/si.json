@@ -618,5 +618,6 @@
   "Copier": "පිටපත් කරන්න",
   "Envoyer": "යවන්න",
   "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "සම්පූර්ණ දෝෂ විනිශ්චය මෙම උපාංගයේ එකතු කරන ලදී. ඔබට එය පිටපත් කිරීමට හෝ සහායට යැවීමට හැකිය.",
-  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "දෝෂ විනිශ්චය බොත්තම පරීක්ෂා, සේවා තත්ත්වය සහ තාක්ෂණික ලොග එකතු කරයි. ස්වයංක්‍රීය යැවීම සක්‍රිය නම්, ඒවා FuzeVPN සහායට යවනු ලැබේ; එසේ නොමැති නම්, ඔබ “යවන්න” එබූ විට පමණි. රහස් සහ ගවේෂණ ඉතිහාසය ඇතුළත් නොවේ. සේවාදායකයේ රඳවා තබන කාලය: දින 30යි."
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "දෝෂ විනිශ්චය බොත්තම පරීක්ෂා, සේවා තත්ත්වය සහ තාක්ෂණික ලොග එකතු කරයි. ස්වයංක්‍රීය යැවීම සක්‍රිය නම්, ඒවා FuzeVPN සහායට යවනු ලැබේ; එසේ නොමැති නම්, ඔබ “යවන්න” එබූ විට පමණි. රහස් සහ ගවේෂණ ඉතිහාසය ඇතුළත් නොවේ. සේවාදායකයේ රඳවා තබන කාලය: දින 30යි.",
+  "P2P autorisé": "P2P සඳහා ඉඩ ඇත"
 }

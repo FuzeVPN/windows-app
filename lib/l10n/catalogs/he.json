@@ -618,5 +618,6 @@
   "Copier": "העתקה",
   "Envoyer": "שליחה",
   "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "האבחון המלא נאסף במכשיר זה. אפשר להעתיק אותו או לשלוח אותו לתמיכה.",
-  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "כפתור האבחון אוסף בדיקות, מצב שירות ויומנים טכניים. אם השליחה האוטומטית פעילה, הם נשלחים לתמיכת FuzeVPN; אחרת, רק לאחר לחיצה על \"שליחה\". סודות והיסטוריית גלישה אינם נכללים. הנתונים נשמרים בשרת למשך 30 ימים."
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "כפתור האבחון אוסף בדיקות, מצב שירות ויומנים טכניים. אם השליחה האוטומטית פעילה, הם נשלחים לתמיכת FuzeVPN; אחרת, רק לאחר לחיצה על \"שליחה\". סודות והיסטוריית גלישה אינם נכללים. הנתונים נשמרים בשרת למשך 30 ימים.",
+  "P2P autorisé": "P2P מותר"
 }

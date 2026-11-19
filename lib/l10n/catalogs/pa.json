@@ -618,5 +618,6 @@
   "Copier": "ਕਾਪੀ ਕਰੋ",
   "Envoyer": "ਭੇਜੋ",
   "Diagnostic complet collecté sur cet appareil. Vous pouvez le copier ou l’envoyer à l’assistance.": "ਪੂਰੀ ਜਾਂਚ ਇਸ ਡਿਵਾਈਸ 'ਤੇ ਇਕੱਠੀ ਹੋ ਗਈ। ਤੁਸੀਂ ਇਸਨੂੰ ਕਾਪੀ ਕਰ ਸਕਦੇ ਹੋ ਜਾਂ ਸਹਾਇਤਾ ਨੂੰ ਭੇਜ ਸਕਦੇ ਹੋ।",
-  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "ਜਾਂਚ ਬਟਨ ਜਾਂਚਾਂ, ਸੇਵਾ ਦੀ ਸਥਿਤੀ ਅਤੇ ਤਕਨੀਕੀ ਲੌਗ ਇਕੱਠੇ ਕਰਦਾ ਹੈ। ਜੇ ਆਪਣੇ ਆਪ ਭੇਜਣਾ ਚਾਲੂ ਹੈ, ਤਾਂ ਇਹ FuzeVPN ਸਹਾਇਤਾ ਨੂੰ ਭੇਜੇ ਜਾਂਦੇ ਹਨ; ਨਹੀਂ ਤਾਂ ਸਿਰਫ਼ ਉਦੋਂ, ਜਦੋਂ ਤੁਸੀਂ “ਭੇਜੋ” ਦਬਾਉਂਦੇ ਹੋ। ਗੁਪਤ ਜਾਣਕਾਰੀ ਅਤੇ ਬ੍ਰਾਊਜ਼ਿੰਗ ਇਤਿਹਾਸ ਸ਼ਾਮਲ ਨਹੀਂ ਹਨ। ਸਰਵਰ 'ਤੇ ਰੱਖਣ ਦੀ ਮਿਆਦ: 30 ਦਿਨ।"
+  "Le bouton Diagnostic collecte les vérifications, l’état du service et les journaux techniques. Si l’envoi automatique est activé, ils sont transmis à l’assistance FuzeVPN ; sinon, seulement lorsque vous appuyez sur « Envoyer ». Les secrets et l’historique de navigation sont exclus. Conservation sur le serveur : 30 jours.": "ਜਾਂਚ ਬਟਨ ਜਾਂਚਾਂ, ਸੇਵਾ ਦੀ ਸਥਿਤੀ ਅਤੇ ਤਕਨੀਕੀ ਲੌਗ ਇਕੱਠੇ ਕਰਦਾ ਹੈ। ਜੇ ਆਪਣੇ ਆਪ ਭੇਜਣਾ ਚਾਲੂ ਹੈ, ਤਾਂ ਇਹ FuzeVPN ਸਹਾਇਤਾ ਨੂੰ ਭੇਜੇ ਜਾਂਦੇ ਹਨ; ਨਹੀਂ ਤਾਂ ਸਿਰਫ਼ ਉਦੋਂ, ਜਦੋਂ ਤੁਸੀਂ “ਭੇਜੋ” ਦਬਾਉਂਦੇ ਹੋ। ਗੁਪਤ ਜਾਣਕਾਰੀ ਅਤੇ ਬ੍ਰਾਊਜ਼ਿੰਗ ਇਤਿਹਾਸ ਸ਼ਾਮਲ ਨਹੀਂ ਹਨ। ਸਰਵਰ 'ਤੇ ਰੱਖਣ ਦੀ ਮਿਆਦ: 30 ਦਿਨ।",
+  "P2P autorisé": "P2P ਦੀ ਇਜਾਜ਼ਤ"
 }

@@ -20,6 +20,12 @@ abstract final class AppTheme {
       Theme.of(context).brightness == Brightness.dark
       ? const Color(0xFFFFBE70)
       : const Color(0xFF9A4C00);
+  // Brand gold for a server feature such as P2P. In light mode it is darkened
+  // to keep text contrast at least 4.5:1 on the surface and on a selected row.
+  static Color premiumFor(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark
+      ? signal
+      : const Color(0xFF7A5C00);
 
   static ThemeData light({Locale? locale}) => _build(Brightness.light, locale);
   static ThemeData dark({Locale? locale}) => _build(Brightness.dark, locale);
