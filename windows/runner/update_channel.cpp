@@ -24,7 +24,14 @@ using flutter::EncodableMap;
 using flutter::EncodableValue;
 using Result = flutter::MethodResult<EncodableValue>;
 using namespace fuzevpn_update;
-struct Internet { HINTERNET value = nullptr; ~Internet() { if (value) WinHttpCloseHandle(value); } };
+struct Internet {
+  HINTERNET value = nullptr;
+  ~Internet() { Reset(); }
+  void Reset(HINTERNET next = nullptr) {
+    if (value) WinHttpCloseHandle(value);
+    value = next;
+  }
+};
 struct FileHandle {
   HANDLE value = INVALID_HANDLE_VALUE;
   ~FileHandle() { if (value != INVALID_HANDLE_VALUE) CloseHandle(value); }
@@ -55,54 +62,98 @@ const std::string* Argument(const EncodableValue* arguments, const char* key) {
   const auto found = map->find(EncodableValue(key));
   return found == map->end() ? nullptr : std::get_if<std::string>(&found->second);
 }
-Failure Download(const std::string& source, const std::filesystem::path& path,
-                 const std::atomic<bool>& cancelled) {
-  const auto url = Wide(source);
-  if (url.empty() || url.size() > 8192 || url.find_first_of(L"\r\n\t") != std::wstring::npos)
-    return Failed("update_download_url_invalid", "download_url");
+// Release hosts such as GitHub answer with a redirect to a short-lived CDN
+// link. The package is authenticated afterwards (SHA-256 from the API,
+// Authenticode publisher and version), so the serving host is not trusted.
+constexpr int kMaximumDownloadRedirects = 5;
+
+// Accepts an absolute HTTPS URL without credentials or fragment.
+bool DownloadTarget(const std::wstring& url, std::wstring* host, INTERNET_PORT* port,
+                    std::wstring* object) {
+  if (url.empty() || url.size() > 8192 || url.find_first_of(L"\r\n\t#") != std::wstring::npos)
+    return false;
   URL_COMPONENTS parts{};
   parts.dwStructSize = sizeof(parts);
   parts.dwHostNameLength = parts.dwUrlPathLength = parts.dwExtraInfoLength =
       parts.dwUserNameLength = parts.dwPasswordLength = static_cast<DWORD>(-1);
-  if (!WinHttpCrackUrl(url.c_str(), static_cast<DWORD>(url.size()), 0, &parts))
-    return Failed("update_download_url_invalid", "download_url", GetLastError());
-  if (parts.nScheme != INTERNET_SCHEME_HTTPS || parts.dwHostNameLength == 0 ||
-      parts.dwUserNameLength != 0 || parts.dwPasswordLength != 0 ||
-      source.find('#') != std::string::npos)
+  if (!WinHttpCrackUrl(url.c_str(), static_cast<DWORD>(url.size()), 0, &parts) ||
+      parts.nScheme != INTERNET_SCHEME_HTTPS || parts.dwHostNameLength == 0 ||
+      parts.dwUserNameLength != 0 || parts.dwPasswordLength != 0)
+    return false;
+  host->assign(parts.lpszHostName, parts.dwHostNameLength);
+  *port = parts.nPort;
+  if (parts.dwUrlPathLength) object->assign(parts.lpszUrlPath, parts.dwUrlPathLength);
+  else object->assign(L"/");
+  if (parts.dwExtraInfoLength) object->append(parts.lpszExtraInfo, parts.dwExtraInfoLength);
+  return true;
+}
+bool RedirectLocation(HINTERNET request, std::wstring* location) {
+  DWORD bytes = 0;
+  if (WinHttpQueryHeaders(request, WINHTTP_QUERY_LOCATION, WINHTTP_HEADER_NAME_BY_INDEX,
+          WINHTTP_NO_OUTPUT_BUFFER, &bytes, WINHTTP_NO_HEADER_INDEX) ||
+      GetLastError() != ERROR_INSUFFICIENT_BUFFER || bytes < sizeof(wchar_t) ||
+      bytes > (8192 + 1) * sizeof(wchar_t))
+    return false;
+  std::wstring value(bytes / sizeof(wchar_t), L'\0');
+  if (!WinHttpQueryHeaders(request, WINHTTP_QUERY_LOCATION, WINHTTP_HEADER_NAME_BY_INDEX,
+          value.data(), &bytes, WINHTTP_NO_HEADER_INDEX))
+    return false;
+  value.resize(bytes / sizeof(wchar_t));
+  *location = std::move(value);
+  return true;
+}
+Failure Download(const std::string& source, const std::filesystem::path& path,
+                 const std::atomic<bool>& cancelled) {
+  std::wstring url = Wide(source);
+  std::wstring host, object;
+  INTERNET_PORT port = 0;
+  if (!DownloadTarget(url, &host, &port, &object))
     return Failed("update_download_url_invalid", "download_url");
-  const std::wstring host(parts.lpszHostName, parts.dwHostNameLength);
-  std::wstring object = parts.dwUrlPathLength ?
-      std::wstring(parts.lpszUrlPath, parts.dwUrlPathLength) : L"/";
-  if (parts.dwExtraInfoLength) object.append(parts.lpszExtraInfo, parts.dwExtraInfoLength);
   // No cookies, credentials or ambient proxy authentication are attached.
   Internet session{WinHttpOpen(L"FuzeVPN-Updater/1", WINHTTP_ACCESS_TYPE_NO_PROXY,
       WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0)};
   if (!session.value) return NetworkFailure("download_session");
   if (!WinHttpSetTimeouts(session.value, 5000, 5000, 5000, 5000))
     return NetworkFailure("download_options");
-  Internet connection{WinHttpConnect(session.value, host.c_str(), parts.nPort, 0)};
-  if (!connection.value) return NetworkFailure("download_connect");
-  Internet request{WinHttpOpenRequest(connection.value, L"GET", object.c_str(), nullptr,
-      WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, WINHTTP_FLAG_SECURE)};
-  if (!request.value) return NetworkFailure("download_request");
-  DWORD redirect = WINHTTP_OPTION_REDIRECT_POLICY_NEVER;
-  DWORD disabled = WINHTTP_DISABLE_COOKIES | WINHTTP_DISABLE_AUTHENTICATION;
-  DWORD logon = WINHTTP_AUTOLOGON_SECURITY_LEVEL_HIGH;
-  if (!WinHttpSetOption(request.value, WINHTTP_OPTION_REDIRECT_POLICY, &redirect, sizeof(redirect)) ||
-      !WinHttpSetOption(request.value, WINHTTP_OPTION_DISABLE_FEATURE, &disabled, sizeof(disabled)) ||
-      !WinHttpSetOption(request.value, WINHTTP_OPTION_AUTOLOGON_POLICY, &logon, sizeof(logon)))
-    return NetworkFailure("download_options");
   const ULONGLONG deadline = GetTickCount64() + kDownloadDeadlineMs;
-  if (cancelled) return Failed("update_cancelled", "download_send");
-  if (!WinHttpSendRequest(request.value, WINHTTP_NO_ADDITIONAL_HEADERS, 0,
-      WINHTTP_NO_REQUEST_DATA, 0, 0, 0)) return NetworkFailure("download_send");
-  if (!WinHttpReceiveResponse(request.value, nullptr)) return NetworkFailure("download_receive");
-  DWORD status = 0, length = sizeof(status);
-  if (!WinHttpQueryHeaders(request.value, WINHTTP_QUERY_STATUS_CODE | WINHTTP_QUERY_FLAG_NUMBER,
-      WINHTTP_HEADER_NAME_BY_INDEX, &status, &length, WINHTTP_NO_HEADER_INDEX))
-    return NetworkFailure("download_headers");
-  if (status != 200) return Failed(status >= 300 && status < 400 ?
-      "update_download_redirect_rejected" : "update_download_http_error", "download_http", 0, status);
+  Internet connection, request;
+  for (int redirects = 0;; ++redirects) {
+    // Previous hop handles are closed first so GetLastError stays accurate.
+    request.Reset();
+    connection.Reset();
+    connection.Reset(WinHttpConnect(session.value, host.c_str(), port, 0));
+    if (!connection.value) return NetworkFailure("download_connect");
+    request.Reset(WinHttpOpenRequest(connection.value, L"GET", object.c_str(), nullptr,
+        WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, WINHTTP_FLAG_SECURE));
+    if (!request.value) return NetworkFailure("download_request");
+    // Redirects are followed below, one validated hop at a time.
+    DWORD redirect = WINHTTP_OPTION_REDIRECT_POLICY_NEVER;
+    DWORD disabled = WINHTTP_DISABLE_COOKIES | WINHTTP_DISABLE_AUTHENTICATION;
+    DWORD logon = WINHTTP_AUTOLOGON_SECURITY_LEVEL_HIGH;
+    if (!WinHttpSetOption(request.value, WINHTTP_OPTION_REDIRECT_POLICY, &redirect, sizeof(redirect)) ||
+        !WinHttpSetOption(request.value, WINHTTP_OPTION_DISABLE_FEATURE, &disabled, sizeof(disabled)) ||
+        !WinHttpSetOption(request.value, WINHTTP_OPTION_AUTOLOGON_POLICY, &logon, sizeof(logon)))
+      return NetworkFailure("download_options");
+    if (cancelled) return Failed("update_cancelled", "download_send");
+    if (GetTickCount64() >= deadline)
+      return Failed("update_download_timeout", "download_deadline", ERROR_TIMEOUT);
+    if (!WinHttpSendRequest(request.value, WINHTTP_NO_ADDITIONAL_HEADERS, 0,
+        WINHTTP_NO_REQUEST_DATA, 0, 0, 0)) return NetworkFailure("download_send");
+    if (!WinHttpReceiveResponse(request.value, nullptr)) return NetworkFailure("download_receive");
+    DWORD status = 0, length = sizeof(status);
+    if (!WinHttpQueryHeaders(request.value, WINHTTP_QUERY_STATUS_CODE | WINHTTP_QUERY_FLAG_NUMBER,
+        WINHTTP_HEADER_NAME_BY_INDEX, &status, &length, WINHTTP_NO_HEADER_INDEX))
+      return NetworkFailure("download_headers");
+    if (status == 301 || status == 302 || status == 303 || status == 307 || status == 308) {
+      if (redirects >= kMaximumDownloadRedirects || !RedirectLocation(request.value, &url) ||
+          !DownloadTarget(url, &host, &port, &object))
+        return Failed("update_download_redirect_rejected", "download_http", 0, status);
+      continue;
+    }
+    if (status != 200) return Failed(status >= 300 && status < 400 ?
+        "update_download_redirect_rejected" : "update_download_http_error", "download_http", 0, status);
+    break;
+  }
   FileHandle file{CreateFileW(path.c_str(), GENERIC_WRITE, 0, nullptr, CREATE_NEW,
       FILE_ATTRIBUTE_NORMAL | FILE_FLAG_OPEN_REPARSE_POINT, nullptr)};
   if (file.value == INVALID_HANDLE_VALUE)
