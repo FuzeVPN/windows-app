@@ -475,15 +475,25 @@ String _updateError(String code) => switch (code) {
 };
 
 String _updateDiagnostics(BuildContext context, WindowsUpdateFailure failure) {
-  final lines = ['${context.tr('Code d’erreur')} : ${failure.code}'];
+  // Each language has its own label separator.
+  String fact(String label, String value) => context
+      .tr('{label} : {value}')
+      .replaceAll('{label}', label)
+      .replaceAll('{value}', value);
+  final lines = [fact(context.tr('Code d’erreur'), failure.code)];
   final stage = failure.stage;
   if (stage != null && WindowsUpdateFailure.diagnosticStages.contains(stage)) {
     lines.add(
-      '${context.tr('Étape')} : ${context.tr(_updateStageText(stage))} ($stage)',
+      fact(
+        context.tr('Étape'),
+        '${context.tr(_updateStageText(stage))} ($stage)',
+      ),
     );
   }
-  if (failure.statusCode case final status?) lines.add('HTTP : $status');
-  if (failure.tlsReason case final reason?) lines.add('TLS : $reason');
+  if (failure.statusCode case final status?) {
+    lines.add(fact('HTTP', '$status'));
+  }
+  if (failure.tlsReason case final reason?) lines.add(fact('TLS', reason));
   if (failure.windowsError case final code?) {
     lines.add(
       context.tr('Code Windows : {code}').replaceAll('{code}', '$code'),

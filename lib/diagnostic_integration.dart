@@ -45,6 +45,7 @@ class DiagnosticCheckView {
     this.windowsError,
     this.httpStatus,
     String? tlsReason,
+    this.note,
     // Keep a public named argument while validating its private backing field.
     // ignore: prefer_initializing_formals
   }) : _tlsReason = tlsReason;
@@ -56,6 +57,9 @@ class DiagnosticCheckView {
   final int? windowsError;
   final int? httpStatus;
   final String? _tlsReason;
+
+  /// Why a skipped check did not run, as a catalogue key.
+  final String? note;
   String? get tlsReason =>
       DiagnosticLog.tlsFailureReasons.contains(_tlsReason) ? _tlsReason : null;
 }
@@ -511,11 +515,35 @@ extension AppDiagnostics on AppController {
   List<DiagnosticCheckView> get diagnosticChecks {
     final values = diagnosticResults?['checks'];
     if (values is! List) return const [];
-    return values
+    final checks = values
         .whereType<Map>()
         .map(
           (check) => DiagnosticCheck.fromMap(Map<String, Object?>.from(check)),
         )
+        .toList(growable: false);
+    final runtime = diagnosticResults?['runtime'];
+    final snapshot = diagnosticResults?['snapshot'];
+    // FuzeVPN's own protection can hold traffic without a live runtime; its
+    // skipped checks then prove nothing about the policy Windows enforces.
+    final protectionHeld =
+        requiresExplicitDisconnect && vpnStatus != VpnStatus.connected;
+    final presence = runtime is Map ? runtime['presence'] : null;
+    // A skipped tunnel check proves that no tunnel is active, unless the
+    // runtime belongs to another Windows user.
+    final tunnelSkipped =
+        !protectionHeld &&
+        (presence == 'present' || presence == 'absent') &&
+        !(runtime is Map && runtime['owned_by_another_user'] == true) &&
+        checks.any(
+          (check) =>
+              check.id == 'tunnel_connection' && check.result == 'skipped',
+        );
+    // Only a present runtime with readable filters proves that nothing else
+    // is enforced; an absent one may have left a persisted policy.
+    final noTunnel = tunnelSkipped && presence == 'present';
+    final killSwitchOff =
+        snapshot is Map && snapshot['kill_switch_requested'] == false;
+    return checks
         .map((check) {
           final failure = check.id == 'api_reachability'
               ? _diagnosticApiFailures[this]
@@ -554,6 +582,22 @@ extension AppDiagnostics on AppController {
             windowsError: failure?.windowsError,
             httpStatus: failure?.httpStatus,
             tlsReason: failure?.tlsReason,
+            note: check.result != 'skipped'
+                ? null
+                : switch (check.id) {
+                    'tunnel_connection' when tunnelSkipped =>
+                      'Aucun tunnel VPN n’est actif.',
+                    'kill_switch' || 'connectivity'
+                        when protectionHeld && !killSwitchOff =>
+                      'Trafic bloqué par le kill switch',
+                    'kill_switch' when killSwitchOff && !protectionHeld =>
+                      'Désactivé',
+                    'kill_switch' ||
+                    'driver_availability' ||
+                    'service_availability' when noTunnel =>
+                      'Nécessite une connexion VPN active.',
+                    _ => null,
+                  },
           );
         })
         .toList(growable: false);
@@ -760,8 +804,14 @@ extension AppDiagnostics on AppController {
     final checks = <Object?>[...?result['checks'] as List?];
     final clock = Stopwatch()..start();
     _diagnosticApiFailures[this] = null;
+    // The same unauthenticated request measures Internet access: any HTTP
+    // reply proves it, only a network-level failure disproves it, and a local
+    // resolver, broker or storage failure leaves it unmeasured.
+    var connectivity = 'skipped';
+    String? connectivityCode;
     try {
       await _api.locations();
+      connectivity = 'passed';
       checks.add(
         DiagnosticCheck(
           id: 'api_reachability',
@@ -825,6 +875,19 @@ extension AppDiagnostics on AppController {
               code == 'api_transport_unsupported' ||
               code == 'unknown_error' ||
               code == 'unexpected_error');
+      if (httpStatus != null) {
+        connectivity = 'passed';
+      } else if (!localUnavailable &&
+          const {
+            'network_unreachable',
+            'network_error',
+            'network_unavailable',
+            'network_timeout',
+            'request_timeout',
+          }.contains(code)) {
+        connectivity = 'failed';
+        connectivityCode = code;
+      }
       checks.add(
         DiagnosticCheck(
           id: 'api_reachability',
@@ -840,8 +903,19 @@ extension AppDiagnostics on AppController {
     if (_disposed || generation != _diagnosticGeneration || isConnectionBusy) {
       throw const DiagnosticsFailure('diagnostic_cancelled');
     }
-    // Observing API reachability is not a general Internet or leakage test.
-    checks.add(DiagnosticCheck(id: 'connectivity', result: 'skipped').toJson());
+    // While FuzeVPN's filters hold traffic they decide this request, so it
+    // says nothing about the Internet connection itself.
+    if (requiresExplicitDisconnect && vpnStatus != VpnStatus.connected) {
+      connectivity = 'skipped';
+      connectivityCode = null;
+    }
+    checks.add(
+      DiagnosticCheck(
+        id: 'connectivity',
+        result: connectivity,
+        code: connectivityCode,
+      ).toJson(),
+    );
     final snapshot = <String, Object?>{
       ...?result['snapshot'] as Map<String, Object?>?,
       'kill_switch_requested': killSwitchEnabled,

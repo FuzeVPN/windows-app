@@ -90,6 +90,8 @@ Map EncodeSnapshot(const RuntimeObservation& source) {
       const bool openvpn = source.openvpn_protection.active || (!source.wireguard_protection.active &&
           source.openvpn.available && (!source.wireguard.available || source.openvpn.observation_tick >= source.wireguard.observation_tick));
       const auto& engine = openvpn ? source.openvpn : source.wireguard;
+      // Readable filters without FuzeVPN protection prove there is no tunnel.
+      const bool no_tunnel = source.protection_known && !protection && !engine.connected;
       if (engine.available) {
         const bool cleanup_eligible = source.owned && (engine.cleanup_eligible ||
             (engine.attempt_failed && !engine.connected && source.protection_known && protection &&
@@ -113,7 +115,7 @@ Map EncodeSnapshot(const RuntimeObservation& source) {
             protection->phase == NetworkProtectionStatus::Phase::tunnel;
         Check(checks, "tunnel_connection", !source.protection_known ? CheckResult::unknown :
             engine.connected && protected_connection ? CheckResult::passed :
-            !engine.connected && !source.owned && !protection ? CheckResult::skipped : CheckResult::failed);
+            no_tunnel && !source.owned ? CheckResult::skipped : CheckResult::failed);
         Check(checks, "cleanup", cleanup_complete ? CheckResult::passed : cleanup_eligible ? CheckResult::failed :
             std::string_view(cleanup) == "unknown" ? CheckResult::unknown : CheckResult::skipped);
         if (engine.handshake_age_ms) Check(checks, "handshake", CheckResult::passed);
@@ -139,8 +141,10 @@ Map EncodeSnapshot(const RuntimeObservation& source) {
           if (const auto* code = ErrorCode(engine.first_error)) windows[Value("first_error")] = Value(code);
           if (const auto* code = ErrorCode(engine.last_error)) windows[Value("last_error")] = Value(code);
         }
-      } else Check(checks, "tunnel_connection", CheckResult::unknown);
-      Check(checks, "driver_availability", source.driver.available);
+      } else Check(checks, "tunnel_connection", no_tunnel && !source.owned ? CheckResult::skipped : CheckResult::unknown);
+      // Without a tunnel, a driver that was not observed is not needed.
+      Check(checks, "driver_availability", no_tunnel && !source.owned && source.driver.available == CheckResult::unknown ?
+          CheckResult::skipped : source.driver.available);
     } else {
       Check(checks, "tunnel_connection", CheckResult::skipped);
       Check(checks, "permissions", CheckResult::failed);

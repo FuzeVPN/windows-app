@@ -259,6 +259,24 @@ void EncodingChecks() {
   Check(CheckResultOf(encoded, "tunnel_connection") == "unknown", "stale filter handle cannot prove connected");
   Check(!Has(Child(encoded, "snapshot"), "kill_switch_verified"), "lost BFE omitted rather than false bit");
   Check(!BoundedAge(100, 101) && !BoundedAge(100, 0) && BoundedAge(100, 99) == 1, "freshness rejects unknown/future timestamps");
+  RuntimeObservation idle;
+  idle.present = true; idle.protection_known = true;
+  encoded = EncodeSnapshot(idle);
+  Check(CheckResultOf(encoded, "service_availability") == "passed" &&
+      CheckResultOf(encoded, "tunnel_connection") == "skipped" &&
+      CheckResultOf(encoded, "driver_availability") == "skipped" &&
+      CheckResultOf(encoded, "kill_switch") == "skipped",
+      "readable filters without protection prove a disconnected runtime");
+  idle.protection_known = false;
+  encoded = EncodeSnapshot(idle);
+  Check(CheckResultOf(encoded, "tunnel_connection") == "unknown" &&
+      CheckResultOf(encoded, "driver_availability") == "unknown",
+      "unreadable filters cannot prove the absence of a tunnel");
+  idle.protection_known = true; idle.owned = true;
+  encoded = EncodeSnapshot(idle);
+  Check(CheckResultOf(encoded, "tunnel_connection") == "unknown" &&
+      CheckResultOf(encoded, "driver_availability") == "unknown",
+      "owned runtime without engine evidence stays unknown");
 }
 }
 int main() {

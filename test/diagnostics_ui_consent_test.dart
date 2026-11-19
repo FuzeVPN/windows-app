@@ -711,4 +711,81 @@ void main() {
     }
     await tester.pumpWidget(const SizedBox.shrink());
   });
+
+  for (final requested in [true, false]) {
+    testWidgets(
+      'a disconnected VPN explains skipped checks without support (kill switch $requested)',
+      (tester) async {
+        Map<String, Object?> results({required bool otherUser}) => {
+          'runtime': {
+            'presence': 'present',
+            'owned_by_another_user': otherUser,
+          },
+          'snapshot': {'kill_switch_requested': requested},
+          'checks': [
+            {'id': 'service_availability', 'result': 'passed'},
+            {'id': 'kill_switch', 'result': 'skipped'},
+            {'id': 'tunnel_connection', 'result': 'skipped'},
+            {'id': 'driver_availability', 'result': 'skipped'},
+            {'id': 'api_reachability', 'result': 'passed'},
+            {'id': 'connectivity', 'result': 'passed'},
+          ],
+        };
+        final app = _UiController(_Diagnostics())
+          ..diagnosticResults = results(otherUser: false);
+        await _mount(tester, app);
+        final skipped = find.text('Vérifications non exécutées (3)');
+        await tester.ensureVisible(skipped);
+        await tester.tap(skipped);
+        await tester.pumpAndSettle();
+        expect(find.text('Aucun tunnel VPN n’est actif.'), findsOneWidget);
+        expect(
+          find.text('Nécessite une connexion VPN active.'),
+          findsNWidgets(requested ? 2 : 1),
+        );
+        expect(
+          find.text('Désactivé'),
+          requested ? findsNothing : findsOneWidget,
+        );
+        expect(find.text('Non exécuté'), findsNWidgets(3));
+        expect(find.textContaining('Code d’erreur'), findsNothing);
+        expect(
+          find.textContaining(RegExp('contactez', caseSensitive: false)),
+          findsNothing,
+        );
+        // Another Windows user's runtime does not prove that no tunnel exists.
+        app.diagnosticResults = results(otherUser: true);
+        expect(
+          app.diagnosticChecks
+              .where((check) => check.id != 'kill_switch' || requested)
+              .map((check) => check.note),
+          everyElement(isNull),
+        );
+        // A kill switch still holding traffic is never described as idle,
+        // even when its runtime is absent.
+        app
+          ..vpnStatus = VpnStatus.blocked
+          ..diagnosticResults = {
+            ...results(otherUser: false),
+            'runtime': {'presence': 'absent'},
+            'checks': [
+              {'id': 'service_availability', 'result': 'skipped'},
+              {'id': 'kill_switch', 'result': 'skipped'},
+              {'id': 'tunnel_connection', 'result': 'skipped'},
+              {'id': 'connectivity', 'result': 'skipped'},
+            ],
+          };
+        final notes = {
+          for (final check in app.diagnosticChecks) check.id: check.note,
+        };
+        expect(notes, {
+          'service_availability': null,
+          'kill_switch': requested ? 'Trafic bloqué par le kill switch' : null,
+          'tunnel_connection': null,
+          'connectivity': requested ? 'Trafic bloqué par le kill switch' : null,
+        });
+        await tester.pumpWidget(const SizedBox.shrink());
+      },
+    );
+  }
 }

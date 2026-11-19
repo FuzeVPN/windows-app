@@ -10,13 +10,14 @@ class _LocationsPage extends StatefulWidget {
   State<_LocationsPage> createState() => _LocationsPageState();
 }
 
+/// One list filter at a time; a server can still match several of them.
+enum _LocationFilter { all, favorites, p2p }
+
 class _LocationsPageState extends State<_LocationsPage> {
   final _searchController = TextEditingController();
   final _scrollController = ScrollController();
   String _query = '';
-  bool _favoritesOnly = false;
-  // Combined with the favorites filter: both on shows P2P favorites.
-  bool _p2pOnly = false;
+  _LocationFilter _filter = _LocationFilter.all;
   String? _countryCode;
   String? _city;
 
@@ -113,6 +114,7 @@ class _LocationsPageState extends State<_LocationsPage> {
                 .tr(selected ? 'Sélectionné : {server}' : 'Choisir : {server}')
                 .replaceAll('{server}', candidate.displayName),
       selected: selected,
+      p2pAllowed: candidate?.p2pAllowed ?? false,
       onSelect: _select(candidate),
       selectionLabel: context
           .tr('Sélectionner {name}')
@@ -142,16 +144,19 @@ class _LocationsPageState extends State<_LocationsPage> {
         .firstOrNull;
     final query = _query.trim().toLowerCase();
     final searching = query.isNotEmpty;
-    final filtering = searching || _favoritesOnly || _p2pOnly;
+    final filtering = searching || _filter != _LocationFilter.all;
     final favoriteCount = ordered.where(controller.isFavoriteLocation).length;
     final p2pCount = ordered.where((location) => location.p2pAllowed).length;
     final matches = filtering
         ? ordered
               .where(
                 (location) =>
-                    (!_favoritesOnly ||
-                        controller.isFavoriteLocation(location)) &&
-                    (!_p2pOnly || location.p2pAllowed) &&
+                    switch (_filter) {
+                      _LocationFilter.all => true,
+                      _LocationFilter.favorites =>
+                        controller.isFavoriteLocation(location),
+                      _LocationFilter.p2p => location.p2pAllowed,
+                    } &&
                     (location.displayName.toLowerCase().contains(query) ||
                         location.city.toLowerCase().contains(query) ||
                         location.countryCode.toLowerCase().contains(query) ||
@@ -215,8 +220,15 @@ class _LocationsPageState extends State<_LocationsPage> {
     final visibleLocations = filtering
         ? matches
         : city?.locations ?? country?.locations ?? ordered;
-    final listTitle = filtering
-        ? context.tr('Serveurs')
+    // The title names what the list shows: the chosen filter (a search with
+    // Tous covers every country) or the current level of the country > city >
+    // server directory.
+    final listTitle = _filter == _LocationFilter.favorites
+        ? context.tr('Favoris')
+        : _filter == _LocationFilter.p2p
+        ? 'P2P'
+        : searching
+        ? context.tr('Tous les pays')
         : city != null
         ? context.tr('Serveurs à {name}').replaceAll('{name}', city.city)
         : country != null
@@ -274,8 +286,8 @@ class _LocationsPageState extends State<_LocationsPage> {
                     border: Border.all(color: scheme.outlineVariant),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
+                  child: Builder(
+                    builder: (context) {
                       final search = TextField(
                         key: const ValueKey('location-search'),
                         controller: _searchController,
@@ -300,67 +312,59 @@ class _LocationsPageState extends State<_LocationsPage> {
                                 ),
                         ),
                       );
-                      final favoriteFilter = FilterChip(
-                        key: const ValueKey('location-filter-favorites'),
-                        selected: _favoritesOnly,
-                        showCheckmark: false,
-                        avatar: Icon(
-                          _favoritesOnly ? Icons.star : Icons.star_outline,
-                          size: 18,
-                        ),
-                        label: Text(
-                          '${context.tr('Favori')} · $favoriteCount',
-                          style: theme.textTheme.labelLarge,
-                        ),
-                        onSelected: (selected) {
-                          setState(() => _favoritesOnly = selected);
-                          _scrollToTop();
-                        },
-                      );
                       final gold = AppTheme.premiumFor(context);
-                      final p2pFilter = FilterChip(
-                        key: const ValueKey('location-filter-p2p'),
-                        selected: _p2pOnly,
-                        showCheckmark: false,
-                        tooltip: context.tr('P2P autorisé'),
-                        side: BorderSide(
-                          color: _p2pOnly ? gold : scheme.outlineVariant,
-                        ),
-                        avatar: Icon(Icons.swap_vert, size: 18, color: gold),
-                        label: Text(
-                          'P2P · $p2pCount',
-                          style: theme.textTheme.labelLarge,
-                        ),
-                        onSelected: (selected) {
-                          setState(() => _p2pOnly = selected);
-                          _scrollToTop();
-                        },
-                      );
-                      final inline =
-                          constraints.maxWidth >= 640 &&
-                          MediaQuery.textScalerOf(context).scale(14) <= 18;
-                      return inline
-                          ? Row(
-                              children: [
-                                Expanded(child: search),
-                                const SizedBox(width: 16),
-                                favoriteFilter,
-                                const SizedBox(width: 8),
-                                p2pFilter,
-                              ],
-                            )
-                          : Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                search,
-                                const SizedBox(height: 8),
-                                Wrap(
-                                  spacing: 8,
-                                  runSpacing: 8,
-                                  children: [favoriteFilter, p2pFilter],
+                      final filters =
+                          _SettingsSegmentedControl<_LocationFilter>(
+                            segments: [
+                              ButtonSegment(
+                                value: _LocationFilter.all,
+                                icon: const Icon(Icons.public, size: 18),
+                                label: Text(
+                                  '${context.tr('Tous')} · ${ordered.length}',
+                                  key: const ValueKey('location-filter-all'),
                                 ),
-                              ],
-                            );
+                              ),
+                              ButtonSegment(
+                                value: _LocationFilter.favorites,
+                                icon: const Icon(Icons.star_outline, size: 18),
+                                label: Text(
+                                  '${context.tr('Favoris')} · $favoriteCount',
+                                  key: const ValueKey(
+                                    'location-filter-favorites',
+                                  ),
+                                ),
+                              ),
+                              ButtonSegment(
+                                value: _LocationFilter.p2p,
+                                tooltip: context.tr('P2P autorisé'),
+                                icon: Icon(
+                                  Icons.swap_vert,
+                                  size: 18,
+                                  color: gold,
+                                ),
+                                label: Text(
+                                  'P2P · $p2pCount',
+                                  key: const ValueKey('location-filter-p2p'),
+                                ),
+                              ),
+                            ],
+                            selected: {_filter},
+                            showSelectedIcon: true,
+                            onSelectionChanged: (selection) {
+                              setState(() {
+                                _filter = selection.single;
+                                // A filter lists servers of every country, so
+                                // returning to Tous starts from all countries.
+                                _countryCode = null;
+                                _city = null;
+                              });
+                              _scrollToTop();
+                            },
+                          );
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [search, const SizedBox(height: 12), filters],
+                      );
                     },
                   ),
                 ),
@@ -410,6 +414,7 @@ class _LocationsPageState extends State<_LocationsPage> {
                     children: [
                       Text(
                         listTitle,
+                        key: const ValueKey('location-list-title'),
                         style: theme.textTheme.titleSmall?.copyWith(
                           fontWeight: FontWeight.w700,
                         ),
@@ -427,11 +432,18 @@ class _LocationsPageState extends State<_LocationsPage> {
                 ),
                 const SizedBox(height: 12),
                 if (rows.isEmpty)
-                  const _NoticeCard(
+                  _NoticeCard(
                     icon: Icons.search_off_outlined,
                     title: 'Aucun emplacement trouvé',
                     message:
                         'Essayez une autre ville, un autre pays ou un autre nom de serveur.',
+                    actionLabel: _filter == _LocationFilter.all ? null : 'Tous',
+                    onAction: _filter == _LocationFilter.all
+                        ? null
+                        : () {
+                            setState(() => _filter = _LocationFilter.all);
+                            _scrollToTop();
+                          },
                   )
                 else
                   Container(
@@ -466,6 +478,7 @@ class _LocationGroupRow extends StatelessWidget {
     required this.count,
     required this.candidateLabel,
     required this.selected,
+    required this.p2pAllowed,
     required this.onSelect,
     required this.selectionLabel,
     required this.openLabel,
@@ -480,6 +493,9 @@ class _LocationGroupRow extends StatelessWidget {
   final String count;
   final String candidateLabel;
   final bool selected;
+
+  /// Whether the server this row selects allows P2P traffic.
+  final bool p2pAllowed;
   final VoidCallback? onSelect;
   final String selectionLabel;
   final String openLabel;
@@ -501,8 +517,21 @@ class _LocationGroupRow extends StatelessWidget {
             color: scheme.onSurfaceVariant,
           ),
         );
-        final nameLabel = Text(
-          name,
+        // The badge follows the last word when a long name wraps.
+        final nameLabel = Text.rich(
+          TextSpan(
+            text: name,
+            children: [
+              if (p2pAllowed)
+                const WidgetSpan(
+                  alignment: PlaceholderAlignment.middle,
+                  child: Padding(
+                    padding: EdgeInsetsDirectional.only(start: 8),
+                    child: _P2pBadge(),
+                  ),
+                ),
+            ],
+          ),
           style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w700,
           ),
@@ -516,7 +545,8 @@ class _LocationGroupRow extends StatelessWidget {
                   button: true,
                   enabled: onSelect != null,
                   selected: selected,
-                  label: '$selectionLabel, $candidateLabel, $count',
+                  label:
+                      '$selectionLabel, $candidateLabel${p2pAllowed ? ', ${context.tr('P2P autorisé')}' : ''}, $count',
                   onTap: onSelect,
                   excludeSemantics: true,
                   child: Material(
@@ -578,14 +608,17 @@ class _LocationGroupRow extends StatelessWidget {
                                   ],
                                 ),
                               ),
-                              if (selected) ...[
-                                const SizedBox(width: 8),
+                              const SizedBox(width: 8),
+                              // The slot stays reserved so the count column
+                              // lines up on selected and unselected rows.
+                              if (selected)
                                 Icon(
                                   Icons.check_circle,
                                   size: 20,
                                   color: scheme.onPrimaryContainer,
-                                ),
-                              ],
+                                )
+                              else
+                                const SizedBox(width: 20),
                             ],
                           ),
                         ),

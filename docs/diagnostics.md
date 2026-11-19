@@ -79,6 +79,14 @@ flow. An unavailable observation is reported as unavailable rather than as
 proof of disconnection. A local trace is not a packet capture or proof of a
 working VPN tunnel.
 
+Diagnostics never require an account or a VPN connection; only sending a
+report requires an account. When readable filters show no FuzeVPN protection,
+the tunnel, VPN driver and kill switch checks are marked as not run with their
+reason (no active tunnel, active VPN connection required, or kill switch
+disabled) rather than as unknown. **Internet access** reuses the
+unauthenticated API request: any HTTP reply passes, a network-level failure
+fails, and a local resolver, broker or storage failure leaves it not run.
+
 For a public bug report, include:
 
 - App version, Windows version and x64 or ARM64 architecture.

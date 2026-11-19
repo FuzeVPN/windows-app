@@ -215,7 +215,7 @@ void main() {
         expect(tester.takeException(), isNull);
       }
 
-      await selectCategory('Confidentialité');
+      await selectCategory('Sécurité');
       final privacy = find.byKey(const ValueKey('settings-content-privacy'));
       expect(privacy, findsOneWidget);
       for (final label in [

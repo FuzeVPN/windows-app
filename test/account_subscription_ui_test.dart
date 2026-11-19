@@ -99,6 +99,7 @@ void main() {
     expect(find.text('Annulé'), findsOneWidget);
     expect(find.text('Autorisé'), findsOneWidget);
     expect(find.text('Annulé à la fin de la période'), findsOneWidget);
+    expect(find.text('Expiration'), findsOneWidget);
     expect(find.text('Prochaine échéance'), findsNothing);
     await _closeApp(tester, app);
   });
@@ -109,11 +110,30 @@ void main() {
     final app = _SubscriptionUiController()
       ..response = _subscription(expiresAt: null, nextChargeAt: null);
     await _openAccount(tester, app);
+    // Without a next charge date, the end date is not folded into it.
     expect(find.text('Expiration'), findsOneWidget);
     expect(find.text('Prochaine échéance'), findsOneWidget);
     expect(find.text('Indisponible'), findsNWidgets(2));
     expect(find.text('Automatique'), findsOneWidget);
     await _closeApp(tester, app);
+  });
+
+  testWidgets('a renewing period shows its end date once as the next charge', (
+    tester,
+  ) async {
+    final app = _SubscriptionUiController();
+    await _openAccount(tester, app);
+    expect(find.text('Expiration'), findsNothing);
+    expect(find.text('Prochaine échéance'), findsOneWidget);
+    await _closeApp(tester, app);
+
+    final missingCharge = _SubscriptionUiController()
+      ..response = _subscription(nextChargeAt: null);
+    await _openAccount(tester, missingCharge);
+    // The known end date stays visible when the next charge is unknown.
+    expect(find.text('Expiration'), findsOneWidget);
+    expect(find.text('Indisponible'), findsOneWidget);
+    await _closeApp(tester, missingCharge);
   });
 
   testWidgets('an unknown API status never advertises confirmed access', (
@@ -136,6 +156,7 @@ void main() {
       ..response = _subscription(renewsAutomatically: false);
     await _openAccount(tester, app);
     expect(find.text('Désactivé'), findsOneWidget);
+    expect(find.text('Expiration'), findsOneWidget);
     expect(find.text('Prochaine échéance'), findsNothing);
     await _closeApp(tester, app);
   });
@@ -191,12 +212,12 @@ void main() {
             : DateFormat.localeExists(language.locale!.languageCode)
             ? language.locale!.languageCode
             : null;
-        final expiry =
+        final nextCharge =
             (dataLocale == null
                     ? DateFormat('yyyy-MM-dd HH:mm', 'en_US')
                     : DateFormat.yMMMMd(dataLocale).add_Hm())
-                .format(app.response!.expiresAt!.toLocal());
-        expect(find.text(expiry), findsNWidgets(2), reason: language.name);
+                .format(app.response!.nextChargeAt!.toLocal());
+        expect(find.text(nextCharge), findsOneWidget, reason: language.name);
         expect(tester.takeException(), isNull, reason: language.name);
         await _closeApp(tester, app);
       }
@@ -217,11 +238,11 @@ void main() {
         final strings = AppStrings.forLanguage(language);
         await _openAccount(tester, app);
         final locale = language.locale!.toString();
-        final expires = app.response!.expiresAt!.toLocal();
-        final expected = DateFormat.yMMMMd(locale).add_Hm().format(expires);
-        expect(find.text(expected), findsNWidgets(2));
-        final expiry = find.text(strings.text('Expiration'));
-        await tester.ensureVisible(expiry);
+        final nextCharge = app.response!.nextChargeAt!.toLocal();
+        final expected = DateFormat.yMMMMd(locale).add_Hm().format(nextCharge);
+        expect(find.text(expected), findsOneWidget);
+        final dateLabel = find.text(strings.text('Prochaine échéance'));
+        await tester.ensureVisible(dateLabel);
         await tester.pumpAndSettle();
         final signOut = find.widgetWithText(
           FilledButton,

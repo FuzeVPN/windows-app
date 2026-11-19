@@ -657,7 +657,10 @@ class _ConnectionDetail extends StatelessWidget {
       const SizedBox(width: 8),
       Flexible(
         child: Text(
-          '$label : $value',
+          context
+              .tr('{label} : {value}')
+              .replaceAll('{label}', label)
+              .replaceAll('{value}', value),
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
             color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),

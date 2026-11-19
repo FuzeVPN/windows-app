@@ -717,6 +717,7 @@ class _DiagnosticCheckTile extends StatelessWidget {
 }
 
 String? _diagnosticGuidance(DiagnosticCheckView check) {
+  if (check.result == 'skipped') return check.note;
   if (check.result != 'failed' && check.result != 'unknown') return null;
   if (check.id == 'api_reachability') {
     if (check.httpStatus != null) {
@@ -785,7 +786,7 @@ String? _diagnosticGuidance(DiagnosticCheckView check) {
     return 'Cette mesure est indisponible. Relancez le diagnostic. Si elle reste indéterminée, contactez l’assistance.';
   }
   return switch (check.label) {
-    'Accès à l’API' =>
+    'Accès Internet' =>
       'Vérifiez votre connexion Internet, puis relancez le diagnostic. Le tunnel peut fonctionner même si l’API ne répond pas.',
     'Configuration du tunnel' ||
     'État du tunnel' ||
