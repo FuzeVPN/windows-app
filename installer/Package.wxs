@@ -71,7 +71,11 @@
                           Arguments="--fuzevpn-vpn-service" Vital="yes">
             <ServiceDependency Id="Nsi" />
             <ServiceDependency Id="TcpIp" />
-            <PermissionEx Sddl="D:P(A;;GA;;;SY)(A;;GA;;;BA)(A;;CCLCSWLORC;;;BU)" />
+            <!-- Users may start (RP) the service: the UI starts it before its
+                 delayed automatic start without an elevation prompt. Keep equal
+                 to kServiceSecurity (windows/runner/maintenance_service_config.h),
+                 which the maintenance commit also applies on upgrade. -->
+            <PermissionEx Sddl="D:P(A;;GA;;;SY)(A;;GA;;;BA)(A;;CCLCSWRPLORC;;;BU)" />
           </ServiceInstall>
           <ServiceControl Id="VpnServiceStopRemove" Name="FuzeVPNService" Stop="both" Remove="uninstall" Wait="yes" />
         </Component>

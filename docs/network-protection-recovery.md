@@ -68,10 +68,20 @@ phase préparée, pour ce protocole.
   délai d’attente dépassé, intention endommagée ou d’une version inconnue),
   l’état est déclaré inconnu. Il n’est jamais supposé absent.
 - **Déconnecter** est la seule action qui démarre alors le moteur, comme le
-  fait une connexion, avec l’invite d’élévation Windows nécessaire : le moteur
-  restaure la politique, puis la retire. Lorsque l’intention est illisible, la
-  demande est transmise de la même façon et le moteur tranche. Sans intention
-  persistante, rien n’est démarré.
+  fait une connexion : le moteur restaure la politique, puis la retire.
+  Lorsque l’intention est illisible, la demande est transmise de la même façon
+  et le moteur tranche. Sans intention persistante, rien n’est démarré.
+- Le service installé est démarré par l’interface elle-même, sans invite
+  d’élévation : son ACL accorde aux utilisateurs le droit de le démarrer,
+  mais ni de l’arrêter ni de le reconfigurer. L’installeur la pose, et la
+  validation de chaque installation ou mise à niveau la réapplique. Le
+  service refuse lui-même de tourner pendant une maintenance, depuis une
+  installation non protégée ou lorsqu’un autre moteur détient le verrou
+  machine. L’interface ne le démarre pas pendant un relais vers une copie
+  portable. L’invite d’élévation ne reste nécessaire que si ce démarrage
+  direct est impossible (service absent, désactivé, relais portable en cours
+  ou ACL sans ce droit), ainsi que pour une copie portable ou de
+  développement.
 - Si l’intention appartient à un autre compte Windows, la déconnexion est
   refusée sans invite d’élévation. Seul ce compte, ou la récupération
   administrateur décrite plus bas, peut retirer le blocage.

@@ -315,6 +315,12 @@ bool EndInstallerMaintenance(const std::wstring& transaction,
     } else {
       if (!ExpectedService(service.value, directory)) return Fail(ERROR_BAD_CONFIGURATION, error);
       if (!ConfigureServiceRuntime(service.value, ChangeServiceConfig2W)) return Fail(GetLastError(), error);
+      // Best effort, through its own handle so the commit never depends on
+      // WRITE_DAC: without this ACL the UI falls back to the elevated start.
+      {
+        Service secured{OpenServiceW(manager.value, kServiceName, WRITE_DAC)};
+        if (secured.value) ApplyServiceSecurity(secured.value, SetServiceObjectSecurity);
+      }
       if (!ChangeServiceConfigW(service.value, SERVICE_NO_CHANGE, SERVICE_AUTO_START,
           SERVICE_NO_CHANGE, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
           nullptr)) return Fail(GetLastError(), error);

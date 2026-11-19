@@ -10,6 +10,7 @@
 #include "portable_runtime.h"
 #include "portable_runtime_client.h"
 #include "portable_service_lease_journal.h"
+#include "maintenance_service_config.h"
 #include "maintenance_state.h"
 #include "runtime_ownership.h"
 #include "service_idle_handoff.h"
@@ -1287,6 +1288,9 @@ int InstallVpnService() {
                             &recovery) &&
       ChangeServiceConfig2W(service, SERVICE_CONFIG_FAILURE_ACTIONS_FLAG,
                             &recovery_flag);
+  // Best effort, as at an installer commit: without it, the UI keeps using
+  // the elevated start for this service.
+  if (configured) fuzevpn_maintenance::ApplyServiceSecurity(service, SetServiceObjectSecurity);
   const bool started = configured &&
                        (StartServiceW(service, 0, nullptr) != FALSE ||
                         GetLastError() == ERROR_SERVICE_ALREADY_RUNNING);
@@ -1552,6 +1556,32 @@ void RecordServiceInstallerResult(HANDLE installer) {
   AppendNativeDiagnostic("broker", "service_install_failed", failure);
 }
 
+// Starts the registered service as the calling user, without elevation. Its
+// ACL grants Users SERVICE_START (kServiceSecurity). The service checks its
+// own installation, maintenance gate and runtime lock when it starts. Any
+// failure, including a service registered by an older installer that denied
+// this right, leaves the elevated installer as the fallback.
+bool StartRegisteredService() {
+  // A portable hand-off lease or an elevated install holds this mutex: a
+  // start now could take the runtime from the portable engine. Its ACL admits
+  // only administrators, so ERROR_ACCESS_DENIED also means it exists.
+  HANDLE handoff = OpenMutexW(SYNCHRONIZE, FALSE, fuzevpn_handoff::kHelperMutex);
+  if (handoff != nullptr) {
+    CloseHandle(handoff);
+    return false;
+  }
+  if (GetLastError() != ERROR_FILE_NOT_FOUND) return false;
+  SC_HANDLE manager = OpenSCManagerW(nullptr, nullptr, SC_MANAGER_CONNECT);
+  if (manager == nullptr) return false;
+  SC_HANDLE service = OpenServiceW(manager, kVpnServiceName, SERVICE_START);
+  const bool started = service != nullptr &&
+      (StartServiceW(service, 0, nullptr) != FALSE ||
+       GetLastError() == ERROR_SERVICE_ALREADY_RUNNING);
+  if (service != nullptr) CloseServiceHandle(service);
+  CloseServiceHandle(manager);
+  return started;
+}
+
 HANDLE LaunchServiceInstaller(bool* installation_required) {
   const auto executable = SiblingExecutable(kServiceExecutableName);
   if (!executable.has_value() || !IsCurrentExecutableTrusted() ||
@@ -1660,23 +1690,37 @@ HANDLE ConnectToBroker(bool start_if_missing, bool allow_service,
     if (!allow_service || !start_if_missing) return INVALID_HANDLE_VALUE;
     const auto service_pid = QueryServiceProcessId();
     if (!service_pid.has_value()) return INVALID_HANDLE_VALUE;
-    HANDLE installer = *service_pid == 0 ? LaunchServiceInstaller(installation_required) : nullptr;
-    if (*service_pid == 0 && installer == nullptr) return INVALID_HANDLE_VALUE;
+    // A registered but stopped service, typically before its delayed start
+    // after a reboot, is started directly: no elevation prompt is needed.
+    const bool started = *service_pid == 0 && StartRegisteredService();
+    HANDLE installer = *service_pid == 0 && !started
+        ? LaunchServiceInstaller(installation_required) : nullptr;
+    if (*service_pid == 0 && !started && installer == nullptr)
+      return INVALID_HANDLE_VALUE;
     const ULONGLONG deadline = GetTickCount64() + kBrokerStartupTimeoutMs;
     HANDLE pipe = INVALID_HANDLE_VALUE;
+    DWORD pipe_error = ERROR_FILE_NOT_FOUND;
     while (!ClientCancelled() && GetTickCount64() < deadline) {
       pipe = OpenAuthenticatedPipe(true);
-      if (pipe != INVALID_HANDLE_VALUE || GetLastError() == ERROR_ACCESS_DENIED)
+      pipe_error = GetLastError();
+      if (pipe != INVALID_HANDLE_VALUE || pipe_error == ERROR_ACCESS_DENIED)
         break;
       if (installer != nullptr &&
           WaitForSingleObject(installer, 0) != WAIT_TIMEOUT &&
           ServiceProcessId() == 0) break;
+      // The service refused to run (maintenance, invalid installation or a
+      // runtime held elsewhere) and stopped again: waiting cannot help.
+      if (started && QueryServiceProcessId() == std::optional<DWORD>(0)) break;
       std::this_thread::sleep_for(std::chrono::milliseconds(75));
     }
     if (installer != nullptr) {
       RecordServiceInstallerResult(installer);
       CloseHandle(installer);
     }
+    // The caller reports the connection's own error, not that of a status
+    // query made while waiting.
+    if (pipe == INVALID_HANDLE_VALUE)
+      SetLastError(ClientCancelled() ? ERROR_CANCELLED : pipe_error);
     return pipe;
   }
 

@@ -3,9 +3,31 @@
 #define RUNNER_MAINTENANCE_SERVICE_CONFIG_H_
 
 #include <windows.h>
+#include <sddl.h>
 #include <winsvc.h>
 
 namespace fuzevpn_maintenance {
+// Same service ACL as installer/Package.wxs. Users may query and start (RP)
+// the service: the UI starts it before its delayed automatic start without an
+// elevation prompt. The service itself refuses to run during maintenance,
+// from an unprotected installation or while another runtime holds its lock.
+constexpr wchar_t kServiceSecurity[] =
+    L"D:P(A;;GA;;;SY)(A;;GA;;;BA)(A;;CCLCSWRPLORC;;;BU)";
+
+// MSI is not relied upon to rewrite the ACL of a service it keeps across an
+// upgrade. `apply` is SetServiceObjectSecurity in production.
+template <typename Apply>
+bool ApplyServiceSecurity(SC_HANDLE service, Apply apply) {
+  PSECURITY_DESCRIPTOR descriptor = nullptr;
+  if (!ConvertStringSecurityDescriptorToSecurityDescriptorW(
+          kServiceSecurity, SDDL_REVISION_1, &descriptor, nullptr)) return false;
+  const bool applied = apply(service, DACL_SECURITY_INFORMATION, descriptor) != FALSE;
+  const DWORD apply_error = GetLastError();
+  LocalFree(descriptor);
+  SetLastError(apply_error);
+  return applied;
+}
+
 // Maintenance restores operational settings only. MSI owns the localized
 // display name and description, including during repair and rollback.
 template <typename Configure>

@@ -2,6 +2,7 @@
 // Including this translation unit exercises the actual private IPC boundary.
 #include <windows.h>
 #include <winsvc.h>
+#include <shellapi.h>
 #include <aclapi.h>
 #include <sddl.h>
 #include <wintrust.h>
@@ -102,10 +103,39 @@ BOOL WINAPI ObserveQueryServiceConfig(SC_HANDLE service, LPQUERY_SERVICE_CONFIGW
   config->lpServiceStartName = const_cast<LPWSTR>(repair_account);
   return TRUE;
 }
+// Unelevated start of a registered, stopped service by the UI.
+bool inspect_service_start = false;
+unsigned service_start_calls = 0;
+DWORD service_start_error = ERROR_SUCCESS;
+bool service_runs_after_start = true;
+unsigned installer_launches = 0;
 BOOL WINAPI ObserveStartService(SC_HANDLE service, DWORD count, LPCWSTR* args) {
+  if (inspect_service_start) {
+    ++service_start_calls;
+    if (service_start_error != ERROR_SUCCESS) {
+      SetLastError(service_start_error);
+      return FALSE;
+    }
+    if (service_runs_after_start) scm_scenario = ScmScenario::running;
+    return TRUE;
+  }
   if (!inspect_service_repair) return StartServiceW(service, count, args);
   ++repair_starts;
   return TRUE;
+}
+// ERROR_FILE_NOT_FOUND: no portable hand-off lease or elevated install.
+DWORD handoff_mutex_error = ERROR_FILE_NOT_FOUND;
+HANDLE WINAPI ObserveOpenMutex(DWORD access, BOOL inherit, LPCWSTR name) {
+  if (!inspect_service_start) return OpenMutexW(access, inherit, name);
+  SetLastError(handoff_mutex_error);
+  return nullptr;
+}
+// Never shows a real elevation prompt while a start is inspected.
+BOOL WINAPI ObserveShellExecute(SHELLEXECUTEINFOW* execution) {
+  if (!inspect_service_start) return ShellExecuteExW(execution);
+  ++installer_launches;
+  SetLastError(ERROR_CANCELLED);
+  return FALSE;
 }
 BOOL WINAPI ObserveOpenProcessToken(HANDLE process, DWORD access, PHANDLE token) {
   if (!inspect_privilege_adjustments) return OpenProcessToken(process, access, token);
@@ -199,10 +229,16 @@ SC_HANDLE WINAPI ObserveOpenService(SC_HANDLE manager, LPCWSTR name, DWORD acces
   }
   return reinterpret_cast<SC_HANDLE>(static_cast<ULONG_PTR>(102));
 }
+// The fake clock never advances during a real sleep: a wait that regressed
+// into polling is cancelled after this many status reads instead of hanging.
+unsigned service_status_queries = 0;
+constexpr unsigned kServiceStatusQueryLimit = 50;
 BOOL WINAPI ObserveQueryService(SC_HANDLE service, SC_STATUS_TYPE type,
                                 LPBYTE buffer, DWORD size, LPDWORD needed) {
   if (scm_scenario == ScmScenario::real)
     return QueryServiceStatusEx(service, type, buffer, size, needed);
+  if (inspect_service_start && ++service_status_queries > kServiceStatusQueryLimit)
+    transport_cancelled = true;
   if (scm_scenario == ScmScenario::query_failed) {
     SetLastError(ERROR_ACCESS_DENIED);
     return FALSE;
@@ -237,6 +273,8 @@ bool ObserveReadServicePipeName(DWORD expected_process, std::wstring* name) {
 #define QueryServiceStatusEx ObserveQueryService
 #define QueryServiceConfigW ObserveQueryServiceConfig
 #define StartServiceW ObserveStartService
+#define ShellExecuteExW ObserveShellExecute
+#define OpenMutexW ObserveOpenMutex
 #define SetServiceStatus ObserveSetServiceStatus
 #define CloseServiceHandle ObserveCloseService
 #define GetSecurityInfo ObserveGetSecurityInfo
@@ -258,6 +296,8 @@ bool ObserveReadServicePipeName(DWORD expected_process, std::wstring* name) {
 #undef QueryServiceStatusEx
 #undef QueryServiceConfigW
 #undef StartServiceW
+#undef ShellExecuteExW
+#undef OpenMutexW
 #undef SetServiceStatus
 #undef CloseServiceHandle
 #undef GetSecurityInfo
@@ -1143,6 +1183,71 @@ void TestPassiveBrokerTransport() {
   fuzevpn_distribution::test_distribution_mode = old_mode;
 }
 
+void TestStoppedServiceStartsWithoutElevation() {
+  const auto old_scm = scm_scenario;
+  const auto old_mode = fuzevpn_distribution::test_distribution_mode;
+  HANDLE old_cancel = client_cancel_event;
+  inspect_pipe_connections = true;
+  inspect_service_start = true;
+  client_cancel_event = transport_cancel_handle;
+  fuzevpn_distribution::test_distribution_mode = fuzevpn_distribution::Mode::installed;
+  const auto reset = [](ScmScenario scenario) {
+    scm_scenario = scenario;
+    scm_manager_queries = transport_open_attempts = transport_trust_queries = 0;
+    transport_ticks = transport_cancel_at = 0;
+    transport_cancelled = false;
+    // A terminal pipe answer ends each wait after its first attempt.
+    transport_open_error = ERROR_ACCESS_DENIED;
+    service_start_calls = installer_launches = service_status_queries = 0;
+    service_start_error = ERROR_SUCCESS;
+    service_runs_after_start = true;
+    handoff_mutex_error = ERROR_FILE_NOT_FOUND;
+  };
+  bool installation = false;
+  const auto connect = [&installation] {
+    installation = false;
+    return ConnectToBroker(true, true, &installation);
+  };
+
+  reset(ScmScenario::stopped);
+  Check(connect() == INVALID_HANDLE_VALUE && GetLastError() == ERROR_ACCESS_DENIED &&
+        service_start_calls == 1 && installer_launches == 0 && !installation &&
+        transport_open_attempts == 1,
+        "a stopped registered service is started directly and its pipe is opened without elevation");
+
+  reset(ScmScenario::stopped); service_runs_after_start = false;
+  Check(connect() == INVALID_HANDLE_VALUE && GetLastError() == ERROR_FILE_NOT_FOUND &&
+        service_start_calls == 1 && installer_launches == 0 && !installation &&
+        !transport_cancelled,
+        "a started service that stops again ends the wait at once, reporting the pipe error");
+
+  reset(ScmScenario::stopped); handoff_mutex_error = ERROR_ACCESS_DENIED;
+  Check(connect() == INVALID_HANDLE_VALUE && service_start_calls == 0 &&
+        (installer_launches == 1 || installation),
+        "a held portable hand-off lease is never raced by a direct start");
+
+  reset(ScmScenario::stopped); service_start_error = ERROR_ACCESS_DENIED;
+  Check(connect() == INVALID_HANDLE_VALUE && service_start_calls == 1 &&
+        (installer_launches == 1 || installation),
+        "a start refused by an older service ACL falls back to the elevated installer");
+
+  reset(ScmScenario::absent);
+  Check(connect() == INVALID_HANDLE_VALUE && service_start_calls == 0 &&
+        (installer_launches == 1 || installation),
+        "a missing service still needs the elevated installer");
+
+  reset(ScmScenario::running);
+  Check(connect() == INVALID_HANDLE_VALUE && GetLastError() == ERROR_ACCESS_DENIED &&
+        service_start_calls == 0 && installer_launches == 0 && !installation,
+        "a running service is neither started again nor installed");
+
+  inspect_service_start = false;
+  inspect_pipe_connections = false;
+  client_cancel_event = old_cancel;
+  scm_scenario = old_scm;
+  fuzevpn_distribution::test_distribution_mode = old_mode;
+}
+
 void TestRuntimeStatusFailures() {
   for (const auto mode : {fuzevpn_distribution::Mode::unavailable,
                          fuzevpn_distribution::Mode::installed}) {
@@ -1543,6 +1648,7 @@ int main() {
   TestBrokerFailureDetails();
   TestBrokerFailureCapture();
   TestPassiveBrokerTransport();
+  TestStoppedServiceStartsWithoutElevation();
   Check(TestPassiveServicePipeRetry(), "passive authenticated service retry handles bounded recovery and terminal failures");
   TestServiceIdleHandoff();
   TestInstallationPolicy();
