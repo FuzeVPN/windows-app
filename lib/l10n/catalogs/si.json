@@ -85,7 +85,6 @@
   "Configuration IPv4": "IPv4 වින්‍යාසය",
   "Configuration IPv6": "IPv6 වින්‍යාසය",
   "Configuration du tunnel": "උමං වින්‍යාසය",
-  "Confirmer mon e-mail": "මගේ ඊමේල් ලිපිනය තහවුරු කරන්න",
   "Connecter": "සම්බන්ධ කරන්න",
   "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.": "මෙම උපාංගය ඔබේ ගිණුමට එක් කිරීමට මෙම යෙදුමෙන් සම්බන්ධ වන්න.",
   "Connectez-vous pour gérer vos appareils": "ඔබේ උපාංග කළමනාකරණයට ගිණුමට පිවිසෙන්න",
@@ -679,7 +678,6 @@
   "Le composant OpenVPN sécurisé n’est pas disponible.": "ආරක්ෂිත OpenVPN සංරචකය ලබාගත නොහැක.",
   "Le profil OpenVPN n’a pas pu être renouvelé.": "OpenVPN පැතිකඩ අලුත් කිරීමට නොහැකි විය.",
   "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.": "OpenVPN අලුත් කිරීම අසාර්ථක විය. Kill switch තවමත් ජාල ගමනාගමනය අවහිර කරයි.",
-  "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.": "දේශීය WireGuard අනන්‍යතාව ලබාගත නොහැක. මෙම උපාංගය පමණක් අලුත් කිරීමට උපාංග විවෘත කරන්න.",
   "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.": "WireGuard ආරක්ෂිත ගබඩාව විවෘත කිරීමට Windows හට නොහැකි විය.",
   "Windows n’a pas autorisé l’opération WireGuard demandée.": "ඉල්ලූ WireGuard මෙහෙයුමට Windows අවසර දුන්නේ නැත.",
   "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.": "දේශීය VPN සේවාව ලබාගත නොහැක. FuzeVPN වසා නැවත විවෘත කරන්න.",
@@ -725,7 +723,6 @@
   "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.": "නව VPN අනන්‍යතාව ලියාපදිංචි කිරීමට නොහැකි විය. පසුව නැවත උත්සාහ කරන්න.",
   "Identité VPN à renouveler": "VPN අනන්‍යතාව අලුත් කළ යුතුය",
   "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.": "මෙම VPN අනන්‍යතාව ඉවත් කර ඇත. ඉදිරියට යාමට නව එකක් සාදන්න.",
-  "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.": "මෙම ස්ථානය තාවකාලිකව ලබාගත නොහැක. Frankfurt 1 හෝ Frankfurt 2 තෝරන්න, නැතහොත් පසුව නැවත උත්සාහ කරන්න.",
   "Réessayez dans {seconds} secondes.": "තත්පර {seconds}කින් නැවත උත්සාහ කරන්න.",
   "Trop de tentatives": "උත්සාහයන් වැඩියි",
   "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.": "VPN සම්බන්ධතාවක් පිහිටුවීමට නොහැකි විය. පසුව නැවත උත්සාහ කරන්න.",
@@ -875,5 +872,11 @@
   "Tous": "සියල්ල",
   "Favoris": "ප්‍රියතම",
   "{label} : {value}": "{label}: {value}",
-  "Nécessite une connexion VPN active.": "සක්‍රිය VPN සම්බන්ධතාවක් අවශ්‍යයි."
+  "Nécessite une connexion VPN active.": "සක්‍රිය VPN සම්බන්ධතාවක් අවශ්‍යයි.",
+  "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.": "මෙම පරිගණකයේ සුරැකි VPN අනන්‍යතාව කියවිය නොහැක. මෙම උපාංගය සඳහා පමණක් නව එකක් සාදන්න.",
+  "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.": "මෙම ස්ථානය තාවකාලිකව ලබාගත නොහැක. වෙනත් ස්ථානයක් තෝරන්න, නැතහොත් පසුව නැවත උත්සාහ කරන්න.",
+  "Renvoyer l’e-mail": "ඊමේල් නැවත යවන්න",
+  "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "ඊමේල් යවන ලදී. එහි ඇති සබැඳිය විවෘත කර, ඉන්පසු නැවත සම්බන්ධ වීමට උත්සාහ කරන්න.",
+  "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "ඊමේලයක් මේ දැන් යවන ලදී. තත්පර {seconds}කින් ඔබට තවත් එකක් ඉල්ලිය හැක.",
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "ඊමේල් යැවීමට නොහැකි විය. පසුව නැවත උත්සාහ කරන්න."
 }

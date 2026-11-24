@@ -84,7 +84,6 @@
   "Configuration IPv4": "IPv4 ውቅር",
   "Configuration IPv6": "IPv6 ውቅር",
   "Configuration du tunnel": "የዋሻ ውቅር",
-  "Confirmer mon e-mail": "የእኔን ኢሜይል ያረጋግጡ",
   "Connecter": "ያገናኙ",
   "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.": "ይህን መሣሪያ ወደ መለያዎ ለማከል ከዚህ መተግበሪያ ይገናኙ።",
   "Connectez-vous pour gérer vos appareils": "መሣሪያዎን ለማስተዳደር ይግቡ",
@@ -679,7 +678,6 @@
   "Le composant OpenVPN sécurisé n’est pas disponible.": "ደህንነቱ የተጠበቀው የ OpenVPN ክፍል አይገኝም።",
   "Le profil OpenVPN n’a pas pu être renouvelé.": "የ OpenVPN መገለጫን ማደስ አልተቻለም።",
   "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.": "የ OpenVPN እድሳት አልተሳካም። Kill switch አሁንም የኔትወርክ ትራፊክን እያገደ ነው።",
-  "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.": "በመሣሪያው ላይ ያለው የ WireGuard ማንነት አይገኝም። ይህን መሣሪያ ብቻ ለማደስ «መሣሪያዎች» ይክፈቱ።",
   "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.": "Windows የ WireGuard የተጠበቀ ማከማቻን መክፈት አልቻለም።",
   "Windows n’a pas autorisé l’opération WireGuard demandée.": "Windows የተጠየቀውን የ WireGuard ክወና አልፈቀደም።",
   "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.": "በመሣሪያው ላይ ያለው የ VPN አገልግሎት አይገኝም። FuzeVPN ን ዝጉና እንደገና ይክፈቱ።",
@@ -725,7 +723,6 @@
   "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.": "አዲሱን የ VPN ማንነት መመዝገብ አልተቻለም። ቆይተው እንደገና ይሞክሩ።",
   "Identité VPN à renouveler": "የ VPN ማንነት መታደስ ያስፈልገዋል",
   "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.": "ይህ የ VPN ማንነት ተወግዷል። ለመቀጠል አዲስ ይፍጠሩ።",
-  "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.": "ይህ ቦታ ለጊዜው አይገኝም። Frankfurt 1 ወይም Frankfurt 2 ይምረጡ፣ ወይም ቆይተው እንደገና ይሞክሩ።",
   "Réessayez dans {seconds} secondes.": "ከ {seconds} ሰከንድ በኋላ እንደገና ይሞክሩ።",
   "Trop de tentatives": "ብዙ ሙከራዎች",
   "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.": "የ VPN ግንኙነት መፍጠር አልተቻለም። ቆይተው እንደገና ይሞክሩ።",
@@ -875,5 +872,11 @@
   "Tous": "ሁሉም",
   "Favoris": "ተወዳጆች",
   "{label} : {value}": "{label}፦ {value}",
-  "Nécessite une connexion VPN active.": "ንቁ የVPN ግንኙነት ያስፈልጋል።"
+  "Nécessite une connexion VPN active.": "ንቁ የVPN ግንኙነት ያስፈልጋል።",
+  "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.": "በዚህ ኮምፒውተር ላይ የተቀመጠውን የ VPN ማንነት ማንበብ አይቻልም። ለዚህ መሣሪያ ብቻ አዲስ ማንነት ይፍጠሩ።",
+  "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.": "ይህ ቦታ ለጊዜው አይገኝም። ሌላ ቦታ ይምረጡ፣ ወይም ቆይተው እንደገና ይሞክሩ።",
+  "Renvoyer l’e-mail": "ኢሜይሉን እንደገና ይላኩ",
+  "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "ኢሜይሉ ተልኳል። በውስጡ ያለውን አገናኝ ይክፈቱ፣ ከዚያ እንደገና ለመገናኘት ይሞክሩ።",
+  "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "ልክ አሁን ኢሜይል ተልኳል። ከ {seconds} ሰከንድ በኋላ ሌላ መጠየቅ ይችላሉ።",
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "ኢሜይሉን መላክ አልተቻለም። ቆይተው እንደገና ይሞክሩ።"
 }

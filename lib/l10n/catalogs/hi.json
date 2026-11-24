@@ -85,7 +85,6 @@
   "Configuration IPv4": "IPv4 कॉन्फ़िगरेशन",
   "Configuration IPv6": "IPv6 कॉन्फ़िगरेशन",
   "Configuration du tunnel": "टनल कॉन्फ़िगरेशन",
-  "Confirmer mon e-mail": "मेरे ईमेल की पुष्टि करें",
   "Connecter": "कनेक्ट करें",
   "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.": "इस डिवाइस को अपने खाते में जोड़ने के लिए इस ऐप से कनेक्ट करें।",
   "Connectez-vous pour gérer vos appareils": "अपने डिवाइस प्रबंधित करने के लिए कनेक्ट करें",
@@ -679,7 +678,6 @@
   "Le composant OpenVPN sécurisé n’est pas disponible.": "सुरक्षित OpenVPN घटक उपलब्ध नहीं है।",
   "Le profil OpenVPN n’a pas pu être renouvelé.": "OpenVPN प्रोफ़ाइल नवीनीकृत नहीं की जा सकी।",
   "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.": "OpenVPN नवीनीकरण विफल हुआ। kill switch अभी भी नेटवर्क ट्रैफ़िक अवरुद्ध करता है।",
-  "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.": "स्थानीय WireGuard पहचान उपलब्ध नहीं है। केवल इस डिवाइस को नवीनीकृत करने के लिए डिवाइस खोलें।",
   "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.": "Windows WireGuard का सुरक्षित संग्रहण नहीं खोल सका।",
   "Windows n’a pas autorisé l’opération WireGuard demandée.": "Windows ने अनुरोधित WireGuard संचालन की अनुमति नहीं दी।",
   "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.": "स्थानीय VPN सेवा उपलब्ध नहीं है। FuzeVPN बंद करके फिर खोलें।",
@@ -725,7 +723,6 @@
   "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.": "नई VPN पहचान पंजीकृत नहीं की जा सकी। बाद में फिर प्रयास करें।",
   "Identité VPN à renouveler": "VPN पहचान नवीनीकृत करनी है",
   "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.": "यह VPN पहचान हटा दी गई है। जारी रखने के लिए नई बनाएँ।",
-  "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.": "यह स्थान अस्थायी रूप से उपलब्ध नहीं है। Frankfurt 1 या Frankfurt 2 चुनें, या बाद में फिर प्रयास करें।",
   "Réessayez dans {seconds} secondes.": "{seconds} सेकंड में फिर प्रयास करें।",
   "Trop de tentatives": "बहुत अधिक प्रयास",
   "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.": "VPN कनेक्शन स्थापित नहीं किया जा सका। बाद में फिर प्रयास करें।",
@@ -875,5 +872,11 @@
   "Tous": "सभी",
   "Favoris": "पसंदीदा",
   "{label} : {value}": "{label}: {value}",
-  "Nécessite une connexion VPN active.": "सक्रिय VPN कनेक्शन आवश्यक है।"
+  "Nécessite une connexion VPN active.": "सक्रिय VPN कनेक्शन आवश्यक है।",
+  "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.": "इस PC पर सहेजी गई VPN पहचान पढ़ी नहीं जा सकती। केवल इस डिवाइस के लिए नई पहचान बनाएँ।",
+  "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.": "यह स्थान अस्थायी रूप से उपलब्ध नहीं है। कोई दूसरा स्थान चुनें या बाद में फिर प्रयास करें।",
+  "Renvoyer l’e-mail": "ईमेल फिर से भेजें",
+  "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "ईमेल भेज दिया गया है। उसमें दिया गया लिंक खोलें, फिर दोबारा कनेक्ट करने का प्रयास करें।",
+  "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "अभी-अभी एक ईमेल भेजा गया है। आप {seconds} सेकंड में दूसरा ईमेल माँग सकेंगे।",
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "ईमेल नहीं भेजा जा सका। बाद में फिर प्रयास करें।"
 }

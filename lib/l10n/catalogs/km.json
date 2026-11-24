@@ -85,7 +85,6 @@
   "Configuration IPv4": "ការកំណត់ IPv4",
   "Configuration IPv6": "ការកំណត់ IPv6",
   "Configuration du tunnel": "ការកំណត់បណ្ដាញរូង",
-  "Confirmer mon e-mail": "បញ្ជាក់អ៊ីមែលរបស់ខ្ញុំ",
   "Connecter": "ភ្ជាប់",
   "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.": "ចូលគណនីពីកម្មវិធីនេះដើម្បីបន្ថែមឧបករណ៍នេះទៅគណនីរបស់អ្នក។",
   "Connectez-vous pour gérer vos appareils": "ចូលគណនីដើម្បីគ្រប់គ្រងឧបករណ៍របស់អ្នក",
@@ -679,7 +678,6 @@
   "Le composant OpenVPN sécurisé n’est pas disponible.": "សមាសភាគ OpenVPN សុវត្ថិភាពមិនអាចប្រើបានទេ។",
   "Le profil OpenVPN n’a pas pu être renouvelé.": "មិនអាចបន្តទម្រង់ OpenVPN ឡើងវិញបានទេ។",
   "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.": "ការបន្ត OpenVPN ឡើងវិញបរាជ័យ។ kill switch នៅតែទប់ស្កាត់ចរាចរណ៍បណ្ដាញ។",
-  "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.": "អត្តសញ្ញាណ WireGuard មូលដ្ឋានមិនអាចប្រើបានទេ។ បើក ឧបករណ៍ ដើម្បីបន្តតែឧបករណ៍នេះឡើងវិញ។",
   "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.": "Windows មិនអាចបើកឃ្លាំងផ្ទុកដែលបានការពាររបស់ WireGuard បានទេ។",
   "Windows n’a pas autorisé l’opération WireGuard demandée.": "Windows មិនបានអនុញ្ញាតប្រតិបត្តិការ WireGuard ដែលបានស្នើទេ។",
   "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.": "សេវាកម្ម VPN មូលដ្ឋានមិនអាចប្រើបានទេ។ បិទ និងបើក FuzeVPN ឡើងវិញ។",
@@ -725,7 +723,6 @@
   "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.": "មិនអាចចុះបញ្ជីអត្តសញ្ញាណ VPN ថ្មីបានទេ។ ព្យាយាមម្ដងទៀតពេលក្រោយ។",
   "Identité VPN à renouveler": "ត្រូវបន្តអត្តសញ្ញាណ VPN ឡើងវិញ",
   "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.": "អត្តសញ្ញាណ VPN នេះត្រូវបានដកចេញ។ បង្កើតអត្តសញ្ញាណថ្មីដើម្បីបន្ត។",
-  "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.": "ទីតាំងនេះមិនអាចប្រើបានជាបណ្ដោះអាសន្ន។ ជ្រើសរើស Frankfurt 1 ឬ Frankfurt 2 ឬព្យាយាមម្ដងទៀតពេលក្រោយ។",
   "Réessayez dans {seconds} secondes.": "ព្យាយាមម្ដងទៀតក្នុងរយៈពេល {seconds} វិនាទី។",
   "Trop de tentatives": "ការព្យាយាមច្រើនពេក",
   "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.": "មិនអាចបង្កើតការតភ្ជាប់ VPN បានទេ។ ព្យាយាមម្ដងទៀតពេលក្រោយ។",
@@ -875,5 +872,11 @@
   "Tous": "ទាំងអស់",
   "Favoris": "ចំណូលចិត្ត",
   "{label} : {value}": "{label}៖ {value}",
-  "Nécessite une connexion VPN active.": "ត្រូវការការតភ្ជាប់ VPN សកម្ម។"
+  "Nécessite une connexion VPN active.": "ត្រូវការការតភ្ជាប់ VPN សកម្ម។",
+  "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.": "មិនអាចអានអត្តសញ្ញាណ VPN ដែលបានរក្សាទុកនៅលើកុំព្យូទ័រនេះបានទេ។ បង្កើតអត្តសញ្ញាណថ្មីសម្រាប់ឧបករណ៍នេះប៉ុណ្ណោះ។",
+  "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.": "ទីតាំងនេះមិនអាចប្រើបានជាបណ្ដោះអាសន្ន។ ជ្រើសរើសទីតាំងផ្សេង ឬព្យាយាមម្ដងទៀតពេលក្រោយ។",
+  "Renvoyer l’e-mail": "ផ្ញើអ៊ីមែលម្ដងទៀត",
+  "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "បានផ្ញើអ៊ីមែលហើយ។ បើកតំណក្នុងអ៊ីមែលនោះ រួចព្យាយាមភ្ជាប់ម្ដងទៀត។",
+  "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "ទើបតែបានផ្ញើអ៊ីមែលមួយ។ អ្នកអាចស្នើសុំអ៊ីមែលមួយទៀតក្នុងរយៈពេល {seconds} វិនាទី។",
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "មិនអាចផ្ញើអ៊ីមែលបានទេ។ ព្យាយាមម្ដងទៀតពេលក្រោយ។"
 }

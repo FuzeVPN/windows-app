@@ -85,7 +85,6 @@
   "Configuration IPv4": "Configurare IPv4",
   "Configuration IPv6": "Configurare IPv6",
   "Configuration du tunnel": "Configurarea tunelului",
-  "Confirmer mon e-mail": "Confirmați e-mailul",
   "Connecter": "Conectați",
   "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.": "Conectați-vă din această aplicație pentru a adăuga dispozitivul la contul dvs.",
   "Connectez-vous pour gérer vos appareils": "Conectați-vă pentru a vă gestiona dispozitivele",
@@ -679,7 +678,6 @@
   "Le composant OpenVPN sécurisé n’est pas disponible.": "Componenta OpenVPN securizată nu este disponibilă.",
   "Le profil OpenVPN n’a pas pu être renouvelé.": "Profilul OpenVPN nu a putut fi reînnoit.",
   "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.": "Reînnoirea OpenVPN a eșuat. Kill switch-ul blochează în continuare traficul de rețea.",
-  "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.": "Identitatea WireGuard locală nu este disponibilă. Deschideți Dispozitive pentru a reînnoi doar acest dispozitiv.",
   "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.": "Windows nu a putut deschide stocarea protejată WireGuard.",
   "Windows n’a pas autorisé l’opération WireGuard demandée.": "Windows nu a autorizat operațiunea WireGuard solicitată.",
   "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.": "Serviciul VPN local nu este disponibil. Închideți și redeschideți FuzeVPN.",
@@ -725,7 +723,6 @@
   "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.": "Noua identitate VPN nu a putut fi înregistrată. Încercați din nou mai târziu.",
   "Identité VPN à renouveler": "Identitate VPN de reînnoit",
   "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.": "Această identitate VPN a fost eliminată. Creați una nouă pentru a continua.",
-  "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.": "Această locație este momentan indisponibilă. Alegeți Frankfurt 1 sau Frankfurt 2 ori încercați din nou mai târziu.",
   "Réessayez dans {seconds} secondes.": "Încercați din nou peste {seconds} secunde.",
   "Trop de tentatives": "Prea multe încercări",
   "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.": "Nu a putut fi stabilită o conexiune VPN. Încercați din nou mai târziu.",
@@ -875,5 +872,11 @@
   "Tous": "Toate",
   "Favoris": "Favorite",
   "{label} : {value}": "{label}: {value}",
-  "Nécessite une connexion VPN active.": "Necesită o conexiune VPN activă."
+  "Nécessite une connexion VPN active.": "Necesită o conexiune VPN activă.",
+  "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.": "Identitatea VPN salvată pe acest PC nu poate fi citită. Creați una nouă doar pentru acest dispozitiv.",
+  "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.": "Această locație este momentan indisponibilă. Alegeți o altă locație sau încercați din nou mai târziu.",
+  "Renvoyer l’e-mail": "Retrimiteți e-mailul",
+  "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "E-mail trimis. Deschideți linkul din acesta, apoi încercați din nou să vă conectați la VPN.",
+  "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "Tocmai a fost trimis un e-mail. Veți putea solicita altul peste {seconds} s.",
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "E-mailul nu a putut fi trimis. Încercați din nou mai târziu."
 }

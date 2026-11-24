@@ -1058,6 +1058,17 @@ class ApiClient {
     await _readResponseBody(response);
   }
 
+  /// Sends a new confirmation e-mail. An already confirmed account also gets
+  /// 204; a recent request gets 429 with the server's waiting time.
+  Future<void> resendVerificationEmail(String token) async {
+    final response = await _request(
+      'POST',
+      '/v1/auth/email/resend',
+      token: token,
+    );
+    await _readResponseBody(response);
+  }
+
   Future<UserProfile> me(String token) async {
     final response = await _request('GET', '/v1/me', token: token);
     final body = await _readJsonObject(response);

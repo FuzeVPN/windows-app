@@ -85,7 +85,6 @@
   "Configuration IPv4": "Konfigurácia IPv4",
   "Configuration IPv6": "Konfigurácia IPv6",
   "Configuration du tunnel": "Konfigurácia tunela",
-  "Confirmer mon e-mail": "Potvrdiť môj e-mail",
   "Connecter": "Pripojiť",
   "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.": "Pripojte sa z tejto aplikácie a pridajte toto zariadenie do svojho účtu.",
   "Connectez-vous pour gérer vos appareils": "Prihláste sa a spravujte svoje zariadenia",
@@ -679,7 +678,6 @@
   "Le composant OpenVPN sécurisé n’est pas disponible.": "Zabezpečený komponent OpenVPN nie je dostupný.",
   "Le profil OpenVPN n’a pas pu être renouvelé.": "Profil OpenVPN sa nepodarilo obnoviť.",
   "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.": "Obnovenie OpenVPN zlyhalo. Núdzové odpojenie stále blokuje sieťovú prevádzku.",
-  "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.": "Miestna identita WireGuard nie je dostupná. Otvorte Zariadenia a obnovte iba toto zariadenie.",
   "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.": "Windows nedokázal otvoriť chránené úložisko WireGuard.",
   "Windows n’a pas autorisé l’opération WireGuard demandée.": "Windows nepovolil požadovanú operáciu WireGuard.",
   "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.": "Miestna služba VPN nie je dostupná. Zatvorte a znova otvorte FuzeVPN.",
@@ -725,7 +723,6 @@
   "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.": "Novú identitu VPN sa nepodarilo zaregistrovať. Skúste to znova neskôr.",
   "Identité VPN à renouveler": "Identitu VPN treba obnoviť",
   "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.": "Táto identita VPN bola odstránená. Ak chcete pokračovať, vytvorte novú.",
-  "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.": "Toto umiestnenie je dočasne nedostupné. Vyberte Frankfurt 1 alebo Frankfurt 2, prípadne skúste neskôr.",
   "Réessayez dans {seconds} secondes.": "Skúste to znova o {seconds} sekúnd.",
   "Trop de tentatives": "Príliš veľa pokusov",
   "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.": "Pripojenie VPN sa nepodarilo nadviazať. Skúste to znova neskôr.",
@@ -875,5 +872,11 @@
   "Tous": "Všetky",
   "Favoris": "Obľúbené",
   "{label} : {value}": "{label}: {value}",
-  "Nécessite une connexion VPN active.": "Vyžaduje aktívne pripojenie VPN."
+  "Nécessite une connexion VPN active.": "Vyžaduje aktívne pripojenie VPN.",
+  "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.": "Identita VPN uložená v tomto počítači sa nedá načítať. Vytvorte novú iba pre toto zariadenie.",
+  "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.": "Toto umiestnenie je dočasne nedostupné. Vyberte iné umiestnenie alebo skúste neskôr.",
+  "Renvoyer l’e-mail": "Znova odoslať e-mail",
+  "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "E-mail bol odoslaný. Otvorte odkaz v e-maile a potom sa skúste znova pripojiť.",
+  "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "Práve bol odoslaný e-mail. Ďalší si môžete vyžiadať o {seconds} s.",
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "E-mail sa nepodarilo odoslať. Skúste to znova neskôr."
 }

@@ -85,7 +85,6 @@
   "Configuration IPv4": "پیکربندی IPv4",
   "Configuration IPv6": "پیکربندی IPv6",
   "Configuration du tunnel": "پیکربندی تونل",
-  "Confirmer mon e-mail": "تأیید ایمیل من",
   "Connecter": "اتصال",
   "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.": "از این برنامه وارد شوید تا این دستگاه به حساب شما اضافه شود.",
   "Connectez-vous pour gérer vos appareils": "برای مدیریت دستگاه‌های خود وارد شوید",
@@ -679,7 +678,6 @@
   "Le composant OpenVPN sécurisé n’est pas disponible.": "مؤلفه امن OpenVPN در دسترس نیست.",
   "Le profil OpenVPN n’a pas pu être renouvelé.": "پروفایل OpenVPN نوسازی نشد.",
   "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.": "نوسازی OpenVPN ناموفق بود. کلید قطع اضطراری همچنان ترافیک شبکه را مسدود می‌کند.",
-  "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.": "هویت محلی WireGuard در دسترس نیست. برای نوسازی فقط این دستگاه، دستگاه‌ها را باز کنید.",
   "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.": "Windows نتوانست فضای ذخیره‌سازی محافظت‌شده WireGuard را باز کند.",
   "Windows n’a pas autorisé l’opération WireGuard demandée.": "Windows عملیات درخواست‌شده WireGuard را مجاز نکرد.",
   "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.": "سرویس VPN محلی در دسترس نیست. FuzeVPN را ببندید و دوباره باز کنید.",
@@ -725,7 +723,6 @@
   "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.": "هویت VPN جدید ثبت نشد. بعداً دوباره تلاش کنید.",
   "Identité VPN à renouveler": "هویت VPN نیازمند نوسازی",
   "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.": "این هویت VPN حذف شده است. برای ادامه هویت جدیدی ایجاد کنید.",
-  "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.": "این مکان موقتاً در دسترس نیست. Frankfurt 1 یا Frankfurt 2 را انتخاب کنید یا بعداً دوباره تلاش کنید.",
   "Réessayez dans {seconds} secondes.": "پس از {seconds} ثانیه دوباره تلاش کنید.",
   "Trop de tentatives": "تلاش‌های بیش از حد",
   "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.": "اتصال VPN برقرار نشد. بعداً دوباره تلاش کنید.",
@@ -875,5 +872,11 @@
   "Tous": "همه",
   "Favoris": "موارد دلخواه",
   "{label} : {value}": "{label}: {value}",
-  "Nécessite une connexion VPN active.": "به اتصال VPN فعال نیاز دارد."
+  "Nécessite une connexion VPN active.": "به اتصال VPN فعال نیاز دارد.",
+  "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.": "هویت VPN ذخیره‌شده در این رایانه قابل خواندن نیست. فقط برای این دستگاه هویت جدیدی ایجاد کنید.",
+  "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.": "این مکان موقتاً در دسترس نیست. مکان دیگری انتخاب کنید یا بعداً دوباره تلاش کنید.",
+  "Renvoyer l’e-mail": "ارسال مجدد ایمیل",
+  "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "ایمیل ارسال شد. پیوند داخل آن را باز کنید، سپس اتصال را دوباره امتحان کنید.",
+  "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "یک ایمیل هم‌اکنون ارسال شد. پس از {seconds} ثانیه می‌توانید ایمیل دیگری درخواست کنید.",
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "ایمیل ارسال نشد. بعداً دوباره تلاش کنید."
 }

@@ -85,7 +85,6 @@
   "Configuration IPv4": "תצורת IPv4",
   "Configuration IPv6": "תצורת IPv6",
   "Configuration du tunnel": "תצורת המנהרה",
-  "Confirmer mon e-mail": "אישור כתובת הדוא״ל שלי",
   "Connecter": "התחברות",
   "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.": "יש להתחבר מהיישום הזה כדי להוסיף את המכשיר לחשבון.",
   "Connectez-vous pour gérer vos appareils": "יש להתחבר לחשבון כדי לנהל את המכשירים",
@@ -679,7 +678,6 @@
   "Le composant OpenVPN sécurisé n’est pas disponible.": "רכיב OpenVPN המאובטח אינו זמין.",
   "Le profil OpenVPN n’a pas pu être renouvelé.": "לא ניתן לחדש את פרופיל OpenVPN.",
   "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.": "חידוש OpenVPN נכשל. מתג הניתוק עדיין חוסם את תעבורת הרשת.",
-  "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.": "זהות WireGuard המקומית אינה זמינה. יש לפתוח את ״מכשירים״ כדי לחדש מכשיר זה בלבד.",
   "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.": "Windows לא הצליח לפתוח את האחסון המוגן של WireGuard.",
   "Windows n’a pas autorisé l’opération WireGuard demandée.": "Windows לא התיר את פעולת WireGuard המבוקשת.",
   "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.": "שירות ה-VPN המקומי אינו זמין. יש לסגור ולפתוח מחדש את FuzeVPN.",
@@ -725,7 +723,6 @@
   "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.": "לא ניתן לרשום את זהות ה-VPN החדשה. יש לנסות שוב מאוחר יותר.",
   "Identité VPN à renouveler": "יש לחדש את זהות ה-VPN",
   "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.": "זהות VPN זו הוסרה. יש ליצור זהות חדשה כדי להמשיך.",
-  "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.": "מיקום זה אינו זמין זמנית. יש לבחור ב-Frankfurt 1 או ב-Frankfurt 2, או לנסות שוב מאוחר יותר.",
   "Réessayez dans {seconds} secondes.": "יש לנסות שוב בעוד {seconds} שניות.",
   "Trop de tentatives": "יותר מדי ניסיונות",
   "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.": "לא ניתן ליצור חיבור VPN. יש לנסות שוב מאוחר יותר.",
@@ -875,5 +872,11 @@
   "Tous": "הכול",
   "Favoris": "מועדפים",
   "{label} : {value}": "{label}: {value}",
-  "Nécessite une connexion VPN active.": "נדרש חיבור VPN פעיל."
+  "Nécessite une connexion VPN active.": "נדרש חיבור VPN פעיל.",
+  "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.": "לא ניתן לקרוא את זהות ה-VPN השמורה במחשב זה. יש ליצור זהות חדשה עבור מכשיר זה בלבד.",
+  "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.": "מיקום זה אינו זמין זמנית. יש לבחור מיקום אחר או לנסות שוב מאוחר יותר.",
+  "Renvoyer l’e-mail": "שליחת הדוא״ל מחדש",
+  "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "הדוא״ל נשלח. יש לפתוח את הקישור שבו ולאחר מכן לנסות להתחבר שוב.",
+  "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "דוא״ל נשלח זה עתה. ניתן יהיה לבקש דוא״ל נוסף בעוד {seconds} שניות.",
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "לא ניתן לשלוח את הדוא״ל. יש לנסות שוב מאוחר יותר."
 }

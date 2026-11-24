@@ -1131,6 +1131,7 @@ class _NoticeCard extends StatelessWidget {
     required this.icon,
     required this.title,
     required this.message,
+    this.detail,
     this.actionLabel,
     this.onAction,
   });
@@ -1138,6 +1139,9 @@ class _NoticeCard extends StatelessWidget {
   final IconData icon;
   final String title;
   final String message;
+
+  /// Already translated text shown under [message].
+  final String? detail;
   final String? actionLabel;
   final VoidCallback? onAction;
 
@@ -1186,6 +1190,13 @@ class _NoticeCard extends StatelessWidget {
                           color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                       ),
+                      if (detail != null) ...[
+                        const SizedBox(height: 8),
+                        Text(
+                          detail!,
+                          key: const ValueKey('notice-card-detail'),
+                        ),
+                      ],
                       if (action != null && !inlineAction) ...[
                         const SizedBox(height: 8),
                         action,
@@ -1236,9 +1247,11 @@ class _DeviceEnrollmentIssueCard extends StatelessWidget {
         'Se connecter',
         () => _showSignInDialog(context, controller),
       ),
+      // The Web confirmation page needs the link from the e-mail itself, so
+      // the app sends a new one with its own session instead.
       DeviceEnrollmentIssueKind.emailVerificationRequired => (
-        'Confirmer mon e-mail',
-        () => _openWebsite(context, BrandConfig.portalVerifyEmail),
+        'Renvoyer l’e-mail',
+        controller.resendVerificationEmail,
       ),
       DeviceEnrollmentIssueKind.subscriptionRequired => (
         'Mon compte',
@@ -1255,6 +1268,14 @@ class _DeviceEnrollmentIssueCard extends StatelessWidget {
       DeviceEnrollmentIssueKind.deviceIdentityRevoked => (
         'Créer une nouvelle identité',
         () => _confirmIdentityReset(context, controller),
+      ),
+      DeviceEnrollmentIssueKind.localIdentityUnavailable => (
+        'Créer une nouvelle identité',
+        () => _confirmIdentityReset(
+          context,
+          controller,
+          replaceCurrentDevice: true,
+        ),
       ),
       DeviceEnrollmentIssueKind.openVpnProfileExists => (
         'Renouveler le profil',
@@ -1281,10 +1302,22 @@ class _DeviceEnrollmentIssueCard extends StatelessWidget {
       DeviceEnrollmentIssueKind.rateLimited => ('Réessayer', retry),
       DeviceEnrollmentIssueKind.unknown => ('Réessayer', retry),
     };
+    final notice =
+        issue.kind == DeviceEnrollmentIssueKind.emailVerificationRequired
+        ? controller.verificationEmailNotice
+        : null;
     return _NoticeCard(
       icon: Icons.info_outline,
       title: issue.title,
       message: issue.message,
+      detail: notice == null
+          ? null
+          : context
+                .tr(notice)
+                .replaceAll(
+                  '{seconds}',
+                  '${controller.verificationEmailRetryAfterSeconds ?? ''}',
+                ),
       actionLabel: action.$1,
       onAction: action.$2,
     );
@@ -1720,8 +1753,9 @@ class _AccountDialogState extends State<_AccountDialog> {
 
 Future<void> _confirmIdentityReset(
   BuildContext context,
-  AppController controller,
-) async {
+  AppController controller, {
+  bool replaceCurrentDevice = false,
+}) async {
   final confirmed = await showDialog<bool>(
     context: context,
     builder: (dialogContext) => AlertDialog(
@@ -1745,7 +1779,9 @@ Future<void> _confirmIdentityReset(
     ),
   );
   if (confirmed == true && context.mounted) {
-    await controller.retryAfterIdentityReset();
+    await controller.retryAfterIdentityReset(
+      replaceCurrentDevice: replaceCurrentDevice,
+    );
   }
 }
 

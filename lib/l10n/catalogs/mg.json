@@ -85,7 +85,6 @@
   "Configuration IPv4": "Fandrindrana IPv4",
   "Configuration IPv6": "Fandrindrana IPv6",
   "Configuration du tunnel": "Fandrindrana ny tonelina",
-  "Confirmer mon e-mail": "Hamarino ny mailakako",
   "Connecter": "Mifandraisa",
   "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.": "Mifandraisa amin'ity fampiharana ity mba hampidirana ity fitaovana ity amin'ny kaontinao.",
   "Connectez-vous pour gérer vos appareils": "Midira mba hitantanana ny fitaovanao",
@@ -679,7 +678,6 @@
   "Le composant OpenVPN sécurisé n’est pas disponible.": "Tsy misy ny singa OpenVPN azo antoka.",
   "Le profil OpenVPN n’a pas pu être renouvelé.": "Tsy afaka nohavaozina ny mombamomba OpenVPN.",
   "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.": "Tsy nahomby ny fanavaozana OpenVPN. Mbola manakana ny fifamoivoizana ny kill switch.",
-  "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.": "Tsy misy ny mombamomba WireGuard eto an-toerana. Sokafy ny Fitaovana mba hanavaozana ity fitaovana ity ihany.",
   "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.": "Tsy afaka nanokatra ny fitahirizana voaaro an'ny WireGuard ny Windows.",
   "Windows n’a pas autorisé l’opération WireGuard demandée.": "Tsy namela ny hetsika WireGuard nangatahana ny Windows.",
   "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.": "Tsy misy ny serivisy VPN eto an-toerana. Akatony ary sokafy indray i FuzeVPN.",
@@ -725,7 +723,6 @@
   "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.": "Tsy afaka nosoratana ny mombamomba VPN vaovao. Andramo indray rehefa afaka kelikely.",
   "Identité VPN à renouveler": "Mila havaozina ny mombamomba VPN",
   "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.": "Nesorina ity mombamomba VPN ity. Mamorona vaovao mba hanohizana.",
-  "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.": "Tsy misy vonjimaika ity toerana ity. Mifidiana Frankfurt 1 na Frankfurt 2, na andramo indray rehefa afaka kelikely.",
   "Réessayez dans {seconds} secondes.": "Andramo indray afaka {seconds} segondra.",
   "Trop de tentatives": "Be loatra ny andrana",
   "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.": "Tsy tafapetraka ny fifandraisana VPN. Andramo indray rehefa afaka kelikely.",
@@ -875,5 +872,11 @@
   "Tous": "Rehetra",
   "Favoris": "Ankafizina",
   "{label} : {value}": "{label}: {value}",
-  "Nécessite une connexion VPN active.": "Mila fifandraisana VPN mavitrika."
+  "Nécessite une connexion VPN active.": "Mila fifandraisana VPN mavitrika.",
+  "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.": "Tsy azo vakina ny mombamomba VPN voatahiry amin'ity solosaina ity. Mamorona vaovao ho an'ity fitaovana ity ihany.",
+  "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.": "Tsy misy vonjimaika ity toerana ity. Mifidiana toerana hafa na andramo indray rehefa afaka kelikely.",
+  "Renvoyer l’e-mail": "Alefaso indray ny mailaka",
+  "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "Voalefa ny mailaka. Sokafy ny rohy ao anatiny, avy eo andramo mifandray indray.",
+  "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "Vao avy nalefa ny mailaka. Azonao atao ny mangataka iray hafa afaka {seconds} segondra.",
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "Tsy afaka nalefa ny mailaka. Andramo indray rehefa afaka kelikely."
 }

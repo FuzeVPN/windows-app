@@ -85,7 +85,6 @@
   "Configuration IPv4": "IPv4-konfiguration",
   "Configuration IPv6": "IPv6-konfiguration",
   "Configuration du tunnel": "Tunnelkonfiguration",
-  "Confirmer mon e-mail": "Bekräfta min e-postadress",
   "Connecter": "Anslut",
   "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.": "Anslut från den här appen för att lägga till enheten i ditt konto.",
   "Connectez-vous pour gérer vos appareils": "Logga in för att hantera dina enheter",
@@ -679,7 +678,6 @@
   "Le composant OpenVPN sécurisé n’est pas disponible.": "Den säkra OpenVPN-komponenten är inte tillgänglig.",
   "Le profil OpenVPN n’a pas pu être renouvelé.": "OpenVPN-profilen kunde inte förnyas.",
   "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.": "OpenVPN-förnyelsen misslyckades. Kill switch blockerar fortfarande nätverkstrafik.",
-  "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.": "Den lokala WireGuard-identiteten är inte tillgänglig. Öppna Enheter för att endast förnya den här enheten.",
   "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.": "Windows kunde inte öppna WireGuards skyddade lagring.",
   "Windows n’a pas autorisé l’opération WireGuard demandée.": "Windows tillät inte den begärda WireGuard-åtgärden.",
   "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.": "Den lokala VPN-tjänsten är inte tillgänglig. Stäng och öppna FuzeVPN igen.",
@@ -725,7 +723,6 @@
   "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.": "Den nya VPN-identiteten kunde inte registreras. Försök igen senare.",
   "Identité VPN à renouveler": "VPN-identitet måste förnyas",
   "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.": "Den här VPN-identiteten har tagits bort. Skapa en ny för att fortsätta.",
-  "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.": "Den här platsen är tillfälligt otillgänglig. Välj Frankfurt 1 eller Frankfurt 2, eller försök igen senare.",
   "Réessayez dans {seconds} secondes.": "Försök igen om {seconds} sekunder.",
   "Trop de tentatives": "För många försök",
   "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.": "En VPN-anslutning kunde inte upprättas. Försök igen senare.",
@@ -875,5 +872,11 @@
   "Tous": "Alla",
   "Favoris": "Favoriter",
   "{label} : {value}": "{label}: {value}",
-  "Nécessite une connexion VPN active.": "Kräver en aktiv VPN-anslutning."
+  "Nécessite une connexion VPN active.": "Kräver en aktiv VPN-anslutning.",
+  "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.": "VPN-identiteten som sparats på den här datorn kan inte läsas. Skapa en ny endast för den här enheten.",
+  "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.": "Den här platsen är tillfälligt otillgänglig. Välj en annan plats eller försök igen senare.",
+  "Renvoyer l’e-mail": "Skicka e-post igen",
+  "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "E-postmeddelandet har skickats. Öppna länken i det och försök sedan ansluta igen.",
+  "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "Ett e-postmeddelande har just skickats. Du kan begära ett nytt om {seconds} s.",
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "E-postmeddelandet kunde inte skickas. Försök igen senare."
 }

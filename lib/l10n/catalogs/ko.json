@@ -85,7 +85,6 @@
   "Configuration IPv4": "IPv4 구성",
   "Configuration IPv6": "IPv6 구성",
   "Configuration du tunnel": "터널 구성",
-  "Confirmer mon e-mail": "내 이메일 확인",
   "Connecter": "연결",
   "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.": "이 앱에서 로그인하여 이 장치를 계정에 추가하세요.",
   "Connectez-vous pour gérer vos appareils": "장치를 관리하려면 로그인하세요",
@@ -679,7 +678,6 @@
   "Le composant OpenVPN sécurisé n’est pas disponible.": "보안 OpenVPN 구성 요소를 사용할 수 없습니다.",
   "Le profil OpenVPN n’a pas pu être renouvelé.": "OpenVPN 프로필을 갱신하지 못했습니다.",
   "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.": "OpenVPN 갱신에 실패했습니다. kill switch가 여전히 네트워크 트래픽을 차단하고 있습니다.",
-  "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.": "로컬 WireGuard ID를 사용할 수 없습니다. 장치에서 이 장치만 갱신하세요.",
   "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.": "Windows가 WireGuard 보호 저장소를 열지 못했습니다.",
   "Windows n’a pas autorisé l’opération WireGuard demandée.": "Windows가 요청된 WireGuard 작업을 허용하지 않았습니다.",
   "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.": "로컬 VPN 서비스를 사용할 수 없습니다. FuzeVPN을 닫았다가 다시 여세요.",
@@ -725,7 +723,6 @@
   "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.": "새 VPN ID를 등록하지 못했습니다. 나중에 다시 시도하세요.",
   "Identité VPN à renouveler": "갱신할 VPN ID",
   "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.": "이 VPN ID는 제거되었습니다. 계속하려면 새 ID를 만드세요.",
-  "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.": "이 위치는 현재 사용할 수 없습니다. Frankfurt 1 또는 Frankfurt 2를 선택하거나 나중에 다시 시도하세요.",
   "Réessayez dans {seconds} secondes.": "{seconds}초 후 다시 시도하세요.",
   "Trop de tentatives": "시도 횟수 초과",
   "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.": "VPN 연결을 설정하지 못했습니다. 나중에 다시 시도하세요.",
@@ -875,5 +872,11 @@
   "Tous": "전체",
   "Favoris": "즐겨찾기",
   "{label} : {value}": "{label}: {value}",
-  "Nécessite une connexion VPN active.": "활성 VPN 연결이 필요합니다."
+  "Nécessite une connexion VPN active.": "활성 VPN 연결이 필요합니다.",
+  "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.": "이 PC에 저장된 VPN ID를 읽을 수 없습니다. 이 장치 전용 새 ID를 만드세요.",
+  "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.": "이 위치는 현재 사용할 수 없습니다. 다른 위치를 선택하거나 나중에 다시 시도하세요.",
+  "Renvoyer l’e-mail": "이메일 재전송",
+  "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "이메일을 전송했습니다. 이메일에 있는 링크를 연 후 다시 연결을 시도하세요.",
+  "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "방금 이메일을 전송했습니다. {seconds}초 후에 다시 요청할 수 있습니다.",
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "이메일을 전송하지 못했습니다. 나중에 다시 시도하세요."
 }

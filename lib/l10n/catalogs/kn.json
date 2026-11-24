@@ -85,7 +85,6 @@
   "Configuration IPv4": "IPv4 ಸಂರಚನೆ",
   "Configuration IPv6": "IPv6 ಸಂರಚನೆ",
   "Configuration du tunnel": "ಟನಲ್ ಸಂರಚನೆ",
-  "Confirmer mon e-mail": "ನನ್ನ ಇಮೇಲ್ ದೃಢೀಕರಿಸಿ",
   "Connecter": "ಸಂಪರ್ಕಿಸಿ",
   "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.": "ಈ ಸಾಧನವನ್ನು ನಿಮ್ಮ ಖಾತೆಗೆ ಸೇರಿಸಲು ಈ ಅಪ್ಲಿಕೇಶನ್‌ನಿಂದ ಸೈನ್ ಇನ್ ಮಾಡಿ.",
   "Connectez-vous pour gérer vos appareils": "ನಿಮ್ಮ ಸಾಧನಗಳನ್ನು ನಿರ್ವಹಿಸಲು ಸೈನ್ ಇನ್ ಮಾಡಿ",
@@ -679,7 +678,6 @@
   "Le composant OpenVPN sécurisé n’est pas disponible.": "ಸುರಕ್ಷಿತ OpenVPN ಘಟಕ ಲಭ್ಯವಿಲ್ಲ.",
   "Le profil OpenVPN n’a pas pu être renouvelé.": "OpenVPN ಪ್ರೊಫೈಲ್ ನವೀಕರಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ.",
   "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.": "OpenVPN ನವೀಕರಣ ವಿಫಲವಾಗಿದೆ. ಕಿಲ್ ಸ್ವಿಚ್ ಇನ್ನೂ ನೆಟ್‌ವರ್ಕ್ ಸಂಚಾರವನ್ನು ನಿರ್ಬಂಧಿಸುತ್ತಿದೆ.",
-  "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.": "ಸ್ಥಳೀಯ WireGuard ಗುರುತು ಲಭ್ಯವಿಲ್ಲ. ಈ ಸಾಧನವನ್ನು ಮಾತ್ರ ನವೀಕರಿಸಲು ಸಾಧನಗಳನ್ನು ತೆರೆಯಿರಿ.",
   "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.": "WireGuard ನ ಸಂರಕ್ಷಿತ ಸಂಗ್ರಹಣೆಯನ್ನು ತೆರೆಯಲು Windows ಗೆ ಸಾಧ್ಯವಾಗಲಿಲ್ಲ.",
   "Windows n’a pas autorisé l’opération WireGuard demandée.": "ವಿನಂತಿಸಿದ WireGuard ಕಾರ್ಯಾಚರಣೆಗೆ Windows ಅನುಮತಿ ನೀಡಲಿಲ್ಲ.",
   "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.": "ಸ್ಥಳೀಯ VPN ಸೇವೆ ಲಭ್ಯವಿಲ್ಲ. FuzeVPN ಮುಚ್ಚಿ ಮತ್ತೆ ತೆರೆಯಿರಿ.",
@@ -725,7 +723,6 @@
   "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.": "ಹೊಸ VPN ಗುರುತನ್ನು ನೋಂದಾಯಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
   "Identité VPN à renouveler": "VPN ಗುರುತನ್ನು ನವೀಕರಿಸಬೇಕು",
   "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.": "ಈ VPN ಗುರುತನ್ನು ತೆಗೆದುಹಾಕಲಾಗಿದೆ. ಮುಂದುವರಿಯಲು ಹೊಸದನ್ನು ರಚಿಸಿ.",
-  "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.": "ಈ ಸ್ಥಳ ತಾತ್ಕಾಲಿಕವಾಗಿ ಲಭ್ಯವಿಲ್ಲ. Frankfurt 1 ಅಥವಾ Frankfurt 2 ಆಯ್ಕೆಮಾಡಿ, ಅಥವಾ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
   "Réessayez dans {seconds} secondes.": "{seconds} ಸೆಕೆಂಡುಗಳಲ್ಲಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
   "Trop de tentatives": "ತುಂಬಾ ಪ್ರಯತ್ನಗಳು",
   "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.": "VPN ಸಂಪರ್ಕವನ್ನು ಸ್ಥಾಪಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
@@ -875,5 +872,11 @@
   "Tous": "ಎಲ್ಲಾ",
   "Favoris": "ಮೆಚ್ಚಿನವು",
   "{label} : {value}": "{label}: {value}",
-  "Nécessite une connexion VPN active.": "ಸಕ್ರಿಯ VPN ಸಂಪರ್ಕ ಅಗತ್ಯವಿದೆ."
+  "Nécessite une connexion VPN active.": "ಸಕ್ರಿಯ VPN ಸಂಪರ್ಕ ಅಗತ್ಯವಿದೆ.",
+  "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.": "ಈ PC ಯಲ್ಲಿ ಉಳಿಸಿದ VPN ಗುರುತನ್ನು ಓದಲು ಸಾಧ್ಯವಿಲ್ಲ. ಈ ಸಾಧನಕ್ಕೆ ಮಾತ್ರ ಹೊಸ ಗುರುತನ್ನು ರಚಿಸಿ.",
+  "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.": "ಈ ಸ್ಥಳ ತಾತ್ಕಾಲಿಕವಾಗಿ ಲಭ್ಯವಿಲ್ಲ. ಬೇರೆ ಸ್ಥಳವನ್ನು ಆಯ್ಕೆಮಾಡಿ, ಅಥವಾ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "Renvoyer l’e-mail": "ಇಮೇಲ್ ಮರುಕಳುಹಿಸಿ",
+  "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "ಇಮೇಲ್ ಕಳುಹಿಸಲಾಗಿದೆ. ಅದರಲ್ಲಿರುವ ಲಿಂಕ್ ತೆರೆಯಿರಿ, ನಂತರ ಮತ್ತೆ ಸಂಪರ್ಕಿಸಲು ಪ್ರಯತ್ನಿಸಿ.",
+  "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "ಇದೀಗ ಒಂದು ಇಮೇಲ್ ಕಳುಹಿಸಲಾಗಿದೆ. {seconds} ಸೆಕೆಂಡುಗಳಲ್ಲಿ ನೀವು ಇನ್ನೊಂದನ್ನು ವಿನಂತಿಸಬಹುದು.",
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "ಇಮೇಲ್ ಕಳುಹಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ."
 }

@@ -85,7 +85,6 @@
   "Configuration IPv4": "ການຕັ້ງຄ່າ IPv4",
   "Configuration IPv6": "ການຕັ້ງຄ່າ IPv6",
   "Configuration du tunnel": "ການຕັ້ງຄ່າອຸໂມງ",
-  "Confirmer mon e-mail": "ຢືນຢັນອີເມວຂອງຂ້ອຍ",
   "Connecter": "ເຊື່ອມຕໍ່",
   "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.": "ເຊື່ອມຕໍ່ຈາກແອັບນີ້ເພື່ອເພີ່ມອຸປະກອນໃສ່ບັນຊີຂອງທ່ານ.",
   "Connectez-vous pour gérer vos appareils": "ເຂົ້າລະບົບເພື່ອຈັດການອຸປະກອນ",
@@ -679,7 +678,6 @@
   "Le composant OpenVPN sécurisé n’est pas disponible.": "ສ່ວນປະກອບ OpenVPN ທີ່ປອດໄພບໍ່ພ້ອມໃຊ້.",
   "Le profil OpenVPN n’a pas pu être renouvelé.": "ບໍ່ສາມາດຕໍ່ອາຍຸໂປຣໄຟລ໌ OpenVPN.",
   "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.": "ການຕໍ່ອາຍຸ OpenVPN ລົ້ມເຫຼວ. ສະວິດຕັດການເຊື່ອມຕໍ່ຍັງບລັອກເຄືອຂ່າຍ.",
-  "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.": "ຕົວຕົນ WireGuard ໃນເຄື່ອງບໍ່ພ້ອມໃຊ້. ເປີດອຸປະກອນເພື່ອຕໍ່ອາຍຸສະເພາະອຸປະກອນນີ້.",
   "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.": "Windows ບໍ່ສາມາດເປີດບ່ອນເກັບທີ່ປ້ອງກັນຂອງ WireGuard.",
   "Windows n’a pas autorisé l’opération WireGuard demandée.": "Windows ບໍ່ອະນຸຍາດການດຳເນີນງານ WireGuard ທີ່ຮ້ອງຂໍ.",
   "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.": "ບໍລິການ VPN ໃນເຄື່ອງບໍ່ພ້ອມໃຊ້. ປິດ ແລະ ເປີດ FuzeVPN ຄືນ.",
@@ -725,7 +723,6 @@
   "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.": "ບໍ່ສາມາດລົງທະບຽນຕົວຕົນ VPN ໃໝ່. ລອງໃໝ່ພາຍຫຼັງ.",
   "Identité VPN à renouveler": "ຕ້ອງຕໍ່ອາຍຸຕົວຕົນ VPN",
   "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.": "ຕົວຕົນ VPN ນີ້ຖືກລຶບແລ້ວ. ສ້າງໃໝ່ເພື່ອສືບຕໍ່.",
-  "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.": "ສະຖານທີ່ນີ້ບໍ່ພ້ອມໃຊ້ຊົ່ວຄາວ. ເລືອກ Frankfurt 1 ຫຼື Frankfurt 2 ຫຼື ລອງໃໝ່ພາຍຫຼັງ.",
   "Réessayez dans {seconds} secondes.": "ລອງອີກຄັ້ງໃນ {seconds} ວິນາທີ.",
   "Trop de tentatives": "ພະຍາຍາມຫຼາຍເກີນໄປ",
   "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.": "ບໍ່ສາມາດສ້າງການເຊື່ອມຕໍ່ VPN. ລອງໃໝ່ພາຍຫຼັງ.",
@@ -875,5 +872,11 @@
   "Tous": "ທັງໝົດ",
   "Favoris": "ລາຍການມັກ",
   "{label} : {value}": "{label}: {value}",
-  "Nécessite une connexion VPN active.": "ຕ້ອງມີການເຊື່ອມຕໍ່ VPN ທີ່ເຮັດວຽກຢູ່."
+  "Nécessite une connexion VPN active.": "ຕ້ອງມີການເຊື່ອມຕໍ່ VPN ທີ່ເຮັດວຽກຢູ່.",
+  "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.": "ບໍ່ສາມາດອ່ານຕົວຕົນ VPN ທີ່ບັນທຶກໄວ້ໃນຄອມພິວເຕີນີ້. ສ້າງຕົວຕົນໃໝ່ສຳລັບອຸປະກອນນີ້ເທົ່ານັ້ນ.",
+  "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.": "ສະຖານທີ່ນີ້ບໍ່ພ້ອມໃຊ້ຊົ່ວຄາວ. ເລືອກສະຖານທີ່ອື່ນ ຫຼື ລອງໃໝ່ພາຍຫຼັງ.",
+  "Renvoyer l’e-mail": "ສົ່ງອີເມວອີກຄັ້ງ",
+  "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "ສົ່ງອີເມວແລ້ວ. ເປີດລິ້ງໃນອີເມວນັ້ນ ແລ້ວລອງເຊື່ອມຕໍ່ອີກຄັ້ງ.",
+  "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "ຫາກໍ່ສົ່ງອີເມວໄປແລ້ວ. ທ່ານຈະຂໍອີເມວອີກສະບັບໄດ້ຫຼັງຈາກ {seconds} ວິນາທີ.",
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "ບໍ່ສາມາດສົ່ງອີເມວໄດ້. ລອງໃໝ່ພາຍຫຼັງ."
 }

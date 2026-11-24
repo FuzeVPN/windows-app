@@ -85,7 +85,6 @@
   "Configuration IPv4": "Ntọala IPv4",
   "Configuration IPv6": "Ntọala IPv6",
   "Configuration du tunnel": "Ntọala ọwara",
-  "Confirmer mon e-mail": "Kwenye ozi-e m",
   "Connecter": "Jikọọ",
   "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.": "Banye site na ngwa a iji tinye ngwaọrụ a na akaụntụ gị.",
   "Connectez-vous pour gérer vos appareils": "Banye iji jikwaa ngwaọrụ gị",
@@ -679,7 +678,6 @@
   "Le composant OpenVPN sécurisé n’est pas disponible.": "Akụkụ OpenVPN echedoro adịghị.",
   "Le profil OpenVPN n’a pas pu être renouvelé.": "Enweghị ike imegharịa profaịlụ OpenVPN.",
   "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.": "Mmegharị OpenVPN adaghị. Kill switch ka na-egbochi okporo ụzọ netwọkụ.",
-  "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.": "Njirimara WireGuard dị na ngwaọrụ a adịghị. Mepee Ngwaọrụ iji megharịa naanị ngwaọrụ a.",
   "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.": "Windows enweghị ike imeghe nchekwa echedoro WireGuard.",
   "Windows n’a pas autorisé l’opération WireGuard demandée.": "Windows ekweghị ka a rụọ ọrụ WireGuard a rịọrọ.",
   "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.": "Ọrụ VPN dị na ngwaọrụ a adịghị. Mechie ma mepee FuzeVPN ọzọ.",
@@ -725,7 +723,6 @@
   "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.": "Enweghị ike ịdebanye njirimara VPN ọhụrụ ahụ. Gbalịa ọzọ ma emechaa.",
   "Identité VPN à renouveler": "A ga-emegharị njirimara VPN",
   "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.": "Ewepụrụ njirimara VPN a. Mepụta nke ọhụrụ iji gaa n'ihu.",
-  "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.": "Ọnọdụ a adịghị nwa oge. Họrọ Frankfurt 1 ma ọ bụ Frankfurt 2, ma ọ bụ gbalịa ọzọ ma emechaa.",
   "Réessayez dans {seconds} secondes.": "Gbalịa ọzọ n'ime sekọnd {seconds}.",
   "Trop de tentatives": "Ọtụtụ mbọ",
   "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.": "Enweghị ike iguzobe njikọ VPN. Gbalịa ọzọ ma emechaa.",
@@ -875,5 +872,11 @@
   "Tous": "Niile",
   "Favoris": "Ndị kacha mmasị",
   "{label} : {value}": "{label}: {value}",
-  "Nécessite une connexion VPN active.": "Ọ chọrọ njikọ VPN na-arụ ọrụ."
+  "Nécessite une connexion VPN active.": "Ọ chọrọ njikọ VPN na-arụ ọrụ.",
+  "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.": "Enweghị ike ịgụ njirimara VPN echekwara na PC a. Mepụta njirimara ọhụrụ maka naanị ngwaọrụ a.",
+  "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.": "Ọnọdụ a adịghị nwa oge. Họrọ ọnọdụ ọzọ ma ọ bụ gbalịa ọzọ ma emechaa.",
+  "Renvoyer l’e-mail": "Ziga ozi-e ọzọ",
+  "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "Ezigala ozi-e. Mepee linkị dị n'ime ya, wee gbalịa ijikọ ọzọ.",
+  "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "Ezigala otu ozi-e ugbu a. Ị nwere ike ịrịọ nke ọzọ n'ime sekọnd {seconds}.",
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "Enweghị ike izipu ozi-e ahụ. Gbalịa ọzọ ma emechaa."
 }

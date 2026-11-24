@@ -85,7 +85,6 @@
   "Configuration IPv4": "Saitin IPv4",
   "Configuration IPv6": "Saitin IPv6",
   "Configuration du tunnel": "Saitin rami",
-  "Confirmer mon e-mail": "Tabbatar da imel ɗina",
   "Connecter": "Haɗa",
   "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.": "Shiga daga wannan manhajar don ƙara wannan na'urar zuwa asusunka.",
   "Connectez-vous pour gérer vos appareils": "Shiga don sarrafa na'urorinka",
@@ -679,7 +678,6 @@
   "Le composant OpenVPN sécurisé n’est pas disponible.": "Babu amintaccen ɓangaren OpenVPN.",
   "Le profil OpenVPN n’a pas pu être renouvelé.": "Ba a iya sabunta bayanan haɗin OpenVPN ba.",
   "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.": "Sabunta OpenVPN ya gaza. Kill switch har yanzu yana toshe zirga-zirgar hanyar sadarwa.",
-  "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.": "Babu shaidar WireGuard ta cikin na'ura. Buɗe Na'urori don sabunta wannan na'urar kawai.",
   "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.": "Windows ya kasa buɗe ma'ajiyar WireGuard da aka kare.",
   "Windows n’a pas autorisé l’opération WireGuard demandée.": "Windows bai yarda da aikin WireGuard da aka nema ba.",
   "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.": "Babu sabis na VPN na cikin na'ura. Rufe FuzeVPN kuma sake buɗe shi.",
@@ -725,7 +723,6 @@
   "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.": "Ba a iya rajistar sabuwar shaidar VPN ba. Sake gwadawa daga baya.",
   "Identité VPN à renouveler": "Ana buƙatar sabunta shaidar VPN",
   "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.": "An cire wannan shaidar VPN. Ƙirƙiri sabuwa don ci gaba.",
-  "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.": "Wannan wurin ba ya samuwa a yanzu. Zaɓi Frankfurt 1 ko Frankfurt 2, ko sake gwadawa daga baya.",
   "Réessayez dans {seconds} secondes.": "Sake gwadawa cikin daƙiƙa {seconds}.",
   "Trop de tentatives": "Ƙoƙari ya yi yawa",
   "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.": "Ba a iya kafa haɗin VPN ba. Sake gwadawa daga baya.",
@@ -875,5 +872,11 @@
   "Tous": "Duka",
   "Favoris": "Waɗanda aka fi so",
   "{label} : {value}": "{label}: {value}",
-  "Nécessite une connexion VPN active.": "Yana buƙatar haɗin VPN mai aiki."
+  "Nécessite une connexion VPN active.": "Yana buƙatar haɗin VPN mai aiki.",
+  "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.": "Ba a iya karanta shaidar VPN da aka adana a wannan kwamfutar ba. Ƙirƙiri sabuwa don wannan na'urar kawai.",
+  "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.": "Wannan wurin ba ya samuwa a yanzu. Zaɓi wani wuri ko sake gwadawa daga baya.",
+  "Renvoyer l’e-mail": "Sake aika imel",
+  "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "An aika imel. Buɗe mahaɗin da ke cikinsa, sannan sake gwada haɗawa.",
+  "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "An aika imel yanzu-yanzu. Za ka iya neman wani cikin daƙiƙa {seconds}.",
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "Ba a iya aika imel ɗin ba. Sake gwadawa daga baya."
 }

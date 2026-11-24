@@ -85,7 +85,6 @@
   "Configuration IPv4": "Ètò IPv4",
   "Configuration IPv6": "Ètò IPv6",
   "Configuration du tunnel": "Ètò ọ̀nà VPN",
-  "Confirmer mon e-mail": "Jẹ́rìí sí ímeèlì mi",
   "Connecter": "Sopọ̀",
   "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.": "Sopọ̀ láti inú ohun èlò yìí láti fi ẹ̀rọ yìí kún àkọọ́lẹ̀ rẹ.",
   "Connectez-vous pour gérer vos appareils": "Wọlé láti ṣàkóso àwọn ẹ̀rọ rẹ",
@@ -679,7 +678,6 @@
   "Le composant OpenVPN sécurisé n’est pas disponible.": "Ẹ̀ka OpenVPN tó ní ààbò kò sí.",
   "Le profil OpenVPN n’a pas pu être renouvelé.": "A kò lè tún profáìlì OpenVPN ṣe.",
   "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.": "Ìtúnṣe OpenVPN kùnà. Kill switch ṣì ń dí ìrìnàjò dátà nẹ́tíwọ́ọ̀kì.",
-  "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.": "Ìdánimọ̀ WireGuard agbègbè kò sí. Ṣí Àwọn ẹ̀rọ láti tún ẹ̀rọ yìí nìkan ṣe.",
   "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.": "Windows kò lè ṣí ibi ìpamọ́ WireGuard tó ní ààbò.",
   "Windows n’a pas autorisé l’opération WireGuard demandée.": "Windows kò gba iṣẹ́ WireGuard tí a béèrè láàyè.",
   "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.": "Iṣẹ́ VPN agbègbè kò sí. Ti FuzeVPN kí o sì tún ṣí i.",
@@ -725,7 +723,6 @@
   "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.": "A kò lè forúkọ ìdánimọ̀ VPN tuntun sílẹ̀. Gbìyànjú lẹ́ẹ̀kan sí i nígbà mìíràn.",
   "Identité VPN à renouveler": "A gbọ́dọ̀ tún ìdánimọ̀ VPN ṣe",
   "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.": "A ti yọ ìdánimọ̀ VPN yìí kúrò. Ṣẹ̀dá òmíràn láti tẹ̀síwájú.",
-  "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.": "Ibi yìí kò sí fún ìgbà díẹ̀. Yan Frankfurt 1 tàbí Frankfurt 2, tàbí gbìyànjú lẹ́ẹ̀kan sí i nígbà mìíràn.",
   "Réessayez dans {seconds} secondes.": "Gbìyànjú lẹ́ẹ̀kan sí i ní ìṣẹ́jú àáyá {seconds}.",
   "Trop de tentatives": "Ọ̀pọ̀ ìgbìyànjú jù",
   "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.": "A kò lè dá ìsopọ̀ VPN sílẹ̀. Gbìyànjú lẹ́ẹ̀kan sí i nígbà mìíràn.",
@@ -875,5 +872,11 @@
   "Tous": "Gbogbo",
   "Favoris": "Àwọn ààyò",
   "{label} : {value}": "{label}: {value}",
-  "Nécessite une connexion VPN active.": "Ó nílò ìsopọ̀ VPN tó ń ṣiṣẹ́."
+  "Nécessite une connexion VPN active.": "Ó nílò ìsopọ̀ VPN tó ń ṣiṣẹ́.",
+  "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.": "A kò lè ka ìdánimọ̀ VPN tí a fi pamọ́ sórí PC yìí. Ṣẹ̀dá òmíràn fún ẹ̀rọ yìí nìkan.",
+  "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.": "Ibi yìí kò sí fún ìgbà díẹ̀. Yan ibi mìíràn tàbí gbìyànjú lẹ́ẹ̀kan sí i nígbà mìíràn.",
+  "Renvoyer l’e-mail": "Tún fi ímeèlì ránṣẹ́",
+  "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "A ti fi ímeèlì ránṣẹ́. Ṣí ìjápọ̀ tó wà nínú rẹ̀, lẹ́yìn náà gbìyànjú láti sopọ̀ lẹ́ẹ̀kan sí i.",
+  "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "A ṣẹ̀ṣẹ̀ fi ímeèlì kan ránṣẹ́. O ó lè béèrè òmíràn lẹ́yìn ìṣẹ́jú àáyá {seconds}.",
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "A kò lè fi ímeèlì náà ránṣẹ́. Gbìyànjú lẹ́ẹ̀kan sí i nígbà mìíràn."
 }

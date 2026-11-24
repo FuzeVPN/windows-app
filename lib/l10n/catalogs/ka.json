@@ -85,7 +85,6 @@
   "Configuration IPv4": "IPv4 კონფიგურაცია",
   "Configuration IPv6": "IPv6 კონფიგურაცია",
   "Configuration du tunnel": "გვირაბის კონფიგურაცია",
-  "Confirmer mon e-mail": "ელფოსტის დადასტურება",
   "Connecter": "დაკავშირება",
   "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.": "ამ მოწყობილობის ანგარიშზე დასამატებლად დაუკავშირდით ამ აპიდან.",
   "Connectez-vous pour gérer vos appareils": "მოწყობილობების სამართავად შედით ანგარიშში",
@@ -679,7 +678,6 @@
   "Le composant OpenVPN sécurisé n’est pas disponible.": "უსაფრთხო OpenVPN კომპონენტი მიუწვდომელია.",
   "Le profil OpenVPN n’a pas pu être renouvelé.": "OpenVPN პროფილის განახლება ვერ მოხერხდა.",
   "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.": "OpenVPN-ის განახლება ვერ მოხერხდა. Kill switch კვლავ ბლოკავს ქსელის ტრაფიკს.",
-  "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.": "ლოკალური WireGuard იდენტობა მიუწვდომელია. მხოლოდ ამ მოწყობილობის განახლებისთვის გახსენით „მოწყობილობები“.",
   "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.": "Windows-მა WireGuard-ის დაცული საცავი ვერ გახსნა.",
   "Windows n’a pas autorisé l’opération WireGuard demandée.": "Windows-მა მოთხოვნილი WireGuard ოპერაცია არ დაუშვა.",
   "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.": "ლოკალური VPN სერვისი მიუწვდომელია. დახურეთ და ხელახლა გახსენით FuzeVPN.",
@@ -725,7 +723,6 @@
   "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.": "ახალი VPN იდენტობის რეგისტრაცია ვერ მოხერხდა. მოგვიანებით სცადეთ ხელახლა.",
   "Identité VPN à renouveler": "VPN იდენტობა განახლებას საჭიროებს",
   "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.": "ეს VPN იდენტობა გაუქმდა. გასაგრძელებლად შექმენით ახალი.",
-  "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.": "ეს მდებარეობა დროებით მიუწვდომელია. აირჩიეთ Frankfurt 1 ან Frankfurt 2, ან მოგვიანებით სცადეთ ხელახლა.",
   "Réessayez dans {seconds} secondes.": "{seconds} წამში სცადეთ ხელახლა.",
   "Trop de tentatives": "ძალიან ბევრი მცდელობა",
   "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.": "VPN კავშირის დამყარება ვერ მოხერხდა. მოგვიანებით სცადეთ ხელახლა.",
@@ -875,5 +872,11 @@
   "Tous": "ყველა",
   "Favoris": "რჩეულები",
   "{label} : {value}": "{label}: {value}",
-  "Nécessite une connexion VPN active.": "საჭიროა აქტიური VPN კავშირი."
+  "Nécessite une connexion VPN active.": "საჭიროა აქტიური VPN კავშირი.",
+  "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.": "ამ კომპიუტერზე შენახული VPN იდენტობა წაუკითხავია. შექმენით ახალი იდენტობა მხოლოდ ამ მოწყობილობისთვის.",
+  "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.": "ეს მდებარეობა დროებით მიუწვდომელია. აირჩიეთ სხვა მდებარეობა ან მოგვიანებით სცადეთ ხელახლა.",
+  "Renvoyer l’e-mail": "წერილის ხელახლა გაგზავნა",
+  "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "წერილი გაიგზავნა. გახსენით მასში მოცემული ბმული და შემდეგ ხელახლა სცადეთ დაკავშირება.",
+  "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "წერილი ახლახან გაიგზავნა. ახალი წერილის მოთხოვნას {seconds} წამში შეძლებთ.",
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "წერილის გაგზავნა ვერ მოხერხდა. მოგვიანებით სცადეთ ხელახლა."
 }

@@ -85,7 +85,6 @@
   "Configuration IPv4": "IPv4 sozlamalari",
   "Configuration IPv6": "IPv6 sozlamalari",
   "Configuration du tunnel": "Tunnel sozlamalari",
-  "Confirmer mon e-mail": "Elektron pochtamni tasdiqlash",
   "Connecter": "Ulanish",
   "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.": "Bu qurilmani hisobingizga qo‘shish uchun ushbu ilovada hisobga kiring.",
   "Connectez-vous pour gérer vos appareils": "Qurilmalaringizni boshqarish uchun hisobga kiring",
@@ -679,7 +678,6 @@
   "Le composant OpenVPN sécurisé n’est pas disponible.": "Xavfsiz OpenVPN komponenti mavjud emas.",
   "Le profil OpenVPN n’a pas pu être renouvelé.": "OpenVPN profilini yangilab bo‘lmadi.",
   "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.": "OpenVPN’ni yangilab bo‘lmadi. Kill switch tarmoq trafigini bloklashda davom etmoqda.",
-  "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.": "Mahalliy WireGuard identifikatori mavjud emas. Faqat ushbu qurilmani yangilash uchun Qurilmalar bo‘limini oching.",
   "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.": "Windows WireGuard’ning himoyalangan xotirasini ocha olmadi.",
   "Windows n’a pas autorisé l’opération WireGuard demandée.": "Windows so‘ralgan WireGuard amaliga ruxsat bermadi.",
   "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.": "Mahalliy VPN xizmati mavjud emas. FuzeVPN’ni yoping va qayta oching.",
@@ -725,7 +723,6 @@
   "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.": "Yangi VPN identifikatorini ro‘yxatdan o‘tkazib bo‘lmadi. Keyinroq qayta urinib ko‘ring.",
   "Identité VPN à renouveler": "VPN identifikatorini yangilash kerak",
   "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.": "Bu VPN identifikatori olib tashlangan. Davom etish uchun yangisini yarating.",
-  "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.": "Bu joylashuv vaqtincha mavjud emas. Frankfurt 1 yoki Frankfurt 2 ni tanlang yoki keyinroq qayta urinib ko‘ring.",
   "Réessayez dans {seconds} secondes.": "{seconds} soniyadan keyin qayta urinib ko‘ring.",
   "Trop de tentatives": "Urinishlar juda ko‘p",
   "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.": "VPN ulanishini o‘rnatib bo‘lmadi. Keyinroq qayta urinib ko‘ring.",
@@ -875,5 +872,11 @@
   "Tous": "Hammasi",
   "Favoris": "Sevimlilar",
   "{label} : {value}": "{label}: {value}",
-  "Nécessite une connexion VPN active.": "Faol VPN ulanishi talab qilinadi."
+  "Nécessite une connexion VPN active.": "Faol VPN ulanishi talab qilinadi.",
+  "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.": "Ushbu kompyuterda saqlangan VPN identifikatorini o‘qib bo‘lmaydi. Faqat shu qurilma uchun yangisini yarating.",
+  "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.": "Bu joylashuv vaqtincha mavjud emas. Boshqa joylashuvni tanlang yoki keyinroq qayta urinib ko‘ring.",
+  "Renvoyer l’e-mail": "Xatni qayta yuborish",
+  "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "Elektron xat yuborildi. Undagi havolani oching, so‘ng qayta ulanishga urinib ko‘ring.",
+  "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "Hozirgina elektron xat yuborildi. Yana birini {seconds} soniyadan keyin so‘rashingiz mumkin.",
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "Elektron xatni yuborib bo‘lmadi. Keyinroq qayta urinib ko‘ring."
 }

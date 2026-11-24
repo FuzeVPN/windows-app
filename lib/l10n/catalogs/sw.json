@@ -85,7 +85,6 @@
   "Configuration IPv4": "Usanidi wa IPv4",
   "Configuration IPv6": "Usanidi wa IPv6",
   "Configuration du tunnel": "Usanidi wa tunnel",
-  "Confirmer mon e-mail": "Thibitisha barua pepe yangu",
   "Connecter": "Unganisha",
   "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.": "Unganisha kutoka kwenye programu hii ili kuongeza kifaa hiki kwenye akaunti yako.",
   "Connectez-vous pour gérer vos appareils": "Ingia ili kudhibiti vifaa vyako",
@@ -679,7 +678,6 @@
   "Le composant OpenVPN sécurisé n’est pas disponible.": "Kipengele salama cha OpenVPN hakipatikani.",
   "Le profil OpenVPN n’a pas pu être renouvelé.": "Wasifu wa OpenVPN haukuweza kusasishwa.",
   "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.": "Usasishaji wa OpenVPN umeshindwa. Kill switch bado inazuia trafiki ya mtandao.",
-  "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.": "Utambulisho wa ndani wa WireGuard haupatikani. Fungua Vifaa ili kusasisha kifaa hiki pekee.",
   "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.": "Windows haikuweza kufungua hifadhi iliyolindwa ya WireGuard.",
   "Windows n’a pas autorisé l’opération WireGuard demandée.": "Windows haikuruhusu operesheni ya WireGuard iliyoombwa.",
   "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.": "Huduma ya ndani ya VPN haipatikani. Funga na ufungue tena FuzeVPN.",
@@ -725,7 +723,6 @@
   "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.": "Utambulisho mpya wa VPN haukuweza kusajiliwa. Jaribu tena baadaye.",
   "Identité VPN à renouveler": "Utambulisho wa VPN unahitaji kusasishwa",
   "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.": "Utambulisho huu wa VPN umeondolewa. Unda mpya ili kuendelea.",
-  "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.": "Eneo hili halipatikani kwa muda. Chagua Frankfurt 1 au Frankfurt 2, au ujaribu tena baadaye.",
   "Réessayez dans {seconds} secondes.": "Jaribu tena baada ya sekunde {seconds}.",
   "Trop de tentatives": "Majaribio mengi mno",
   "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.": "Muunganisho wa VPN haukuweza kuanzishwa. Jaribu tena baadaye.",
@@ -875,5 +872,11 @@
   "Tous": "Zote",
   "Favoris": "Vipendwa",
   "{label} : {value}": "{label}: {value}",
-  "Nécessite une connexion VPN active.": "Inahitaji muunganisho wa VPN unaotumika."
+  "Nécessite une connexion VPN active.": "Inahitaji muunganisho wa VPN unaotumika.",
+  "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.": "Utambulisho wa VPN uliohifadhiwa kwenye kompyuta hii hauwezi kusomwa. Unda mpya kwa ajili ya kifaa hiki pekee.",
+  "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.": "Eneo hili halipatikani kwa muda. Chagua eneo jingine, au ujaribu tena baadaye.",
+  "Renvoyer l’e-mail": "Tuma barua pepe tena",
+  "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "Barua pepe imetumwa. Fungua kiungo kilichomo, kisha ujaribu kuunganisha tena.",
+  "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "Barua pepe imetumwa hivi punde. Utaweza kuomba nyingine baada ya sekunde {seconds}.",
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "Barua pepe haikuweza kutumwa. Jaribu tena baadaye."
 }

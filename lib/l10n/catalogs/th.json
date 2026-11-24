@@ -85,7 +85,6 @@
   "Configuration IPv4": "การกำหนดค่า IPv4",
   "Configuration IPv6": "การกำหนดค่า IPv6",
   "Configuration du tunnel": "การกำหนดค่าอุโมงค์",
-  "Confirmer mon e-mail": "ยืนยันอีเมลของฉัน",
   "Connecter": "เชื่อมต่อ",
   "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.": "ลงชื่อเข้าใช้จากแอปนี้เพื่อเพิ่มอุปกรณ์นี้ไปยังบัญชีของคุณ",
   "Connectez-vous pour gérer vos appareils": "ลงชื่อเข้าใช้เพื่อจัดการอุปกรณ์ของคุณ",
@@ -680,7 +679,6 @@
   "Le composant OpenVPN sécurisé n’est pas disponible.": "ส่วนประกอบ OpenVPN ที่ปลอดภัยไม่พร้อมใช้งาน",
   "Le profil OpenVPN n’a pas pu être renouvelé.": "ต่ออายุโปรไฟล์ OpenVPN ไม่ได้",
   "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.": "ต่ออายุ OpenVPN ล้มเหลว kill switch ยังคงบล็อกการรับส่งข้อมูลเครือข่าย",
-  "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.": "ข้อมูลระบุตัวตน WireGuard ในเครื่องไม่พร้อมใช้งาน เปิดอุปกรณ์เพื่อ ต่ออายุเฉพาะอุปกรณ์นี้",
   "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.": "Windows ไม่สามารถเปิดพื้นที่จัดเก็บที่ได้รับการป้องกันของ WireGuard ได้",
   "Windows n’a pas autorisé l’opération WireGuard demandée.": "Windows ไม่อนุญาตการดำเนินการ WireGuard ที่ร้องขอ",
   "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.": "บริการ VPN ในเครื่องไม่พร้อมใช้งาน ปิดแล้วเปิด FuzeVPN ใหม่",
@@ -726,7 +724,6 @@
   "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.": "ลงทะเบียนข้อมูลระบุตัวตน VPN ใหม่ไม่ได้ โปรดลองอีกครั้งภายหลัง",
   "Identité VPN à renouveler": "ต้องต่ออายุข้อมูลระบุตัวตน VPN",
   "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.": "นำข้อมูลระบุตัวตน VPN นี้ออกแล้ว สร้างใหม่เพื่อดำเนินการต่อ",
-  "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.": "ตำแหน่งนี้ไม่พร้อมใช้งานชั่วคราว เลือก Frankfurt 1 หรือ Frankfurt 2 หรือลองอีกครั้งภายหลัง",
   "Réessayez dans {seconds} secondes.": "ลองอีกครั้งใน {seconds} วินาที",
   "Trop de tentatives": "พยายามมากเกินไป",
   "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.": "ไม่สามารถสร้างการเชื่อมต่อ VPN ได้ โปรดลองอีกครั้งภายหลัง",
@@ -875,5 +872,11 @@
   "Tous": "ทั้งหมด",
   "Favoris": "รายการโปรด",
   "{label} : {value}": "{label}: {value}",
-  "Nécessite une connexion VPN active.": "ต้องมีการเชื่อมต่อ VPN ที่ใช้งานอยู่"
+  "Nécessite une connexion VPN active.": "ต้องมีการเชื่อมต่อ VPN ที่ใช้งานอยู่",
+  "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.": "ข้อมูลระบุตัวตน VPN ที่บันทึกไว้ในพีซีเครื่องนี้อ่านไม่ได้ สร้างข้อมูลระบุตัวตนใหม่สำหรับอุปกรณ์นี้เท่านั้น",
+  "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.": "ตำแหน่งนี้ไม่พร้อมใช้งานชั่วคราว เลือกตำแหน่งอื่นหรือลองอีกครั้งภายหลัง",
+  "Renvoyer l’e-mail": "ส่งอีเมลอีกครั้ง",
+  "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "ส่งอีเมลแล้ว เปิดลิงก์ในอีเมล จากนั้นลองเชื่อมต่ออีกครั้ง",
+  "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "เพิ่งส่งอีเมลไป คุณจะขออีเมลฉบับใหม่ได้ในอีก {seconds} วินาที",
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "ส่งอีเมลไม่ได้ โปรดลองอีกครั้งภายหลัง"
 }

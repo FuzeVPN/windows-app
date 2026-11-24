@@ -85,7 +85,6 @@
   "Configuration IPv4": "IPv4 конфигурациясы",
   "Configuration IPv6": "IPv6 конфигурациясы",
   "Configuration du tunnel": "Туннель конфигурациясы",
-  "Confirmer mon e-mail": "Электрондық поштамды растау",
   "Connecter": "Қосылу",
   "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.": "Бұл құрылғыны есептік жазбаңызға қосу үшін осы қолданбадан қосылыңыз.",
   "Connectez-vous pour gérer vos appareils": "Құрылғыларды басқару үшін жүйеге кіріңіз",
@@ -679,7 +678,6 @@
   "Le composant OpenVPN sécurisé n’est pas disponible.": "Қауіпсіз OpenVPN құрамдасы қолжетімсіз.",
   "Le profil OpenVPN n’a pas pu être renouvelé.": "OpenVPN профилін жаңарту мүмкін болмады.",
   "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.": "OpenVPN жаңартуы сәтсіз аяқталды. Kill switch әлі де желі трафигін бұғаттауда.",
-  "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.": "Жергілікті WireGuard сәйкестендіру деректері қолжетімсіз. Тек осы құрылғыны жаңарту үшін «Құрылғылар» бөлімін ашыңыз.",
   "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.": "Windows WireGuard қорғалған қоймасын аша алмады.",
   "Windows n’a pas autorisé l’opération WireGuard demandée.": "Windows сұралған WireGuard әрекетіне рұқсат бермеді.",
   "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.": "Жергілікті VPN қызметі қолжетімсіз. FuzeVPN жауып, қайта ашыңыз.",
@@ -725,7 +723,6 @@
   "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.": "Жаңа VPN сәйкестендіру деректерін тіркеу мүмкін болмады. Кейінірек қайталап көріңіз.",
   "Identité VPN à renouveler": "VPN сәйкестендіру деректерін жаңарту қажет",
   "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.": "Бұл VPN сәйкестендіру деректері жойылды. Жалғастыру үшін жаңасын жасаңыз.",
-  "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.": "Бұл орын уақытша қолжетімсіз. Frankfurt 1 немесе Frankfurt 2 таңдаңыз, не кейінірек қайталап көріңіз.",
   "Réessayez dans {seconds} secondes.": "{seconds} секундтан кейін қайталап көріңіз.",
   "Trop de tentatives": "Әрекеттер тым көп",
   "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.": "VPN қосылымын орнату мүмкін болмады. Кейінірек қайталап көріңіз.",
@@ -875,5 +872,11 @@
   "Tous": "Барлығы",
   "Favoris": "Таңдаулылар",
   "{label} : {value}": "{label}: {value}",
-  "Nécessite une connexion VPN active.": "Белсенді VPN қосылымы қажет."
+  "Nécessite une connexion VPN active.": "Белсенді VPN қосылымы қажет.",
+  "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.": "Осы компьютерде сақталған VPN сәйкестендіру деректерін оқу мүмкін емес. Тек осы құрылғы үшін жаңа сәйкестендіру деректерін жасаңыз.",
+  "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.": "Бұл орын уақытша қолжетімсіз. Басқа орынды таңдаңыз, не кейінірек қайталап көріңіз.",
+  "Renvoyer l’e-mail": "Хатты қайта жіберу",
+  "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "Хат жіберілді. Ондағы сілтемені ашып, қайта қосылып көріңіз.",
+  "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "Хат жаңа ғана жіберілді. Келесісін {seconds} секундтан кейін сұрай аласыз.",
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "Хатты жіберу мүмкін болмады. Кейінірек қайталап көріңіз."
 }

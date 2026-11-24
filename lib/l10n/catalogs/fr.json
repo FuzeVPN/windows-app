@@ -85,7 +85,6 @@
   "Configuration IPv4": "Configuration IPv4",
   "Configuration IPv6": "Configuration IPv6",
   "Configuration du tunnel": "Configuration du tunnel",
-  "Confirmer mon e-mail": "Confirmer mon e-mail",
   "Connecter": "Connecter",
   "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.": "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.",
   "Connectez-vous pour gérer vos appareils": "Connectez-vous pour gérer vos appareils",
@@ -679,7 +678,6 @@
   "Le composant OpenVPN sécurisé n’est pas disponible.": "Le composant OpenVPN sécurisé n’est pas disponible.",
   "Le profil OpenVPN n’a pas pu être renouvelé.": "Le profil OpenVPN n’a pas pu être renouvelé.",
   "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.": "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.",
-  "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.": "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.",
   "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.": "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.",
   "Windows n’a pas autorisé l’opération WireGuard demandée.": "Windows n’a pas autorisé l’opération WireGuard demandée.",
   "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.": "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.",
@@ -725,7 +723,6 @@
   "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.": "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.",
   "Identité VPN à renouveler": "Identité VPN à renouveler",
   "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.": "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.",
-  "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.": "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.",
   "Réessayez dans {seconds} secondes.": "Réessayez dans {seconds} secondes.",
   "Trop de tentatives": "Trop de tentatives",
   "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.": "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.",
@@ -875,5 +872,11 @@
   "Tous": "Tous",
   "Favoris": "Favoris",
   "{label} : {value}": "{label} : {value}",
-  "Nécessite une connexion VPN active.": "Nécessite une connexion VPN active."
+  "Nécessite une connexion VPN active.": "Nécessite une connexion VPN active.",
+  "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.": "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.",
+  "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.": "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.",
+  "Renvoyer l’e-mail": "Renvoyer l’e-mail",
+  "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.",
+  "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.",
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "L’e-mail n’a pas pu être envoyé. Réessayez plus tard."
 }

@@ -85,7 +85,6 @@
   "Configuration IPv4": "Διαμόρφωση IPv4",
   "Configuration IPv6": "Διαμόρφωση IPv6",
   "Configuration du tunnel": "Διαμόρφωση σήραγγας",
-  "Confirmer mon e-mail": "Επιβεβαίωση του email μου",
   "Connecter": "Σύνδεση",
   "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.": "Συνδεθείτε από αυτήν την εφαρμογή για να προσθέσετε τη συσκευή στον λογαριασμό σας.",
   "Connectez-vous pour gérer vos appareils": "Συνδεθείτε για να διαχειριστείτε τις συσκευές σας",
@@ -679,7 +678,6 @@
   "Le composant OpenVPN sécurisé n’est pas disponible.": "Το ασφαλές στοιχείο OpenVPN δεν είναι διαθέσιμο.",
   "Le profil OpenVPN n’a pas pu être renouvelé.": "Δεν ήταν δυνατή η ανανέωση του προφίλ OpenVPN.",
   "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.": "Η ανανέωση του OpenVPN απέτυχε. Το kill switch εξακολουθεί να αποκλείει την κίνηση δικτύου.",
-  "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.": "Η τοπική ταυτότητα WireGuard δεν είναι διαθέσιμη. Ανοίξτε τις Συσκευές για να ανανεώσετε μόνο αυτήν τη συσκευή.",
   "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.": "Τα Windows δεν μπόρεσαν να ανοίξουν τον προστατευμένο χώρο αποθήκευσης του WireGuard.",
   "Windows n’a pas autorisé l’opération WireGuard demandée.": "Τα Windows δεν ενέκριναν τη ζητούμενη λειτουργία WireGuard.",
   "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.": "Η τοπική υπηρεσία VPN δεν είναι διαθέσιμη. Κλείστε και ανοίξτε ξανά το FuzeVPN.",
@@ -725,7 +723,6 @@
   "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.": "Δεν ήταν δυνατή η εγγραφή της νέας ταυτότητας VPN. Δοκιμάστε ξανά αργότερα.",
   "Identité VPN à renouveler": "Απαιτείται ανανέωση ταυτότητας VPN",
   "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.": "Αυτή η ταυτότητα VPN αφαιρέθηκε. Δημιουργήστε νέα για να συνεχίσετε.",
-  "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.": "Αυτή η τοποθεσία δεν είναι προσωρινά διαθέσιμη. Επιλέξτε Frankfurt 1 ή Frankfurt 2 ή δοκιμάστε ξανά αργότερα.",
   "Réessayez dans {seconds} secondes.": "Δοκιμάστε ξανά σε {seconds} δευτερόλεπτα.",
   "Trop de tentatives": "Πάρα πολλές προσπάθειες",
   "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.": "Δεν ήταν δυνατή η δημιουργία σύνδεσης VPN. Δοκιμάστε ξανά αργότερα.",
@@ -875,5 +872,11 @@
   "Tous": "Όλα",
   "Favoris": "Αγαπημένα",
   "{label} : {value}": "{label}: {value}",
-  "Nécessite une connexion VPN active.": "Απαιτείται ενεργή σύνδεση VPN."
+  "Nécessite une connexion VPN active.": "Απαιτείται ενεργή σύνδεση VPN.",
+  "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.": "Η ταυτότητα VPN που είναι αποθηκευμένη σε αυτόν τον υπολογιστή δεν είναι αναγνώσιμη. Δημιουργήστε μια νέα μόνο για αυτήν τη συσκευή.",
+  "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.": "Αυτή η τοποθεσία δεν είναι προσωρινά διαθέσιμη. Επιλέξτε άλλη τοποθεσία ή δοκιμάστε ξανά αργότερα.",
+  "Renvoyer l’e-mail": "Επαναποστολή email",
+  "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "Το email στάλθηκε. Ανοίξτε τον σύνδεσμο που περιέχει και, στη συνέχεια, δοκιμάστε ξανά να συνδεθείτε.",
+  "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "Μόλις στάλθηκε ένα email. Μπορείτε να ζητήσετε άλλο σε {seconds} δευτ.",
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "Δεν ήταν δυνατή η αποστολή του email. Δοκιμάστε ξανά αργότερα."
 }

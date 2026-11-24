@@ -85,7 +85,6 @@
   "Configuration IPv4": "IPv4 configuration",
   "Configuration IPv6": "IPv6 configuration",
   "Configuration du tunnel": "Tunnel configuration",
-  "Confirmer mon e-mail": "Confirm my email",
   "Connecter": "Connect",
   "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.": "Connect from this app to add this device to your account.",
   "Connectez-vous pour gérer vos appareils": "Sign in to manage your devices",
@@ -679,7 +678,6 @@
   "Le composant OpenVPN sécurisé n’est pas disponible.": "The secure OpenVPN component is unavailable.",
   "Le profil OpenVPN n’a pas pu être renouvelé.": "The OpenVPN profile could not be renewed.",
   "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.": "OpenVPN renewal failed. The kill switch is still blocking network traffic.",
-  "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.": "The local WireGuard identity is unavailable. Open Devices to renew only this device.",
   "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.": "Windows could not open WireGuard’s protected storage.",
   "Windows n’a pas autorisé l’opération WireGuard demandée.": "Windows did not allow the requested WireGuard operation.",
   "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.": "The local VPN service is unavailable. Close and reopen FuzeVPN.",
@@ -725,7 +723,6 @@
   "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.": "The new VPN identity could not be registered. Try again later.",
   "Identité VPN à renouveler": "VPN identity must be renewed",
   "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.": "This VPN identity was removed. Create a new one to continue.",
-  "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.": "This location is temporarily unavailable. Choose Frankfurt 1 or Frankfurt 2, or try again later.",
   "Réessayez dans {seconds} secondes.": "Try again in {seconds} seconds.",
   "Trop de tentatives": "Too many attempts",
   "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.": "A VPN connection could not be established. Try again later.",
@@ -875,5 +872,11 @@
   "Tous": "All",
   "Favoris": "Favorites",
   "{label} : {value}": "{label}: {value}",
-  "Nécessite une connexion VPN active.": "Requires an active VPN connection."
+  "Nécessite une connexion VPN active.": "Requires an active VPN connection.",
+  "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.": "The VPN identity saved on this PC cannot be read. Create a new one for this device only.",
+  "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.": "This location is temporarily unavailable. Choose another location or try again later.",
+  "Renvoyer l’e-mail": "Resend email",
+  "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "Email sent. Open the link it contains, then try connecting again.",
+  "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "An email was just sent. You can request another one in {seconds} s.",
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "The email could not be sent. Try again later."
 }
