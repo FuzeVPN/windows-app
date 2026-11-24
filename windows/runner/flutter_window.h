@@ -40,6 +40,7 @@ class FlutterWindow : public Win32Window {
       window_channel_;
   HANDLE connectivity_notification_ = nullptr;
   bool tray_available_ = false;
+  bool maintenance_was_blocked_ = false;
   std::unique_ptr<UpdateChannel> update_channel_;
   std::unique_ptr<DiagnosticsStoreChannel> diagnostics_store_channel_;
   std::unique_ptr<TlsTrustChannel> tls_trust_channel_;

@@ -32,7 +32,10 @@
         After="RestoreDesktopShortcut" Condition="DesktopShortcut = -1" />
     <Variable Name="BuildNotice" Type="string" Value="$(var.BuildNotice)" />
     <Chain>
-      <MsiPackage Id="FuzeVpnMsi" SourceFile="$(var.MsiPath)" Vital="yes" Compressed="yes" Visible="no">
+      <!-- The only real holders are our service and app, which the package's
+           maintenance actions stop and wait for: never ask the user to close apps. -->
+      <MsiPackage Id="FuzeVpnMsi" SourceFile="$(var.MsiPath)" Vital="yes" Compressed="yes" Visible="no"
+          bal:DisplayFilesInUseDialogCondition="0">
         <MsiProperty Name="FUZEVPN_LANGUAGE" Value="[WixStdBALanguageId]" />
         <MsiProperty Name="DESKTOP_SHORTCUT" Value="[DesktopShortcut]" />
         <MsiProperty Name="INSTALLFOLDER" Value="[InstallFolder]" />
