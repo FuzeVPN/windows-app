@@ -82,7 +82,50 @@ class _BlockedRetryController extends ConnectionUxController {
   Future<void> toggleConnection() async {
     toggles++;
   }
+
+  int resends = 0;
+  final identityResets = <bool>[];
+
+  @override
+  Future<void> resendVerificationEmail() async {
+    resends++;
+    verificationEmailNotice = _sentNotice;
+    notifyListeners();
+  }
+
+  @override
+  Future<void> retryAfterIdentityReset({
+    bool replaceCurrentDevice = false,
+  }) async {
+    identityResets.add(replaceCurrentDevice);
+  }
 }
+
+const _sentNotice =
+    'E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.';
+const _cooldownNotice =
+    'Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.';
+
+const _emailIssue = DeviceEnrollmentIssue(
+  kind: DeviceEnrollmentIssueKind.emailVerificationRequired,
+  title: 'Adresse e-mail à confirmer',
+  message: 'Confirmez votre adresse e-mail avant d’ajouter cet appareil VPN.',
+);
+
+const _identityIssues = {
+  DeviceEnrollmentIssue(
+    kind: DeviceEnrollmentIssueKind.localIdentityUnavailable,
+    title: 'Identité VPN à renouveler',
+    message:
+        'L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.',
+  ): true,
+  DeviceEnrollmentIssue(
+    kind: DeviceEnrollmentIssueKind.deviceIdentityRevoked,
+    title: 'Identité VPN à renouveler',
+    message:
+        'Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.',
+  ): false,
+};
 
 Future<void> _pump(WidgetTester tester, AppController controller) async {
   tester.view.physicalSize = const Size(1280, 900);
@@ -106,7 +149,7 @@ const _nodeUnavailableIssue = DeviceEnrollmentIssue(
   kind: DeviceEnrollmentIssueKind.nodeUnavailable,
   title: 'Emplacement indisponible',
   message:
-      'Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.',
+      'Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.',
 );
 
 void main() {
@@ -338,6 +381,73 @@ void main() {
       expect(controller.canRetryConnection, isFalse);
       expect(find.text(strings.text(_pendingIssue.message)), findsOneWidget);
       expect(_retryButton(strings), findsNothing);
+      expect(controller.toggles, 0);
+      await tester.pumpWidget(const SizedBox.shrink());
+      controller.dispose();
+    });
+  }
+
+  testWidgets('the e-mail card resends from the app in every language', (
+    tester,
+  ) async {
+    for (final language in AppLanguage.values.where(
+      (value) => value != AppLanguage.system,
+    )) {
+      final controller = _BlockedRetryController()
+        ..language = language
+        ..deviceEnrollmentIssue = _emailIssue;
+      final strings = AppStrings.forLanguage(language);
+      await _pump(tester, controller);
+
+      expect(find.byKey(const ValueKey('notice-card-detail')), findsNothing);
+      await tester.tap(
+        find.widgetWithText(OutlinedButton, strings.text('Renvoyer l’e-mail')),
+      );
+      await tester.pumpAndSettle();
+      expect(controller.resends, 1, reason: language.name);
+      expect(
+        tester
+            .widget<Text>(find.byKey(const ValueKey('notice-card-detail')))
+            .data,
+        strings.text(_sentNotice),
+        reason: language.name,
+      );
+
+      controller
+        ..verificationEmailNotice = _cooldownNotice
+        ..verificationEmailRetryAfterSeconds = 42
+        ..notifyListeners();
+      await tester.pumpAndSettle();
+      final cooldown = tester
+          .widget<Text>(find.byKey(const ValueKey('notice-card-detail')))
+          .data!;
+      expect(cooldown, contains('42'), reason: language.name);
+      expect(cooldown, isNot(contains('{seconds}')), reason: language.name);
+      expect(tester.takeException(), isNull, reason: language.name);
+      await tester.pumpWidget(const SizedBox.shrink());
+      controller.dispose();
+    }
+  });
+
+  for (final entry in _identityIssues.entries) {
+    testWidgets('${entry.key.kind.name} creates a new identity '
+        '(replacing this device: ${entry.value})', (tester) async {
+      final controller = _BlockedRetryController()
+        ..deviceEnrollmentIssue = entry.key;
+      final strings = AppStrings.forLanguage(AppLanguage.french);
+      await _pump(tester, controller);
+
+      await tester.tap(
+        find.widgetWithText(
+          OutlinedButton,
+          strings.text('Créer une nouvelle identité'),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(FilledButton, 'Continuer'));
+      await tester.pumpAndSettle();
+
+      expect(controller.identityResets, [entry.value]);
       expect(controller.toggles, 0);
       await tester.pumpWidget(const SizedBox.shrink());
       controller.dispose();

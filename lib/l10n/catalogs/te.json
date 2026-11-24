@@ -76,7 +76,6 @@
   "Configuration IPv4": "IPv4 కాన్ఫిగరేషన్",
   "Configuration IPv6": "IPv6 కాన్ఫిగరేషన్",
   "Configuration du tunnel": "టన్నెల్ కాన్ఫిగరేషన్",
-  "Confirmer mon e-mail": "నా ఇమెయిల్‌ను నిర్ధారించు",
   "Connecter": "కనెక్ట్ చేయి",
   "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.": "ఈ పరికరాన్ని మీ ఖాతాకు జోడించడానికి ఈ అనువర్తనం నుండి కనెక్ట్ అవ్వండి.",
   "Connectez-vous pour gérer vos appareils": "మీ పరికరాలను నిర్వహించడానికి సైన్ ఇన్ చేయండి",
@@ -656,7 +655,6 @@
   "Le composant OpenVPN sécurisé n’est pas disponible.": "సురక్షిత OpenVPN భాగం అందుబాటులో లేదు.",
   "Le profil OpenVPN n’a pas pu être renouvelé.": "OpenVPN ప్రొఫైల్‌ను పునరుద్ధరించడం సాధ్యం కాలేదు.",
   "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.": "OpenVPN పునరుద్ధరణ విఫలమైంది. Kill switch ఇప్పటికీ నెట్‌వర్క్ ట్రాఫిక్‌ను నిరోధిస్తోంది.",
-  "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.": "స్థానిక WireGuard గుర్తింపు అందుబాటులో లేదు. ఈ పరికరాన్ని మాత్రమే పునరుద్ధరించడానికి పరికరాలను తెరవండి.",
   "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.": "Windows WireGuard రక్షిత నిల్వను తెరవలేకపోయింది.",
   "Windows n’a pas autorisé l’opération WireGuard demandée.": "అభ్యర్థించిన WireGuard పనికి Windows అనుమతించలేదు.",
   "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.": "స్థానిక VPN సేవ అందుబాటులో లేదు. FuzeVPNను మూసి మళ్లీ తెరవండి.",
@@ -702,7 +700,6 @@
   "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.": "కొత్త VPN గుర్తింపును నమోదు చేయడం సాధ్యం కాలేదు. తర్వాత మళ్లీ ప్రయత్నించండి.",
   "Identité VPN à renouveler": "VPN గుర్తింపును పునరుద్ధరించాలి",
   "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.": "ఈ VPN గుర్తింపు తీసివేయబడింది. కొనసాగించడానికి కొత్త గుర్తింపును సృష్టించండి.",
-  "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.": "ఈ స్థానం తాత్కాలికంగా అందుబాటులో లేదు. Frankfurt 1 లేదా Frankfurt 2ను ఎంచుకోండి లేదా తర్వాత మళ్లీ ప్రయత్నించండి.",
   "Réessayez dans {seconds} secondes.": "{seconds} సెకన్లలో మళ్లీ ప్రయత్నించండి.",
   "Trop de tentatives": "చాలా ప్రయత్నాలు జరిగాయి",
   "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.": "VPN కనెక్షన్ ఏర్పాటు చేయడం సాధ్యం కాలేదు. తర్వాత మళ్లీ ప్రయత్నించండి.",
@@ -852,5 +849,11 @@
   "Tous": "అన్నీ",
   "Favoris": "ఇష్టమైనవి",
   "{label} : {value}": "{label}: {value}",
-  "Nécessite une connexion VPN active.": "సక్రియ VPN కనెక్షన్ అవసరం."
+  "Nécessite une connexion VPN active.": "సక్రియ VPN కనెక్షన్ అవసరం.",
+  "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.": "ఈ PCలో సేవ్ చేసిన VPN గుర్తింపును చదవడం సాధ్యం కాదు. ఈ పరికరం కోసం మాత్రమే కొత్త గుర్తింపును సృష్టించండి.",
+  "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.": "ఈ స్థానం తాత్కాలికంగా అందుబాటులో లేదు. మరొక స్థానాన్ని ఎంచుకోండి లేదా తర్వాత మళ్లీ ప్రయత్నించండి.",
+  "Renvoyer l’e-mail": "ఇమెయిల్‌ను మళ్లీ పంపు",
+  "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "ఇమెయిల్ పంపబడింది. అందులోని లింక్‌ను తెరిచి, ఆపై మళ్లీ కనెక్ట్ కావడానికి ప్రయత్నించండి.",
+  "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "ఇప్పుడే ఒక ఇమెయిల్ పంపబడింది. మీరు {seconds} సెకన్లలో మరొకదాన్ని అభ్యర్థించవచ్చు.",
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "ఇమెయిల్‌ను పంపడం సాధ్యం కాలేదు. తర్వాత మళ్లీ ప్రయత్నించండి."
 }

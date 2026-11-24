@@ -76,7 +76,6 @@
   "Configuration IPv4": "IPv4 کی ترتیب",
   "Configuration IPv6": "IPv6 کی ترتیب",
   "Configuration du tunnel": "ٹنل کی ترتیب",
-  "Confirmer mon e-mail": "میری ای میل کی تصدیق کریں",
   "Connecter": "کنیکٹ کریں",
   "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.": "اس آلے کو اپنے اکاؤنٹ میں شامل کرنے کے لیے اس ایپ سے لاگ اِن کریں۔",
   "Connectez-vous pour gérer vos appareils": "اپنے آلات کا انتظام کرنے کے لیے لاگ اِن کریں",
@@ -656,7 +655,6 @@
   "Le composant OpenVPN sécurisé n’est pas disponible.": "محفوظ OpenVPN جزو دستیاب نہیں۔",
   "Le profil OpenVPN n’a pas pu être renouvelé.": "OpenVPN پروفائل کی تجدید نہیں ہو سکی۔",
   "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.": "OpenVPN کی تجدید ناکام ہو گئی۔ kill switch اب بھی نیٹ ورک ٹریفک بلاک کر رہا ہے۔",
-  "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.": "مقامی WireGuard شناخت دستیاب نہیں۔ صرف اس آلے کی تجدید کے لیے آلات کھولیں۔",
   "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.": "Windows WireGuard کا محفوظ اسٹوریج نہیں کھول سکا۔",
   "Windows n’a pas autorisé l’opération WireGuard demandée.": "Windows نے مطلوبہ WireGuard آپریشن کی اجازت نہیں دی۔",
   "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.": "مقامی VPN سروس دستیاب نہیں۔ FuzeVPN بند کر کے دوبارہ کھولیں۔",
@@ -702,7 +700,6 @@
   "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.": "نئی VPN شناخت رجسٹر نہیں ہو سکی۔ بعد میں دوبارہ کوشش کریں۔",
   "Identité VPN à renouveler": "VPN شناخت کی تجدید درکار ہے",
   "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.": "یہ VPN شناخت ہٹا دی گئی ہے۔ جاری رکھنے کے لیے نئی بنائیں۔",
-  "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.": "یہ مقام عارضی طور پر دستیاب نہیں۔ Frankfurt 1 یا Frankfurt 2 منتخب کریں، یا بعد میں دوبارہ کوشش کریں۔",
   "Réessayez dans {seconds} secondes.": "{seconds} سیکنڈ بعد دوبارہ کوشش کریں۔",
   "Trop de tentatives": "بہت زیادہ کوششیں",
   "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.": "VPN کنکشن قائم نہیں ہو سکا۔ بعد میں دوبارہ کوشش کریں۔",
@@ -852,5 +849,11 @@
   "Tous": "سبھی",
   "Favoris": "پسندیدہ",
   "{label} : {value}": "{label}: {value}",
-  "Nécessite une connexion VPN active.": "فعال VPN کنکشن درکار ہے۔"
+  "Nécessite une connexion VPN active.": "فعال VPN کنکشن درکار ہے۔",
+  "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.": "اس PC پر محفوظ VPN شناخت پڑھی نہیں جا سکتی۔ صرف اس آلے کے لیے نئی شناخت بنائیں۔",
+  "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.": "یہ مقام عارضی طور پر دستیاب نہیں۔ کوئی دوسرا مقام منتخب کریں، یا بعد میں دوبارہ کوشش کریں۔",
+  "Renvoyer l’e-mail": "ای میل دوبارہ بھیجیں",
+  "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "ای میل بھیج دی گئی۔ اس میں موجود لنک کھولیں، پھر دوبارہ کنیکٹ ہونے کی کوشش کریں۔",
+  "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "ابھی ایک ای میل بھیجی گئی ہے۔ آپ {seconds} سیکنڈ بعد ایک اور ای میل کی درخواست کر سکیں گے۔",
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "ای میل بھیجی نہیں جا سکی۔ بعد میں دوبارہ کوشش کریں۔"
 }

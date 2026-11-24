@@ -76,7 +76,6 @@
   "Configuration IPv4": "IPv4 設定",
   "Configuration IPv6": "IPv6 設定",
   "Configuration du tunnel": "通道設定",
-  "Confirmer mon e-mail": "確認我的電子郵件",
   "Connecter": "連線",
   "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.": "從此應用程式登入，將此裝置新增至您的帳戶。",
   "Connectez-vous pour gérer vos appareils": "登入以管理您的裝置",
@@ -656,7 +655,6 @@
   "Le composant OpenVPN sécurisé n’est pas disponible.": "安全的 OpenVPN 元件無法使用。",
   "Le profil OpenVPN n’a pas pu être renouvelé.": "無法更新 OpenVPN 設定檔。",
   "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.": "OpenVPN 更新失敗。終止開關仍會封鎖網路流量。",
-  "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.": "本機 WireGuard 身分無法使用。請開啟「裝置」以僅更新此裝置。",
   "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.": "Windows 無法開啟 WireGuard 的受保護儲存空間。",
   "Windows n’a pas autorisé l’opération WireGuard demandée.": "Windows 未允許要求的 WireGuard 作業。",
   "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.": "本機 VPN 服務無法使用。請關閉並重新開啟 FuzeVPN。",
@@ -702,7 +700,6 @@
   "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.": "無法註冊新的 VPN 身分。請稍後重試。",
   "Identité VPN à renouveler": "需要更新的 VPN 身分",
   "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.": "此 VPN 身分已被移除。請建立新的身分以繼續。",
-  "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.": "此位置暫時無法使用。請選擇 Frankfurt 1 或 Frankfurt 2，或稍後重試。",
   "Réessayez dans {seconds} secondes.": "請在 {seconds} 秒後重試。",
   "Trop de tentatives": "嘗試次數過多",
   "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.": "無法建立 VPN 連線。請稍後重試。",
@@ -852,5 +849,11 @@
   "Tous": "全部",
   "Favoris": "最愛",
   "{label} : {value}": "{label}：{value}",
-  "Nécessite une connexion VPN active.": "需要已連線的 VPN。"
+  "Nécessite une connexion VPN active.": "需要已連線的 VPN。",
+  "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.": "此電腦上儲存的 VPN 身分無法讀取。請僅為此裝置建立新的身分。",
+  "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.": "此位置暫時無法使用。請選擇其他位置或稍後重試。",
+  "Renvoyer l’e-mail": "重新傳送電子郵件",
+  "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "電子郵件已傳送。請開啟其中的連結，然後再次嘗試連線。",
+  "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "剛剛已傳送一封電子郵件。您可以在 {seconds} 秒後再次要求傳送。",
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "無法傳送電子郵件。請稍後重試。"
 }

@@ -76,7 +76,6 @@
   "Configuration IPv4": "IPv4-configuratie",
   "Configuration IPv6": "IPv6-configuratie",
   "Configuration du tunnel": "Tunnelconfiguratie",
-  "Confirmer mon e-mail": "Mijn e-mail bevestigen",
   "Connecter": "Verbinden",
   "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.": "Maak vanuit deze app verbinding om dit apparaat aan uw account toe te voegen.",
   "Connectez-vous pour gérer vos appareils": "Meld u aan om uw apparaten te beheren",
@@ -656,7 +655,6 @@
   "Le composant OpenVPN sécurisé n’est pas disponible.": "Het beveiligde OpenVPN-onderdeel is niet beschikbaar.",
   "Le profil OpenVPN n’a pas pu être renouvelé.": "Het OpenVPN-profiel kon niet worden vernieuwd.",
   "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.": "OpenVPN vernieuwen mislukt. De kill switch blokkeert nog steeds netwerkverkeer.",
-  "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.": "De lokale WireGuard-identiteit is niet beschikbaar. Open Apparaten om alleen dit apparaat te vernieuwen.",
   "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.": "Windows kon de beveiligde WireGuard-opslag niet openen.",
   "Windows n’a pas autorisé l’opération WireGuard demandée.": "Windows heeft de gevraagde WireGuard-bewerking niet toegestaan.",
   "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.": "De lokale VPN-service is niet beschikbaar. Sluit FuzeVPN en open het opnieuw.",
@@ -702,7 +700,6 @@
   "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.": "De nieuwe VPN-identiteit kon niet worden geregistreerd. Probeer het later opnieuw.",
   "Identité VPN à renouveler": "VPN-identiteit vernieuwen",
   "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.": "Deze VPN-identiteit is verwijderd. Maak een nieuwe om door te gaan.",
-  "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.": "Deze locatie is tijdelijk niet beschikbaar. Kies Frankfurt 1 of Frankfurt 2, of probeer het later opnieuw.",
   "Réessayez dans {seconds} secondes.": "Probeer het opnieuw over {seconds} seconden.",
   "Trop de tentatives": "Te veel pogingen",
   "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.": "Er kon geen VPN-verbinding worden gemaakt. Probeer het later opnieuw.",
@@ -852,5 +849,11 @@
   "Tous": "Alle",
   "Favoris": "Favorieten",
   "{label} : {value}": "{label}: {value}",
-  "Nécessite une connexion VPN active.": "Vereist een actieve VPN-verbinding."
+  "Nécessite une connexion VPN active.": "Vereist een actieve VPN-verbinding.",
+  "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.": "De op deze pc opgeslagen VPN-identiteit kan niet worden gelezen. Maak alleen voor dit apparaat een nieuwe aan.",
+  "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.": "Deze locatie is tijdelijk niet beschikbaar. Kies een andere locatie of probeer het later opnieuw.",
+  "Renvoyer l’e-mail": "E-mail opnieuw verzenden",
+  "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "E-mail verzonden. Open de link in de e-mail en probeer daarna opnieuw verbinding te maken.",
+  "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "Er is net een e-mail verzonden. Je kunt over {seconds} s een nieuwe aanvragen.",
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "De e-mail kon niet worden verzonden. Probeer het later opnieuw."
 }

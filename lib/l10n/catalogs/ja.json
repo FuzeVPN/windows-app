@@ -76,7 +76,6 @@
   "Configuration IPv4": "IPv4設定",
   "Configuration IPv6": "IPv6設定",
   "Configuration du tunnel": "トンネル設定",
-  "Confirmer mon e-mail": "メールアドレスを確認",
   "Connecter": "接続",
   "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.": "このアプリからログインして、このデバイスをアカウントに追加してください。",
   "Connectez-vous pour gérer vos appareils": "デバイスを管理するにはログインしてください",
@@ -656,7 +655,6 @@
   "Le composant OpenVPN sécurisé n’est pas disponible.": "安全なOpenVPNコンポーネントを利用できません。",
   "Le profil OpenVPN n’a pas pu être renouvelé.": "OpenVPNプロファイルを更新できませんでした。",
   "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.": "OpenVPNの更新に失敗しました。キルスイッチは引き続きネットワークトラフィックをブロックしています。",
-  "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.": "ローカルWireGuard IDを利用できません。デバイスを開き、このデバイスだけを更新してください。",
   "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.": "WindowsはWireGuardの保護されたストレージを開けませんでした。",
   "Windows n’a pas autorisé l’opération WireGuard demandée.": "Windowsは要求されたWireGuard操作を許可しませんでした。",
   "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.": "ローカルVPNサービスを利用できません。FuzeVPNを閉じて再度開いてください。",
@@ -702,7 +700,6 @@
   "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.": "新しいVPN IDを登録できませんでした。後でもう一度お試しください。",
   "Identité VPN à renouveler": "更新が必要なVPN ID",
   "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.": "このVPN IDは削除されました。続行するには新しいIDを作成してください。",
-  "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.": "このロケーションは一時的に利用できません。Frankfurt 1またはFrankfurt 2を選択するか、後でもう一度お試しください。",
   "Réessayez dans {seconds} secondes.": "{seconds}秒後にもう一度お試しください。",
   "Trop de tentatives": "試行回数が多すぎます",
   "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.": "VPN接続を確立できませんでした。後でもう一度お試しください。",
@@ -852,5 +849,11 @@
   "Tous": "すべて",
   "Favoris": "お気に入り",
   "{label} : {value}": "{label}：{value}",
-  "Nécessite une connexion VPN active.": "アクティブな VPN 接続が必要です。"
+  "Nécessite une connexion VPN active.": "アクティブな VPN 接続が必要です。",
+  "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.": "このPCに保存されたVPN IDを読み取れません。このデバイス専用の新しいIDを作成してください。",
+  "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.": "このロケーションは一時的に利用できません。別のロケーションを選択するか、後でもう一度お試しください。",
+  "Renvoyer l’e-mail": "メールを再送信",
+  "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "メールを送信しました。メールに記載されたリンクを開いてから、もう一度接続をお試しください。",
+  "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "メールを送信したばかりです。{seconds}秒後に再度リクエストできます。",
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "メールを送信できませんでした。後でもう一度お試しください。"
 }

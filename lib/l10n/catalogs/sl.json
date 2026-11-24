@@ -76,7 +76,6 @@
   "Configuration IPv4": "Konfiguracija IPv4",
   "Configuration IPv6": "Konfiguracija IPv6",
   "Configuration du tunnel": "Konfiguracija predora",
-  "Confirmer mon e-mail": "Potrdi moj e-poštni naslov",
   "Connecter": "Poveži",
   "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.": "Prijavite se v tej aplikaciji, da dodate to napravo v svoj račun.",
   "Connectez-vous pour gérer vos appareils": "Prijavite se za upravljanje naprav",
@@ -656,7 +655,6 @@
   "Le composant OpenVPN sécurisé n’est pas disponible.": "Varna komponenta OpenVPN ni na voljo.",
   "Le profil OpenVPN n’a pas pu être renouvelé.": "Profila OpenVPN ni bilo mogoče obnoviti.",
   "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.": "Obnovitev OpenVPN ni uspela. Kill switch še vedno blokira omrežni promet.",
-  "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.": "Lokalna identiteta WireGuard ni na voljo. Odprite Naprave, da obnovite samo to napravo.",
   "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.": "Windows ni mogel odpreti zaščitenega prostora za shranjevanje WireGuard.",
   "Windows n’a pas autorisé l’opération WireGuard demandée.": "Windows ni dovolil zahtevane operacije WireGuard.",
   "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.": "Lokalna storitev VPN ni na voljo. Zaprite in znova odprite FuzeVPN.",
@@ -702,7 +700,6 @@
   "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.": "Nove identitete VPN ni bilo mogoče registrirati. Poskusite znova pozneje.",
   "Identité VPN à renouveler": "Identiteto VPN je treba obnoviti",
   "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.": "Ta identiteta VPN je bila odstranjena. Za nadaljevanje ustvarite novo.",
-  "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.": "Ta lokacija začasno ni na voljo. Izberite Frankfurt 1 ali Frankfurt 2 ali poskusite znova pozneje.",
   "Réessayez dans {seconds} secondes.": "Poskusite znova čez {seconds} sekund.",
   "Trop de tentatives": "Preveč poskusov",
   "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.": "Povezave VPN ni bilo mogoče vzpostaviti. Poskusite znova pozneje.",
@@ -852,5 +849,11 @@
   "Tous": "Vse",
   "Favoris": "Priljubljeni",
   "{label} : {value}": "{label}: {value}",
-  "Nécessite une connexion VPN active.": "Zahteva aktivno povezavo VPN."
+  "Nécessite une connexion VPN active.": "Zahteva aktivno povezavo VPN.",
+  "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.": "Identiteta VPN, shranjena v tem računalniku, je neberljiva. Ustvarite novo samo za to napravo.",
+  "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.": "Ta lokacija začasno ni na voljo. Izberite drugo lokacijo ali poskusite znova pozneje.",
+  "Renvoyer l’e-mail": "Znova pošlji e-sporočilo",
+  "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "E-sporočilo je poslano. Odprite povezavo v njem in se nato znova poskusite povezati.",
+  "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "E-sporočilo je bilo pravkar poslano. Novo lahko zahtevate čez {seconds} s.",
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "E-sporočila ni bilo mogoče poslati. Poskusite znova pozneje."
 }

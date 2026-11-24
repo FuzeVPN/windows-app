@@ -76,7 +76,6 @@
   "Configuration IPv4": "IPv4-Konfiguration",
   "Configuration IPv6": "IPv6-Konfiguration",
   "Configuration du tunnel": "Tunnelkonfiguration",
-  "Confirmer mon e-mail": "E-Mail bestätigen",
   "Connecter": "Verbinden",
   "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.": "Stellen Sie über diese App eine Verbindung her, um dieses Gerät Ihrem Konto hinzuzufügen.",
   "Connectez-vous pour gérer vos appareils": "Melden Sie sich an, um Ihre Geräte zu verwalten",
@@ -656,7 +655,6 @@
   "Le composant OpenVPN sécurisé n’est pas disponible.": "Die sichere OpenVPN-Komponente ist nicht verfügbar.",
   "Le profil OpenVPN n’a pas pu être renouvelé.": "Das OpenVPN-Profil konnte nicht erneuert werden.",
   "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.": "Die OpenVPN-Erneuerung ist fehlgeschlagen. Der Kill Switch blockiert weiterhin den Netzwerkverkehr.",
-  "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.": "Die lokale WireGuard-Identität ist nicht verfügbar. Öffnen Sie Geräte, um nur dieses Gerät zu erneuern.",
   "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.": "Windows konnte den geschützten WireGuard-Speicher nicht öffnen.",
   "Windows n’a pas autorisé l’opération WireGuard demandée.": "Windows hat den angeforderten WireGuard-Vorgang nicht zugelassen.",
   "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.": "Der lokale VPN-Dienst ist nicht verfügbar. Schließen Sie FuzeVPN und öffnen Sie es erneut.",
@@ -702,7 +700,6 @@
   "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.": "Die neue VPN-Identität konnte nicht registriert werden. Versuchen Sie es später erneut.",
   "Identité VPN à renouveler": "VPN-Identität erneuern",
   "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.": "Diese VPN-Identität wurde entfernt. Erstellen Sie eine neue, um fortzufahren.",
-  "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.": "Dieser Standort ist vorübergehend nicht verfügbar. Wählen Sie Frankfurt 1 oder Frankfurt 2 oder versuchen Sie es später erneut.",
   "Réessayez dans {seconds} secondes.": "Versuchen Sie es in {seconds} Sekunden erneut.",
   "Trop de tentatives": "Zu viele Versuche",
   "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.": "Eine VPN-Verbindung konnte nicht hergestellt werden. Versuchen Sie es später erneut.",
@@ -852,5 +849,11 @@
   "Tous": "Alle",
   "Favoris": "Favoriten",
   "{label} : {value}": "{label}: {value}",
-  "Nécessite une connexion VPN active.": "Erfordert eine aktive VPN-Verbindung."
+  "Nécessite une connexion VPN active.": "Erfordert eine aktive VPN-Verbindung.",
+  "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.": "Die auf diesem PC gespeicherte VPN-Identität ist nicht lesbar. Erstellen Sie nur für dieses Gerät eine neue.",
+  "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.": "Dieser Standort ist vorübergehend nicht verfügbar. Wählen Sie einen anderen Standort oder versuchen Sie es später erneut.",
+  "Renvoyer l’e-mail": "E-Mail erneut senden",
+  "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "E-Mail gesendet. Öffnen Sie den darin enthaltenen Link und versuchen Sie dann erneut, eine Verbindung herzustellen.",
+  "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "Es wurde gerade eine E-Mail gesendet. Sie können in {seconds} s eine weitere anfordern.",
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "Die E-Mail konnte nicht gesendet werden. Versuchen Sie es später erneut."
 }

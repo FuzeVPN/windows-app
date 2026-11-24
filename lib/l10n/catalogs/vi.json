@@ -76,7 +76,6 @@
   "Configuration IPv4": "Cấu hình IPv4",
   "Configuration IPv6": "Cấu hình IPv6",
   "Configuration du tunnel": "Cấu hình đường hầm",
-  "Confirmer mon e-mail": "Xác nhận email của tôi",
   "Connecter": "Kết nối",
   "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.": "Đăng nhập từ ứng dụng này để thêm thiết bị vào tài khoản của bạn.",
   "Connectez-vous pour gérer vos appareils": "Đăng nhập để quản lý thiết bị",
@@ -656,7 +655,6 @@
   "Le composant OpenVPN sécurisé n’est pas disponible.": "Thành phần OpenVPN bảo mật không khả dụng.",
   "Le profil OpenVPN n’a pas pu être renouvelé.": "Không thể gia hạn hồ sơ OpenVPN.",
   "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.": "Gia hạn OpenVPN thất bại. Kill switch vẫn chặn lưu lượng mạng.",
-  "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.": "Danh tính WireGuard cục bộ không khả dụng. Hãy mở Thiết bị để chỉ gia hạn thiết bị này.",
   "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.": "Windows không thể mở bộ nhớ được bảo vệ của WireGuard.",
   "Windows n’a pas autorisé l’opération WireGuard demandée.": "Windows không cho phép thao tác WireGuard được yêu cầu.",
   "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.": "Dịch vụ VPN cục bộ không khả dụng. Hãy đóng rồi mở lại FuzeVPN.",
@@ -702,7 +700,6 @@
   "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.": "Không thể đăng ký danh tính VPN mới. Hãy thử lại sau.",
   "Identité VPN à renouveler": "Danh tính VPN cần gia hạn",
   "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.": "Danh tính VPN này đã bị gỡ. Hãy tạo danh tính mới để tiếp tục.",
-  "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.": "Địa điểm này hiện tạm thời không khả dụng. Hãy chọn Frankfurt 1 hoặc Frankfurt 2, hoặc thử lại sau.",
   "Réessayez dans {seconds} secondes.": "Hãy thử lại sau {seconds} giây.",
   "Trop de tentatives": "Quá nhiều lần thử",
   "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.": "Không thể thiết lập kết nối VPN. Hãy thử lại sau.",
@@ -852,5 +849,11 @@
   "Tous": "Tất cả",
   "Favoris": "Yêu thích",
   "{label} : {value}": "{label}: {value}",
-  "Nécessite une connexion VPN active.": "Cần có kết nối VPN đang hoạt động."
+  "Nécessite une connexion VPN active.": "Cần có kết nối VPN đang hoạt động.",
+  "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.": "Không thể đọc danh tính VPN đã lưu trên PC này. Hãy tạo danh tính mới chỉ cho thiết bị này.",
+  "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.": "Địa điểm này hiện tạm thời không khả dụng. Hãy chọn địa điểm khác hoặc thử lại sau.",
+  "Renvoyer l’e-mail": "Gửi lại email",
+  "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "Đã gửi email. Hãy mở liên kết trong email, rồi thử kết nối lại.",
+  "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "Một email vừa được gửi. Bạn có thể yêu cầu gửi lại sau {seconds} giây.",
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "Không thể gửi email. Hãy thử lại sau."
 }

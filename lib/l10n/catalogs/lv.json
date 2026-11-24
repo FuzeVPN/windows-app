@@ -76,7 +76,6 @@
   "Configuration IPv4": "IPv4 konfigurācija",
   "Configuration IPv6": "IPv6 konfigurācija",
   "Configuration du tunnel": "Tuneļa konfigurācija",
-  "Confirmer mon e-mail": "Apstiprināt manu e-pastu",
   "Connecter": "Izveidot savienojumu",
   "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.": "Izveidojiet savienojumu šajā lietotnē, lai pievienotu ierīci savam kontam.",
   "Connectez-vous pour gérer vos appareils": "Pierakstieties, lai pārvaldītu ierīces",
@@ -656,7 +655,6 @@
   "Le composant OpenVPN sécurisé n’est pas disponible.": "Drošais OpenVPN komponents nav pieejams.",
   "Le profil OpenVPN n’a pas pu être renouvelé.": "OpenVPN profilu neizdevās atjaunot.",
   "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.": "OpenVPN atjaunošana neizdevās. Kill switch joprojām bloķē tīkla datplūsmu.",
-  "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.": "Vietējā WireGuard identitāte nav pieejama. Atveriet sadaļu Ierīces, lai atjaunotu tikai šo ierīci.",
   "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.": "Windows neizdevās atvērt WireGuard aizsargāto krātuvi.",
   "Windows n’a pas autorisé l’opération WireGuard demandée.": "Windows neatļāva pieprasīto WireGuard darbību.",
   "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.": "Vietējais VPN pakalpojums nav pieejams. Aizveriet un vēlreiz atveriet FuzeVPN.",
@@ -702,7 +700,6 @@
   "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.": "Jauno VPN identitāti neizdevās reģistrēt. Mēģiniet vēlāk.",
   "Identité VPN à renouveler": "VPN identitāte ir jāatjauno",
   "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.": "Šī VPN identitāte tika noņemta. Izveidojiet jaunu, lai turpinātu.",
-  "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.": "Šī atrašanās vieta īslaicīgi nav pieejama. Izvēlieties Frankfurt 1 vai Frankfurt 2 vai mēģiniet vēlāk.",
   "Réessayez dans {seconds} secondes.": "Mēģiniet vēlreiz pēc {seconds} sekundēm.",
   "Trop de tentatives": "Pārāk daudz mēģinājumu",
   "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.": "VPN savienojumu neizdevās izveidot. Mēģiniet vēlāk.",
@@ -852,5 +849,11 @@
   "Tous": "Visi",
   "Favoris": "Izlase",
   "{label} : {value}": "{label}: {value}",
-  "Nécessite une connexion VPN active.": "Nepieciešams aktīvs VPN savienojums."
+  "Nécessite une connexion VPN active.": "Nepieciešams aktīvs VPN savienojums.",
+  "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.": "Šajā datorā saglabāto VPN identitāti nevar nolasīt. Izveidojiet jaunu tikai šai ierīcei.",
+  "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.": "Šī atrašanās vieta īslaicīgi nav pieejama. Izvēlieties citu atrašanās vietu vai mēģiniet vēlāk.",
+  "Renvoyer l’e-mail": "Nosūtīt e-pastu vēlreiz",
+  "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "E-pasts nosūtīts. Atveriet tajā esošo saiti un pēc tam vēlreiz mēģiniet izveidot savienojumu.",
+  "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "E-pasts tikko tika nosūtīts. Citu varēsiet pieprasīt pēc {seconds} s.",
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "E-pastu neizdevās nosūtīt. Mēģiniet vēlāk."
 }

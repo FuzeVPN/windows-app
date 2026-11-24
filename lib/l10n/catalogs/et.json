@@ -76,7 +76,6 @@
   "Configuration IPv4": "IPv4 konfiguratsioon",
   "Configuration IPv6": "IPv6 konfiguratsioon",
   "Configuration du tunnel": "Tunneli konfiguratsioon",
-  "Confirmer mon e-mail": "Kinnita mu e-posti aadress",
   "Connecter": "Ühenda",
   "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.": "Selle seadme kontole lisamiseks logige selles rakenduses sisse.",
   "Connectez-vous pour gérer vos appareils": "Seadmete haldamiseks logige sisse",
@@ -656,7 +655,6 @@
   "Le composant OpenVPN sécurisé n’est pas disponible.": "Turvaline OpenVPN-i komponent pole saadaval.",
   "Le profil OpenVPN n’a pas pu être renouvelé.": "OpenVPN-i profiili ei saanud uuendada.",
   "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.": "OpenVPN-i uuendamine ebaõnnestus. Hädaseiskamine blokeerib endiselt võrguliiklust.",
-  "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.": "Kohalik WireGuardi identiteet pole saadaval. Ainult selle seadme uuendamiseks avage Seadmed.",
   "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.": "Windows ei saanud WireGuardi kaitstud salvestusruumi avada.",
   "Windows n’a pas autorisé l’opération WireGuard demandée.": "Windows ei lubanud soovitud WireGuardi toimingut.",
   "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.": "Kohalik VPN-teenus pole saadaval. Sulgege ja avage FuzeVPN uuesti.",
@@ -702,7 +700,6 @@
   "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.": "Uut VPN-i identiteeti ei saanud registreerida. Proovige hiljem uuesti.",
   "Identité VPN à renouveler": "VPN-i identiteeti tuleb uuendada",
   "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.": "See VPN-i identiteet eemaldati. Jätkamiseks looge uus.",
-  "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.": "See asukoht pole ajutiselt saadaval. Valige Frankfurt 1 või Frankfurt 2 või proovige hiljem uuesti.",
   "Réessayez dans {seconds} secondes.": "Proovige {seconds} sekundi pärast uuesti.",
   "Trop de tentatives": "Liiga palju katseid",
   "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.": "VPN-ühendust ei saanud luua. Proovige hiljem uuesti.",
@@ -852,5 +849,11 @@
   "Tous": "Kõik",
   "Favoris": "Lemmikud",
   "{label} : {value}": "{label}: {value}",
-  "Nécessite une connexion VPN active.": "Vajab aktiivset VPN-ühendust."
+  "Nécessite une connexion VPN active.": "Vajab aktiivset VPN-ühendust.",
+  "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.": "Sellesse arvutisse salvestatud VPN-i identiteeti ei saa lugeda. Looge uus ainult selle seadme jaoks.",
+  "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.": "See asukoht pole ajutiselt saadaval. Valige teine asukoht või proovige hiljem uuesti.",
+  "Renvoyer l’e-mail": "Saada e-kiri uuesti",
+  "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "E-kiri on saadetud. Avage selles olev link ja proovige seejärel uuesti ühendust luua.",
+  "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "Äsja saadeti e-kiri. Uue saate taotleda {seconds} s pärast.",
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "E-kirja ei saanud saata. Proovige hiljem uuesti."
 }

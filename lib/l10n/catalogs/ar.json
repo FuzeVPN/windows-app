@@ -76,7 +76,6 @@
   "Configuration IPv4": "إعداد IPv4",
   "Configuration IPv6": "إعداد IPv6",
   "Configuration du tunnel": "إعداد القناة",
-  "Confirmer mon e-mail": "تأكيد بريدي الإلكتروني",
   "Connecter": "اتصال",
   "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.": "سجّل الدخول من هذا التطبيق لإضافة هذا الجهاز إلى حسابك.",
   "Connectez-vous pour gérer vos appareils": "سجّل الدخول لإدارة أجهزتك",
@@ -656,7 +655,6 @@
   "Le composant OpenVPN sécurisé n’est pas disponible.": "مكوّن OpenVPN الآمن غير متاح.",
   "Le profil OpenVPN n’a pas pu être renouvelé.": "تعذّر تجديد ملف OpenVPN الشخصي.",
   "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.": "فشل تجديد OpenVPN. ما زال kill switch يحظر حركة مرور الشبكة.",
-  "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.": "هوية WireGuard المحلية غير متاحة. افتح الأجهزة لتجديد هذا الجهاز فقط.",
   "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.": "تعذّر على Windows فتح التخزين المحمي لـ WireGuard.",
   "Windows n’a pas autorisé l’opération WireGuard demandée.": "لم يسمح Windows بعملية WireGuard المطلوبة.",
   "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.": "خدمة VPN المحلية غير متاحة. أغلق FuzeVPN ثم افتحه مجددًا.",
@@ -702,7 +700,6 @@
   "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.": "تعذّر تسجيل الهوية الجديدة لـ VPN. حاول مرة أخرى لاحقًا.",
   "Identité VPN à renouveler": "هوية VPN بحاجة إلى التجديد",
   "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.": "تمت إزالة هوية VPN هذه. أنشئ هوية جديدة للمتابعة.",
-  "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.": "هذا الموقع غير متاح مؤقتًا. اختر Frankfurt 1 أو Frankfurt 2، أو حاول مرة أخرى لاحقًا.",
   "Réessayez dans {seconds} secondes.": "حاول مرة أخرى بعد {seconds} ثانية.",
   "Trop de tentatives": "محاولات كثيرة جدًا",
   "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.": "تعذّر إنشاء اتصال VPN. حاول مرة أخرى لاحقًا.",
@@ -852,5 +849,11 @@
   "Tous": "الكل",
   "Favoris": "المفضلة",
   "{label} : {value}": "{label}: {value}",
-  "Nécessite une connexion VPN active.": "يتطلب اتصال VPN نشطًا."
+  "Nécessite une connexion VPN active.": "يتطلب اتصال VPN نشطًا.",
+  "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.": "هوية VPN المحفوظة على هذا الكمبيوتر غير قابلة للقراءة. أنشئ هوية جديدة لهذا الجهاز فقط.",
+  "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.": "هذا الموقع غير متاح مؤقتًا. اختر موقعًا آخر، أو حاول مرة أخرى لاحقًا.",
+  "Renvoyer l’e-mail": "إعادة إرسال البريد الإلكتروني",
+  "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "تم إرسال البريد الإلكتروني. افتح الرابط الموجود فيه، ثم حاول الاتصال مرة أخرى.",
+  "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "تم إرسال بريد إلكتروني للتو. يمكنك طلب رسالة أخرى بعد {seconds} ث.",
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "تعذّر إرسال البريد الإلكتروني. حاول مرة أخرى لاحقًا."
 }

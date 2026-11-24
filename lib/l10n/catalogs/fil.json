@@ -76,7 +76,6 @@
   "Configuration IPv4": "IPv4 configuration",
   "Configuration IPv6": "IPv6 configuration",
   "Configuration du tunnel": "Configuration ng tunnel",
-  "Confirmer mon e-mail": "Kumpirmahin ang aking email",
   "Connecter": "Kumonekta",
   "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.": "Mag-log in mula sa app na ito upang idagdag ang device na ito sa iyong account.",
   "Connectez-vous pour gérer vos appareils": "Mag-log in upang pamahalaan ang iyong mga device",
@@ -656,7 +655,6 @@
   "Le composant OpenVPN sécurisé n’est pas disponible.": "Hindi available ang secure na OpenVPN component.",
   "Le profil OpenVPN n’a pas pu être renouvelé.": "Hindi ma-renew ang OpenVPN profile.",
   "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.": "Nabigo ang pag-renew ng OpenVPN. Hinaharangan pa rin ng kill switch ang trapiko sa network.",
-  "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.": "Hindi available ang lokal na WireGuard identity. Buksan ang Mga Device upang ang device na ito lamang ang i-renew.",
   "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.": "Hindi mabuksan ng Windows ang protektadong storage ng WireGuard.",
   "Windows n’a pas autorisé l’opération WireGuard demandée.": "Hindi pinahintulutan ng Windows ang hiniling na operasyon ng WireGuard.",
   "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.": "Hindi available ang lokal na VPN service. Isara at buksan muli ang FuzeVPN.",
@@ -702,7 +700,6 @@
   "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.": "Hindi ma-enroll ang bagong VPN identity. Subukan muli mamaya.",
   "Identité VPN à renouveler": "Kailangang i-renew ang VPN identity",
   "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.": "Inalis ang VPN identity na ito. Gumawa ng bago upang magpatuloy.",
-  "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.": "Pansamantalang hindi available ang lokasyong ito. Piliin ang Frankfurt 1 o Frankfurt 2, o subukan muli mamaya.",
   "Réessayez dans {seconds} secondes.": "Subukan muli pagkalipas ng {seconds} segundo.",
   "Trop de tentatives": "Masyadong maraming pagtatangka",
   "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.": "Hindi maitatag ang koneksyon sa VPN. Subukan muli mamaya.",
@@ -852,5 +849,11 @@
   "Tous": "Lahat",
   "Favoris": "Mga paborito",
   "{label} : {value}": "{label}: {value}",
-  "Nécessite une connexion VPN active.": "Kailangan ng aktibong koneksyon sa VPN."
+  "Nécessite une connexion VPN active.": "Kailangan ng aktibong koneksyon sa VPN.",
+  "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.": "Hindi mabasa ang VPN identity na naka-save sa PC na ito. Gumawa ng bago para sa device na ito lamang.",
+  "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.": "Pansamantalang hindi available ang lokasyong ito. Pumili ng ibang lokasyon o subukan muli mamaya.",
+  "Renvoyer l’e-mail": "Ipadala muli ang email",
+  "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "Naipadala na ang email. Buksan ang link sa loob nito, pagkatapos ay subukang kumonekta muli.",
+  "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "Kapapadala lang ng email. Maaari kang humiling ng isa pa pagkalipas ng {seconds} s.",
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "Hindi maipadala ang email. Subukan muli mamaya."
 }

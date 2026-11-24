@@ -76,7 +76,6 @@
   "Configuration IPv4": "IPv4 konfiguráció",
   "Configuration IPv6": "IPv6 konfiguráció",
   "Configuration du tunnel": "Alagút konfiguráció",
-  "Confirmer mon e-mail": "E-mail-címem megerősítése",
   "Connecter": "Csatlakozás",
   "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.": "Jelentkezzen be ebből az alkalmazásból, hogy hozzáadja ezt az eszközt a fiókjához.",
   "Connectez-vous pour gérer vos appareils": "Jelentkezzen be eszközei kezeléséhez",
@@ -656,7 +655,6 @@
   "Le composant OpenVPN sécurisé n’est pas disponible.": "A biztonságos OpenVPN összetevő nem érhető el.",
   "Le profil OpenVPN n’a pas pu être renouvelé.": "Az OpenVPN-profilt nem sikerült megújítani.",
   "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.": "Az OpenVPN megújítása sikertelen. A kill switch még mindig blokkolja a hálózati forgalmat.",
-  "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.": "A helyi WireGuard-identitás nem érhető el. Nyissa meg az Eszközök menüpontot, és újítsa meg csak ennek az eszköznek az identitását.",
   "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.": "A Windows nem tudta megnyitni a WireGuard védett tárhelyét.",
   "Windows n’a pas autorisé l’opération WireGuard demandée.": "A Windows nem engedélyezte a kért WireGuard műveletet.",
   "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.": "A helyi VPN-szolgáltatás nem érhető el. Zárja be, majd nyissa meg újra a FuzeVPN-t.",
@@ -702,7 +700,6 @@
   "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.": "Az új VPN-identitást nem sikerült regisztrálni. Próbálkozzon újra később.",
   "Identité VPN à renouveler": "A VPN-identitást meg kell újítani",
   "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.": "Ezt a VPN-identitást eltávolították. A folytatáshoz hozzon létre egy újat.",
-  "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.": "Ez a hely átmenetileg nem érhető el. Válassza a Frankfurt 1 vagy a Frankfurt 2 lehetőséget, vagy próbálkozzon újra később.",
   "Réessayez dans {seconds} secondes.": "Próbálkozzon újra {seconds} másodperc múlva.",
   "Trop de tentatives": "Túl sok kísérlet",
   "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.": "Nem sikerült VPN-kapcsolatot létesíteni. Próbálkozzon újra később.",
@@ -852,5 +849,11 @@
   "Tous": "Összes",
   "Favoris": "Kedvencek",
   "{label} : {value}": "{label}: {value}",
-  "Nécessite une connexion VPN active.": "Aktív VPN-kapcsolat szükséges."
+  "Nécessite une connexion VPN active.": "Aktív VPN-kapcsolat szükséges.",
+  "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.": "Az ezen a számítógépen mentett VPN-identitás nem olvasható. Hozzon létre egy újat kizárólag ehhez az eszközhöz.",
+  "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.": "Ez a hely átmenetileg nem érhető el. Válasszon másik helyet, vagy próbálkozzon újra később.",
+  "Renvoyer l’e-mail": "E-mail újraküldése",
+  "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "E-mail elküldve. Nyissa meg a benne található hivatkozást, majd próbálkozzon újra a csatlakozással.",
+  "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "Az imént elküldtünk egy e-mailt. {seconds} másodperc múlva kérhet újat.",
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "Az e-mailt nem sikerült elküldeni. Próbálkozzon újra később."
 }

@@ -76,7 +76,6 @@
   "Configuration IPv4": "IPv4-määritys",
   "Configuration IPv6": "IPv6-määritys",
   "Configuration du tunnel": "Tunnelin määritys",
-  "Confirmer mon e-mail": "Vahvista sähköpostini",
   "Connecter": "Yhdistä",
   "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.": "Muodosta yhteys tässä sovelluksessa lisätäksesi tämän laitteen tilillesi.",
   "Connectez-vous pour gérer vos appareils": "Kirjaudu sisään hallitaksesi laitteitasi",
@@ -656,7 +655,6 @@
   "Le composant OpenVPN sécurisé n’est pas disponible.": "Turvallinen OpenVPN-komponentti ei ole käytettävissä.",
   "Le profil OpenVPN n’a pas pu être renouvelé.": "OpenVPN-profiilia ei voitu uusia.",
   "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.": "OpenVPN:n uusiminen epäonnistui. Kill switch estää edelleen verkkoliikenteen.",
-  "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.": "Paikallinen WireGuard-identiteetti ei ole käytettävissä. Avaa Laitteet uudistaaksesi vain tämän laitteen.",
   "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.": "Windows ei voinut avata WireGuardin suojattua tallennustilaa.",
   "Windows n’a pas autorisé l’opération WireGuard demandée.": "Windows ei sallinut pyydettyä WireGuard-toimenpidettä.",
   "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.": "Paikallinen VPN-palvelu ei ole käytettävissä. Sulje ja avaa FuzeVPN uudelleen.",
@@ -702,7 +700,6 @@
   "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.": "Uutta VPN-identiteettiä ei voitu rekisteröidä. Yritä myöhemmin uudelleen.",
   "Identité VPN à renouveler": "VPN-identiteetti on uusittava",
   "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.": "Tämä VPN-identiteetti on poistettu. Luo uusi jatkaaksesi.",
-  "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.": "Tämä sijainti ei ole tilapäisesti käytettävissä. Valitse Frankfurt 1 tai Frankfurt 2 tai yritä myöhemmin uudelleen.",
   "Réessayez dans {seconds} secondes.": "Yritä uudelleen {seconds} sekunnin kuluttua.",
   "Trop de tentatives": "Liian monta yritystä",
   "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.": "VPN-yhteyttä ei voitu muodostaa. Yritä myöhemmin uudelleen.",
@@ -852,5 +849,11 @@
   "Tous": "Kaikki",
   "Favoris": "Suosikit",
   "{label} : {value}": "{label}: {value}",
-  "Nécessite une connexion VPN active.": "Edellyttää aktiivista VPN-yhteyttä."
+  "Nécessite une connexion VPN active.": "Edellyttää aktiivista VPN-yhteyttä.",
+  "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.": "Tälle tietokoneelle tallennettua VPN-identiteettiä ei voi lukea. Luo uusi vain tälle laitteelle.",
+  "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.": "Tämä sijainti ei ole tilapäisesti käytettävissä. Valitse toinen sijainti tai yritä myöhemmin uudelleen.",
+  "Renvoyer l’e-mail": "Lähetä sähköposti uudelleen",
+  "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "Sähköposti lähetetty. Avaa siinä oleva linkki ja yritä sitten muodostaa yhteys uudelleen.",
+  "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "Sähköposti lähetettiin juuri. Voit pyytää uuden {seconds} sekunnin kuluttua.",
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "Sähköpostia ei voitu lähettää. Yritä myöhemmin uudelleen."
 }

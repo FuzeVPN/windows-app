@@ -76,7 +76,6 @@
   "Configuration IPv4": "Igenamiterere rya IPv4",
   "Configuration IPv6": "Igenamiterere rya IPv6",
   "Configuration du tunnel": "Igenamiterere ry'umuyoboro",
-  "Confirmer mon e-mail": "Emeza imeyili yanjye",
   "Connecter": "Huza",
   "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.": "Injira muri konti ukoresheje iyi porogaramu kugira ngo wongere iki gikoresho kuri konti yawe.",
   "Connectez-vous pour gérer vos appareils": "Injira muri konti kugira ngo ucunge ibikoresho byawe",
@@ -656,7 +655,6 @@
   "Le composant OpenVPN sécurisé n’est pas disponible.": "Igice gitekanye cya OpenVPN ntikiboneka.",
   "Le profil OpenVPN n’a pas pu être renouvelé.": "Umwirondoro wa OpenVPN ntiwashoboye kuvugururwa.",
   "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.": "Kuvugurura OpenVPN byananiranye. Kill switch iracyahagarika amakuru y'urusobe.",
-  "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.": "Umwirondoro wa WireGuard w'iki gikoresho ntuboneka. Fungura Ibikoresho kugira ngo uvugurure iki gikoresho gusa.",
   "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.": "Windows ntiyashoboye gufungura ububiko burinzwe bwa WireGuard.",
   "Windows n’a pas autorisé l’opération WireGuard demandée.": "Windows ntiyemeye igikorwa cya WireGuard cyasabwe.",
   "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.": "Serivisi ya VPN y'iki gikoresho ntiboneka. Funga wongere ufungure FuzeVPN.",
@@ -702,7 +700,6 @@
   "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.": "Umwirondoro mushya wa VPN ntiwashoboye kwandikwa. Ongera ugerageze nyuma.",
   "Identité VPN à renouveler": "Umwirondoro wa VPN ugomba kuvugururwa",
   "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.": "Uyu mwirondoro wa VPN wakuweho. Kora mushya kugira ngo ukomeze.",
-  "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.": "Aha hantu ntihaboneka by'agateganyo. Hitamo Frankfurt 1 cyangwa Frankfurt 2, cyangwa wongere ugerageze nyuma.",
   "Réessayez dans {seconds} secondes.": "Ongera ugerageze mu masegonda {seconds}.",
   "Trop de tentatives": "Ingerageza ni nyinshi cyane",
   "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.": "Ntibyashobotse kwihuza na VPN. Ongera ugerageze nyuma.",
@@ -852,5 +849,11 @@
   "Tous": "Byose",
   "Favoris": "Ibyo ukunda",
   "{label} : {value}": "{label}: {value}",
-  "Nécessite une connexion VPN active.": "Bisaba ihuza rya VPN rikora."
+  "Nécessite une connexion VPN active.": "Bisaba ihuza rya VPN rikora.",
+  "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.": "Umwirondoro wa VPN wabitswe kuri iyi mudasobwa ntushobora gusomwa. Kora umwirondoro mushya w'iki gikoresho gusa.",
+  "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.": "Aha hantu ntihaboneka by'agateganyo. Hitamo ahandi, cyangwa wongere ugerageze nyuma.",
+  "Renvoyer l’e-mail": "Ongera wohereze imeyili",
+  "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "Imeyili yoherejwe. Fungura ihuzanzira riri muri yo, hanyuma wongere ugerageze kwihuza.",
+  "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "Imeyili imaze koherezwa. Uzashobora gusaba indi mu masegonda {seconds}.",
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "Imeyili ntiyashoboye koherezwa. Ongera ugerageze nyuma."
 }

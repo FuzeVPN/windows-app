@@ -76,7 +76,6 @@
   "Configuration IPv4": "IPv4 ക്രമീകരണം",
   "Configuration IPv6": "IPv6 ക്രമീകരണം",
   "Configuration du tunnel": "ടണൽ ക്രമീകരണം",
-  "Confirmer mon e-mail": "എന്റെ ഇമെയിൽ സ്ഥിരീകരിക്കുക",
   "Connecter": "കണക്റ്റ് ചെയ്യുക",
   "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.": "ഈ ഉപകരണം അക്കൗണ്ടിലേക്ക് ചേർക്കാൻ ഈ ആപ്പിൽ നിന്ന് കണക്റ്റ് ചെയ്യുക.",
   "Connectez-vous pour gérer vos appareils": "ഉപകരണങ്ങൾ നിയന്ത്രിക്കാൻ സൈൻ ഇൻ ചെയ്യുക",
@@ -656,7 +655,6 @@
   "Le composant OpenVPN sécurisé n’est pas disponible.": "സുരക്ഷിത OpenVPN ഘടകം ലഭ്യമല്ല.",
   "Le profil OpenVPN n’a pas pu être renouvelé.": "OpenVPN പ്രൊഫൈൽ പുതുക്കാനായില്ല.",
   "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.": "OpenVPN പുതുക്കൽ പരാജയപ്പെട്ടു. കിൽ സ്വിച്ച് ഇപ്പോഴും നെറ്റ്‌വർക്ക് ട്രാഫിക് തടയുന്നു.",
-  "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.": "പ്രാദേശിക WireGuard ഐഡന്റിറ്റി ലഭ്യമല്ല. ഈ ഉപകരണം മാത്രം പുതുക്കാൻ ഉപകരണങ്ങൾ തുറക്കുക.",
   "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.": "WireGuard-ന്റെ പരിരക്ഷിത സംഭരണം തുറക്കാൻ Windows-ന് കഴിഞ്ഞില്ല.",
   "Windows n’a pas autorisé l’opération WireGuard demandée.": "അഭ്യർത്ഥിച്ച WireGuard പ്രവർത്തനം Windows അനുവദിച്ചില്ല.",
   "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.": "പ്രാദേശിക VPN സേവനം ലഭ്യമല്ല. FuzeVPN അടച്ച് വീണ്ടും തുറക്കുക.",
@@ -702,7 +700,6 @@
   "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.": "പുതിയ VPN ഐഡന്റിറ്റി രജിസ്റ്റർ ചെയ്യാനായില്ല. പിന്നീട് വീണ്ടും ശ്രമിക്കുക.",
   "Identité VPN à renouveler": "VPN ഐഡന്റിറ്റി പുതുക്കേണ്ടതുണ്ട്",
   "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.": "ഈ VPN ഐഡന്റിറ്റി നീക്കം ചെയ്തു. തുടരാൻ പുതിയത് സൃഷ്ടിക്കുക.",
-  "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.": "ഈ ലൊക്കേഷൻ താൽക്കാലികമായി ലഭ്യമല്ല. Frankfurt 1 അല്ലെങ്കിൽ Frankfurt 2 തിരഞ്ഞെടുക്കുക, അല്ലെങ്കിൽ പിന്നീട് വീണ്ടും ശ്രമിക്കുക.",
   "Réessayez dans {seconds} secondes.": "{seconds} സെക്കൻഡിന് ശേഷം വീണ്ടും ശ്രമിക്കുക.",
   "Trop de tentatives": "വളരെയധികം ശ്രമങ്ങൾ",
   "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.": "VPN കണക്ഷൻ സ്ഥാപിക്കാനായില്ല. പിന്നീട് വീണ്ടും ശ്രമിക്കുക.",
@@ -852,5 +849,11 @@
   "Tous": "എല്ലാം",
   "Favoris": "പ്രിയപ്പെട്ടവ",
   "{label} : {value}": "{label}: {value}",
-  "Nécessite une connexion VPN active.": "സജീവമായ VPN കണക്ഷൻ ആവശ്യമാണ്."
+  "Nécessite une connexion VPN active.": "സജീവമായ VPN കണക്ഷൻ ആവശ്യമാണ്.",
+  "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.": "ഈ PC-യിൽ സംരക്ഷിച്ച VPN ഐഡന്റിറ്റി വായിക്കാനാവില്ല. ഈ ഉപകരണത്തിനായി മാത്രം പുതിയ ഐഡന്റിറ്റി സൃഷ്ടിക്കുക.",
+  "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.": "ഈ ലൊക്കേഷൻ താൽക്കാലികമായി ലഭ്യമല്ല. മറ്റൊരു ലൊക്കേഷൻ തിരഞ്ഞെടുക്കുക അല്ലെങ്കിൽ പിന്നീട് വീണ്ടും ശ്രമിക്കുക.",
+  "Renvoyer l’e-mail": "ഇമെയിൽ വീണ്ടും അയയ്ക്കുക",
+  "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "ഇമെയിൽ അയച്ചു. അതിലെ ലിങ്ക് തുറന്ന ശേഷം വീണ്ടും കണക്റ്റ് ചെയ്യാൻ ശ്രമിക്കുക.",
+  "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "ഒരു ഇമെയിൽ ഇപ്പോൾ അയച്ചതേയുള്ളൂ. {seconds} സെക്കൻഡിന് ശേഷം നിങ്ങൾക്ക് മറ്റൊന്ന് അഭ്യർത്ഥിക്കാം.",
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "ഇമെയിൽ അയയ്ക്കാനായില്ല. പിന്നീട് വീണ്ടും ശ്രമിക്കുക."
 }

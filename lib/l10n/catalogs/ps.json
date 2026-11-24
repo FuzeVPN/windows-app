@@ -76,7 +76,6 @@
   "Configuration IPv4": "د IPv4 تنظیمات",
   "Configuration IPv6": "د IPv6 تنظیمات",
   "Configuration du tunnel": "د تونل تنظیمات",
-  "Confirmer mon e-mail": "زما برېښنالیک تایید کړئ",
   "Connecter": "ونښلوئ",
   "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.": "د دې وسیلې خپل حساب ته د اضافه کولو لپاره له دې اپ څخه ونښلئ.",
   "Connectez-vous pour gérer vos appareils": "د خپلو وسایلو د مدیریت لپاره حساب ته ننوځئ",
@@ -656,7 +655,6 @@
   "Le composant OpenVPN sécurisé n’est pas disponible.": "خوندي OpenVPN جز شتون نه لري.",
   "Le profil OpenVPN n’a pas pu être renouvelé.": "د OpenVPN پروفایل نوی نه شو.",
   "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.": "د OpenVPN نوي کول ناکام شول. kill switch لا هم د شبکې ټرافیک بندوي.",
-  "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.": "ځايي WireGuard پېژندنه شتون نه لري. یوازې د دې وسیلې د نوي کولو لپاره وسایل پرانیزئ.",
   "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.": "Windows د WireGuard خوندي زېرمتون پرانیستلی نه شو.",
   "Windows n’a pas autorisé l’opération WireGuard demandée.": "Windows د غوښتل شوي WireGuard عملیاتو اجازه ورنه کړه.",
   "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.": "ځايي VPN خدمت شتون نه لري. FuzeVPN وتړئ او بیا یې پرانیزئ.",
@@ -702,7 +700,6 @@
   "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.": "نوې VPN پېژندنه ثبت نه شوه. وروسته بیا هڅه وکړئ.",
   "Identité VPN à renouveler": "VPN پېژندنه باید نوې شي",
   "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.": "دا VPN پېژندنه لیرې شوې ده. د دوام لپاره نوې جوړه کړئ.",
-  "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.": "دا ځای په موقتي ډول شتون نه لري. Frankfurt 1 یا Frankfurt 2 غوره کړئ، یا وروسته بیا هڅه وکړئ.",
   "Réessayez dans {seconds} secondes.": "له {seconds} ثانیو وروسته بیا هڅه وکړئ.",
   "Trop de tentatives": "ډېرې هڅې",
   "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.": "د VPN اتصال ټینګ نه شو. وروسته بیا هڅه وکړئ.",
@@ -852,5 +849,11 @@
   "Tous": "ټول",
   "Favoris": "د خوښې وړ",
   "{label} : {value}": "{label}: {value}",
-  "Nécessite une connexion VPN active.": "فعاله VPN اړیکه اړینه ده."
+  "Nécessite une connexion VPN active.": "فعاله VPN اړیکه اړینه ده.",
+  "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.": "په دې کمپیوټر کې خوندي شوې VPN پېژندنه نه شي لوستل کېدای. یوازې د دې وسیلې لپاره نوې پېژندنه جوړه کړئ.",
+  "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.": "دا ځای په موقتي ډول شتون نه لري. بل ځای غوره کړئ، یا وروسته بیا هڅه وکړئ.",
+  "Renvoyer l’e-mail": "برېښنالیک بیا ولېږئ",
+  "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "برېښنالیک ولېږل شو. په هغه کې موجود لینک پرانیزئ، او له هغه وروسته بیا د نښلېدو هڅه وکړئ.",
+  "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "همدا اوس یو برېښنالیک ولېږل شو. له {seconds} ثانیو وروسته کولی شئ بل وغواړئ.",
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "برېښنالیک ونه لېږل شو. وروسته بیا هڅه وکړئ."
 }

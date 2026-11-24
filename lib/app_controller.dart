@@ -57,6 +57,7 @@ enum DeviceEnrollmentIssueKind {
   deviceLimit,
   deviceExists,
   deviceIdentityRevoked,
+  localIdentityUnavailable,
   openVpnProfileExists,
   openVpnProfileRevoked,
   openVpnOperationPending,
@@ -407,6 +408,15 @@ class AppController extends ChangeNotifier {
       _retainedProtectionProtocol != null && _runtimeAbsentObserved;
   static const _otherSessionMessage =
       'Le VPN est utilisé par une autre session Windows. Fermez-le depuis cette session pour continuer.';
+  static const _localIdentityUnavailableMessage =
+      'L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.';
+  // The native store cannot read this PC's WireGuard key or account binding:
+  // only a new identity, replacing this device, lets WireGuard connect again.
+  static const _localIdentityUnavailableIssue = DeviceEnrollmentIssue(
+    kind: DeviceEnrollmentIssueKind.localIdentityUnavailable,
+    title: 'Identité VPN à renouveler',
+    message: _localIdentityUnavailableMessage,
+  );
   static const _openVpnPreparationProgressMessage =
       'La préparation OpenVPN continue. Le kill switch bloque le trafic jusqu’à la connexion ou une déconnexion explicite.';
   bool get requiresExplicitDisconnect =>
@@ -487,6 +497,12 @@ class AppController extends ChangeNotifier {
   String? securitySettingsError;
   String? experienceSettingsError;
   DeviceEnrollmentIssue? deviceEnrollmentIssue;
+  bool isResendingVerificationEmail = false;
+
+  /// Source text shown on the e-mail confirmation card after a resend.
+  /// [verificationEmailRetryAfterSeconds] fills its `{seconds}` placeholder.
+  String? verificationEmailNotice;
+  int? verificationEmailRetryAfterSeconds;
 
   String? get diagnosticLogPath => DiagnosticLog.filePath;
   bool _signInPromptPending = false;
@@ -1082,6 +1098,62 @@ class AppController extends ChangeNotifier {
     currentDeviceId = null;
     realDeviceLocation = null;
     await _safe<void>(_store.clearCurrentDeviceId());
+  }
+
+  /// Requests a new confirmation e-mail from the e-mail confirmation card.
+  Future<void> resendVerificationEmail() async {
+    if (isResendingVerificationEmail) return;
+    final sessionEpoch = _sessionEpoch;
+    final userId = profile?.userId;
+    isResendingVerificationEmail = true;
+    verificationEmailNotice = null;
+    verificationEmailRetryAfterSeconds = null;
+    notifyListeners();
+    const failed = 'L’e-mail n’a pas pu être envoyé. Réessayez plus tard.';
+    String notice;
+    int? retryAfter;
+    try {
+      final token = await _safe(_accessToken());
+      if (token == null) {
+        notice = 'Connectez-vous à votre compte avant de vous connecter.';
+      } else {
+        await _api.resendVerificationEmail(token);
+        notice =
+            'E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.';
+      }
+    } on ApiException catch (error) {
+      retryAfter = error.errorCode == 'verification_email_cooldown'
+          ? error.retryAfterSeconds
+          : null;
+      notice = retryAfter == null
+          ? failed
+          : 'Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.';
+    } catch (_) {
+      notice = failed;
+    }
+    if (_disposed) return;
+    isResendingVerificationEmail = false;
+    if (_isCurrentSession(sessionEpoch, userId)) {
+      verificationEmailNotice = notice;
+      verificationEmailRetryAfterSeconds = retryAfter;
+    }
+    notifyListeners();
+  }
+
+  /// Best effort: if the server cannot retire the old device now, the new
+  /// enrollment still runs and reports the device limit when it is reached.
+  Future<void> _retireUnreadableDevice(String token) async {
+    final deviceId = currentDeviceId;
+    if (deviceId == null) return;
+    try {
+      _invalidateDeviceSnapshots();
+      await _api.revokeDevice(token: token, deviceId: deviceId);
+      devices = devices
+          .where((item) => item.deviceId != deviceId)
+          .toList(growable: false);
+    } catch (_) {
+      // The old device then stays listed in Devices, where it can be removed.
+    }
   }
 
   Future<String> _deviceName() async {
@@ -5011,13 +5083,23 @@ class AppController extends ChangeNotifier {
     }
   }
 
-  Future<void> retryAfterIdentityReset() => _runConnectionCommand(
-    _retryAfterIdentityReset,
-    initialState: VpnStatus.preparing,
-    userConnect: true,
-  );
+  /// [replaceCurrentDevice] retires this PC's device on the server first: an
+  /// unreadable local key leaves a live device that would otherwise keep
+  /// counting against the account's device limit.
+  Future<void> retryAfterIdentityReset({bool replaceCurrentDevice = false}) =>
+      _runConnectionCommand(
+        (operationId) => _retryAfterIdentityReset(
+          operationId,
+          replaceCurrentDevice: replaceCurrentDevice,
+        ),
+        initialState: VpnStatus.preparing,
+        userConnect: true,
+      );
 
-  Future<void> _retryAfterIdentityReset(int operationId) async {
+  Future<void> _retryAfterIdentityReset(
+    int operationId, {
+    required bool replaceCurrentDevice,
+  }) async {
     if (vpnProtocol != VpnProtocol.wireGuard) {
       _transitionConnection(operationId, VpnStatus.error);
       errorMessage =
@@ -5047,6 +5129,10 @@ class AppController extends ChangeNotifier {
       area: 'wireguard',
       event: 'identity_reset_started',
     );
+    if (replaceCurrentDevice) {
+      await _retireUnreadableDevice(token);
+      if (!_acceptConnectionOperation(operationId)) return;
+    }
     try {
       // Stop, erase and recreate inside one privileged native request. The UI
       // never observes or attempts to use a half-reset identity.
@@ -5261,6 +5347,10 @@ class AppController extends ChangeNotifier {
       errorMessage = vpnProtocol == VpnProtocol.openVpn
           ? _openVpnPlatformErrorMessage(error.code)
           : _wireGuardPlatformErrorMessage(error.code);
+      if (vpnProtocol == VpnProtocol.wireGuard &&
+          error.code == 'key_unavailable') {
+        deviceEnrollmentIssue = _localIdentityUnavailableIssue;
+      }
       await _restoreRetainedNetworkProtection(operationId: operationId);
     } catch (_) {
       if (!_transitionConnection(operationId, VpnStatus.error)) return;
@@ -5424,6 +5514,9 @@ class AppController extends ChangeNotifier {
           error.code != 'runtime_owned_by_another_user';
       _transitionConnection(operationId, VpnStatus.error);
       errorMessage = _wireGuardPlatformErrorMessage(error.code);
+      if (error.code == 'key_unavailable') {
+        deviceEnrollmentIssue = _localIdentityUnavailableIssue;
+      }
     } catch (_) {
       if (nativeConnectAttempted &&
           await _recoverNativeConnection(
@@ -6617,8 +6710,7 @@ class AppController extends ChangeNotifier {
     'installation_required' =>
       'Installez FuzeVPN dans un dossier protégé pour activer le VPN.',
     'runtime_owned_by_another_user' => _otherSessionMessage,
-    'key_unavailable' =>
-      'L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.',
+    'key_unavailable' => _localIdentityUnavailableMessage,
     'storage_failure' =>
       'Windows n’a pas pu ouvrir le stockage protégé de WireGuard.',
     'storage_error' =>
@@ -6920,6 +7012,8 @@ class AppController extends ChangeNotifier {
         _setSubscriptionRequiredIssue();
         return;
       case 'email_verification_required':
+        verificationEmailNotice = null;
+        verificationEmailRetryAfterSeconds = null;
         deviceEnrollmentIssue = const DeviceEnrollmentIssue(
           kind: DeviceEnrollmentIssueKind.emailVerificationRequired,
           title: 'Adresse e-mail à confirmer',
@@ -6962,7 +7056,7 @@ class AppController extends ChangeNotifier {
           kind: DeviceEnrollmentIssueKind.nodeUnavailable,
           title: 'Emplacement indisponible',
           message:
-              'Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.',
+              'Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.',
         );
         return;
       case 'rate_limited':

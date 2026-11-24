@@ -76,7 +76,6 @@
   "Configuration IPv4": "IPv4 கட்டமைப்பு",
   "Configuration IPv6": "IPv6 கட்டமைப்பு",
   "Configuration du tunnel": "சுரங்கக் கட்டமைப்பு",
-  "Confirmer mon e-mail": "என் மின்னஞ்சலை உறுதிப்படுத்து",
   "Connecter": "இணை",
   "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.": "இந்தச் சாதனத்தை உங்கள் கணக்கில் சேர்க்க இப்பயன்பாட்டில் உள்நுழையவும்.",
   "Connectez-vous pour gérer vos appareils": "சாதனங்களை நிர்வகிக்க உள்நுழையவும்",
@@ -656,7 +655,6 @@
   "Le composant OpenVPN sécurisé n’est pas disponible.": "பாதுகாப்பான OpenVPN கூறு கிடைக்கவில்லை.",
   "Le profil OpenVPN n’a pas pu être renouvelé.": "OpenVPN சுயவிவரத்தைப் புதுப்பிக்க முடியவில்லை.",
   "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.": "OpenVPN புதுப்பிப்பு தோல்வியடைந்தது. Kill switch இன்னும் பிணையப் போக்குவரத்தைத் தடுக்கிறது.",
-  "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.": "உள்ளூர் WireGuard அடையாளம் கிடைக்கவில்லை. இந்தச் சாதனத்தை மட்டும் புதுப்பிக்க சாதனங்களைத் திறக்கவும்.",
   "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.": "WireGuard பாதுகாக்கப்பட்ட சேமிப்பகத்தை Windows ஆல் திறக்க முடியவில்லை.",
   "Windows n’a pas autorisé l’opération WireGuard demandée.": "கோரப்பட்ட WireGuard செயல்பாட்டை Windows அனுமதிக்கவில்லை.",
   "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.": "உள்ளூர் VPN சேவை கிடைக்கவில்லை. FuzeVPN ஐ மூடி மீண்டும் திறக்கவும்.",
@@ -702,7 +700,6 @@
   "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.": "புதிய VPN அடையாளத்தைப் பதிவுசெய்ய முடியவில்லை. பிறகு மீண்டும் முயற்சிக்கவும்.",
   "Identité VPN à renouveler": "VPN அடையாளத்தைப் புதுப்பிக்க வேண்டும்",
   "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.": "இந்த VPN அடையாளம் அகற்றப்பட்டது. தொடர புதிய ஒன்றை உருவாக்கவும்.",
-  "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.": "இந்த இடம் தற்காலிகமாகக் கிடைக்கவில்லை. Frankfurt 1 அல்லது Frankfurt 2 ஐத் தேர்ந்தெடுக்கவும் அல்லது பிறகு முயற்சிக்கவும்.",
   "Réessayez dans {seconds} secondes.": "{seconds} விநாடிகளில் மீண்டும் முயற்சிக்கவும்.",
   "Trop de tentatives": "அதிகமான முயற்சிகள்",
   "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.": "VPN இணைப்பை ஏற்படுத்த முடியவில்லை. பிறகு மீண்டும் முயற்சிக்கவும்.",
@@ -852,5 +849,11 @@
   "Tous": "அனைத்தும்",
   "Favoris": "பிடித்தவை",
   "{label} : {value}": "{label}: {value}",
-  "Nécessite une connexion VPN active.": "செயலில் உள்ள VPN இணைப்பு தேவை."
+  "Nécessite une connexion VPN active.": "செயலில் உள்ள VPN இணைப்பு தேவை.",
+  "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.": "இந்தக் கணினியில் சேமிக்கப்பட்ட VPN அடையாளத்தைப் படிக்க முடியவில்லை. இந்தச் சாதனத்திற்கு மட்டும் புதிய ஒன்றை உருவாக்கவும்.",
+  "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.": "இந்த இடம் தற்காலிகமாகக் கிடைக்கவில்லை. வேறொரு இடத்தைத் தேர்ந்தெடுக்கவும் அல்லது பிறகு முயற்சிக்கவும்.",
+  "Renvoyer l’e-mail": "மின்னஞ்சலை மீண்டும் அனுப்பு",
+  "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "மின்னஞ்சல் அனுப்பப்பட்டது. அதிலுள்ள இணைப்பைத் திறந்து, பிறகு மீண்டும் இணைக்க முயற்சிக்கவும்.",
+  "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "ஒரு மின்னஞ்சல் இப்போதுதான் அனுப்பப்பட்டது. {seconds} விநாடிகளில் மற்றொன்றைக் கோரலாம்.",
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "மின்னஞ்சலை அனுப்ப முடியவில்லை. பிறகு மீண்டும் முயற்சிக்கவும்."
 }

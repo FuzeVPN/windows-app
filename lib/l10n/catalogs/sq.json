@@ -76,7 +76,6 @@
   "Configuration IPv4": "Konfigurimi IPv4",
   "Configuration IPv6": "Konfigurimi IPv6",
   "Configuration du tunnel": "Konfigurimi i tunelit",
-  "Confirmer mon e-mail": "Konfirmo emailin tim",
   "Connecter": "Lidhu",
   "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.": "Identifikohuni nga ky aplikacion për ta shtuar këtë pajisje në llogarinë tuaj.",
   "Connectez-vous pour gérer vos appareils": "Identifikohuni për të menaxhuar pajisjet tuaja",
@@ -656,7 +655,6 @@
   "Le composant OpenVPN sécurisé n’est pas disponible.": "Komponenti i sigurt OpenVPN nuk është i disponueshëm.",
   "Le profil OpenVPN n’a pas pu être renouvelé.": "Profili OpenVPN nuk u rinovua.",
   "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.": "Rinovimi i OpenVPN dështoi. Kill switch ende bllokon trafikun e rrjetit.",
-  "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.": "Identiteti lokal WireGuard nuk është i disponueshëm. Hapni Pajisjet për të rinovuar vetëm këtë pajisje.",
   "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.": "Windows nuk arriti të hapë ruajtjen e mbrojtur të WireGuard.",
   "Windows n’a pas autorisé l’opération WireGuard demandée.": "Windows nuk e lejoi veprimin e kërkuar të WireGuard.",
   "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.": "Shërbimi lokal VPN nuk është i disponueshëm. Mbyllni dhe rihapni FuzeVPN.",
@@ -702,7 +700,6 @@
   "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.": "Identiteti i ri VPN nuk u regjistrua. Provoni përsëri më vonë.",
   "Identité VPN à renouveler": "Identiteti VPN duhet rinovuar",
   "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.": "Ky identitet VPN u hoq. Krijoni një të ri për të vazhduar.",
-  "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.": "Kjo vendndodhje nuk është përkohësisht e disponueshme. Zgjidhni Frankfurt 1 ose Frankfurt 2, ose provoni përsëri më vonë.",
   "Réessayez dans {seconds} secondes.": "Provoni përsëri pas {seconds} sekondash.",
   "Trop de tentatives": "Shumë përpjekje",
   "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.": "Nuk u krijua një lidhje VPN. Provoni përsëri më vonë.",
@@ -852,5 +849,11 @@
   "Tous": "Të gjitha",
   "Favoris": "Të preferuarat",
   "{label} : {value}": "{label}: {value}",
-  "Nécessite une connexion VPN active.": "Kërkon një lidhje aktive VPN."
+  "Nécessite une connexion VPN active.": "Kërkon një lidhje aktive VPN.",
+  "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.": "Identiteti VPN i ruajtur në këtë kompjuter nuk mund të lexohet. Krijoni një të ri vetëm për këtë pajisje.",
+  "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.": "Kjo vendndodhje nuk është përkohësisht e disponueshme. Zgjidhni një vendndodhje tjetër ose provoni përsëri më vonë.",
+  "Renvoyer l’e-mail": "Dërgo përsëri emailin",
+  "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "Emaili u dërgua. Hapni lidhjen që përmban, pastaj provoni përsëri të lidheni.",
+  "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "Sapo u dërgua një email. Mund të kërkoni një tjetër pas {seconds} s.",
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "Emaili nuk mund të dërgohej. Provoni përsëri më vonë."
 }

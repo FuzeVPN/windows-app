@@ -76,7 +76,6 @@
   "Configuration IPv4": "IPv4 কনফিগারেশন",
   "Configuration IPv6": "IPv6 কনফিগারেশন",
   "Configuration du tunnel": "টানেল কনফিগারেশন",
-  "Confirmer mon e-mail": "আমার ইমেইল নিশ্চিত করুন",
   "Connecter": "সংযুক্ত করুন",
   "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.": "এই ডিভাইসটি আপনার অ্যাকাউন্টে যোগ করতে এই অ্যাপ থেকে সংযোগ করুন।",
   "Connectez-vous pour gérer vos appareils": "ডিভাইস পরিচালনা করতে সাইন ইন করুন",
@@ -656,7 +655,6 @@
   "Le composant OpenVPN sécurisé n’est pas disponible.": "সুরক্ষিত OpenVPN উপাদান উপলব্ধ নয়।",
   "Le profil OpenVPN n’a pas pu être renouvelé.": "OpenVPN প্রোফাইল নবায়ন করা যায়নি।",
   "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.": "OpenVPN নবায়ন ব্যর্থ হয়েছে। kill switch এখনও নেটওয়ার্ক ট্রাফিক ব্লক করছে।",
-  "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.": "স্থানীয় WireGuard পরিচয় উপলব্ধ নয়। শুধু এই ডিভাইস নবায়ন করতে ডিভাইস খুলুন।",
   "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.": "Windows WireGuard-এর সুরক্ষিত স্টোরেজ খুলতে পারেনি।",
   "Windows n’a pas autorisé l’opération WireGuard demandée.": "Windows অনুরোধ করা WireGuard কাজের অনুমতি দেয়নি।",
   "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.": "স্থানীয় VPN পরিষেবা উপলব্ধ নয়। FuzeVPN বন্ধ করে আবার খুলুন।",
@@ -702,7 +700,6 @@
   "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.": "নতুন VPN পরিচয় নিবন্ধন করা যায়নি। পরে আবার চেষ্টা করুন।",
   "Identité VPN à renouveler": "VPN পরিচয় নবায়ন করতে হবে",
   "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.": "এই VPN পরিচয় সরানো হয়েছে। চালিয়ে যেতে নতুন পরিচয় তৈরি করুন।",
-  "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.": "এই অবস্থান সাময়িকভাবে উপলব্ধ নয়। Frankfurt 1 বা Frankfurt 2 বেছে নিন, অথবা পরে আবার চেষ্টা করুন।",
   "Réessayez dans {seconds} secondes.": "{seconds} সেকেন্ড পর আবার চেষ্টা করুন।",
   "Trop de tentatives": "অতিরিক্ত প্রচেষ্টা",
   "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.": "VPN সংযোগ স্থাপন করা যায়নি। পরে আবার চেষ্টা করুন।",
@@ -852,5 +849,11 @@
   "Tous": "সব",
   "Favoris": "পছন্দের তালিকা",
   "{label} : {value}": "{label}: {value}",
-  "Nécessite une connexion VPN active.": "একটি সক্রিয় VPN সংযোগ প্রয়োজন।"
+  "Nécessite une connexion VPN active.": "একটি সক্রিয় VPN সংযোগ প্রয়োজন।",
+  "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.": "এই PC-তে সংরক্ষিত VPN পরিচয় পড়া যাচ্ছে না। শুধু এই ডিভাইসের জন্য একটি নতুন পরিচয় তৈরি করুন।",
+  "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.": "এই অবস্থান সাময়িকভাবে উপলব্ধ নয়। অন্য অবস্থান বেছে নিন, অথবা পরে আবার চেষ্টা করুন।",
+  "Renvoyer l’e-mail": "ইমেইল আবার পাঠান",
+  "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "ইমেইল পাঠানো হয়েছে। এতে থাকা লিংকটি খুলুন, তারপর আবার সংযুক্ত হওয়ার চেষ্টা করুন।",
+  "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "এইমাত্র একটি ইমেইল পাঠানো হয়েছে। {seconds} সেকেন্ড পর আরেকটির জন্য অনুরোধ করতে পারবেন।",
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "ইমেইল পাঠানো যায়নি। পরে আবার চেষ্টা করুন।"
 }

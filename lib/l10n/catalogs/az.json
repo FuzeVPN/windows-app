@@ -76,7 +76,6 @@
   "Configuration IPv4": "IPv4 konfiqurasiyası",
   "Configuration IPv6": "IPv6 konfiqurasiyası",
   "Configuration du tunnel": "Tunel konfiqurasiyası",
-  "Confirmer mon e-mail": "E-poçtumu təsdiqləyin",
   "Connecter": "Qoşulun",
   "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.": "Bu cihazı hesabınıza əlavə etmək üçün bu tətbiqdən qoşulun.",
   "Connectez-vous pour gérer vos appareils": "Cihazlarınızı idarə etmək üçün hesaba daxil olun",
@@ -656,7 +655,6 @@
   "Le composant OpenVPN sécurisé n’est pas disponible.": "Təhlükəsiz OpenVPN komponenti əlçatan deyil.",
   "Le profil OpenVPN n’a pas pu être renouvelé.": "OpenVPN profili yenilənə bilmədi.",
   "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.": "OpenVPN yenilənməsi alınmadı. Kill switch şəbəkə trafikini bloklamağa davam edir.",
-  "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.": "Yerli WireGuard kimliyi əlçatan deyil. Yalnız bu cihazı yeniləmək üçün Cihazlar bölməsini açın.",
   "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.": "Windows WireGuard üçün qorunan yaddaşı aça bilmədi.",
   "Windows n’a pas autorisé l’opération WireGuard demandée.": "Windows tələb olunan WireGuard əməliyyatına icazə vermədi.",
   "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.": "Yerli VPN xidməti əlçatan deyil. FuzeVPN-i bağlayıb yenidən açın.",
@@ -702,7 +700,6 @@
   "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.": "Yeni VPN kimliyi qeydiyyatdan keçirilə bilmədi. Daha sonra yenidən cəhd edin.",
   "Identité VPN à renouveler": "VPN kimliyi yenilənməlidir",
   "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.": "Bu VPN kimliyi silinib. Davam etmək üçün yenisini yaradın.",
-  "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.": "Bu məkan müvəqqəti əlçatan deyil. Frankfurt 1 və ya Frankfurt 2 seçin, yaxud daha sonra yenidən cəhd edin.",
   "Réessayez dans {seconds} secondes.": "{seconds} saniyədən sonra yenidən cəhd edin.",
   "Trop de tentatives": "Həddən çox cəhd",
   "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.": "VPN bağlantısı qurula bilmədi. Daha sonra yenidən cəhd edin.",
@@ -852,5 +849,11 @@
   "Tous": "Hamısı",
   "Favoris": "Seçilmişlər",
   "{label} : {value}": "{label}: {value}",
-  "Nécessite une connexion VPN active.": "Aktiv VPN bağlantısı tələb olunur."
+  "Nécessite une connexion VPN active.": "Aktiv VPN bağlantısı tələb olunur.",
+  "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.": "Bu kompüterdə saxlanmış VPN kimliyi oxuna bilmir. Yalnız bu cihaz üçün yenisini yaradın.",
+  "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.": "Bu məkan müvəqqəti əlçatan deyil. Başqa məkan seçin, yaxud daha sonra yenidən cəhd edin.",
+  "Renvoyer l’e-mail": "E-poçtu yenidən göndərin",
+  "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "E-poçt göndərildi. İçindəki keçidi açın, sonra yenidən qoşulmağa cəhd edin.",
+  "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "E-poçt indicə göndərildi. {seconds} saniyədən sonra başqasını tələb edə bilərsiniz.",
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "E-poçt göndərilə bilmədi. Daha sonra yenidən cəhd edin."
 }

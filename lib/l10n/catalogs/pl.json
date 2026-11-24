@@ -76,7 +76,6 @@
   "Configuration IPv4": "Konfiguracja IPv4",
   "Configuration IPv6": "Konfiguracja IPv6",
   "Configuration du tunnel": "Konfiguracja tunelu",
-  "Confirmer mon e-mail": "Potwierdź mój adres e-mail",
   "Connecter": "Połącz",
   "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.": "Połącz się z poziomu tej aplikacji, aby dodać urządzenie do konta.",
   "Connectez-vous pour gérer vos appareils": "Zaloguj się, aby zarządzać urządzeniami",
@@ -656,7 +655,6 @@
   "Le composant OpenVPN sécurisé n’est pas disponible.": "Bezpieczny składnik OpenVPN jest niedostępny.",
   "Le profil OpenVPN n’a pas pu être renouvelé.": "Nie można odnowić profilu OpenVPN.",
   "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.": "Odnowienie OpenVPN nie powiodło się. Kill switch nadal blokuje ruch sieciowy.",
-  "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.": "Lokalna tożsamość WireGuard jest niedostępna. Otwórz Urządzenia, aby odnowić tylko to urządzenie.",
   "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.": "System Windows nie mógł otworzyć chronionego magazynu WireGuard.",
   "Windows n’a pas autorisé l’opération WireGuard demandée.": "System Windows nie zezwolił na żądaną operację WireGuard.",
   "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.": "Lokalna usługa VPN jest niedostępna. Zamknij i otwórz ponownie FuzeVPN.",
@@ -702,7 +700,6 @@
   "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.": "Nie można zarejestrować nowej tożsamości VPN. Spróbuj ponownie później.",
   "Identité VPN à renouveler": "Odnowienie tożsamości VPN",
   "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.": "Ta tożsamość VPN została usunięta. Utwórz nową, aby kontynuować.",
-  "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.": "Ta lokalizacja jest chwilowo niedostępna. Wybierz Frankfurt 1 lub Frankfurt 2 albo spróbuj ponownie później.",
   "Réessayez dans {seconds} secondes.": "Spróbuj ponownie za {seconds} sekund.",
   "Trop de tentatives": "Zbyt wiele prób",
   "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.": "Nie można nawiązać połączenia VPN. Spróbuj ponownie później.",
@@ -852,5 +849,11 @@
   "Tous": "Wszystkie",
   "Favoris": "Ulubione",
   "{label} : {value}": "{label}: {value}",
-  "Nécessite une connexion VPN active.": "Wymaga aktywnego połączenia VPN."
+  "Nécessite une connexion VPN active.": "Wymaga aktywnego połączenia VPN.",
+  "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.": "Nie można odczytać tożsamości VPN zapisanej na tym komputerze. Utwórz nową tylko dla tego urządzenia.",
+  "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.": "Ta lokalizacja jest chwilowo niedostępna. Wybierz inną lokalizację albo spróbuj ponownie później.",
+  "Renvoyer l’e-mail": "Wyślij e-mail ponownie",
+  "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "E-mail został wysłany. Otwórz zawarty w nim link, a następnie spróbuj ponownie się połączyć.",
+  "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "E-mail został właśnie wysłany. O kolejny możesz poprosić za {seconds} s.",
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "Nie udało się wysłać e-maila. Spróbuj ponownie później."
 }

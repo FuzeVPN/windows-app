@@ -76,7 +76,6 @@
   "Configuration IPv4": "Dejinta IPv4",
   "Configuration IPv6": "Dejinta IPv6",
   "Configuration du tunnel": "Dejinta tunnel-ka",
-  "Confirmer mon e-mail": "Xaqiiji iimaylkayga",
   "Connecter": "Ku xidh",
   "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.": "Ka soo gal app-kan si aad qalabkan ugu darto akoonkaaga.",
   "Connectez-vous pour gérer vos appareils": "Soo gal si aad u maamusho qalabkaaga",
@@ -656,7 +655,6 @@
   "Le composant OpenVPN sécurisé n’est pas disponible.": "Qaybta sugan ee OpenVPN lama heli karo.",
   "Le profil OpenVPN n’a pas pu être renouvelé.": "Profile-ka OpenVPN lama cusboonaysiin karo.",
   "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.": "Cusboonaysiinta OpenVPN way fashilantay. Kill switch weli wuxuu xannibayaa taraafikada shabakadda.",
-  "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.": "Aqoonsiga WireGuard ee maxalliga ah lama heli karo. Fur Qalabka si aad u cusboonaysiiso qalabkan oo keliya.",
   "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.": "Windows ma furi karin kaydka la ilaaliyo ee WireGuard.",
   "Windows n’a pas autorisé l’opération WireGuard demandée.": "Windows ma oggolaan hawsha WireGuard ee la codsaday.",
   "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.": "Adeegga VPN ee maxalliga ah lama heli karo. Xir oo dib u fur FuzeVPN.",
@@ -702,7 +700,6 @@
   "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.": "Aqoonsiga VPN ee cusub lama diiwaangelin karo. Mar kale isku day goor dambe.",
   "Identité VPN à renouveler": "Aqoonsiga VPN waa in la cusboonaysiiyaa",
   "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.": "Aqoonsigan VPN waa la saaray. Samee mid cusub si aad u sii waddo.",
-  "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.": "Goobtan si ku meel gaar ah lama heli karo. Dooro Frankfurt 1 ama Frankfurt 2, ama mar kale isku day goor dambe.",
   "Réessayez dans {seconds} secondes.": "Mar kale isku day {seconds} ilbiriqsi ka dib.",
   "Trop de tentatives": "Isku dayo aad u badan",
   "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.": "Xiriir VPN lama samayn karo. Mar kale isku day goor dambe.",
@@ -852,5 +849,11 @@
   "Tous": "Dhammaan",
   "Favoris": "Kuwa la jecel yahay",
   "{label} : {value}": "{label}: {value}",
-  "Nécessite une connexion VPN active.": "Waxay u baahan tahay xiriir VPN oo firfircoon."
+  "Nécessite une connexion VPN active.": "Waxay u baahan tahay xiriir VPN oo firfircoon.",
+  "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.": "Aqoonsiga VPN ee lagu kaydiyay kombiyuutarkan lama akhrin karo. Mid cusub u samee qalabkan oo keliya.",
+  "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.": "Goobtan si ku meel gaar ah lama heli karo. Dooro goob kale, ama mar kale isku day goor dambe.",
+  "Renvoyer l’e-mail": "Mar kale dir iimaylka",
+  "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "Iimaylka waa la diray. Fur linkiga ku jira, dabadeed mar kale isku day inaad xirmato.",
+  "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "Iimayl ayaa hadda la diray. Mid kale waxaad codsan kartaa {seconds} ilbiriqsi ka dib.",
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "Iimaylka lama diri karin. Mar kale isku day goor dambe."
 }

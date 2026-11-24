@@ -111,6 +111,147 @@ void main() {
     expect(wireguard.resetCalls, 0);
   });
 
+  test('renvoie l’e-mail de confirmation et annonce le délai du serveur', () async {
+    final api = FakeApiClient()
+      ..registerResults = const [
+        ApiException(statusCode: 403, errorCode: 'email_verification_required'),
+      ];
+    final controller = controllerFor(
+      api,
+      FakeSecureStore(),
+      FakeWireGuardBridge(),
+    );
+    await controller.toggleConnection();
+
+    await controller.resendVerificationEmail();
+    expect(api.resendCalls, 1);
+    expect(controller.isResendingVerificationEmail, isFalse);
+    expect(
+      controller.verificationEmailNotice,
+      'E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.',
+    );
+    expect(controller.verificationEmailRetryAfterSeconds, isNull);
+
+    api.resendFailure = const ApiException(
+      statusCode: 429,
+      errorCode: 'verification_email_cooldown',
+      retryAfterSeconds: 42,
+    );
+    await controller.resendVerificationEmail();
+    expect(
+      controller.verificationEmailNotice,
+      'Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.',
+    );
+    expect(controller.verificationEmailRetryAfterSeconds, 42);
+
+    // A generic rate limit may last an hour: no countdown is promised.
+    for (final failure in const [
+      ApiException(
+        statusCode: 429,
+        errorCode: 'rate_limited',
+        retryAfterSeconds: 3000,
+      ),
+      ApiException(statusCode: 503, errorCode: 'email_delivery_unavailable'),
+    ]) {
+      api.resendFailure = failure;
+      await controller.resendVerificationEmail();
+      expect(
+        controller.verificationEmailNotice,
+        'L’e-mail n’a pas pu être envoyé. Réessayez plus tard.',
+      );
+      expect(controller.verificationEmailRetryAfterSeconds, isNull);
+    }
+    expect(api.resendCalls, 4);
+
+    // A new refusal starts from a clean card.
+    api
+      ..registerResults = const [
+        ApiException(statusCode: 403, errorCode: 'email_verification_required'),
+      ]
+      ..registerCalls = 0;
+    expect(controller.canRetryConnection, isTrue);
+    await controller.retryConnection();
+    expect(api.registerCalls, 1);
+    expect(
+      controller.deviceEnrollmentIssue?.kind,
+      DeviceEnrollmentIssueKind.emailVerificationRequired,
+    );
+    expect(controller.verificationEmailNotice, isNull);
+  });
+
+  test('une clé WireGuard locale illisible propose une nouvelle identité '
+      'qui remplace cet appareil', () async {
+    final api = FakeApiClient()
+      ..registerResults = [fakeConfiguration, fakeConfiguration];
+    final wireguard = FakeWireGuardBridge()
+      ..connectFailure = PlatformException(code: 'key_unavailable');
+    final controller = controllerFor(api, FakeSecureStore(), wireguard);
+
+    await controller.toggleConnection();
+
+    expect(controller.vpnStatus, isNot(VpnStatus.connected));
+    expect(
+      controller.deviceEnrollmentIssue?.kind,
+      DeviceEnrollmentIssueKind.localIdentityUnavailable,
+    );
+    expect(
+      controller.deviceEnrollmentIssue?.message,
+      'L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.',
+    );
+    final oldDeviceId = controller.currentDeviceId;
+    expect(oldDeviceId, isNotNull);
+
+    await controller.retryAfterIdentityReset(replaceCurrentDevice: true);
+
+    expect(api.revokedDeviceIds, [oldDeviceId]);
+    expect(wireguard.recreateCalls, 1);
+    expect(api.registerCalls, 2);
+    expect(controller.vpnStatus, VpnStatus.connected);
+    expect(controller.deviceEnrollmentIssue, isNull);
+  });
+
+  test(
+    'le retrait de l’ancien appareil n’empêche pas la nouvelle identité',
+    () async {
+      final api = FakeApiClient()
+        ..registerResults = [fakeConfiguration, fakeConfiguration]
+        ..revokeDeviceFailure = const ApiException(
+          statusCode: 503,
+          errorCode: 'server_error',
+        );
+      final wireguard = FakeWireGuardBridge()
+        ..connectFailure = PlatformException(code: 'key_unavailable');
+      final controller = controllerFor(api, FakeSecureStore(), wireguard);
+      await controller.toggleConnection();
+
+      await controller.retryAfterIdentityReset(replaceCurrentDevice: true);
+
+      expect(api.revokeDeviceCalls, 1);
+      expect(wireguard.recreateCalls, 1);
+      expect(controller.vpnStatus, VpnStatus.connected);
+    },
+  );
+
+  test(
+    'sans remplacement demandé, la nouvelle identité ne retire rien',
+    () async {
+      // The revoked-identity card relies on this: the server already retired
+      // that device.
+      final api = FakeApiClient()
+        ..registerResults = [fakeConfiguration, fakeConfiguration];
+      final wireguard = FakeWireGuardBridge()
+        ..connectFailure = PlatformException(code: 'key_unavailable');
+      final controller = controllerFor(api, FakeSecureStore(), wireguard);
+      await controller.toggleConnection();
+
+      await controller.retryAfterIdentityReset();
+
+      expect(api.revokeDeviceCalls, 0);
+      expect(wireguard.recreateCalls, 1);
+      expect(controller.vpnStatus, VpnStatus.connected);
+    },
+  );
+
   test('propose la gestion lors de la limite de deux appareils', () async {
     final api = FakeApiClient()
       ..registerResults = const [
@@ -1540,12 +1681,27 @@ class FakeApiClient extends ApiClient {
   @override
   Future<DeviceList> devices(String token) async => deviceList;
 
+  List<String> revokedDeviceIds = [];
+  Object? revokeDeviceFailure;
+  int resendCalls = 0;
+  Object? resendFailure;
+
   @override
   Future<void> revokeDevice({
     required String token,
     required String deviceId,
   }) async {
     revokeDeviceCalls += 1;
+    revokedDeviceIds.add(deviceId);
+    final failure = revokeDeviceFailure;
+    if (failure != null) throw failure;
+  }
+
+  @override
+  Future<void> resendVerificationEmail(String token) async {
+    resendCalls += 1;
+    final failure = resendFailure;
+    if (failure != null) throw failure;
   }
 
   @override
@@ -1672,9 +1828,16 @@ class FakeWireGuardBridge extends WireGuardBridge
     connected = false;
   }
 
+  PlatformException? connectFailure;
+
   @override
   Future<void> connect(DeviceConfiguration configuration) async {
     connectCalls += 1;
+    final failure = connectFailure;
+    if (failure != null) {
+      connectFailure = null;
+      throw failure;
+    }
     connected = true;
     protectionActive = true;
   }

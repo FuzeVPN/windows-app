@@ -76,7 +76,6 @@
   "Configuration IPv4": "Настройка IPv4",
   "Configuration IPv6": "Настройка IPv6",
   "Configuration du tunnel": "Настройка туннеля",
-  "Confirmer mon e-mail": "Подтвердить мой адрес электронной почты",
   "Connecter": "Подключить",
   "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.": "Войдите через это приложение, чтобы добавить устройство в свою учётную запись.",
   "Connectez-vous pour gérer vos appareils": "Войдите, чтобы управлять своими устройствами",
@@ -656,7 +655,6 @@
   "Le composant OpenVPN sécurisé n’est pas disponible.": "Защищённый компонент OpenVPN недоступен.",
   "Le profil OpenVPN n’a pas pu être renouvelé.": "Не удалось обновить профиль OpenVPN.",
   "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.": "Не удалось обновить OpenVPN. Аварийный выключатель по-прежнему блокирует сетевой трафик.",
-  "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.": "Локальная идентичность WireGuard недоступна. Откройте раздел «Устройства», чтобы обновить только это устройство.",
   "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.": "Windows не удалось открыть защищённое хранилище WireGuard.",
   "Windows n’a pas autorisé l’opération WireGuard demandée.": "Windows не разрешила запрошенную операцию WireGuard.",
   "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.": "Локальная служба VPN недоступна. Закройте и снова откройте FuzeVPN.",
@@ -702,7 +700,6 @@
   "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.": "Не удалось зарегистрировать новую идентичность VPN. Повторите попытку позже.",
   "Identité VPN à renouveler": "Идентичность VPN необходимо обновить",
   "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.": "Эта идентичность VPN удалена. Создайте новую, чтобы продолжить.",
-  "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.": "Это местоположение временно недоступно. Выберите Frankfurt 1 или Frankfurt 2 либо повторите попытку позже.",
   "Réessayez dans {seconds} secondes.": "Повторите попытку через {seconds} секунд.",
   "Trop de tentatives": "Слишком много попыток",
   "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.": "Не удалось установить VPN-подключение. Повторите попытку позже.",
@@ -852,5 +849,11 @@
   "Tous": "Все",
   "Favoris": "Избранное",
   "{label} : {value}": "{label}: {value}",
-  "Nécessite une connexion VPN active.": "Требуется активное VPN-подключение."
+  "Nécessite une connexion VPN active.": "Требуется активное VPN-подключение.",
+  "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.": "Невозможно прочитать идентичность VPN, сохранённую на этом компьютере. Создайте новую только для этого устройства.",
+  "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.": "Это местоположение временно недоступно. Выберите другое местоположение или повторите попытку позже.",
+  "Renvoyer l’e-mail": "Отправить письмо повторно",
+  "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "Письмо отправлено. Откройте ссылку в нём, затем повторите попытку подключения.",
+  "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "Письмо только что отправлено. Запросить ещё одно можно через {seconds} с.",
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "Не удалось отправить письмо. Повторите попытку позже."
 }

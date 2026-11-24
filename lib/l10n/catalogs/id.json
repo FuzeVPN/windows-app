@@ -76,7 +76,6 @@
   "Configuration IPv4": "Konfigurasi IPv4",
   "Configuration IPv6": "Konfigurasi IPv6",
   "Configuration du tunnel": "Konfigurasi tunnel",
-  "Confirmer mon e-mail": "Konfirmasi email saya",
   "Connecter": "Hubungkan",
   "Connectez-vous depuis cette application pour ajouter cet appareil à votre compte.": "Hubungkan dari aplikasi ini untuk menambahkan perangkat ke akun Anda.",
   "Connectez-vous pour gérer vos appareils": "Hubungkan untuk mengelola perangkat Anda",
@@ -656,7 +655,6 @@
   "Le composant OpenVPN sécurisé n’est pas disponible.": "Komponen OpenVPN aman tidak tersedia.",
   "Le profil OpenVPN n’a pas pu être renouvelé.": "Profil OpenVPN tidak dapat diperbarui.",
   "Le renouvellement OpenVPN a échoué. Le kill switch bloque toujours le trafic réseau.": "Pembaruan OpenVPN gagal. Kill switch tetap memblokir lalu lintas jaringan.",
-  "L’identité WireGuard locale est indisponible. Ouvrez Appareils pour renouveler uniquement cet appareil.": "Identitas WireGuard lokal tidak tersedia. Buka Perangkat untuk memperbarui perangkat ini saja.",
   "Windows n’a pas pu ouvrir le stockage protégé de WireGuard.": "Windows tidak dapat membuka penyimpanan WireGuard yang terlindungi.",
   "Windows n’a pas autorisé l’opération WireGuard demandée.": "Windows tidak mengizinkan operasi WireGuard yang diminta.",
   "Le service VPN local est indisponible. Fermez puis rouvrez FuzeVPN.": "Layanan VPN lokal tidak tersedia. Tutup lalu buka kembali FuzeVPN.",
@@ -702,7 +700,6 @@
   "La nouvelle identité VPN n’a pas pu être inscrite. Réessayez plus tard.": "Identitas VPN baru tidak dapat didaftarkan. Coba lagi nanti.",
   "Identité VPN à renouveler": "Identitas VPN perlu diperbarui",
   "Cette identité VPN a été retirée. Créez-en une nouvelle pour continuer.": "Identitas VPN ini telah dihapus. Buat yang baru untuk melanjutkan.",
-  "Cet emplacement est momentanément indisponible. Choisissez Frankfurt 1 ou Frankfurt 2, ou réessayez plus tard.": "Lokasi ini sementara tidak tersedia. Pilih Frankfurt 1 atau Frankfurt 2, atau coba lagi nanti.",
   "Réessayez dans {seconds} secondes.": "Coba lagi dalam {seconds} detik.",
   "Trop de tentatives": "Terlalu banyak percobaan",
   "Une connexion VPN n’a pas pu être établie. Réessayez plus tard.": "Koneksi VPN tidak dapat dibuat. Coba lagi nanti.",
@@ -852,5 +849,11 @@
   "Tous": "Semua",
   "Favoris": "Favorit",
   "{label} : {value}": "{label}: {value}",
-  "Nécessite une connexion VPN active.": "Memerlukan koneksi VPN aktif."
+  "Nécessite une connexion VPN active.": "Memerlukan koneksi VPN aktif.",
+  "L’identité VPN enregistrée sur ce PC est illisible. Créez-en une nouvelle pour cet appareil uniquement.": "Identitas VPN yang tersimpan di PC ini tidak dapat dibaca. Buat identitas baru hanya untuk perangkat ini.",
+  "Cet emplacement est momentanément indisponible. Choisissez un autre emplacement ou réessayez plus tard.": "Lokasi ini sementara tidak tersedia. Pilih lokasi lain atau coba lagi nanti.",
+  "Renvoyer l’e-mail": "Kirim ulang email",
+  "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "Email terkirim. Buka tautan di dalamnya, lalu coba terhubung lagi.",
+  "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "Email baru saja dikirim. Anda dapat meminta email lain dalam {seconds} detik.",
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "Email tidak dapat dikirim. Coba lagi nanti."
 }
