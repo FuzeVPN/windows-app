@@ -232,6 +232,7 @@ class _SettingsPageState extends State<_SettingsPage> {
                 ),
             ],
           ),
+          _SplitTunnelPanel(controller: controller),
         ];
 
         final connection = <Widget>[
@@ -676,4 +677,212 @@ class _SettingsSegmentedControl<T> extends StatelessWidget {
       );
     },
   );
+}
+
+class _SplitTunnelPanel extends StatefulWidget {
+  const _SplitTunnelPanel({required this.controller});
+
+  final AppController controller;
+
+  @override
+  State<_SplitTunnelPanel> createState() => _SplitTunnelPanelState();
+}
+
+class _SplitTunnelPanelState extends State<_SplitTunnelPanel> {
+  final _rangeController = TextEditingController();
+  String? _rangeError;
+
+  AppController get _controller => widget.controller;
+
+  @override
+  void dispose() {
+    _rangeController.dispose();
+    super.dispose();
+  }
+
+  void _addRange() {
+    String? error;
+    final next = _controller.splitTunnel.withAddedRange(
+      _rangeController.text,
+      error: (value) => error = value,
+    );
+    setState(() => _rangeError = error);
+    if (next == null) return;
+    _rangeController.clear();
+    _controller.setSplitTunnel(next);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final settings = _controller.splitTunnel;
+    final editable = _controller.canChangeNetworkProtection;
+    final exclude = settings.mode == SplitTunnelMode.exclude;
+    final muted = Theme.of(context).textTheme.bodyMedium?.copyWith(
+      color: Theme.of(context).colorScheme.onSurfaceVariant,
+      height: 1.4,
+    );
+    void save(SplitTunnelSettings next) => _controller.setSplitTunnel(next);
+    return _SettingsPanel(
+      icon: Icons.call_split_outlined,
+      title: 'Tunnel fractionné',
+      subtitle: 'Choisissez les adresses qui passent par le VPN ou en dehors.',
+      edgeToEdge: true,
+      children: [
+        SwitchListTile(
+          key: const ValueKey('split-tunnel-enabled'),
+          secondary: const Icon(Icons.call_split_outlined),
+          title: Text(context.tr('Activer le tunnel fractionné')),
+          subtitle: Text(
+            context.tr('Désactivé, tout le trafic passe par le VPN.'),
+          ),
+          value: settings.enabled,
+          onChanged: editable
+              ? (value) => save(settings.copyWith(enabled: value))
+              : null,
+        ),
+        if (settings.enabled) ...[
+          const Divider(height: 1),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(22, 16, 22, 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _SettingsSegmentedControl<SplitTunnelMode>(
+                  segments: [
+                    ButtonSegment(
+                      value: SplitTunnelMode.exclude,
+                      label: Text(context.tr('Exclure du VPN')),
+                    ),
+                    ButtonSegment(
+                      value: SplitTunnelMode.include,
+                      label: Text(context.tr('Seulement via le VPN')),
+                    ),
+                  ],
+                  selected: {settings.mode},
+                  onSelectionChanged: editable
+                      ? (value) => save(settings.copyWith(mode: value.first))
+                      : null,
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  context.tr(
+                    exclude
+                        ? 'Tout passe par le VPN, sauf les adresses de la liste.'
+                        : 'Seules les adresses de la liste passent par le VPN. Le reste utilise votre connexion habituelle.',
+                  ),
+                  style: muted,
+                ),
+              ],
+            ),
+          ),
+          if (exclude) ...[
+            const Divider(height: 1),
+            SwitchListTile(
+              key: const ValueKey('split-tunnel-lan'),
+              secondary: const Icon(Icons.lan_outlined),
+              title: Text(context.tr('Accès au réseau local')),
+              subtitle: Text(
+                context.tr(
+                  'Imprimantes, NAS et appareils de la maison restent joignables hors du VPN.',
+                ),
+              ),
+              value: settings.allowLocalNetwork,
+              onChanged: editable
+                  ? (value) => save(settings.copyWith(allowLocalNetwork: value))
+                  : null,
+            ),
+          ],
+          const Divider(height: 1),
+          if (settings.ranges.isEmpty)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(22, 16, 22, 4),
+              child: Text(
+                context.tr(
+                  exclude
+                      ? 'Aucune adresse exclue pour l’instant.'
+                      : 'Ajoutez au moins une adresse : sinon, tout le trafic passe par le VPN.',
+                ),
+                style: muted,
+              ),
+            )
+          else
+            for (final range in settings.ranges)
+              ListTile(
+                key: ValueKey('split-tunnel-range-${range.cidr}'),
+                leading: const Icon(Icons.router_outlined),
+                title: Text(range.toString(), textDirection: TextDirection.ltr),
+                trailing: IconButton(
+                  tooltip: context.tr('Retirer'),
+                  icon: const Icon(Icons.close),
+                  onPressed: editable
+                      ? () => save(settings.withoutRange(range))
+                      : null,
+                ),
+              ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(22, 12, 22, 8),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: TextField(
+                    key: const ValueKey('split-tunnel-range-field'),
+                    controller: _rangeController,
+                    enabled: editable,
+                    textDirection: TextDirection.ltr,
+                    decoration: InputDecoration(
+                      labelText: context.tr('Adresse IP ou plage CIDR'),
+                      hintText: '192.168.1.0/24',
+                      errorText: _rangeError == null
+                          ? null
+                          : context.tr(_rangeError!),
+                      errorMaxLines: 3,
+                    ),
+                    onSubmitted: editable ? (_) => _addRange() : null,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Padding(
+                  padding: const EdgeInsets.only(top: 6),
+                  child: FilledButton.tonal(
+                    key: const ValueKey('split-tunnel-add'),
+                    onPressed: editable ? _addRange : null,
+                    child: Text(context.tr('Ajouter')),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(22, 8, 22, 16),
+            child: Text(
+              context.tr(
+                exclude
+                    ? 'Le DNS passe toujours par le VPN. Avec le kill switch, ces exceptions restent actives si le VPN se coupe.'
+                    : 'Le DNS passe toujours par le VPN. Avec le kill switch, les adresses de la liste restent bloquées si le VPN se coupe.',
+              ),
+              style: muted,
+            ),
+          ),
+        ],
+        if (!editable)
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Text(
+              context.tr(
+                'Déconnectez le VPN pour modifier le tunnel fractionné.',
+              ),
+            ),
+          ),
+        if (_controller.splitTunnelSettingsError case final error?)
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Text(
+              context.tr(error),
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            ),
+          ),
+      ],
+    );
+  }
 }

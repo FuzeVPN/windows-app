@@ -149,6 +149,54 @@ du tunnel, et la protection DNS bloque les ports distants 53 et 853. WebRTC
 peut aussi utiliser TCP/TLS ; le DNS peut utiliser HTTPS. Le kill switch doit
 être activé pour couvrir également ces transports hors tunnel.
 
+## Tunnel fractionné
+
+Le tunnel fractionné agit par adresses IP, IPv4 ou IPv6. Il ne fonctionne ni
+par application, ce qui exigerait un pilote noyau signé par Microsoft, ni par
+nom de domaine. Il est désactivé par défaut. Chaque plage est revalidée à la
+frontière privilégiée (`split_tunnel_policy.h`) : 16 plages au plus, bits
+d’hôte nuls. Boucle locale, multidiffusion, plages réservées et route par
+défaut sont refusées.
+
+- **Exclusion** : tout passe par le VPN, sauf les plages listées.
+  - WireGuard reçoit `AllowedIPs` = moitiés `/1` moins les plages exclues.
+  - OpenVPN reçoit une route `net_gateway` par plage exclue, sur la passerelle
+    physique relevée à la connexion. La reconnexion la met à jour.
+- **Inclusion** : seules les plages listées passent par le VPN, moins
+  l’adresse du serveur VPN. OpenVPN ignore alors un `redirect-gateway` poussé.
+  Si le serveur ne fournit pas d’IPv6, une plage IPv6 incluse n’a aucune route
+  dans le tunnel : bloquée avec le kill switch, elle sort sans VPN sinon.
+- **Réseau local** (exclusion seulement) : liste fixe de plages non routables
+  (RFC 1918, link-local, ULA et multidiffusion locale), jamais « le
+  sous-réseau annoncé ». Un réseau hostile ne peut donc pas élargir
+  l’exception (TunnelCrack LocalNet).
+- **DNS** : les serveurs DNS du VPN restent toujours routés dans le tunnel.
+  Un blocage des ports 53 et 853 hors tunnel prime sur toutes les
+  exceptions, même sans kill switch ni protection DNS.
+
+Côté WFP, les exceptions sont des filtres de la session dynamique, en deux
+plages de poids :
+- poids 0xE : blocage du DNS et, en inclusion avec kill switch, des plages
+  protégées ;
+- poids 0xD : autorisation des plages exclues ou du trafic hors inclusion.
+
+Ces plages se situent sous les autorisations moteur et interface VPN (0xF), et
+au-dessus de la base persistante (poids automatique).
+
+Avec le kill switch, les exceptions restent actives pendant la préparation et
+la reconnexion : comportement de Mullvad et PIA. En inclusion, les plages
+listées restent bloquées hors tunnel. Après un crash ou un redémarrage, seule
+la base persistante subsiste : tout est bloqué, exceptions comprises, jusqu’au
+réarmement.
+
+Tant que le tunnel fractionné est actif :
+- WireGuard ne reçoit jamais de `/0` : son pare-feu interne bloquerait les
+  exceptions depuis son propre sous-calque.
+- OpenVPN ne reçoit ni `block-local` ni `block-ipv6`, pour la même raison.
+  La politique du service reste alors la seule protection.
+
+Le trafic exclu sort avec l’adresse IP réelle.
+
 ## Validation
 
 Les tests `network_filters`, `native_security` et `runtime_network_recovery`

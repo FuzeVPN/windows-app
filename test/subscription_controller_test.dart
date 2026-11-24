@@ -7,6 +7,7 @@ import 'package:fuzevpn_windows/app_controller.dart';
 import 'package:fuzevpn_windows/core/api_client.dart';
 import 'package:fuzevpn_windows/core/models.dart';
 import 'package:fuzevpn_windows/core/secure_store.dart';
+import 'package:fuzevpn_windows/core/split_tunnel.dart';
 import 'package:fuzevpn_windows/core/windows_update_controller.dart';
 
 import 'subscription_models_test.dart' show subscriptionJson;
@@ -43,6 +44,9 @@ class _Store extends fixtures.ProbeStore {
     webRtcProtection: true,
     automaticReconnect: automaticReconnectEnabled,
   );
+  @override
+  Future<SplitTunnelSettings> splitTunnelSettings() async =>
+      SplitTunnelSettings.disabled;
   @override
   Future<String?> token() async {
     await tokenGate?.future;

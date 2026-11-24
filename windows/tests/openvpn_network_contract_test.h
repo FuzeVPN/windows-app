@@ -67,6 +67,33 @@ inline void OpenVpnNetworkContractTests() {
         check(!BuildActivationNetworkContract({invalid}, {"10.1.0.1"}, false, &single),
             "malformed CIDR cannot enter a network contract");
     }
+    ActivationNetworkContract excluded;
+    check(BuildActivationNetworkContract({"10.20.0.2/32"}, {"10.20.0.1"}, false, &excluded) &&
+        SetActivationContractRoutes({"10.20.0.1/32"}, true, &excluded) &&
+        excluded.expected.routes == std::vector<std::string>({"0.0.0.0/1", "128.0.0.0/1", "10.20.0.1/32"}),
+        "split exclusion keeps the full tunnel and adds the VPN DNS host route");
+    auto excluded_push = excluded.expected;
+    check(!ActivationNetworkContractFailures(excluded, excluded_push, {24}),
+        "pushed configuration carrying the local DNS route satisfies the split contract");
+    excluded_push.routes.pop_back();
+    check(ActivationNetworkContractFailures(excluded, excluded_push, {24}) == 4,
+        "a missing split route fails closed");
+    ActivationNetworkContract included;
+    check(BuildActivationNetworkContract({"10.20.0.2/32", "fd42::2/128"}, {"10.20.0.1"}, true, &included) &&
+        SetActivationContractRoutes({"198.51.100.0/24", "2001:DB8:0:0:0:0:0:0/32", "10.20.0.1/32"},
+            false, &included) &&
+        included.expected.routes ==
+            std::vector<std::string>({"198.51.100.0/24", "2001:db8::/32", "10.20.0.1/32"}),
+        "split inclusion replaces the half-default routes with canonical listed routes");
+    auto included_push = included.expected;
+    included_push.routes.push_back("0.0.0.0/1");
+    check(!ActivationNetworkContractFailures(included, included_push, {24, 64}),
+        "extra pushed routes do not hide a satisfied inclusion contract");
+    ActivationNetworkContract disabled;
+    check(!SetActivationContractRoutes({"198.51.100.0/33"}, false, &included) &&
+        !SetActivationContractRoutes({"198.51.100.0/24"}, false, nullptr) &&
+        !SetActivationContractRoutes({"198.51.100.0/24"}, false, &disabled),
+        "malformed split routes and absent contracts are rejected");
     check(!BuildActivationNetworkContract({"10.1.0.2/24"}, {"10.1.0.1"}, true, &single) &&
         !BuildActivationNetworkContract({"10.1.0.2/24", "fd42::2/128"}, {"10.1.0.1"}, false, &single) &&
         !BuildActivationNetworkContract({"10.1.0.2/24", "fd42::2/129"}, {"10.1.0.1"}, true, &single),

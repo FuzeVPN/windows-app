@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fuzevpn_windows/app_controller.dart';
 import 'package:fuzevpn_windows/core/models.dart';
+import 'package:fuzevpn_windows/core/split_tunnel.dart';
 import 'package:fuzevpn_windows/l10n/app_localizations.dart';
 import 'package:fuzevpn_windows/main.dart';
 
@@ -464,6 +465,89 @@ void main() {
       find.widgetWithText(SwitchListTile, 'Protection WebRTC'),
     );
     expect(webRtcTile.onChanged, isNull);
+    final splitTile = tester.widget<SwitchListTile>(
+      find.byKey(const ValueKey('split-tunnel-enabled')),
+    );
+    expect(splitTile.onChanged, isNull);
+    expect(
+      find.text('Déconnectez le VPN pour modifier le tunnel fractionné.'),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('configure le tunnel fractionné depuis les réglages', (
+    tester,
+  ) async {
+    final controller = TestController()
+      ..locations = locations
+      ..isLoadingLocations = false;
+    await pumpApp(tester, controller);
+
+    await tester.tap(find.byTooltip('Réglages'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('settings-category-privacy')));
+    await tester.pumpAndSettle();
+    expect(find.text('Tunnel fractionné'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('split-tunnel-range-field')),
+      findsNothing,
+    );
+
+    final enable = find.byKey(const ValueKey('split-tunnel-enabled'));
+    await tester.ensureVisible(enable);
+    await tester.tap(enable);
+    await tester.pumpAndSettle();
+    expect(controller.splitTunnel.enabled, isTrue);
+    expect(find.text('Aucune adresse exclue pour l’instant.'), findsOneWidget);
+
+    final field = find.byKey(const ValueKey('split-tunnel-range-field'));
+    final add = find.byKey(const ValueKey('split-tunnel-add'));
+    await tester.ensureVisible(field);
+    await tester.enterText(field, '127.0.0.1');
+    await tester.tap(add);
+    await tester.pumpAndSettle();
+    expect(find.text(SplitTunnelRange.reservedError), findsOneWidget);
+    expect(controller.splitTunnel.excludedRanges, isEmpty);
+
+    await tester.enterText(field, '192.168.1.5/24');
+    await tester.tap(add);
+    await tester.pumpAndSettle();
+    expect(find.text(SplitTunnelRange.reservedError), findsNothing);
+    expect(controller.splitTunnel.excludedRanges.map((range) => range.cidr), [
+      '192.168.1.0/24',
+    ]);
+    expect(
+      find.byKey(const ValueKey('split-tunnel-range-192.168.1.0/24')),
+      findsOneWidget,
+    );
+
+    final lan = find.byKey(const ValueKey('split-tunnel-lan'));
+    await tester.ensureVisible(lan);
+    await tester.tap(lan);
+    await tester.pumpAndSettle();
+    expect(controller.splitTunnel.allowLocalNetwork, isTrue);
+
+    await tester.ensureVisible(find.text('Seulement via le VPN'));
+    await tester.tap(find.text('Seulement via le VPN'));
+    await tester.pumpAndSettle();
+    expect(controller.splitTunnel.mode, SplitTunnelMode.include);
+    expect(find.byKey(const ValueKey('split-tunnel-lan')), findsNothing);
+    expect(
+      find.text(
+        'Ajoutez au moins une adresse : sinon, tout le trafic passe par le VPN.',
+      ),
+      findsOneWidget,
+    );
+    expect(controller.splitTunnel.effectiveMode, 'off');
+
+    final remove = find.byTooltip('Retirer');
+    expect(remove, findsNothing);
+    await tester.tap(find.text('Exclure du VPN'));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.byTooltip('Retirer'));
+    await tester.tap(find.byTooltip('Retirer'));
+    await tester.pumpAndSettle();
+    expect(controller.splitTunnel.excludedRanges, isEmpty);
   });
 
   testWidgets(
@@ -589,6 +673,12 @@ class TestController extends AppController {
   @override
   Future<void> selectLocation(Location value) async {
     selectedLocation = value;
+    notifyListeners();
+  }
+
+  @override
+  Future<void> setSplitTunnel(SplitTunnelSettings value) async {
+    splitTunnel = value;
     notifyListeners();
   }
 

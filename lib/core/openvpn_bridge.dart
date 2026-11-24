@@ -2,6 +2,7 @@
 import 'package:flutter/services.dart';
 
 import 'models.dart';
+import 'split_tunnel.dart';
 
 /// OpenVPN private material never crosses this boundary. The CSR is public;
 /// activation material is passed once to native code for encrypted import and
@@ -20,6 +21,13 @@ class OpenVpnBridge {
     _killSwitch = killSwitch;
     _dnsProtection = dnsProtection;
     _webRtcProtection = webRtcProtection;
+  }
+
+  /// Split-tunnel arguments sent with both prepare and connect calls.
+  Map<String, Object> _splitTunnel = const {};
+
+  void configureSplitTunnel(SplitTunnelSettings settings) {
+    _splitTunnel = settings.channelArguments;
   }
 
   Future<bool> isAvailable() async =>
@@ -47,6 +55,7 @@ class OpenVpnBridge {
         'killSwitch': _killSwitch,
         'dnsProtection': _dnsProtection,
         'webRtcProtection': _webRtcProtection,
+        ..._splitTunnel,
       });
 
   /// Reuses the last native configuration without a control-plane request.
@@ -93,6 +102,7 @@ class OpenVpnBridge {
         'killSwitch': _killSwitch,
         'dnsProtection': _dnsProtection,
         'webRtcProtection': _webRtcProtection,
+        ..._splitTunnel,
       });
 
   Future<void> disconnect() => _channel.invokeMethod<void>('disconnect');

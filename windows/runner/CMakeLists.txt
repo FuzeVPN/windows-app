@@ -789,6 +789,17 @@ set_target_properties(fuzevpn_wireguard_address_validation_test PROPERTIES
 fuzevpn_add_native_test(wireguard_address_validation fuzevpn_wireguard_address_validation_test)
 set_tests_properties(wireguard_address_validation PROPERTIES TIMEOUT 10)
 
+add_executable(fuzevpn_split_tunnel_policy_test EXCLUDE_FROM_ALL
+  "../tests/split_tunnel_policy_test.cpp")
+apply_standard_settings(fuzevpn_split_tunnel_policy_test)
+target_compile_features(fuzevpn_split_tunnel_policy_test PRIVATE cxx_std_17)
+target_compile_definitions(fuzevpn_split_tunnel_policy_test PRIVATE NOMINMAX WIN32_LEAN_AND_MEAN)
+target_include_directories(fuzevpn_split_tunnel_policy_test PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
+set_target_properties(fuzevpn_split_tunnel_policy_test PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/native-tests")
+fuzevpn_add_native_test(split_tunnel_policy fuzevpn_split_tunnel_policy_test)
+set_tests_properties(split_tunnel_policy PROPERTIES TIMEOUT 10)
+
 add_executable(fuzevpn_portable_service_journal_test EXCLUDE_FROM_ALL
   "../tests/portable_service_journal_test.cpp" "update_security.cpp")
 apply_standard_settings(fuzevpn_portable_service_journal_test)

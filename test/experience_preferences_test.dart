@@ -7,6 +7,7 @@ import 'package:fuzevpn_windows/core/api_client.dart';
 import 'package:fuzevpn_windows/core/models.dart';
 import 'package:fuzevpn_windows/core/openvpn_bridge.dart';
 import 'package:fuzevpn_windows/core/secure_store.dart';
+import 'package:fuzevpn_windows/core/split_tunnel.dart';
 import 'package:fuzevpn_windows/core/window_bridge.dart';
 import 'package:fuzevpn_windows/core/wireguard_bridge.dart';
 
@@ -153,6 +154,9 @@ class _ExperienceStore extends SecureStore {
   @override
   Future<SecuritySettings> securitySettings() async =>
       SecuritySettings.secureDefaults;
+  @override
+  Future<SplitTunnelSettings> splitTunnelSettings() async =>
+      SplitTunnelSettings.disabled;
   @override
   Future<StoredLocationMigration?> locationMigration() async => null;
   @override

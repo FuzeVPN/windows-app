@@ -13,7 +13,8 @@ inline bool SameNetworkProtectionOptions(
     const NetworkProtectionOptions& right) {
   return left.kill_switch == right.kill_switch &&
          left.dns_protection == right.dns_protection &&
-         left.web_rtc_protection == right.web_rtc_protection;
+         left.web_rtc_protection == right.web_rtc_protection &&
+         fuzevpn::SameSplitTunnelPolicy(left.split, right.split);
 }
 
 struct NetworkProtectionFilterPlan {
