@@ -19,6 +19,7 @@
 #include <sstream>
 #include <ostream>
 #include <memory>
+#include <optional>
 #include <utility>
 #include <thread>
 #include <algorithm>
@@ -341,6 +342,19 @@ class Setup : public SetupBase
         if (pull.reroute_gw.ipv6 && !pull.block_ipv6) {
             expected.routes.emplace_back("::/1");
             expected.routes.emplace_back("8000::/1");
+        }
+        // FuzeVPN: every explicit tunnel route (split-tunnel ranges and VPN DNS
+        // hosts from the local profile, or pushed routes) must be installed on
+        // the adapter too. Setup skips IPv6 routes while IPv6 is blocked.
+        for (const auto& route : pull.add_routes) {
+            if (route.ipv6 && pull.block_ipv6) continue;
+            std::string address;
+            unsigned prefix = 0;
+            if (Win::CanonicalActivationAddress(route.address + "/" + std::to_string(route.prefix_length),
+                                                route.ipv6, &address, &prefix))
+                expected.routes.push_back(address + "/" + std::to_string(prefix));
+            else
+                expected.routes.push_back(route.address + "/" + std::to_string(route.prefix_length));
         }
         if (!pull.dns_options.servers.empty()) {
             for (const auto& dns : pull.dns_options.servers.begin()->second.addresses)
@@ -799,34 +813,43 @@ class Setup : public SetupBase
             }
         }
 
-        // Process exclude routes
+        // Process exclude routes. FuzeVPN: IPv6 exclusions follow the best
+        // physical IPv6 default gateway. A missing gateway leaves the range in
+        // the tunnel (never outside it) and is only noted.
         if (!pull.exclude_routes.empty())
         {
             const Util::BestGateway gw{AF_INET};
-            if (gw.defined())
+            // Read the IPv6 table only when an IPv6 exclusion needs it.
+            std::optional<Util::BestGateway> gw6;
+            for (const auto &route : pull.exclude_routes)
+                if (route.ipv6 && !pull.block_ipv6) { gw6.emplace(AF_INET6); break; }
+            bool ipv4_error = false, ipv6_error = false;
+            for (auto &route : pull.exclude_routes)
             {
-                bool ipv6_error = false;
-                for (auto &route : pull.exclude_routes)
-                {
-                    int metric = pull.route_metric_default;
-                    if (route.metric >= 0)
-                        metric = route.metric;
+                int metric = pull.route_metric_default;
+                if (route.metric >= 0)
+                    metric = route.metric;
 
-                    if (route.ipv6)
-                    {
+                if (route.ipv6)
+                {
+                    if (pull.block_ipv6 || !gw6 || !gw6->defined())
                         ipv6_error = true;
-                    }
                     else
-                    {
                         Win::AddOwnedRoutePair(create, destroy, route.address, route.prefix_length,
-                            gw.interface_index(), gw.gateway_address(), static_cast<ULONG>(metric));
-                    }
+                            gw6->interface_index(), gw6->gateway_address(), static_cast<ULONG>(metric));
                 }
-                if (ipv6_error)
-                    os << "NOTE: exclude IPv6 routes not currently supported\n";
+                else if (gw.defined())
+                {
+                    Win::AddOwnedRoutePair(create, destroy, route.address, route.prefix_length,
+                        gw.interface_index(), gw.gateway_address(), static_cast<ULONG>(metric));
+                }
+                else
+                    ipv4_error = true;
             }
-            else
+            if (ipv4_error)
                 os << "NOTE: exclude routes error: cannot detect default gateway\n";
+            if (ipv6_error)
+                os << "NOTE: exclude IPv6 routes skipped: no IPv6 default gateway\n";
         }
 
         // Process IPv4 redirect-gateway

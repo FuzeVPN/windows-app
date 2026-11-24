@@ -153,6 +153,9 @@ inline bool ValidateMethodRequest(const uint8_t* bytes, size_t size) {
       {"killSwitch", Kind::boolean, false, 0},
       {"dnsProtection", Kind::boolean, false, 0},
       {"webRtcProtection", Kind::boolean, false, 0},
+      {"splitTunnelMode", Kind::text, false, 16},
+      {"splitTunnelRoutes", Kind::text_list, false, 64, 16},
+      {"splitTunnelLan", Kind::boolean, false, 0},
   };
   constexpr Field account[] = {{"accountId", Kind::text, true, 128}};
   constexpr Field identity[] = {
@@ -170,6 +173,9 @@ inline bool ValidateMethodRequest(const uint8_t* bytes, size_t size) {
       {"killSwitch", Kind::boolean, false, 0},
       {"dnsProtection", Kind::boolean, false, 0},
       {"webRtcProtection", Kind::boolean, false, 0},
+      {"splitTunnelMode", Kind::text, false, 16},
+      {"splitTunnelRoutes", Kind::text_list, false, 64, 16},
+      {"splitTunnelLan", Kind::boolean, false, 0},
   };
   constexpr Field openvpn[] = {
       {"certificatePem", Kind::text, true, 128 * 1024},
@@ -187,6 +193,9 @@ inline bool ValidateMethodRequest(const uint8_t* bytes, size_t size) {
       {"killSwitch", Kind::boolean, false, 0},
       {"dnsProtection", Kind::boolean, false, 0},
       {"webRtcProtection", Kind::boolean, false, 0},
+      {"splitTunnelMode", Kind::text, false, 16},
+      {"splitTunnelRoutes", Kind::text_list, false, 64, 16},
+      {"splitTunnelLan", Kind::boolean, false, 0},
   };
   bool valid = false;
   if (method == "wireguard.prepareConnection" || method == "openvpn.prepareConnection") {

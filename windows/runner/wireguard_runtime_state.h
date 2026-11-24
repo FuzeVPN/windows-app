@@ -6,6 +6,8 @@
 #include <string>
 #include <vector>
 
+#include "split_tunnel_policy.h"
+
 namespace fuzevpn {
 inline std::vector<std::string> WireGuardRoutes(
     const std::vector<std::string>& allowed, bool kill_switch) {
@@ -21,6 +23,18 @@ inline std::vector<std::string> WireGuardRoutes(
     } else result.push_back(route);
   }
   return result;
+}
+
+// With an active split policy the engine never receives a /0: that would arm
+// wireguard-windows' own block-all, which our exceptions cannot override.
+inline std::vector<std::string> WireGuardRoutes(
+    const std::vector<std::string>& allowed, bool kill_switch,
+    const SplitTunnelPolicy& split, const std::vector<std::string>& dns,
+    const std::string& endpoint_host) {
+  if (!split.active()) return WireGuardRoutes(allowed, kill_switch);
+  return SplitTunnelRoutes(WireGuardRoutes(allowed, false), split,
+                           SplitTunnelHostPrefixes(dns),
+                           SplitTunnelHostPrefixes({endpoint_host}));
 }
 
 struct WireGuardPeerStats {

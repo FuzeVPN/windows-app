@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 
 import 'models.dart';
+import 'split_tunnel.dart';
 
 class SecuritySettings {
   const SecuritySettings({
@@ -88,6 +89,7 @@ class SecureStore {
   static const _favoriteLocations = 'favorite_locations';
   static const _recentLocations = 'recent_locations';
   static const _securitySettings = 'security_settings';
+  static const _splitTunnelSettings = 'split_tunnel_settings';
   static const _currentDeviceId = 'current_device_id';
   static const _migrationId = 'location_migration_id';
   static const _migrationDeviceId = 'location_migration_device_id';
@@ -208,6 +210,21 @@ class SecureStore {
 
   Future<void> saveSecuritySettings(SecuritySettings value) =>
       _write(_securitySettings, value.toStorageValue());
+
+  /// Absent means never configured: split tunneling stays off. A present
+  /// but unreadable record is an error, never silently replaced.
+  Future<SplitTunnelSettings> splitTunnelSettings() async {
+    final stored = await _read(_splitTunnelSettings);
+    if (stored == null) return SplitTunnelSettings.disabled;
+    final parsed = SplitTunnelSettings.tryParse(stored);
+    if (parsed == null) {
+      throw const FormatException('Réglages du tunnel fractionné illisibles.');
+    }
+    return parsed;
+  }
+
+  Future<void> saveSplitTunnelSettings(SplitTunnelSettings value) =>
+      _write(_splitTunnelSettings, value.toStorageValue());
 
   Future<String?> _readLegacySetting(Future<String?> Function() reader) async {
     try {

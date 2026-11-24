@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:fuzevpn_windows/app_controller.dart';
 import 'package:fuzevpn_windows/core/models.dart';
 import 'package:fuzevpn_windows/core/secure_store.dart';
+import 'package:fuzevpn_windows/core/split_tunnel.dart';
 import 'package:fuzevpn_windows/core/window_bridge.dart';
 
 import '../automatic_protocol_test.dart' as fixtures;
@@ -116,6 +117,9 @@ class ProbeStore extends SecureStore {
     webRtcProtection: true,
     automaticReconnect: true,
   );
+  @override
+  Future<SplitTunnelSettings> splitTunnelSettings() async =>
+      SplitTunnelSettings.disabled;
   @override
   Future<String?> autoConnectOnLaunch() async => autoConnect ? 'true' : 'false';
   @override

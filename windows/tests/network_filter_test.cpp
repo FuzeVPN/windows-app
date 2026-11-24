@@ -37,7 +37,7 @@ struct Condition {
 struct Filter {
   GUID layer;
   FWP_ACTION_TYPE action;
-  bool permit_priority;
+  int weight;  // FWP_UINT8 weight range, or -1 for an automatic (range 0) weight
   std::vector<Condition> conditions;
   UINT64 id = 0;
   UINT32 flags = 0;
@@ -238,7 +238,7 @@ DWORD WINAPI FakeFwpmFilterAdd0(HANDLE engine, const FWPM_FILTER0* filter,
   if (capture::fail_filter_after == 0) return ERROR_ACCESS_DENIED;
   if (capture::fail_filter_after > 0) --capture::fail_filter_after;
   capture::Filter copy{filter->layerKey, filter->action.type,
-                       filter->weight.type == FWP_UINT8, {}};
+                       filter->weight.type == FWP_UINT8 ? int(filter->weight.uint8) : -1, {}};
   copy.id = ++capture::next_filter_id;
   copy.flags = filter->flags;
   copy.key = filter->filterKey;
@@ -267,6 +267,16 @@ DWORD WINAPI FakeFwpmFilterAdd0(HANDLE engine, const FWPM_FILTER0* filter,
     else if (value.type == FWP_V6_ADDR_MASK) {
       std::copy_n(value.v6AddrMask->addr, 16, condition.address.begin());
       condition.prefix = value.v6AddrMask->prefixLength;
+    } else if (value.type == FWP_V4_ADDR_MASK) {
+      // Host byte order, as WFP defines FWP_V4_ADDR_AND_MASK.
+      const UINT32 address = value.v4AddrMask->addr, mask = value.v4AddrMask->mask;
+      for (unsigned byte = 0; byte < 4; ++byte)
+        condition.address[byte] = static_cast<UINT8>(address >> (24 - 8 * byte));
+      UINT8 bits = 0;
+      for (UINT32 rest = mask; rest & 0x80000000u; rest <<= 1) ++bits;
+      capture::Check(mask == (bits ? ~UINT32(0) << (32 - bits) : 0u) && (address & ~mask) == 0,
+                     "IPv4 address conditions use a contiguous mask and a canonical network");
+      condition.prefix = bits;
     } else capture::Check(false, "unhandled condition type in test");
     copy.conditions.push_back(condition);
   }
@@ -378,6 +388,7 @@ struct Flow {
   UINT64 local_port = 12345;
   UINT64 remote_port = 53;
   std::array<UINT8, 16> local_address{}, remote_address{};
+  bool loopback = false;
 };
 bool AddressMatches(const std::array<UINT8, 16>& address, const Condition& condition) {
   for (unsigned bit = 0; bit < condition.prefix; ++bit) {
@@ -389,10 +400,11 @@ bool AddressMatches(const std::array<UINT8, 16>& address, const Condition& condi
 bool Permitted(const Flow& flow) {
   // This models only our own sublayer's priority and conditions. It does not
   // claim to emulate Windows packet classification or other providers.
-    for (bool priority : {true, false}) {
+    // Highest weight range first; automatic weights (range 0) last.
+    for (int weight = 15; weight >= -1; --weight) {
       for (const auto& [id, filter] : active_filters) {
         (void)id;
-        if (filter.permit_priority != priority || filter.layer != flow.layer) continue;
+        if (filter.weight != weight || filter.layer != flow.layer) continue;
         bool matches = true;
         for (const auto& c : filter.conditions) {
           if (c.field == FWPM_CONDITION_ALE_APP_ID) matches &= c.app == flow.app;
@@ -402,7 +414,8 @@ bool Permitted(const Flow& flow) {
           else if (c.field == FWPM_CONDITION_IP_LOCAL_PORT) matches &= c.integer == flow.local_port;
           else if (c.field == FWPM_CONDITION_IP_REMOTE_ADDRESS) matches &= AddressMatches(flow.remote_address, c);
           else if (c.field == FWPM_CONDITION_IP_LOCAL_ADDRESS) matches &= AddressMatches(flow.local_address, c);
-          else if (c.field == FWPM_CONDITION_FLAGS) matches &= c.match == FWP_MATCH_FLAGS_NONE_SET;
+          else if (c.field == FWPM_CONDITION_FLAGS)
+            matches &= c.match == FWP_MATCH_FLAGS_NONE_SET && !flow.loopback;
           else Check(false, "unhandled condition field in test");
         }
         if (matches) {
@@ -465,6 +478,118 @@ void ControlTrafficAndDns() {
   }
   flow.local_port = 128;
   Check(!Permitted(flow), "general physical ICMPv6 echo remains blocked");
+}
+
+Flow To(const char* address, UINT16 port, UINT64 protocol = IPPROTO_TCP, bool inbound = false) {
+  const auto prefix = fuzevpn::MakeIpPrefix(address);
+  Flow flow;
+  flow.layer = prefix.ipv6
+      ? (inbound ? FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V6 : FWPM_LAYER_ALE_AUTH_CONNECT_V6)
+      : (inbound ? FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V4 : FWPM_LAYER_ALE_AUTH_CONNECT_V4);
+  flow.remote_address = prefix.bytes;
+  flow.remote_port = port;
+  flow.protocol = protocol;
+  return flow;
+}
+
+NetworkProtectionOptions SplitOptions(bool kill_switch, const char* mode,
+                                      std::vector<std::string> ranges, bool lan) {
+  NetworkProtectionOptions options{kill_switch, true, true};
+  Check(fuzevpn::DecodeSplitTunnelPolicy(mode, ranges, lan, &options.split) &&
+        options.split.active(), "split-tunnel fixture is valid");
+  return options;
+}
+
+bool SplitFiltersAreDynamic() {
+  for (const auto& [id, filter] : active_filters) {
+    (void)id;
+    if ((filter.weight == 0xD || filter.weight == 0xE) && filter.dynamic_owner == nullptr) return false;
+  }
+  return true;
+}
+
+// Split-tunnel exceptions are modelled inside our own sublayer only. Routing,
+// other providers and Windows classification are integration-test concerns.
+void SplitTunnelPolicies() {
+  const auto owner = NetworkProtectionOwner::wire_guard;
+  Check(SetNetworkProtectionUser("S-1-5-21-123-456-789-1001"), "split fixture owner");
+
+  // Exclusion with the kill switch: excluded ranges and the local network
+  // bypass the block even while the tunnel is down; DNS never does.
+  const auto exclude = SplitOptions(true, "exclude", {"203.0.113.0/24", "2001:db8::/32"}, true);
+  Check(PrepareNetworkProtection(owner, exclude), "prepare exclusion policy");
+  Check(SplitFiltersAreDynamic(), "split exceptions live only in the dynamic session");
+  Check(Permitted(To("203.0.113.10", 443)), "excluded IPv4 range bypasses the kill switch while connecting");
+  Check(Permitted(To("2001:db8::10", 443)), "excluded IPv6 range bypasses the mandatory IPv6 block");
+  Check(!Permitted(To("198.51.100.1", 443)), "other destinations stay blocked");
+  Check(!Permitted(To("2001:4860::1", 443)), "other IPv6 destinations stay blocked");
+  for (const UINT16 port : {UINT16(53), UINT16(853)}) {
+    Check(!Permitted(To("203.0.113.53", port, IPPROTO_UDP)), "DNS never leaves through an excluded range");
+    Check(!Permitted(To("192.168.1.1", port, IPPROTO_TCP)), "DNS never leaves through the local network");
+  }
+  Check(Permitted(To("192.168.1.20", 445)) && Permitted(To("192.168.1.20", 50000, IPPROTO_TCP, true)),
+        "local network reachable in both directions");
+  Check(Permitted(To("224.0.0.251", 5353, IPPROTO_UDP)) && Permitted(To("fe80::1", 5353, IPPROTO_UDP)),
+        "link-local discovery allowed with the local network");
+  Check(!Permitted(To("100.64.0.1", 443)), "carrier-grade NAT is not treated as local");
+  Check(PromoteNetworkProtection(owner, 42, exclude), "promote exclusion policy");
+  Flow tunnel = To("10.64.0.1", 53, IPPROTO_UDP);
+  tunnel.luid = 42;
+  Check(Permitted(tunnel), "VPN DNS over the tunnel outranks the split DNS block");
+  Check(Permitted(To("203.0.113.10", 443)) && !Permitted(To("198.51.100.1", 443)),
+        "exclusion unchanged once the tunnel is up");
+  const auto other = SplitOptions(true, "exclude", {"203.0.113.0/25"}, true);
+  Check(!PromoteNetworkProtection(owner, 43, other), "promotion requires the prepared split policy");
+  CloseEngine(&engine_handle); CloseEngine(&transient_engine_handle); protection_lifecycle.Clear();
+  Check(!Permitted(To("203.0.113.10", 443)) && !Permitted(To("192.168.1.20", 445)),
+        "a crash drops split exceptions and leaves the fail-closed baseline");
+  std::string restored;
+  Check(RestoreNetworkProtection(&restored) && !Permitted(To("203.0.113.10", 443)),
+        "restored persistent policy carries no split exception");
+  Check(DisableNetworkProtection(owner) && sessions.empty(), "exclusion fixture removed");
+
+  // Inclusion with the kill switch: only listed ranges are protected.
+  const auto include = SplitOptions(true, "include", {"198.51.100.0/24", "2001:db8::/32"}, false);
+  Check(PrepareNetworkProtection(owner, include), "prepare inclusion policy");
+  Check(SplitFiltersAreDynamic(), "inclusion exceptions live only in the dynamic session");
+  Check(!Permitted(To("198.51.100.10", 443)) && !Permitted(To("2001:db8::1", 443)),
+        "included ranges stay blocked while the tunnel is down");
+  Check(Permitted(To("203.0.113.10", 443)) && Permitted(To("2001:4860::1", 443)),
+        "other destinations use the physical network");
+  Check(!Permitted(To("203.0.113.53", 53, IPPROTO_UDP)), "DNS stays in the VPN in inclusion mode");
+  Check(PromoteNetworkProtection(owner, 42, include), "promote inclusion policy");
+  Flow included = To("198.51.100.10", 443);
+  included.luid = 42;
+  Check(Permitted(included), "included range permitted over the tunnel interface");
+  Check(!Permitted(To("198.51.100.10", 443)), "included range never leaves outside the tunnel");
+  Check(DisableNetworkProtection(owner) && sessions.empty(), "inclusion fixture removed");
+
+  // Without the kill switch, exclusions override WebRTC/IPv6 protections but
+  // DNS protection still keeps resolution in the tunnel.
+  const auto selective = SplitOptions(false, "exclude", {"203.0.113.0/24", "2001:db8::/32"}, false);
+  Check(PrepareNetworkProtection(owner, selective) && sessions.empty(),
+        "preparation remains a no-op without the kill switch");
+  Check(PromoteNetworkProtection(owner, 42, selective), "promote selective exclusion");
+  Check(Permitted(To("203.0.113.10", 3478, IPPROTO_UDP)), "excluded UDP bypasses WebRTC protection");
+  Check(!Permitted(To("198.51.100.1", 3478, IPPROTO_UDP)), "WebRTC protection still applies elsewhere");
+  Check(Permitted(To("2001:db8::10", 443)) && !Permitted(To("2001:4860::1", 443)),
+        "only excluded IPv6 escapes the mandatory IPv6 block");
+  Check(!Permitted(To("203.0.113.53", 53, IPPROTO_UDP)), "DNS protection covers excluded ranges");
+  Check(DisableNetworkProtection(owner) && sessions.empty(), "selective fixture removed");
+
+  // Even with every selective protection off, split tunneling keeps DNS in
+  // the VPN: WireGuard's own firewall is never armed without a /0.
+  auto unprotected = SplitOptions(false, "include", {"198.51.100.0/24"}, false);
+  unprotected.dns_protection = false;
+  unprotected.web_rtc_protection = false;
+  Check(PromoteNetworkProtection(owner, 42, unprotected), "promote unprotected inclusion");
+  Check(!Permitted(To("192.0.2.53", 53, IPPROTO_UDP)) && !Permitted(To("192.0.2.53", 853)),
+        "split DNS block applies without kill switch or DNS protection");
+  Check(Permitted(To("203.0.113.10", 443)), "non-included traffic uses the physical network");
+  Flow self = To("198.51.100.20", 445);
+  self.loopback = true;
+  Check(Permitted(self), "the machine's own included address stays reachable over loopback");
+  Check(DisableNetworkProtection(owner) && sessions.empty(), "unprotected fixture removed");
 }
 
 struct PersistedRead {
@@ -922,6 +1047,7 @@ int main() {
         sessions.empty(), "the runtime started for an explicit disconnect restores then removes the policy");
   Check(ReadPersistedAsUi().state == PersistedNetworkProtection::absent,
         "the UI then reads a confirmed absence");
+  SplitTunnelPolicies();
   std::cout << "Production network filter construction tests passed (no packets or WFP changes)\n";
   return EXIT_SUCCESS;
 }

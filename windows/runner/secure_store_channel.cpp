@@ -97,6 +97,7 @@ bool IsAllowedKey(const std::string& key) {
          key == "app_language" || key == "kill_switch" ||
          key == "dns_protection" || key == "ipv6_protection" ||
          key == "automatic_reconnect" || key == "security_settings" ||
+         key == "split_tunnel_settings" ||
          key == "auto_connect_on_launch" ||
          key == "windows_notifications" ||
          key == "favorite_locations" || key == "recent_locations" ||

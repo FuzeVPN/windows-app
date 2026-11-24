@@ -15,6 +15,7 @@ import 'package:fuzevpn_windows/core/api_client.dart';
 import 'package:fuzevpn_windows/core/models.dart';
 import 'package:fuzevpn_windows/core/openvpn_bridge.dart';
 import 'package:fuzevpn_windows/core/secure_store.dart';
+import 'package:fuzevpn_windows/core/split_tunnel.dart';
 import 'package:fuzevpn_windows/core/window_bridge.dart';
 import 'package:fuzevpn_windows/core/windows_update_controller.dart';
 import 'package:fuzevpn_windows/core/wireguard_bridge.dart';
@@ -329,6 +330,9 @@ class _CancelStore extends SecureStore {
     webRtcProtection: true,
     automaticReconnect: true,
   );
+  @override
+  Future<SplitTunnelSettings> splitTunnelSettings() async =>
+      SplitTunnelSettings.disabled;
   // Holds the write of the theme until the test releases it.
   final themeGate = _Gate();
   @override

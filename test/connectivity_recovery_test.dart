@@ -13,6 +13,7 @@ import 'package:fuzevpn_windows/core/diagnostic_log.dart';
 import 'package:fuzevpn_windows/core/models.dart';
 import 'package:fuzevpn_windows/core/openvpn_bridge.dart';
 import 'package:fuzevpn_windows/core/secure_store.dart';
+import 'package:fuzevpn_windows/core/split_tunnel.dart';
 import 'package:fuzevpn_windows/core/window_bridge.dart';
 import 'package:fuzevpn_windows/core/wireguard_bridge.dart';
 
@@ -1315,6 +1316,9 @@ class _RecoveryStore extends SecureStore {
     webRtcProtection: true,
     automaticReconnect: automaticReconnectSetting,
   );
+  @override
+  Future<SplitTunnelSettings> splitTunnelSettings() async =>
+      SplitTunnelSettings.disabled;
 
   @override
   Future<String?> token() async => 'session-not-logged';

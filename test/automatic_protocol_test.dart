@@ -10,6 +10,7 @@ import 'package:fuzevpn_windows/core/api_client.dart';
 import 'package:fuzevpn_windows/core/models.dart';
 import 'package:fuzevpn_windows/core/openvpn_bridge.dart';
 import 'package:fuzevpn_windows/core/secure_store.dart';
+import 'package:fuzevpn_windows/core/split_tunnel.dart';
 import 'package:fuzevpn_windows/core/wireguard_bridge.dart';
 
 void main() {
@@ -498,6 +499,9 @@ class AutomaticStore extends SecureStore {
   Future<void> clearOpenVpnRenewalDeviceId() async {}
   @override
   Future<String?> openVpnRenewalCsrSha256() async => null;
+  @override
+  Future<SplitTunnelSettings> splitTunnelSettings() async =>
+      SplitTunnelSettings.disabled;
   String? savedProtocol;
 
   @override

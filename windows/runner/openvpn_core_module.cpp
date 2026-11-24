@@ -706,6 +706,24 @@ static bool ConnectLocked(const OpenVpnActivationInput& a) {
     SetFailure("openvpn_profile_rejected");
     return false;
   }
+  // Split tunneling is a validated local policy (split_tunnel_policy.h). Its
+  // tunnel routes extend (exclusion) or replace (inclusion) the full-tunnel
+  // routes the activation contract later requires on the adapter.
+  const auto& split = a.protection.split;
+  const bool split_active = split.active();
+  const bool split_include = split.mode == fuzevpn::SplitTunnelMode::include;
+  std::string split_directives;
+  if (split_active) {
+    std::vector<std::string> split_routes;
+    split_directives = fuzevpn::OpenVpnSplitTunnelDirectives(
+        split, fuzevpn::SplitTunnelHostPrefixes(a.dns),
+        fuzevpn::SplitTunnelHostPrefixes({a.endpoint}), a.ipv6_enabled, &split_routes);
+    if (!openvpn::Win::SetActivationContractRoutes(split_routes, !split_include,
+                                                   &network_contract)) {
+      SetFailure("openvpn_profile_rejected");
+      return false;
+    }
+  }
   std::string certificate, ca_certificates, tls_crypt_v2;
   const auto erase_remote_material = [&]() {
     Erase(&certificate);
@@ -753,14 +771,25 @@ static bool ConnectLocked(const OpenVpnActivationInput& a) {
   // agent-managed CCD owns the static address, so duplicating them here makes
   // ClientOptions stop with UNUSED_OPTIONS_ERROR before UDP is opened.
   std::string profile = "client\ndev tun\nproto udp4\nremote " + a.endpoint + " 1194\nnobind\nremote-cert-tls server\nverify-x509-name " + a.server_name + " name\nallow-compression no\nauth-nocache\n";
-  profile += "redirect-gateway def1";
-  if (a.ipv6_enabled) profile += " ipv6";
-  if (a.protection.kill_switch) profile += " block-local";
-  profile += "\n";
+  if (!split_include) {
+    profile += "redirect-gateway def1";
+    if (a.ipv6_enabled) profile += " ipv6";
+    // OpenVPN's own block-local WFP lives in a separate sublayer, where its
+    // block would override the split exceptions. While split tunneling is
+    // active, the service policy alone is the kill switch.
+    if (a.protection.kill_switch && !split_active) profile += " block-local";
+    profile += "\n";
+  }
   if (a.protection.dns_protection)
     profile += "block-outside-dns\n";
-  if (!a.ipv6_enabled)
-    profile += "block-ipv6\npull-filter ignore \"route-ipv6\"\npull-filter ignore \"ifconfig-ipv6\"\n";
+  if (!a.ipv6_enabled) {
+    // block-ipv6 blackholes global and ULA IPv6 through the loopback
+    // interface, which would also swallow IPv6 exclusions and local ULA.
+    // With split tunneling the service policy blocks off-tunnel IPv6 instead.
+    profile += split_active ? "pull-filter ignore \"block-ipv6\"\n" : "block-ipv6\n";
+    profile += "pull-filter ignore \"route-ipv6\"\npull-filter ignore \"ifconfig-ipv6\"\n";
+  }
+  profile += split_directives;
   for (const auto& dns : a.dns) profile += "dhcp-option DNS " + dns + "\n";
   profile += "data-ciphers ";
   for (size_t i=0;i<a.ciphers.size();++i) { if (i) profile += ':'; profile += a.ciphers[i]; }

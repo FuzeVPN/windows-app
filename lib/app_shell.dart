@@ -12,6 +12,7 @@ import 'app_theme.dart';
 import 'brand_config.dart';
 import 'core/location_directory.dart';
 import 'core/models.dart';
+import 'core/split_tunnel.dart';
 import 'core/windows_update_controller.dart';
 import 'country_flag_assets.dart';
 import 'fuze_emblem.dart';
