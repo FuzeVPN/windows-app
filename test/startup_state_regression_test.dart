@@ -8,6 +8,7 @@ import 'package:fuzevpn_windows/app_controller.dart';
 import 'package:fuzevpn_windows/core/api_client.dart';
 import 'package:fuzevpn_windows/core/models.dart';
 import 'package:fuzevpn_windows/core/secure_store.dart';
+import 'package:fuzevpn_windows/core/split_tunnel.dart';
 import 'package:fuzevpn_windows/core/windows_update_controller.dart';
 import 'package:fuzevpn_windows/l10n/app_localizations.dart';
 import 'package:fuzevpn_windows/l10n/generated_catalogs.dart';
@@ -180,6 +181,9 @@ class _StartupStore extends fixture.ProbeStore {
     webRtcProtection: true,
     automaticReconnect: false,
   );
+  @override
+  Future<SplitTunnelSettings> splitTunnelSettings() async =>
+      SplitTunnelSettings.disabled;
 }
 
 class _NoUpdates extends WindowsUpdateController {

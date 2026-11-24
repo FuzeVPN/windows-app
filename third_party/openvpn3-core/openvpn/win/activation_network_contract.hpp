@@ -68,6 +68,26 @@ inline bool BuildActivationNetworkContract(const std::vector<std::string>& addre
     return true;
 }
 
+// FuzeVPN split tunneling: the adapter must carry these routes instead of,
+// or in addition to, the full-tunnel halves. Values come from the validated
+// local policy, never from PUSH_REPLY.
+inline bool SetActivationContractRoutes(const std::vector<std::string>& routes,
+                                        bool keep_full_tunnel,
+                                        ActivationNetworkContract* contract) {
+    if (!contract || !contract->enabled) return false;
+    std::vector<std::string> next;
+    if (keep_full_tunnel) next = contract->expected.routes;
+    for (const auto& route : routes) {
+        std::string address;
+        unsigned prefix = 0;
+        if (!CanonicalActivationAddress(route, route.find(':') != std::string::npos, &address, &prefix))
+            return false;
+        next.push_back(address + "/" + std::to_string(prefix));
+    }
+    contract->expected.routes = std::move(next);
+    return true;
+}
+
 inline unsigned ActivationNetworkContractFailures(const ActivationNetworkContract& contract,
                                                   const NetworkPostcondition& pushed,
                                                   const std::vector<unsigned>& prefixes) {

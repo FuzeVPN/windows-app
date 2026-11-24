@@ -315,6 +315,121 @@ FWPM_FILTER_CONDITION0 ProtocolCondition(UINT8 value) {
   return condition;
 }
 
+// Split-tunnel exceptions sit between the runtime permits (weight range 0xF:
+// engine, UI, tunnel interface, DHCP/NDP) and the auto-weighted baseline
+// blocks (range 0). Within that band, the DNS and protected-range blocks
+// outrank the bypass permits, so no exception can carry DNS off the tunnel.
+constexpr UINT8 kSplitTunnelBlockWeight = 0xE;
+constexpr UINT8 kSplitTunnelPermitWeight = 0xD;
+
+bool AddWeightedFilter(HANDLE engine, const GUID& layer, const GUID& sublayer,
+                       FWP_ACTION_TYPE action, UINT8 weight,
+                       FWPM_FILTER_CONDITION0* conditions, UINT32 condition_count,
+                       const wchar_t* name) {
+  FWPM_FILTER0 filter{};
+  filter.layerKey = layer;
+  filter.subLayerKey = sublayer;
+  filter.displayData.name = const_cast<wchar_t*>(name);
+  filter.action.type = action;
+  filter.weight.type = FWP_UINT8;
+  filter.weight.uint8 = weight;
+  filter.numFilterConditions = condition_count;
+  filter.filterCondition = conditions;
+  return AddFilter(engine, filter);
+}
+
+bool IsIpv6Layer(const GUID& layer) {
+  return layer == FWPM_LAYER_ALE_AUTH_CONNECT_V6 ||
+         layer == FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V6;
+}
+
+bool AddSplitTunnelRangeFilter(HANDLE engine, const GUID& layer, const GUID& sublayer,
+                               const fuzevpn::IpPrefix& prefix, FWP_ACTION_TYPE action,
+                               UINT8 weight, const FWPM_FILTER_CONDITION0& not_loopback,
+                               const wchar_t* name) {
+  FWPM_FILTER_CONDITION0 remote{};
+  remote.fieldKey = FWPM_CONDITION_IP_REMOTE_ADDRESS;
+  remote.matchType = FWP_MATCH_EQUAL;
+  FWP_V4_ADDR_AND_MASK ipv4{};
+  FWP_V6_ADDR_AND_MASK ipv6{};
+  if (prefix.ipv6) {
+    std::memcpy(ipv6.addr, prefix.bytes.data(), sizeof(ipv6.addr));
+    ipv6.prefixLength = prefix.length;
+    remote.conditionValue.type = FWP_V6_ADDR_MASK;
+    remote.conditionValue.v6AddrMask = &ipv6;
+  } else {
+    // FWP_V4_ADDR_AND_MASK is in host byte order.
+    ipv4.addr = (UINT32(prefix.bytes[0]) << 24) | (UINT32(prefix.bytes[1]) << 16) |
+                (UINT32(prefix.bytes[2]) << 8) | UINT32(prefix.bytes[3]);
+    ipv4.mask = prefix.length == 0 ? 0 : ~UINT32(0) << (32 - prefix.length);
+    remote.conditionValue.type = FWP_V4_ADDR_MASK;
+    remote.conditionValue.v4AddrMask = &ipv4;
+  }
+  // Traffic to this machine's own addresses stays loopback, as for every
+  // baseline block.
+  FWPM_FILTER_CONDITION0 conditions[]{remote, not_loopback};
+  return AddWeightedFilter(engine, layer, sublayer, action, weight, conditions,
+                           static_cast<UINT32>(std::size(conditions)), name);
+}
+
+// Installed only in the dynamic session, for both the prepared and tunnel
+// phases: exclusions keep working while the tunnel is down or reconnecting,
+// and vanish with the runtime so a crash falls back to the persistent policy.
+bool AddSplitTunnelFilters(HANDLE engine, const GUID& sublayer,
+                           const NetworkProtectionOptions& options,
+                           const FWPM_FILTER_CONDITION0& not_loopback) {
+  const auto& split = options.split;
+  if (!split.active()) return true;
+  const bool include = split.mode == fuzevpn::SplitTunnelMode::include;
+  std::vector<fuzevpn::IpPrefix> bypass;
+  if (!include) {
+    bypass = split.prefixes;
+    if (split.allow_lan) {
+      const auto& lan = fuzevpn::LocalNetworkPrefixes();
+      bypass.insert(bypass.end(), lan.begin(), lan.end());
+    }
+  }
+  for (const GUID& layer :
+       {FWPM_LAYER_ALE_AUTH_CONNECT_V4, FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V4,
+        FWPM_LAYER_ALE_AUTH_CONNECT_V6, FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V6}) {
+    const bool ipv6_layer = IsIpv6Layer(layer);
+    // Split tunneling always keeps DNS in the VPN, whatever the selective
+    // settings: without a /0, wireguard-windows never blocks physical DNS.
+    {
+      for (const UINT16 port : std::array<UINT16, 2>{53, 853}) {
+        FWPM_FILTER_CONDITION0 conditions[]{not_loopback,
+            NumberCondition(FWPM_CONDITION_IP_REMOTE_PORT, port)};
+        if (!AddWeightedFilter(engine, layer, sublayer, FWP_ACTION_BLOCK,
+                               kSplitTunnelBlockWeight, conditions,
+                               static_cast<UINT32>(std::size(conditions)),
+                               L"FuzeVPN — tunnel fractionné, DNS dans le VPN")) return false;
+      }
+    }
+    if (include) {
+      if (options.kill_switch) {
+        for (const auto& prefix : split.prefixes) {
+          if (prefix.ipv6 != ipv6_layer) continue;
+          if (!AddSplitTunnelRangeFilter(engine, layer, sublayer, prefix, FWP_ACTION_BLOCK,
+                                         kSplitTunnelBlockWeight, not_loopback,
+                                         L"FuzeVPN — tunnel fractionné, plage protégée")) return false;
+        }
+      }
+      auto outside = not_loopback;
+      if (!AddWeightedFilter(engine, layer, sublayer, FWP_ACTION_PERMIT,
+                             kSplitTunnelPermitWeight, &outside, 1,
+                             L"FuzeVPN — tunnel fractionné, hors VPN")) return false;
+      continue;
+    }
+    for (const auto& prefix : bypass) {
+      if (prefix.ipv6 != ipv6_layer) continue;
+      if (!AddSplitTunnelRangeFilter(engine, layer, sublayer, prefix, FWP_ACTION_PERMIT,
+                                     kSplitTunnelPermitWeight, not_loopback,
+                                     L"FuzeVPN — tunnel fractionné, exclusion")) return false;
+    }
+  }
+  return true;
+}
+
 bool AddControlTrafficPermits(HANDLE engine, const GUID& sublayer,
                               FWP_BYTE_BLOB* system_app_id) {
   FWPM_FILTER_CONDITION0 system_app{};
@@ -637,6 +752,7 @@ bool InstallFiltersLocked(bool prepared, NET_LUID interface_luid,
     if (plan.permit_tunnel) success = success && AddPermitFilter(transient, connect_layer,
         sublayer, match_interface, L"FuzeVPN — interface VPN");
   }
+  success = success && AddSplitTunnelFilters(transient, sublayer, options, not_loopback);
   if (!success || Capture(Stage::transaction_commit, FwpmTransactionCommit0(transient)) != ERROR_SUCCESS) {
     FwpmTransactionAbort0(transient);
     CloseEngine(&transient);

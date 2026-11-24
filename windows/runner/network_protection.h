@@ -5,10 +5,15 @@
 #include <cstdint>
 #include <string>
 
+#include "split_tunnel_policy.h"
+
 struct NetworkProtectionOptions {
   bool kill_switch = true;
   bool dns_protection = true;
   bool web_rtc_protection = true;
+  // Runtime-only exceptions. They live in the dynamic WFP session, so a crash
+  // or reboot leaves the persistent fail-closed baseline without them.
+  fuzevpn::SplitTunnelPolicy split;
 };
 
 enum class NetworkProtectionOwner { wire_guard, open_vpn };

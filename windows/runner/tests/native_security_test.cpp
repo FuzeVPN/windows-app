@@ -824,6 +824,29 @@ void TestProtocolValidation() {
   });
   Check(!accepted(EncodedCall("wireguard.prepareConnection", &unknown_field)),
         "unknown fields rejected");
+  flutter::EncodableList ranges;
+  for (int index = 0; index < 16; ++index) ranges.emplace_back(std::string("203.0.113.0/24"));
+  const flutter::EncodableValue split(flutter::EncodableMap{
+      {flutter::EncodableValue("killSwitch"), flutter::EncodableValue(true)},
+      {flutter::EncodableValue("splitTunnelMode"), flutter::EncodableValue("exclude")},
+      {flutter::EncodableValue("splitTunnelRoutes"), flutter::EncodableValue(ranges)},
+      {flutter::EncodableValue("splitTunnelLan"), flutter::EncodableValue(true)},
+  });
+  Check(accepted(EncodedCall("wireguard.prepareConnection", &split)) &&
+        accepted(EncodedCall("openvpn.prepareConnection", &split)),
+        "bounded split-tunnel options accepted before decoding");
+  ranges.emplace_back(std::string("198.51.100.0/24"));
+  const flutter::EncodableValue too_many(flutter::EncodableMap{
+      {flutter::EncodableValue("splitTunnelRoutes"), flutter::EncodableValue(ranges)},
+  });
+  Check(!accepted(EncodedCall("wireguard.prepareConnection", &too_many)),
+        "split-tunnel range count bounded at the IPC boundary");
+  const flutter::EncodableValue long_range(flutter::EncodableMap{
+      {flutter::EncodableValue("splitTunnelRoutes"),
+       flutter::EncodableValue(flutter::EncodableList{flutter::EncodableValue(std::string(65, '1'))})},
+  });
+  Check(!accepted(EncodedCall("openvpn.prepareConnection", &long_range)),
+        "split-tunnel range length bounded at the IPC boundary");
   Check(!accepted(EncodedCall("wireguard.unknown")), "unknown methods rejected");
   const flutter::EncodableValue too_long(flutter::EncodableMap{
       {flutter::EncodableValue("accountId"), flutter::EncodableValue(std::string(129, 'x'))},

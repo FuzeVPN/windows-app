@@ -9,6 +9,7 @@
 #include "secure_store_channel.h"
 #include "vpn_reconnect_binding.h"
 #include "wireguard_runtime_state.h"
+#include "split_tunnel_arguments.h"
 #include "wireguard_endpoint.h"
 #include "wireguard_address_validation.h"
 #include "diagnostics_network.h"
@@ -583,6 +584,17 @@ bool IsValidConfiguration(const TunnelConfiguration& configuration,
   return true;
 }
 
+std::vector<std::string> TunnelRoutes(const TunnelConfiguration& configuration) {
+  fuzevpn::WireGuardEndpoint endpoint;
+  const std::string endpoint_host =
+      fuzevpn::ParseWireGuardEndpoint(configuration.endpoint, &endpoint) && endpoint.numeric
+          ? endpoint.host : std::string();
+  return fuzevpn::WireGuardRoutes(configuration.allowed_ips,
+                                  configuration.protection.kill_switch,
+                                  configuration.protection.split,
+                                  configuration.dns, endpoint_host);
+}
+
 std::string ToWgQuickConfiguration(const TunnelConfiguration& configuration,
                                    const std::string& private_key) {
   std::string result;
@@ -610,8 +622,8 @@ std::string ToWgQuickConfiguration(const TunnelConfiguration& configuration,
   result += "\nAllowedIPs = ";
   // /0 activates WireGuard's independent firewall. Retain that second safety
   // net for kill-switch sessions; equivalent /1 routes honor an explicit opt-out.
-  const auto routes = fuzevpn::WireGuardRoutes(configuration.allowed_ips,
-                                              configuration.protection.kill_switch);
+  // Split tunneling never uses /0: that firewall would block its exceptions.
+  const auto routes = TunnelRoutes(configuration);
   for (size_t index = 0; index < routes.size(); ++index) {
     if (index != 0) {
       result += ", ";
@@ -1184,7 +1196,7 @@ bool ConnectTunnel(const TunnelConfiguration& configuration,
           if (ConvertInterfaceLuidToIndex(&luid, &index) == NO_ERROR) {
             diagnostic_network = fuzevpn_diagnostics::NetworkExpectation{
                 interface_luid, index, configuration.addresses,
-                fuzevpn::WireGuardRoutes(configuration.allowed_ips, configuration.protection.kill_switch),
+                TunnelRoutes(resolved),
                 configuration.dns, {}};
           } else diagnostic_network.reset();
           diagnostic_user = user;
@@ -1349,7 +1361,8 @@ bool DecodeConfiguration(const flutter::EncodableValue& argument,
       BoolArgument(*arguments, "dnsProtection", true);
   configuration->protection.web_rtc_protection =
       BoolArgument(*arguments, "webRtcProtection", true);
-  return true;
+  return fuzevpn::DecodeSplitTunnelArguments(*arguments,
+                                             &configuration->protection.split);
 }
 
 bool DecodeProtectionOptions(const flutter::EncodableValue& argument,
@@ -1363,7 +1376,7 @@ bool DecodeProtectionOptions(const flutter::EncodableValue& argument,
       BoolArgument(*arguments, "dnsProtection", true);
   protection->web_rtc_protection =
       BoolArgument(*arguments, "webRtcProtection", true);
-  return true;
+  return fuzevpn::DecodeSplitTunnelArguments(*arguments, &protection->split);
 }
 
 std::pair<const char*, const char*> PublicFailure(TunnelFailure failure) {

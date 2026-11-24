@@ -2,6 +2,7 @@
 #include "openvpn_tunnel.h"
 
 #include "network_protection.h"
+#include "split_tunnel_arguments.h"
 #include "network_protection_channel.h"
 #include "privileged_broker.h"
 
@@ -51,7 +52,7 @@ bool ProtectionOptions(const flutter::EncodableValue& argument,
       FlagOrDefault(*args, "dnsProtection", true);
   protection->web_rtc_protection =
       FlagOrDefault(*args, "webRtcProtection", true);
-  return true;
+  return fuzevpn::DecodeSplitTunnelArguments(*args, &protection->split);
 }
 bool StringList(const flutter::EncodableMap& args, const char* name,
                 std::vector<std::string>* values, bool required) {
@@ -96,6 +97,7 @@ bool Activation(const flutter::EncodableMap& args, OpenVpnActivationInput* input
       FlagOrDefault(args, "dnsProtection", true);
   input->protection.web_rtc_protection =
       FlagOrDefault(args, "webRtcProtection", true);
+  if (!fuzevpn::DecodeSplitTunnelArguments(args, &input->protection.split)) return false;
   for (const auto& item : *ciphers) { const auto* cipher = std::get_if<std::string>(&item); if (!cipher) return false; input->ciphers.push_back(*cipher); }
   for (const auto& item : *dns) { const auto* value = std::get_if<std::string>(&item); if (!value) return false; input->dns.push_back(*value); }
   return true;

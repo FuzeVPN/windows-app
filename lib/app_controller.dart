@@ -23,6 +23,7 @@ import 'core/models.dart';
 import 'core/openvpn_bridge.dart';
 import 'core/secure_store.dart';
 import 'core/session_renewal.dart';
+import 'core/split_tunnel.dart';
 import 'core/wireguard_bridge.dart';
 import 'core/window_bridge.dart';
 import 'core/windows_update_controller.dart';
@@ -289,6 +290,7 @@ class AppController extends ChangeNotifier {
   bool dnsProtectionEnabled = true;
   bool webRtcProtectionEnabled = true;
   bool automaticReconnectEnabled = true;
+  SplitTunnelSettings splitTunnel = SplitTunnelSettings.disabled;
   bool launchWithWindows = false;
   bool autoConnectOnLaunch = false;
   bool windowsNotificationsEnabled = true;
@@ -495,6 +497,7 @@ class AppController extends ChangeNotifier {
   String? errorMessage;
   String? deviceErrorMessage;
   String? securitySettingsError;
+  String? splitTunnelSettingsError;
   String? experienceSettingsError;
   DeviceEnrollmentIssue? deviceEnrollmentIssue;
   bool isResendingVerificationEmail = false;
@@ -851,6 +854,17 @@ class AppController extends ChangeNotifier {
       );
       securitySettingsError =
           'Les réglages de sécurité enregistrés sont illisibles. Les protections par défaut restent activées.';
+    }
+    // Split tunneling fails safe: any unreadable record leaves it off, so
+    // every destination keeps using the VPN.
+    try {
+      splitTunnel = await _store.splitTunnelSettings();
+    } catch (error) {
+      splitTunnel = SplitTunnelSettings.disabled;
+      if (error is FormatException) {
+        splitTunnelSettingsError =
+            'Les réglages du tunnel fractionné enregistrés sont illisibles. Il reste désactivé.';
+      }
     }
     launchWithWindows =
         await _traceOptionalLoad<bool>(
@@ -3523,6 +3537,8 @@ class AppController extends ChangeNotifier {
       dnsProtection: dnsProtectionEnabled,
       webRtcProtection: webRtcProtectionEnabled,
     );
+    _wireguard.configureSplitTunnel(splitTunnel);
+    _openVpn.configureSplitTunnel(splitTunnel);
   }
 
   Future<bool> _prepareConnectionNetworkProtection(
@@ -3684,6 +3700,43 @@ class AppController extends ChangeNotifier {
 
   Future<void> setAutomaticReconnect(bool value) =>
       _persistSecuritySettingsChange(automaticReconnect: value);
+
+  /// Saves the split-tunnel preferences, only while disconnected like the
+  /// other network protections. They take effect at the next connection.
+  Future<void> setSplitTunnel(SplitTunnelSettings value) {
+    if (_disposed || _isSigningOut || _isInstallingUpdate) {
+      return Future<void>.value();
+    }
+    // Shares the security queue: a connection never starts with split
+    // preferences that are not durable yet.
+    _securityPreferenceWritesPending++;
+    final operation = _securitySettingsWriteQueue.then((_) async {
+      try {
+        if (_disposed ||
+            _isSigningOut ||
+            _isInstallingUpdate ||
+            !_canSaveDisconnectedSecuritySettings) {
+          return;
+        }
+        splitTunnelSettingsError = null;
+        notifyListeners();
+        await _store.saveSplitTunnelSettings(value);
+        if (_disposed || !_canSaveDisconnectedSecuritySettings) return;
+        splitTunnel = value;
+        _configureNativeNetworkProtection();
+      } catch (_) {
+        if (_disposed) return;
+        splitTunnelSettingsError =
+            'Le tunnel fractionné n’a pas pu être enregistré.';
+      } finally {
+        _securityPreferenceWritesPending--;
+        if (!_disposed) notifyListeners();
+      }
+    });
+    _securitySettingsWriteQueue = operation;
+    notifyListeners();
+    return operation;
+  }
 
   void _ignoreConnectivityEvents(Duration duration) {
     final candidate = _now().add(duration);

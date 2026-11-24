@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MPL-2.0
 import 'package:flutter/services.dart';
 import 'models.dart';
+import 'split_tunnel.dart';
 
 /// Windows-specific implementation belongs behind this bridge. Private keys
 /// stay in the native secure store and are never returned to Dart.
@@ -18,6 +19,13 @@ class WireGuardBridge {
     _killSwitch = killSwitch;
     _dnsProtection = dnsProtection;
     _webRtcProtection = webRtcProtection;
+  }
+
+  /// Split-tunnel arguments sent with both prepare and connect calls.
+  Map<String, Object> _splitTunnel = const {};
+
+  void configureSplitTunnel(SplitTunnelSettings settings) {
+    _splitTunnel = settings.channelArguments;
   }
 
   /// Ensures the device identity is permanently bound to [accountId]. The
@@ -77,6 +85,7 @@ class WireGuardBridge {
         'killSwitch': _killSwitch,
         'dnsProtection': _dnsProtection,
         'webRtcProtection': _webRtcProtection,
+        ..._splitTunnel,
       });
 
   /// Reuses the last native configuration without a control-plane request.
@@ -96,6 +105,7 @@ class WireGuardBridge {
         'killSwitch': _killSwitch,
         'dnsProtection': _dnsProtection,
         'webRtcProtection': _webRtcProtection,
+        ..._splitTunnel,
       });
   Future<void> disconnect() => _channel.invokeMethod('disconnect');
 
