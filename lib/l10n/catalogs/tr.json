@@ -883,5 +883,12 @@
   "Renvoyer l’e-mail": "E-postayı yeniden gönder",
   "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "E-posta gönderildi. İçindeki bağlantıyı açın, ardından tekrar bağlanmayı deneyin.",
   "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "Az önce bir e-posta gönderildi. {seconds} saniye sonra yenisini isteyebilirsiniz.",
-  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "E-posta gönderilemedi. Daha sonra tekrar deneyin."
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "E-posta gönderilemedi. Daha sonra tekrar deneyin.",
+  "Reçu": "Alınan",
+  "Envoyé": "Gönderilen",
+  "{value} o": "{value}\u00a0B",
+  "{value} Ko": "{value}\u00a0KB",
+  "{value} Mo": "{value}\u00a0MB",
+  "{value} Go": "{value}\u00a0GB",
+  "{value} To": "{value}\u00a0TB"
 }

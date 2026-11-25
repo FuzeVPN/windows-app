@@ -883,5 +883,12 @@
   "Renvoyer l’e-mail": "Хатты қайта жіберу",
   "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "Хат жіберілді. Ондағы сілтемені ашып, қайта қосылып көріңіз.",
   "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "Хат жаңа ғана жіберілді. Келесісін {seconds} секундтан кейін сұрай аласыз.",
-  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "Хатты жіберу мүмкін болмады. Кейінірек қайталап көріңіз."
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "Хатты жіберу мүмкін болмады. Кейінірек қайталап көріңіз.",
+  "Reçu": "Алынды",
+  "Envoyé": "Жіберілді",
+  "{value} o": "{value}\u00a0Б",
+  "{value} Ko": "{value}\u00a0КБ",
+  "{value} Mo": "{value}\u00a0МБ",
+  "{value} Go": "{value}\u00a0ГБ",
+  "{value} To": "{value}\u00a0ТБ"
 }

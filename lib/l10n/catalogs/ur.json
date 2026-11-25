@@ -883,5 +883,12 @@
   "Renvoyer l’e-mail": "ای میل دوبارہ بھیجیں",
   "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "ای میل بھیج دی گئی۔ اس میں موجود لنک کھولیں، پھر دوبارہ کنیکٹ ہونے کی کوشش کریں۔",
   "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "ابھی ایک ای میل بھیجی گئی ہے۔ آپ {seconds} سیکنڈ بعد ایک اور ای میل کی درخواست کر سکیں گے۔",
-  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "ای میل بھیجی نہیں جا سکی۔ بعد میں دوبارہ کوشش کریں۔"
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "ای میل بھیجی نہیں جا سکی۔ بعد میں دوبارہ کوشش کریں۔",
+  "Reçu": "موصول",
+  "Envoyé": "بھیجا گیا",
+  "{value} o": "{value}\u00a0B",
+  "{value} Ko": "{value}\u00a0KB",
+  "{value} Mo": "{value}\u00a0MB",
+  "{value} Go": "{value}\u00a0GB",
+  "{value} To": "{value}\u00a0TB"
 }

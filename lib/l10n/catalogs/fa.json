@@ -883,5 +883,12 @@
   "Renvoyer l’e-mail": "ارسال مجدد ایمیل",
   "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "ایمیل ارسال شد. پیوند داخل آن را باز کنید، سپس اتصال را دوباره امتحان کنید.",
   "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "یک ایمیل هم‌اکنون ارسال شد. پس از {seconds} ثانیه می‌توانید ایمیل دیگری درخواست کنید.",
-  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "ایمیل ارسال نشد. بعداً دوباره تلاش کنید."
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "ایمیل ارسال نشد. بعداً دوباره تلاش کنید.",
+  "Reçu": "دریافتی",
+  "Envoyé": "ارسالی",
+  "{value} o": "{value}\u00a0بایت",
+  "{value} Ko": "{value}\u00a0کیلوبایت",
+  "{value} Mo": "{value}\u00a0مگابایت",
+  "{value} Go": "{value}\u00a0گیگابایت",
+  "{value} To": "{value}\u00a0ترابایت"
 }

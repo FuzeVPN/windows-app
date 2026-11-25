@@ -883,5 +883,12 @@
   "Renvoyer l’e-mail": "برېښنالیک بیا ولېږئ",
   "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "برېښنالیک ولېږل شو. په هغه کې موجود لینک پرانیزئ، او له هغه وروسته بیا د نښلېدو هڅه وکړئ.",
   "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "همدا اوس یو برېښنالیک ولېږل شو. له {seconds} ثانیو وروسته کولی شئ بل وغواړئ.",
-  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "برېښنالیک ونه لېږل شو. وروسته بیا هڅه وکړئ."
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "برېښنالیک ونه لېږل شو. وروسته بیا هڅه وکړئ.",
+  "Reçu": "ترلاسه شوي",
+  "Envoyé": "لېږل شوي",
+  "{value} o": "{value}\u00a0B",
+  "{value} Ko": "{value}\u00a0KB",
+  "{value} Mo": "{value}\u00a0MB",
+  "{value} Go": "{value}\u00a0GB",
+  "{value} To": "{value}\u00a0TB"
 }

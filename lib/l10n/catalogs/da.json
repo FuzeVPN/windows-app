@@ -883,5 +883,12 @@
   "Renvoyer l’e-mail": "Send e-mail igen",
   "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "E-mail sendt. Åbn linket i den, og prøv derefter at oprette forbindelse igen.",
   "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "Der er lige blevet sendt en e-mail. Om {seconds} s kan du anmode om en ny.",
-  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "E-mailen kunne ikke sendes. Prøv igen senere."
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "E-mailen kunne ikke sendes. Prøv igen senere.",
+  "Reçu": "Modtaget",
+  "Envoyé": "Sendt",
+  "{value} o": "{value}\u00a0B",
+  "{value} Ko": "{value}\u00a0KB",
+  "{value} Mo": "{value}\u00a0MB",
+  "{value} Go": "{value}\u00a0GB",
+  "{value} To": "{value}\u00a0TB"
 }

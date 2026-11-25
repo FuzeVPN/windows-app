@@ -883,5 +883,12 @@
   "Renvoyer l’e-mail": "Alefaso indray ny mailaka",
   "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "Voalefa ny mailaka. Sokafy ny rohy ao anatiny, avy eo andramo mifandray indray.",
   "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "Vao avy nalefa ny mailaka. Azonao atao ny mangataka iray hafa afaka {seconds} segondra.",
-  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "Tsy afaka nalefa ny mailaka. Andramo indray rehefa afaka kelikely."
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "Tsy afaka nalefa ny mailaka. Andramo indray rehefa afaka kelikely.",
+  "Reçu": "Voaray",
+  "Envoyé": "Nalefa",
+  "{value} o": "{value}\u00a0B",
+  "{value} Ko": "{value}\u00a0KB",
+  "{value} Mo": "{value}\u00a0MB",
+  "{value} Go": "{value}\u00a0GB",
+  "{value} To": "{value}\u00a0TB"
 }

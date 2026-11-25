@@ -883,5 +883,12 @@
   "Renvoyer l’e-mail": "ផ្ញើអ៊ីមែលម្ដងទៀត",
   "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "បានផ្ញើអ៊ីមែលហើយ។ បើកតំណក្នុងអ៊ីមែលនោះ រួចព្យាយាមភ្ជាប់ម្ដងទៀត។",
   "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "ទើបតែបានផ្ញើអ៊ីមែលមួយ។ អ្នកអាចស្នើសុំអ៊ីមែលមួយទៀតក្នុងរយៈពេល {seconds} វិនាទី។",
-  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "មិនអាចផ្ញើអ៊ីមែលបានទេ។ ព្យាយាមម្ដងទៀតពេលក្រោយ។"
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "មិនអាចផ្ញើអ៊ីមែលបានទេ។ ព្យាយាមម្ដងទៀតពេលក្រោយ។",
+  "Reçu": "បានទទួល",
+  "Envoyé": "បានផ្ញើ",
+  "{value} o": "{value}\u00a0B",
+  "{value} Ko": "{value}\u00a0KB",
+  "{value} Mo": "{value}\u00a0MB",
+  "{value} Go": "{value}\u00a0GB",
+  "{value} To": "{value}\u00a0TB"
 }

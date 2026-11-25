@@ -883,5 +883,12 @@
   "Renvoyer l’e-mail": "Znova odoslať e-mail",
   "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "E-mail bol odoslaný. Otvorte odkaz v e-maile a potom sa skúste znova pripojiť.",
   "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "Práve bol odoslaný e-mail. Ďalší si môžete vyžiadať o {seconds} s.",
-  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "E-mail sa nepodarilo odoslať. Skúste to znova neskôr."
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "E-mail sa nepodarilo odoslať. Skúste to znova neskôr.",
+  "Reçu": "Prijaté",
+  "Envoyé": "Odoslané",
+  "{value} o": "{value}\u00a0B",
+  "{value} Ko": "{value}\u00a0kB",
+  "{value} Mo": "{value}\u00a0MB",
+  "{value} Go": "{value}\u00a0GB",
+  "{value} To": "{value}\u00a0TB"
 }

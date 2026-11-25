@@ -883,5 +883,12 @@
   "Renvoyer l’e-mail": "E-mail újraküldése",
   "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "E-mail elküldve. Nyissa meg a benne található hivatkozást, majd próbálkozzon újra a csatlakozással.",
   "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "Az imént elküldtünk egy e-mailt. {seconds} másodperc múlva kérhet újat.",
-  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "Az e-mailt nem sikerült elküldeni. Próbálkozzon újra később."
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "Az e-mailt nem sikerült elküldeni. Próbálkozzon újra később.",
+  "Reçu": "Fogadott",
+  "Envoyé": "Küldött",
+  "{value} o": "{value}\u00a0B",
+  "{value} Ko": "{value}\u00a0kB",
+  "{value} Mo": "{value}\u00a0MB",
+  "{value} Go": "{value}\u00a0GB",
+  "{value} To": "{value}\u00a0TB"
 }

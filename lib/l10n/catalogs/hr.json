@@ -883,5 +883,12 @@
   "Renvoyer l’e-mail": "Ponovno pošalji e-poruku",
   "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "E-poruka je poslana. Otvorite poveznicu u njoj, a zatim se ponovno pokušajte povezati.",
   "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "E-poruka je upravo poslana. Novu ćete moći zatražiti za {seconds} s.",
-  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "E-poruku nije moguće poslati. Pokušajte ponovno kasnije."
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "E-poruku nije moguće poslati. Pokušajte ponovno kasnije.",
+  "Reçu": "Primljeno",
+  "Envoyé": "Poslano",
+  "{value} o": "{value}\u00a0B",
+  "{value} Ko": "{value}\u00a0KB",
+  "{value} Mo": "{value}\u00a0MB",
+  "{value} Go": "{value}\u00a0GB",
+  "{value} To": "{value}\u00a0TB"
 }

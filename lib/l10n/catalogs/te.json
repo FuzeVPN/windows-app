@@ -883,5 +883,12 @@
   "Renvoyer l’e-mail": "ఇమెయిల్‌ను మళ్లీ పంపు",
   "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "ఇమెయిల్ పంపబడింది. అందులోని లింక్‌ను తెరిచి, ఆపై మళ్లీ కనెక్ట్ కావడానికి ప్రయత్నించండి.",
   "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "ఇప్పుడే ఒక ఇమెయిల్ పంపబడింది. మీరు {seconds} సెకన్లలో మరొకదాన్ని అభ్యర్థించవచ్చు.",
-  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "ఇమెయిల్‌ను పంపడం సాధ్యం కాలేదు. తర్వాత మళ్లీ ప్రయత్నించండి."
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "ఇమెయిల్‌ను పంపడం సాధ్యం కాలేదు. తర్వాత మళ్లీ ప్రయత్నించండి.",
+  "Reçu": "స్వీకరించినది",
+  "Envoyé": "పంపినది",
+  "{value} o": "{value}\u00a0B",
+  "{value} Ko": "{value}\u00a0KB",
+  "{value} Mo": "{value}\u00a0MB",
+  "{value} Go": "{value}\u00a0GB",
+  "{value} To": "{value}\u00a0TB"
 }

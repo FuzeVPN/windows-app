@@ -883,5 +883,12 @@
   "Renvoyer l’e-mail": "Կրկին ուղարկել էլ. նամակը",
   "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "Էլ. նամակն ուղարկվեց։ Բացեք դրա մեջ եղած հղումը, ապա կրկին փորձեք միանալ։",
   "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "Էլ. նամակը հենց նոր ուղարկվեց։ Նորը կարող եք խնդրել {seconds} վայրկյանից։",
-  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "Չհաջողվեց ուղարկել էլ. նամակը։ Փորձեք ավելի ուշ։"
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "Չհաջողվեց ուղարկել էլ. նամակը։ Փորձեք ավելի ուշ։",
+  "Reçu": "Ստացված",
+  "Envoyé": "Ուղարկված",
+  "{value} o": "{value}\u00a0B",
+  "{value} Ko": "{value}\u00a0KB",
+  "{value} Mo": "{value}\u00a0MB",
+  "{value} Go": "{value}\u00a0GB",
+  "{value} To": "{value}\u00a0TB"
 }

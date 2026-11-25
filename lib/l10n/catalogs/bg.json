@@ -883,5 +883,12 @@
   "Renvoyer l’e-mail": "Изпратете имейла отново",
   "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "Имейлът е изпратен. Отворете линка в него, след което опитайте отново да се свържете.",
   "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "Току-що беше изпратен имейл. Можете да поискате нов след {seconds} сек.",
-  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "Имейлът не можа да бъде изпратен. Опитайте по-късно."
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "Имейлът не можа да бъде изпратен. Опитайте по-късно.",
+  "Reçu": "Получени",
+  "Envoyé": "Изпратени",
+  "{value} o": "{value}\u00a0Б",
+  "{value} Ko": "{value}\u00a0КБ",
+  "{value} Mo": "{value}\u00a0МБ",
+  "{value} Go": "{value}\u00a0ГБ",
+  "{value} To": "{value}\u00a0ТБ"
 }

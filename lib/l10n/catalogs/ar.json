@@ -883,5 +883,12 @@
   "Renvoyer l’e-mail": "إعادة إرسال البريد الإلكتروني",
   "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "تم إرسال البريد الإلكتروني. افتح الرابط الموجود فيه، ثم حاول الاتصال مرة أخرى.",
   "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "تم إرسال بريد إلكتروني للتو. يمكنك طلب رسالة أخرى بعد {seconds} ث.",
-  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "تعذّر إرسال البريد الإلكتروني. حاول مرة أخرى لاحقًا."
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "تعذّر إرسال البريد الإلكتروني. حاول مرة أخرى لاحقًا.",
+  "Reçu": "المستلم",
+  "Envoyé": "المرسل",
+  "{value} o": "{value}\u00a0بايت",
+  "{value} Ko": "{value}\u00a0كيلوبايت",
+  "{value} Mo": "{value}\u00a0ميغابايت",
+  "{value} Go": "{value}\u00a0غيغابايت",
+  "{value} To": "{value}\u00a0تيرابايت"
 }

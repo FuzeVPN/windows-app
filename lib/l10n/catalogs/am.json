@@ -883,5 +883,12 @@
   "Renvoyer l’e-mail": "ኢሜይሉን እንደገና ይላኩ",
   "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "ኢሜይሉ ተልኳል። በውስጡ ያለውን አገናኝ ይክፈቱ፣ ከዚያ እንደገና ለመገናኘት ይሞክሩ።",
   "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "ልክ አሁን ኢሜይል ተልኳል። ከ {seconds} ሰከንድ በኋላ ሌላ መጠየቅ ይችላሉ።",
-  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "ኢሜይሉን መላክ አልተቻለም። ቆይተው እንደገና ይሞክሩ።"
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "ኢሜይሉን መላክ አልተቻለም። ቆይተው እንደገና ይሞክሩ።",
+  "Reçu": "የተቀበለ",
+  "Envoyé": "የተላከ",
+  "{value} o": "{value}\u00a0B",
+  "{value} Ko": "{value}\u00a0KB",
+  "{value} Mo": "{value}\u00a0MB",
+  "{value} Go": "{value}\u00a0GB",
+  "{value} To": "{value}\u00a0TB"
 }

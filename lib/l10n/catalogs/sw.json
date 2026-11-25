@@ -883,5 +883,12 @@
   "Renvoyer l’e-mail": "Tuma barua pepe tena",
   "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "Barua pepe imetumwa. Fungua kiungo kilichomo, kisha ujaribu kuunganisha tena.",
   "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "Barua pepe imetumwa hivi punde. Utaweza kuomba nyingine baada ya sekunde {seconds}.",
-  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "Barua pepe haikuweza kutumwa. Jaribu tena baadaye."
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "Barua pepe haikuweza kutumwa. Jaribu tena baadaye.",
+  "Reçu": "Imepokelewa",
+  "Envoyé": "Imetumwa",
+  "{value} o": "{value}\u00a0B",
+  "{value} Ko": "{value}\u00a0KB",
+  "{value} Mo": "{value}\u00a0MB",
+  "{value} Go": "{value}\u00a0GB",
+  "{value} To": "{value}\u00a0TB"
 }

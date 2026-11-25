@@ -883,5 +883,12 @@
   "Renvoyer l’e-mail": "Tún fi ímeèlì ránṣẹ́",
   "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "A ti fi ímeèlì ránṣẹ́. Ṣí ìjápọ̀ tó wà nínú rẹ̀, lẹ́yìn náà gbìyànjú láti sopọ̀ lẹ́ẹ̀kan sí i.",
   "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "A ṣẹ̀ṣẹ̀ fi ímeèlì kan ránṣẹ́. O ó lè béèrè òmíràn lẹ́yìn ìṣẹ́jú àáyá {seconds}.",
-  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "A kò lè fi ímeèlì náà ránṣẹ́. Gbìyànjú lẹ́ẹ̀kan sí i nígbà mìíràn."
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "A kò lè fi ímeèlì náà ránṣẹ́. Gbìyànjú lẹ́ẹ̀kan sí i nígbà mìíràn.",
+  "Reçu": "Ti gba",
+  "Envoyé": "Ti fi ránṣẹ́",
+  "{value} o": "{value}\u00a0B",
+  "{value} Ko": "{value}\u00a0KB",
+  "{value} Mo": "{value}\u00a0MB",
+  "{value} Go": "{value}\u00a0GB",
+  "{value} To": "{value}\u00a0TB"
 }

@@ -318,6 +318,7 @@ bool ObserveReadServicePipeName(DWORD expected_process, std::wstring* name) {
 #include <iostream>
 #include <stdexcept>
 #include "../wireguard_endpoint.h"
+#include "../traffic_statistics.h"
 #include "installation_security_path_test.h"
 #include "broker_passive_connect_test.h"
 #include "runtime_namespace_test.h"
@@ -798,9 +799,44 @@ void TestProtocolValidation() {
   for (const char* method : {"wireguard.disconnect", "openvpn.disconnect",
        "wireguard.suspendForMigration", "openvpn.suspendForMigration",
        "wireguard.networkProtectionStatus", "openvpn.networkProtectionStatus",
-       "wireguard.resolveApiAddresses", "wireguard.reconnect", "openvpn.reconnect"}) {
+       "wireguard.resolveApiAddresses", "wireguard.reconnect", "openvpn.reconnect",
+       "wireguard.trafficStatistics", "openvpn.trafficStatistics"}) {
     Check(accepted(EncodedCall(method)), "valid no-argument application method accepted");
   }
+  const auto traffic = EncodedCall("wireguard.trafficStatistics");
+  const auto status = EncodedCall("openvpn.isConnected");
+  const flutter::EncodableValue traffic_arguments(flutter::EncodableMap{
+      {flutter::EncodableValue("killSwitch"), flutter::EncodableValue(true)},
+  });
+  const auto traffic_with_arguments =
+      EncodedCall("openvpn.trafficStatistics", &traffic_arguments);
+  Check(fuzevpn_ipc::IsTrafficStatisticsRequest(traffic.data(), traffic.size()) &&
+        !fuzevpn_ipc::IsTrafficStatisticsRequest(status.data(), status.size()) &&
+        !accepted(traffic_with_arguments) &&
+        !fuzevpn_ipc::IsTrafficStatisticsRequest(traffic_with_arguments.data(),
+                                                 traffic_with_arguments.size()),
+        "only a valid traffic counter read is served without broker stages");
+  const auto counters = fuzevpn::TrafficStatisticsValue(
+      564u * 1024u, std::numeric_limits<std::uint64_t>::max());
+  const auto& counters_map = std::get<flutter::EncodableMap>(counters);
+  Check(std::get<int64_t>(counters_map.at(flutter::EncodableValue("received"))) == 564 * 1024 &&
+        std::get<int64_t>(counters_map.at(flutter::EncodableValue("sent"))) ==
+            std::numeric_limits<int64_t>::max(),
+        "traffic counters are 64-bit and bounded to the codec's signed range");
+  const auto counters_response =
+      flutter::StandardMethodCodec::GetInstance().EncodeSuccessEnvelope(&counters);
+  Check(fuzevpn_ipc::ValidateResponseEnvelope(counters_response->data(),
+                                              counters_response->size()),
+        "traffic counter response accepted by the bounded envelope reader");
+  test_written_diagnostic.clear();
+  {
+    const QuietBrokerStages quiet(true);
+    WriteSafeStage("request_decoded");
+  }
+  Check(test_written_diagnostic.empty(), "a traffic counter read leaves no broker stage");
+  WriteSafeStage("request_decoded");
+  Check(test_written_diagnostic.find("event=request_decoded") != std::string::npos,
+        "other requests keep their broker stages");
   const flutter::EncodableValue protection(flutter::EncodableMap{
       {flutter::EncodableValue("killSwitch"), flutter::EncodableValue(true)},
       {flutter::EncodableValue("dnsProtection"), flutter::EncodableValue(false)},

@@ -883,5 +883,12 @@
   "Renvoyer l’e-mail": "Invia di nuovo l’e-mail",
   "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "E-mail inviata. Apri il link che contiene, quindi riprova a connetterti.",
   "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "È appena stata inviata un’e-mail. Potrai richiederne un’altra tra {seconds} s.",
-  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "Non è stato possibile inviare l’e-mail. Riprova più tardi."
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "Non è stato possibile inviare l’e-mail. Riprova più tardi.",
+  "Reçu": "Ricevuti",
+  "Envoyé": "Inviati",
+  "{value} o": "{value}\u00a0B",
+  "{value} Ko": "{value}\u00a0KB",
+  "{value} Mo": "{value}\u00a0MB",
+  "{value} Go": "{value}\u00a0GB",
+  "{value} To": "{value}\u00a0TB"
 }

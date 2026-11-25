@@ -883,5 +883,12 @@
   "Renvoyer l’e-mail": "ส่งอีเมลอีกครั้ง",
   "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "ส่งอีเมลแล้ว เปิดลิงก์ในอีเมล จากนั้นลองเชื่อมต่ออีกครั้ง",
   "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "เพิ่งส่งอีเมลไป คุณจะขออีเมลฉบับใหม่ได้ในอีก {seconds} วินาที",
-  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "ส่งอีเมลไม่ได้ โปรดลองอีกครั้งภายหลัง"
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "ส่งอีเมลไม่ได้ โปรดลองอีกครั้งภายหลัง",
+  "Reçu": "ได้รับ",
+  "Envoyé": "ส่งแล้ว",
+  "{value} o": "{value}\u00a0B",
+  "{value} Ko": "{value}\u00a0KB",
+  "{value} Mo": "{value}\u00a0MB",
+  "{value} Go": "{value}\u00a0GB",
+  "{value} To": "{value}\u00a0TB"
 }

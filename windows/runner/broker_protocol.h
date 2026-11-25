@@ -216,6 +216,8 @@ inline bool ValidateMethodRequest(const uint8_t* bytes, size_t size) {
              method == "openvpn.isNetworkProtectionActive" ||
              method == "wireguard.networkProtectionStatus" ||
              method == "openvpn.networkProtectionStatus" ||
+             method == "wireguard.trafficStatistics" ||
+             method == "openvpn.trafficStatistics" ||
              method == "wireguard.resolveApiAddresses" ||
              method == "wireguard.reconnect" || method == "openvpn.reconnect" ||
              method == "wireguard.disconnect" || method == "openvpn.disconnect" ||
@@ -225,6 +227,18 @@ inline bool ValidateMethodRequest(const uint8_t* bytes, size_t size) {
     valid = reader.Null();
   }
   return valid && reader.End();
+}
+
+// Traffic counters are polled while the connection page is open. Such a read
+// leaves no broker stage in the bounded diagnostic log, which would otherwise
+// rotate away the connection history within minutes.
+inline bool IsTrafficStatisticsRequest(const uint8_t* bytes, size_t size) {
+  if (!ValidateMethodRequest(bytes, size)) return false;
+  ProtocolReader reader(bytes, size);
+  std::string_view method;
+  return reader.String(80, &method) &&
+         (method == "wireguard.trafficStatistics" ||
+          method == "openvpn.trafficStatistics");
 }
 
 inline bool ValidateResponseEnvelope(const uint8_t* bytes, size_t size) {

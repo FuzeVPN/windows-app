@@ -2,6 +2,7 @@
 #ifndef RUNNER_OPENVPN_CORE_MODULE_H_
 #define RUNNER_OPENVPN_CORE_MODULE_H_
 
+#include <cstdint>
 #include <string>
 #include <vector>
 
@@ -36,6 +37,8 @@ bool OpenVpnCoreReconnect(bool* cache_available);
 // certificates, endpoints, or server-provided error text.
 std::string OpenVpnCoreFailureCode();
 bool OpenVpnCoreConnected();
+// Transport bytes of the connected client. false when no verified tunnel is up.
+bool OpenVpnCoreTrafficStatistics(std::uint64_t* received, std::uint64_t* sent);
 bool OpenVpnCoreStopped();
 fuzevpn_diagnostics::EngineObservation OpenVpnCoreDiagnostics(const std::string& user, bool observe_owned_network = false);
 bool OpenVpnCoreDiagnosticsCurrent(const std::string& user, const fuzevpn_diagnostics::EngineObservation& observation);

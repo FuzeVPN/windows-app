@@ -883,5 +883,12 @@
   "Renvoyer l’e-mail": "इमेल पुनः पठाउनुहोस्",
   "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "इमेल पठाइयो। त्यसमा भएको लिङ्क खोल्नुहोस्, त्यसपछि फेरि जडान गर्ने प्रयास गर्नुहोस्।",
   "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "भर्खरै एउटा इमेल पठाइयो। तपाईं {seconds} सेकेन्डपछि अर्को अनुरोध गर्न सक्नुहुन्छ।",
-  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "इमेल पठाउन सकिएन। पछि पुनः प्रयास गर्नुहोस्।"
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "इमेल पठाउन सकिएन। पछि पुनः प्रयास गर्नुहोस्।",
+  "Reçu": "प्राप्त",
+  "Envoyé": "पठाइएको",
+  "{value} o": "{value}\u00a0B",
+  "{value} Ko": "{value}\u00a0KB",
+  "{value} Mo": "{value}\u00a0MB",
+  "{value} Go": "{value}\u00a0GB",
+  "{value} To": "{value}\u00a0TB"
 }

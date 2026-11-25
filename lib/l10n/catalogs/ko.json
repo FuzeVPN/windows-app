@@ -883,5 +883,12 @@
   "Renvoyer l’e-mail": "이메일 재전송",
   "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "이메일을 전송했습니다. 이메일에 있는 링크를 연 후 다시 연결을 시도하세요.",
   "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "방금 이메일을 전송했습니다. {seconds}초 후에 다시 요청할 수 있습니다.",
-  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "이메일을 전송하지 못했습니다. 나중에 다시 시도하세요."
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "이메일을 전송하지 못했습니다. 나중에 다시 시도하세요.",
+  "Reçu": "수신",
+  "Envoyé": "송신",
+  "{value} o": "{value}\u00a0B",
+  "{value} Ko": "{value}\u00a0KB",
+  "{value} Mo": "{value}\u00a0MB",
+  "{value} Go": "{value}\u00a0GB",
+  "{value} To": "{value}\u00a0TB"
 }

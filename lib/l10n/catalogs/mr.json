@@ -883,5 +883,12 @@
   "Renvoyer l’e-mail": "ईमेल पुन्हा पाठवा",
   "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "ईमेल पाठवला आहे. त्यातील लिंक उघडा, नंतर पुन्हा जोडणी करण्याचा प्रयत्न करा.",
   "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "नुकताच एक ईमेल पाठवला गेला आहे. {seconds} सेकंदांनंतर तुम्ही दुसऱ्या ईमेलची विनंती करू शकाल.",
-  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "ईमेल पाठवता आला नाही. नंतर पुन्हा प्रयत्न करा."
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "ईमेल पाठवता आला नाही. नंतर पुन्हा प्रयत्न करा.",
+  "Reçu": "प्राप्त",
+  "Envoyé": "पाठवले",
+  "{value} o": "{value}\u00a0B",
+  "{value} Ko": "{value}\u00a0KB",
+  "{value} Mo": "{value}\u00a0MB",
+  "{value} Go": "{value}\u00a0GB",
+  "{value} To": "{value}\u00a0TB"
 }

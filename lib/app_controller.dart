@@ -25,6 +25,7 @@ import 'core/openvpn_bridge.dart';
 import 'core/secure_store.dart';
 import 'core/session_renewal.dart';
 import 'core/split_tunnel.dart';
+import 'core/traffic_statistics.dart';
 import 'core/wireguard_bridge.dart';
 import 'core/window_bridge.dart';
 import 'core/windows_update_controller.dart';
@@ -327,6 +328,24 @@ class AppController extends ChangeNotifier {
   }
 
   Duration get connectedDuration => _connectedOffset + _connectedClock.elapsed;
+
+  /// Traffic counters of the current tunnel, read passively for display.
+  /// Null whenever they cannot be read: they never affect the connection.
+  Future<TrafficStatistics?> trafficStatistics() async {
+    final protocol = activeProtocol;
+    if (_disposed || vpnStatus != VpnStatus.connected || protocol == null) {
+      return null;
+    }
+    try {
+      return await switch (protocol) {
+        VpnProtocol.wireGuard => _wireguard.trafficStatistics(),
+        VpnProtocol.openVpn => _openVpn.trafficStatistics(),
+      };
+    } catch (_) {
+      return null;
+    }
+  }
+
   final VpnConnectionStateMachine _connectionStateMachine =
       VpnConnectionStateMachine();
   Future<void>? _connectionCommand;

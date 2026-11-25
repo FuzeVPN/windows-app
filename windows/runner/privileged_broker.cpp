@@ -661,7 +661,20 @@ void WriteSafeOperation(const std::string& operation, const char* state) {
                              state);
 }
 
+// Set for the request being served when it only reads traffic counters (see
+// fuzevpn_ipc::IsTrafficStatisticsRequest).
+thread_local bool quiet_broker_stages = false;
+
+class QuietBrokerStages final {
+ public:
+  explicit QuietBrokerStages(bool quiet) { quiet_broker_stages = quiet; }
+  ~QuietBrokerStages() { quiet_broker_stages = false; }
+  QuietBrokerStages(const QuietBrokerStages&) = delete;
+  QuietBrokerStages& operator=(const QuietBrokerStages&) = delete;
+};
+
 void WriteSafeStage(const char* stage) {
+  if (quiet_broker_stages) return;
   constexpr const char* kAllowedStages[] = {
       "broker_ready",          "client_connected",
       "request_read",          "client_authenticated",
@@ -712,7 +725,9 @@ bool IsRuntimeStatusMethod(const std::string& name) {
       name == "wireguard.isNetworkProtectionActive" ||
       name == "openvpn.isNetworkProtectionActive" ||
       name == "wireguard.networkProtectionStatus" ||
-      name == "openvpn.networkProtectionStatus";
+      name == "openvpn.networkProtectionStatus" ||
+      name == "wireguard.trafficStatistics" ||
+      name == "openvpn.trafficStatistics";
 }
 
 bool MayReleaseRuntimeOwnership(const std::string& name, bool had_owner) {
@@ -797,6 +812,13 @@ std::vector<uint8_t> Dispatch(const std::vector<uint8_t>& request,
   if (is_resolver && runtime_ownership.OwnedByAnotherUser(user)) {
     result.Error("runtime_owned_by_another_user",
                  "The VPN is managed by another Windows account.");
+    return result.Take();
+  }
+  // Another account's traffic volume is never disclosed: no counters.
+  if ((name == "wireguard.trafficStatistics" ||
+       name == "openvpn.trafficStatistics") &&
+      runtime_ownership.OwnedByAnotherUser(user)) {
+    result.Success();
     return result.Take();
   }
   if (!is_status && !is_resolver) {
@@ -1072,6 +1094,8 @@ int RunVpnServiceLoop() {
       if (user_token != nullptr) {
         std::vector<uint8_t> request;
         if (ReadFrameOverlapped(pipe, service_stop_event, &request)) {
+          const QuietBrokerStages quiet(fuzevpn_ipc::IsTrafficStatisticsRequest(
+              request.data(), request.size()));
           bool ignored_shutdown = false;
           ScopedProtectedStoreUser user_scope(user_token);
           std::vector<uint8_t> response =
@@ -1461,6 +1485,8 @@ int RunBroker(DWORD parent_process_id, bool portable) {
         std::vector<uint8_t> request;
         const bool request_complete =
             ReadFrameOverlapped(pipe, parent, &request);
+        const QuietBrokerStages quiet(request_complete &&
+            fuzevpn_ipc::IsTrafficStatisticsRequest(request.data(), request.size()));
         if (request_complete) {
           WriteSafeStage("request_read");
         }

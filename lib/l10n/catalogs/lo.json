@@ -883,5 +883,12 @@
   "Renvoyer l’e-mail": "ສົ່ງອີເມວອີກຄັ້ງ",
   "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "ສົ່ງອີເມວແລ້ວ. ເປີດລິ້ງໃນອີເມວນັ້ນ ແລ້ວລອງເຊື່ອມຕໍ່ອີກຄັ້ງ.",
   "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "ຫາກໍ່ສົ່ງອີເມວໄປແລ້ວ. ທ່ານຈະຂໍອີເມວອີກສະບັບໄດ້ຫຼັງຈາກ {seconds} ວິນາທີ.",
-  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "ບໍ່ສາມາດສົ່ງອີເມວໄດ້. ລອງໃໝ່ພາຍຫຼັງ."
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "ບໍ່ສາມາດສົ່ງອີເມວໄດ້. ລອງໃໝ່ພາຍຫຼັງ.",
+  "Reçu": "ໄດ້ຮັບ",
+  "Envoyé": "ສົ່ງແລ້ວ",
+  "{value} o": "{value}\u00a0B",
+  "{value} Ko": "{value}\u00a0KB",
+  "{value} Mo": "{value}\u00a0MB",
+  "{value} Go": "{value}\u00a0GB",
+  "{value} To": "{value}\u00a0TB"
 }

@@ -883,5 +883,12 @@
   "Renvoyer l’e-mail": "E-mail opnieuw verzenden",
   "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "E-mail verzonden. Open de link in de e-mail en probeer daarna opnieuw verbinding te maken.",
   "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "Er is net een e-mail verzonden. Je kunt over {seconds} s een nieuwe aanvragen.",
-  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "De e-mail kon niet worden verzonden. Probeer het later opnieuw."
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "De e-mail kon niet worden verzonden. Probeer het later opnieuw.",
+  "Reçu": "Ontvangen",
+  "Envoyé": "Verzonden",
+  "{value} o": "{value}\u00a0B",
+  "{value} Ko": "{value}\u00a0KB",
+  "{value} Mo": "{value}\u00a0MB",
+  "{value} Go": "{value}\u00a0GB",
+  "{value} To": "{value}\u00a0TB"
 }
