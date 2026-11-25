@@ -489,7 +489,8 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('settings-category-privacy')));
     await tester.pumpAndSettle();
-    expect(find.text('Bloqueur de pub'), findsOneWidget);
+    expect(find.text('Protections appliquées à votre ordinateur.'), findsOne);
+    expect(find.text('Bloquer la pub et le pistage'), findsOneWidget);
     expect(controller.dnsFilterReads, 1);
 
     final toggle = find.byKey(const ValueKey('ad-blocker-enabled'));

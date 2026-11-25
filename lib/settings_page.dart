@@ -167,7 +167,7 @@ class _SettingsPageState extends State<_SettingsPage> {
           _SettingsPanel(
             icon: Icons.shield_outlined,
             title: 'Sécurité',
-            subtitle: 'Protections appliquées à WireGuard et OpenVPN.',
+            subtitle: 'Protections appliquées à votre ordinateur.',
             edgeToEdge: true,
             children: [
               SwitchListTile(
@@ -230,9 +230,10 @@ class _SettingsPageState extends State<_SettingsPage> {
                     ),
                   ),
                 ),
+              const Divider(height: 1),
+              _AdBlockerSwitch(controller: controller),
             ],
           ),
-          _AdBlockerPanel(controller: controller),
           _SplitTunnelPanel(controller: controller),
         ];
 
@@ -682,21 +683,21 @@ class _SettingsSegmentedControl<T> extends StatelessWidget {
 
 /// The account's DNS ad blocker. Unlike the protections above it, the
 /// servers apply it within seconds, so it stays editable while connected.
-class _AdBlockerPanel extends StatefulWidget {
-  const _AdBlockerPanel({required this.controller});
+class _AdBlockerSwitch extends StatefulWidget {
+  const _AdBlockerSwitch({required this.controller});
 
   final AppController controller;
 
   @override
-  State<_AdBlockerPanel> createState() => _AdBlockerPanelState();
+  State<_AdBlockerSwitch> createState() => _AdBlockerSwitchState();
 }
 
-class _AdBlockerPanelState extends State<_AdBlockerPanel> {
+class _AdBlockerSwitchState extends State<_AdBlockerSwitch> {
   @override
   void initState() {
     super.initState();
     // Another device may have changed the choice: read it each time the
-    // panel appears, once the current frame is built.
+    // switch appears, once the current frame is built.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) unawaited(widget.controller.refreshDnsFilter());
     });
@@ -711,11 +712,8 @@ class _AdBlockerPanelState extends State<_AdBlockerPanel> {
     final muted = Theme.of(context).textTheme.bodyMedium?.copyWith(
       color: Theme.of(context).colorScheme.onSurfaceVariant,
     );
-    return _SettingsPanel(
-      icon: Icons.block_outlined,
-      title: 'Bloqueur de pub',
-      subtitle: 'Réglage de votre compte, appliqué à tous vos appareils.',
-      edgeToEdge: true,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         SwitchListTile(
           key: const ValueKey('ad-blocker-enabled'),
@@ -723,7 +721,7 @@ class _AdBlockerPanelState extends State<_AdBlockerPanel> {
           title: Text(context.tr('Bloquer la pub et le pistage')),
           subtitle: Text(
             context.tr(
-              'Bloque les domaines de publicité et de pistage connus sur vos connexions WireGuard et OpenVPN, sans reconnexion. Le DNS sécurisé d’un navigateur et l’extension de navigateur ne sont pas couverts.',
+              'Bloque les domaines de publicité et de pistage connus.',
             ),
           ),
           value: controller.adBlockingShown,
