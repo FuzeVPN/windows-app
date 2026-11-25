@@ -167,7 +167,7 @@ class _SettingsPageState extends State<_SettingsPage> {
           _SettingsPanel(
             icon: Icons.shield_outlined,
             title: 'Sécurité',
-            subtitle: 'Protections appliquées à WireGuard et OpenVPN.',
+            subtitle: 'Protections appliquées à votre ordinateur.',
             edgeToEdge: true,
             children: [
               SwitchListTile(
@@ -230,6 +230,8 @@ class _SettingsPageState extends State<_SettingsPage> {
                     ),
                   ),
                 ),
+              const Divider(height: 1),
+              _AdBlockerSwitch(controller: controller),
             ],
           ),
           _SplitTunnelPanel(controller: controller),
@@ -677,6 +679,89 @@ class _SettingsSegmentedControl<T> extends StatelessWidget {
       );
     },
   );
+}
+
+/// The account's DNS ad blocker. Unlike the protections above it, the
+/// servers apply it within seconds, so it stays editable while connected.
+class _AdBlockerSwitch extends StatefulWidget {
+  const _AdBlockerSwitch({required this.controller});
+
+  final AppController controller;
+
+  @override
+  State<_AdBlockerSwitch> createState() => _AdBlockerSwitchState();
+}
+
+class _AdBlockerSwitchState extends State<_AdBlockerSwitch> {
+  @override
+  void initState() {
+    super.initState();
+    // Another device may have changed the choice: read it each time the
+    // switch appears, once the current frame is built.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) unawaited(widget.controller.refreshDnsFilter());
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = widget.controller;
+    final settings = controller.dnsFilter;
+    final busy = controller.isLoadingDnsFilter || controller.isSavingDnsFilter;
+    final error = controller.dnsFilterErrorMessage;
+    final muted = Theme.of(context).textTheme.bodyMedium?.copyWith(
+      color: Theme.of(context).colorScheme.onSurfaceVariant,
+    );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        SwitchListTile(
+          key: const ValueKey('ad-blocker-enabled'),
+          secondary: const Icon(Icons.block_outlined),
+          title: Text(context.tr('Bloquer la pub et le pistage')),
+          subtitle: Text(
+            context.tr(
+              'Bloque les domaines de publicité et de pistage connus.',
+            ),
+          ),
+          value: controller.adBlockingShown,
+          onChanged: settings == null || busy ? null : controller.setAdBlocking,
+        ),
+        if (settings != null && !settings.available)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 4, 20, 16),
+            child: Text(
+              context.tr(
+                'Le bloqueur de pub est momentanément indisponible. Votre choix est conservé.',
+              ),
+              style: muted,
+            ),
+          ),
+        if (error != null)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 4, 12, 12),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    context.tr(error),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                TextButton(
+                  key: const ValueKey('ad-blocker-retry'),
+                  onPressed: busy ? null : controller.refreshDnsFilter,
+                  child: Text(context.tr('Réessayer')),
+                ),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
 }
 
 class _SplitTunnelPanel extends StatefulWidget {

@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import '../brand_config.dart';
 import 'diagnostic_log.dart';
 import 'diagnostics_models.dart';
+import 'dns_filter.dart';
 import 'models.dart';
 import 'wireguard_bridge.dart';
 import 'windows_update_models.dart';
@@ -1073,6 +1074,25 @@ class ApiClient {
     final response = await _request('GET', '/v1/me', token: token);
     final body = await _readJsonObject(response);
     return UserProfile.fromJson(body);
+  }
+
+  Future<DnsFilterSettings> dnsFilter(String token) async {
+    final response = await _request('GET', '/v1/me/dns-filter', token: token);
+    return DnsFilterSettings.fromJson(await _readJsonObject(response));
+  }
+
+  /// Idempotent. The answer has the same form as [dnsFilter].
+  Future<DnsFilterSettings> setAdBlocking({
+    required String token,
+    required bool enabled,
+  }) async {
+    final response = await _request(
+      'PUT',
+      '/v1/me/dns-filter',
+      token: token,
+      body: {'ad_blocking': enabled},
+    );
+    return DnsFilterSettings.fromJson(await _readJsonObject(response));
   }
 
   Future<Subscription> subscription(String token) async {

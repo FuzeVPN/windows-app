@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fuzevpn_windows/app_controller.dart';
+import 'package:fuzevpn_windows/core/dns_filter.dart';
 import 'package:fuzevpn_windows/core/models.dart';
 import 'package:fuzevpn_windows/core/split_tunnel.dart';
 import 'package:fuzevpn_windows/core/traffic_statistics.dart';
@@ -521,6 +522,48 @@ void main() {
     );
   });
 
+  testWidgets('le bloqueur de pub reste modifiable pendant une connexion', (
+    tester,
+  ) async {
+    final controller = TestController()
+      ..locations = locations
+      ..isLoadingLocations = false
+      ..vpnStatus = VpnStatus.connected;
+    await pumpApp(tester, controller);
+
+    await tester.tap(find.byTooltip('Réglages'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('settings-category-privacy')));
+    await tester.pumpAndSettle();
+    expect(find.text('Protections appliquées à votre ordinateur.'), findsOne);
+    expect(find.text('Bloquer la pub et le pistage'), findsOneWidget);
+    expect(controller.dnsFilterReads, 1);
+
+    final toggle = find.byKey(const ValueKey('ad-blocker-enabled'));
+    await tester.ensureVisible(toggle);
+    expect(tester.widget<SwitchListTile>(toggle).onChanged, isNotNull);
+    await tester.tap(toggle);
+    await tester.pumpAndSettle();
+    expect(controller.adBlockingWrites, [true]);
+    expect(tester.widget<SwitchListTile>(toggle).value, isTrue);
+
+    const unavailable =
+        'Le bloqueur de pub est momentanément indisponible. Votre choix est conservé.';
+    expect(find.text(unavailable), findsNothing);
+    controller
+      ..dnsFilter = const DnsFilterSettings(adBlocking: true, available: false)
+      ..dnsFilterErrorMessage =
+          'Le bloqueur de pub n’a pas pu être modifié. Réessayez.'
+      ..notifyListeners();
+    await tester.pumpAndSettle();
+    expect(find.text(unavailable), findsOneWidget);
+    final retry = find.byKey(const ValueKey('ad-blocker-retry'));
+    await tester.ensureVisible(retry);
+    await tester.tap(retry);
+    await tester.pumpAndSettle();
+    expect(controller.dnsFilterReads, 2);
+  });
+
   testWidgets('configure le tunnel fractionné depuis les réglages', (
     tester,
   ) async {
@@ -796,6 +839,26 @@ class TestController extends AppController {
   @override
   Future<void> refreshLocations([String? savedLocation]) async {
     isLoadingLocations = false;
+    notifyListeners();
+  }
+
+  int dnsFilterReads = 0;
+  final adBlockingWrites = <bool>[];
+
+  @override
+  Future<void> refreshDnsFilter() async {
+    dnsFilterReads++;
+    dnsFilter ??= const DnsFilterSettings(adBlocking: false, available: true);
+    notifyListeners();
+  }
+
+  @override
+  Future<void> setAdBlocking(bool value) async {
+    adBlockingWrites.add(value);
+    dnsFilter = DnsFilterSettings(
+      adBlocking: value,
+      available: dnsFilter?.available ?? true,
+    );
     notifyListeners();
   }
 }
