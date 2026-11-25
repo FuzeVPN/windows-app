@@ -17,6 +17,7 @@ import 'core/diagnostics_bridge.dart';
 import 'core/diagnostics_controller.dart';
 import 'core/diagnostics_models.dart';
 import 'core/diagnostics_support.dart';
+import 'core/dns_filter.dart';
 import 'core/local_diagnostic_trace.dart';
 import 'core/location_directory.dart';
 import 'core/models.dart';
@@ -436,7 +437,10 @@ class AppController extends ChangeNotifier {
   UserProfile? _profile;
   UserProfile? get profile => _profile;
   set profile(UserProfile? value) {
-    if (_profile?.userId != value?.userId) _clearSubscriptionState();
+    if (_profile?.userId != value?.userId) {
+      _clearSubscriptionState();
+      _clearDnsFilterState();
+    }
     _profile = value;
   }
 
@@ -445,6 +449,19 @@ class AppController extends ChangeNotifier {
   String? subscriptionErrorMessage;
   Future<void>? _subscriptionRequest;
   int _subscriptionGeneration = 0;
+
+  /// The account's ad blocker, read when its settings panel appears.
+  DnsFilterSettings? dnsFilter;
+  bool isLoadingDnsFilter = false;
+  String? dnsFilterErrorMessage;
+  bool? _requestedAdBlocking;
+  Future<void>? _dnsFilterRequest;
+  int _dnsFilterGeneration = 0;
+
+  /// The switch position: the requested value while it is being saved.
+  bool get adBlockingShown =>
+      _requestedAdBlocking ?? dnsFilter?.adBlocking ?? false;
+  bool get isSavingDnsFilter => _requestedAdBlocking != null;
   List<VpnDevice> devices = const [];
   int deviceLimit = 2;
   String? _currentDeviceId;
@@ -1610,6 +1627,107 @@ class AppController extends ChangeNotifier {
     subscription = null;
     isLoadingSubscription = false;
     subscriptionErrorMessage = null;
+  }
+
+  void _clearDnsFilterState() {
+    _dnsFilterGeneration++;
+    _dnsFilterRequest = null;
+    dnsFilter = null;
+    isLoadingDnsFilter = false;
+    dnsFilterErrorMessage = null;
+    _requestedAdBlocking = null;
+  }
+
+  /// Reads the account's ad blocker. Called by its settings panel when it
+  /// appears or on retry, never by startup. Concurrent calls share a request.
+  Future<void> refreshDnsFilter() => _startDnsFilterRequest(null);
+
+  /// Saves the account's choice. It applies to every device within seconds,
+  /// connected or not. Ignored until the current value is known.
+  Future<void> setAdBlocking(bool value) {
+    if (dnsFilter == null || value == adBlockingShown) return Future.value();
+    return _startDnsFilterRequest(value);
+  }
+
+  Future<void> _startDnsFilterRequest(bool? adBlocking) {
+    if (_disposed || _isSigningOut) return Future.value();
+    if (profile == null) {
+      _clearDnsFilterState();
+      notifyListeners();
+      return Future.value();
+    }
+    final running = _dnsFilterRequest;
+    if (running != null) return running;
+    if (_subscriptionApiBlocked) {
+      dnsFilterErrorMessage = _subscriptionApiBlockedMessage;
+      notifyListeners();
+      return Future.value();
+    }
+    final epoch = _sessionEpoch;
+    final userId = profile!.userId;
+    final generation = ++_dnsFilterGeneration;
+    final completion = Completer<void>();
+    // Reserved before notifying, so that a listener joins this request.
+    _dnsFilterRequest = completion.future;
+    if (adBlocking == null) {
+      isLoadingDnsFilter = true;
+    } else {
+      _requestedAdBlocking = adBlocking;
+    }
+    dnsFilterErrorMessage = null;
+    notifyListeners();
+    unawaited(
+      _exchangeDnsFilter(
+        epoch,
+        userId,
+        generation,
+        adBlocking,
+      ).whenComplete(completion.complete),
+    );
+    return completion.future;
+  }
+
+  Future<void> _exchangeDnsFilter(
+    int epoch,
+    String userId,
+    int generation,
+    bool? adBlocking,
+  ) async {
+    bool current() =>
+        _isCurrentSession(epoch, userId) && generation == _dnsFilterGeneration;
+    final failure = adBlocking == null
+        ? 'Le réglage du bloqueur de pub ne peut pas être chargé pour le moment. Réessayez.'
+        : 'Le bloqueur de pub n’a pas pu être modifié. Réessayez.';
+    try {
+      final token = await _accessToken();
+      if (!current()) return;
+      if (token == null || token.isEmpty) {
+        dnsFilterErrorMessage = failure;
+        return;
+      }
+      final value = adBlocking == null
+          ? await _api.dnsFilter(token)
+          : await _api.setAdBlocking(token: token, enabled: adBlocking);
+      if (!current()) return;
+      dnsFilter = value;
+    } on ApiException catch (error) {
+      if (!current()) return;
+      if (error.isUnauthorized && !_hasLocalApiCause(error)) {
+        await _safe<void>(_expireLocalSession());
+      } else {
+        dnsFilterErrorMessage = _localApiFailureMessage(error) ?? failure;
+      }
+    } catch (_) {
+      if (!current()) return;
+      dnsFilterErrorMessage = failure;
+    } finally {
+      if (current()) {
+        isLoadingDnsFilter = false;
+        _requestedAdBlocking = null;
+        _dnsFilterRequest = null;
+      }
+      if (!_disposed) notifyListeners();
+    }
   }
 
   bool get _subscriptionApiBlocked =>
@@ -4402,6 +4520,7 @@ class AppController extends ChangeNotifier {
       );
       if (!current()) return false;
       _clearSubscriptionState();
+      _clearDnsFilterState();
       signInStage = 'saved_session_storage';
       final writing = _sessions.save(session.accessToken);
       _sessionTokenWrite = writing;
@@ -7157,6 +7276,7 @@ class AppController extends ChangeNotifier {
         );
       }
       _clearSubscriptionState();
+      _clearDnsFilterState();
       _sessionValidationPending = false;
       _sessionStorageUnavailable = false;
       _savedSessionVerificationErrorMessage = null;
@@ -7339,6 +7459,7 @@ class AppController extends ChangeNotifier {
     _runtimeVerificationTimer?.cancel();
     _runtimeVerificationTimer = null;
     _clearSubscriptionState();
+    _clearDnsFilterState();
     _sessionValidationPending = false;
     _sessionStorageUnavailable = false;
     _savedSessionVerificationErrorMessage = null;
