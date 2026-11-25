@@ -878,5 +878,12 @@
   "Renvoyer l’e-mail": "Xatni qayta yuborish",
   "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "Elektron xat yuborildi. Undagi havolani oching, so‘ng qayta ulanishga urinib ko‘ring.",
   "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "Hozirgina elektron xat yuborildi. Yana birini {seconds} soniyadan keyin so‘rashingiz mumkin.",
-  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "Elektron xatni yuborib bo‘lmadi. Keyinroq qayta urinib ko‘ring."
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "Elektron xatni yuborib bo‘lmadi. Keyinroq qayta urinib ko‘ring.",
+  "Reçu": "Qabul qilindi",
+  "Envoyé": "Yuborildi",
+  "{value} o": "{value}\u00a0B",
+  "{value} Ko": "{value}\u00a0KB",
+  "{value} Mo": "{value}\u00a0MB",
+  "{value} Go": "{value}\u00a0GB",
+  "{value} To": "{value}\u00a0TB"
 }

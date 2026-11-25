@@ -878,5 +878,12 @@
   "Renvoyer l’e-mail": "Nosūtīt e-pastu vēlreiz",
   "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "E-pasts nosūtīts. Atveriet tajā esošo saiti un pēc tam vēlreiz mēģiniet izveidot savienojumu.",
   "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "E-pasts tikko tika nosūtīts. Citu varēsiet pieprasīt pēc {seconds} s.",
-  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "E-pastu neizdevās nosūtīt. Mēģiniet vēlāk."
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "E-pastu neizdevās nosūtīt. Mēģiniet vēlāk.",
+  "Reçu": "Saņemts",
+  "Envoyé": "Nosūtīts",
+  "{value} o": "{value}\u00a0B",
+  "{value} Ko": "{value}\u00a0KB",
+  "{value} Mo": "{value}\u00a0MB",
+  "{value} Go": "{value}\u00a0GB",
+  "{value} To": "{value}\u00a0TB"
 }

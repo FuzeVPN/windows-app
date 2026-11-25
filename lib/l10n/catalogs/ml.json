@@ -878,5 +878,12 @@
   "Renvoyer l’e-mail": "ഇമെയിൽ വീണ്ടും അയയ്ക്കുക",
   "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "ഇമെയിൽ അയച്ചു. അതിലെ ലിങ്ക് തുറന്ന ശേഷം വീണ്ടും കണക്റ്റ് ചെയ്യാൻ ശ്രമിക്കുക.",
   "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "ഒരു ഇമെയിൽ ഇപ്പോൾ അയച്ചതേയുള്ളൂ. {seconds} സെക്കൻഡിന് ശേഷം നിങ്ങൾക്ക് മറ്റൊന്ന് അഭ്യർത്ഥിക്കാം.",
-  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "ഇമെയിൽ അയയ്ക്കാനായില്ല. പിന്നീട് വീണ്ടും ശ്രമിക്കുക."
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "ഇമെയിൽ അയയ്ക്കാനായില്ല. പിന്നീട് വീണ്ടും ശ്രമിക്കുക.",
+  "Reçu": "ലഭിച്ചത്",
+  "Envoyé": "അയച്ചത്",
+  "{value} o": "{value}\u00a0B",
+  "{value} Ko": "{value}\u00a0KB",
+  "{value} Mo": "{value}\u00a0MB",
+  "{value} Go": "{value}\u00a0GB",
+  "{value} To": "{value}\u00a0TB"
 }

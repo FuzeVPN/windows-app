@@ -878,5 +878,12 @@
   "Renvoyer l’e-mail": "Dërgo përsëri emailin",
   "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "Emaili u dërgua. Hapni lidhjen që përmban, pastaj provoni përsëri të lidheni.",
   "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "Sapo u dërgua një email. Mund të kërkoni një tjetër pas {seconds} s.",
-  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "Emaili nuk mund të dërgohej. Provoni përsëri më vonë."
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "Emaili nuk mund të dërgohej. Provoni përsëri më vonë.",
+  "Reçu": "Marrë",
+  "Envoyé": "Dërguar",
+  "{value} o": "{value}\u00a0B",
+  "{value} Ko": "{value}\u00a0KB",
+  "{value} Mo": "{value}\u00a0MB",
+  "{value} Go": "{value}\u00a0GB",
+  "{value} To": "{value}\u00a0TB"
 }

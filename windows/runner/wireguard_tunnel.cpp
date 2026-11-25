@@ -10,6 +10,7 @@
 #include "vpn_reconnect_binding.h"
 #include "wireguard_runtime_state.h"
 #include "split_tunnel_arguments.h"
+#include "traffic_statistics.h"
 #include "wireguard_endpoint.h"
 #include "wireguard_address_validation.h"
 #include "diagnostics_network.h"
@@ -1044,6 +1045,19 @@ std::optional<bool> ConnectedPeerState() {
   return active_peer.Observe(stats, GetTickCount64());
 }
 
+// Counters of the authenticated peer of the current tunnel only. Reading them
+// never feeds the peer health observation.
+flutter::EncodableValue ActivePeerTrafficStatistics() {
+  const auto running = QueryServiceRunning();
+  if (!running || !*running || active_peer.public_key().empty() ||
+      !IsTunnelNetworkProtectionActive(NetworkProtectionOwner::wire_guard))
+    return flutter::EncodableValue();
+  fuzevpn::WireGuardPeerStats stats;
+  if (!TunnelRuntime::PeerStats(active_peer.public_key(), &stats))
+    return flutter::EncodableValue();
+  return fuzevpn::TrafficStatisticsValue(stats.rx, stats.tx);
+}
+
 bool ConnectTunnel(const TunnelConfiguration& configuration,
                     TunnelFailure* failure,
                     fuzevpn_installation::RuntimeStorageFailure* storage_failure) {
@@ -1504,7 +1518,8 @@ void HandleWireGuardPrivilegedCall(
     flutter::MethodResult<flutter::EncodableValue>* result) {
   std::lock_guard<std::mutex> lock(tunnel_mutex);
   if (call.method_name() != "isConnected" && call.method_name() != "isNetworkProtectionActive" &&
-      call.method_name() != "networkProtectionStatus" && call.method_name() != "resolveApiAddresses")
+      call.method_name() != "networkProtectionStatus" && call.method_name() != "resolveApiAddresses" &&
+      call.method_name() != "trafficStatistics")
     ++diagnostic_generation;
   if (call.method_name() == "resolveApiAddresses") {
     std::vector<std::string> addresses;
@@ -1673,6 +1688,10 @@ void HandleWireGuardPrivilegedCall(
     result->Success(NetworkProtectionStatusValue(NetworkProtectionOwner::wire_guard));
     return;
   }
+  if (call.method_name() == "trafficStatistics") {
+    result->Success(ActivePeerTrafficStatistics());
+    return;
+  }
   result->NotImplemented();
 }
 
@@ -1704,6 +1723,10 @@ void RegisterWireGuardChannel(flutter::FlutterEngine* engine) {
           engine->messenger(), "com.fuzevpn/windows_wireguard",
           &flutter::StandardMethodCodec::GetInstance());
   channel->SetMethodCallHandler([](const auto& call, auto result) {
+    if (call.method_name() == "trafficStatistics") {
+      fuzevpn_runtime_absent::RoutePassiveReadOrNull("wireguard", call, std::move(result));
+      return;
+    }
     if (call.method_name() == "resolveApiAddresses") {
       bool detection_failed = false;
       const auto presence = PrivilegedRuntimePresence(&detection_failed);

@@ -2,6 +2,7 @@
 import 'package:flutter/services.dart';
 import 'models.dart';
 import 'split_tunnel.dart';
+import 'traffic_statistics.dart';
 
 /// Windows-specific implementation belongs behind this bridge. Private keys
 /// stay in the native secure store and are never returned to Dart.
@@ -53,6 +54,13 @@ class WireGuardBridge {
 
   Future<bool> isNetworkProtectionActive() async =>
       await _channel.invokeMethod<bool>('isNetworkProtectionActive') ?? false;
+
+  /// Counters of the current tunnel, read passively: never starts a runtime.
+  /// Null when no verified tunnel can be read.
+  Future<TrafficStatistics?> trafficStatistics() async =>
+      TrafficStatistics.fromChannel(
+        await _channel.invokeMethod<Object?>('trafficStatistics'),
+      );
 
   Future<NetworkProtectionStatus> networkProtectionStatus() async {
     final value = await _channel.invokeMapMethod<Object?, Object?>(

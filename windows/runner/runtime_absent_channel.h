@@ -137,6 +137,21 @@ inline void RouteStatusOrStop(
   ForwardPrivilegedCall(scope, call, std::move(result), true);
 }
 
+// A read that only means something while a runtime exists, such as traffic
+// counters. That runtime is asked passively; without one, or when its presence
+// is unknown, the answer is null. It never starts or elevates a runtime.
+inline void RoutePassiveReadOrNull(
+    const std::string& scope,
+    const flutter::MethodCall<flutter::EncodableValue>& call,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+  bool detection_failed = false;
+  if (PrivilegedRuntimePresence(&detection_failed).value_or(false)) {
+    ForwardPrivilegedCall(scope, call, std::move(result), false);
+    return;
+  }
+  result->Success();
+}
+
 }  // namespace fuzevpn_runtime_absent
 
 #endif  // RUNNER_RUNTIME_ABSENT_CHANNEL_H_

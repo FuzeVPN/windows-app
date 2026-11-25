@@ -878,5 +878,12 @@
   "Renvoyer l’e-mail": "Kirim ulang email",
   "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "Email terkirim. Buka tautan di dalamnya, lalu coba terhubung lagi.",
   "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "Email baru saja dikirim. Anda dapat meminta email lain dalam {seconds} detik.",
-  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "Email tidak dapat dikirim. Coba lagi nanti."
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "Email tidak dapat dikirim. Coba lagi nanti.",
+  "Reçu": "Diterima",
+  "Envoyé": "Dikirim",
+  "{value} o": "{value}\u00a0B",
+  "{value} Ko": "{value}\u00a0KB",
+  "{value} Mo": "{value}\u00a0MB",
+  "{value} Go": "{value}\u00a0GB",
+  "{value} To": "{value}\u00a0TB"
 }

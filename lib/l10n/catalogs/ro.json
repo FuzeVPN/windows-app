@@ -878,5 +878,12 @@
   "Renvoyer l’e-mail": "Retrimiteți e-mailul",
   "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "E-mail trimis. Deschideți linkul din acesta, apoi încercați din nou să vă conectați la VPN.",
   "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "Tocmai a fost trimis un e-mail. Veți putea solicita altul peste {seconds} s.",
-  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "E-mailul nu a putut fi trimis. Încercați din nou mai târziu."
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "E-mailul nu a putut fi trimis. Încercați din nou mai târziu.",
+  "Reçu": "Primit",
+  "Envoyé": "Trimis",
+  "{value} o": "{value}\u00a0B",
+  "{value} Ko": "{value}\u00a0KB",
+  "{value} Mo": "{value}\u00a0MB",
+  "{value} Go": "{value}\u00a0GB",
+  "{value} To": "{value}\u00a0TB"
 }

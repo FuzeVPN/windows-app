@@ -878,5 +878,12 @@
   "Renvoyer l’e-mail": "Hantar semula e-mel",
   "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "E-mel telah dihantar. Buka pautan di dalamnya, kemudian cuba menyambung lagi.",
   "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "E-mel baru sahaja dihantar. Anda boleh meminta e-mel lain dalam {seconds} saat.",
-  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "E-mel tidak dapat dihantar. Cuba lagi kemudian."
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "E-mel tidak dapat dihantar. Cuba lagi kemudian.",
+  "Reçu": "Diterima",
+  "Envoyé": "Dihantar",
+  "{value} o": "{value}\u00a0B",
+  "{value} Ko": "{value}\u00a0KB",
+  "{value} Mo": "{value}\u00a0MB",
+  "{value} Go": "{value}\u00a0GB",
+  "{value} To": "{value}\u00a0TB"
 }

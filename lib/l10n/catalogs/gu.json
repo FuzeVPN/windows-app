@@ -878,5 +878,12 @@
   "Renvoyer l’e-mail": "ઇમેઇલ ફરી મોકલો",
   "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "ઇમેઇલ મોકલવામાં આવ્યો છે. તેમાંની લિંક ખોલો, પછી ફરી કનેક્ટ કરવાનો પ્રયાસ કરો.",
   "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "હમણાં જ એક ઇમેઇલ મોકલવામાં આવ્યો છે. તમે {seconds} સેકન્ડમાં બીજો ઇમેઇલ માંગી શકશો.",
-  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "ઇમેઇલ મોકલી શકાયો નથી. પછી ફરી પ્રયાસ કરો."
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "ઇમેઇલ મોકલી શકાયો નથી. પછી ફરી પ્રયાસ કરો.",
+  "Reçu": "પ્રાપ્ત",
+  "Envoyé": "મોકલેલ",
+  "{value} o": "{value}\u00a0B",
+  "{value} Ko": "{value}\u00a0KB",
+  "{value} Mo": "{value}\u00a0MB",
+  "{value} Go": "{value}\u00a0GB",
+  "{value} To": "{value}\u00a0TB"
 }

@@ -878,5 +878,12 @@
   "Renvoyer l’e-mail": "ईमेल फिर से भेजें",
   "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "ईमेल भेज दिया गया है। उसमें दिया गया लिंक खोलें, फिर दोबारा कनेक्ट करने का प्रयास करें।",
   "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "अभी-अभी एक ईमेल भेजा गया है। आप {seconds} सेकंड में दूसरा ईमेल माँग सकेंगे।",
-  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "ईमेल नहीं भेजा जा सका। बाद में फिर प्रयास करें।"
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "ईमेल नहीं भेजा जा सका। बाद में फिर प्रयास करें।",
+  "Reçu": "प्राप्त",
+  "Envoyé": "भेजा गया",
+  "{value} o": "{value}\u00a0B",
+  "{value} Ko": "{value}\u00a0KB",
+  "{value} Mo": "{value}\u00a0MB",
+  "{value} Go": "{value}\u00a0GB",
+  "{value} To": "{value}\u00a0TB"
 }

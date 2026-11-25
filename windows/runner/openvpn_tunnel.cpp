@@ -5,6 +5,7 @@
 #include "split_tunnel_arguments.h"
 #include "network_protection_channel.h"
 #include "privileged_broker.h"
+#include "traffic_statistics.h"
 
 #include <windows.h>
 
@@ -170,6 +171,17 @@ void HandleOpenVpnPrivilegedCall(
     result->Success(NetworkProtectionStatusValue(NetworkProtectionOwner::open_vpn));
     return;
   }
+  if (call.method_name() == "trafficStatistics") {
+#ifdef FUZEVPN_ENABLE_OPENVPN3_CORE
+    std::uint64_t received = 0, sent = 0;
+    if (OpenVpnCoreTrafficStatistics(&received, &sent)) {
+      result->Success(fuzevpn::TrafficStatisticsValue(received, sent));
+      return;
+    }
+#endif
+    result->Success();
+    return;
+  }
   if (call.method_name() == "reconnect") {
 #ifdef FUZEVPN_ENABLE_OPENVPN3_CORE
     bool cache_available = false;
@@ -270,6 +282,10 @@ void RegisterOpenVpnChannel(flutter::FlutterEngine* engine) {
   auto channel = std::make_unique<flutter::MethodChannel<flutter::EncodableValue>>(
       engine->messenger(), "com.fuzevpn/windows_openvpn", &flutter::StandardMethodCodec::GetInstance());
   channel->SetMethodCallHandler([](const auto& call, auto result) {
+    if (call.method_name() == "trafficStatistics") {
+      fuzevpn_runtime_absent::RoutePassiveReadOrNull("openvpn", call, std::move(result));
+      return;
+    }
     if (call.method_name() == "isConnected" ||
         call.method_name() == "isNetworkProtectionActive" ||
         call.method_name() == "networkProtectionStatus" ||

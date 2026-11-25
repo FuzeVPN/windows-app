@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import 'models.dart';
 import 'split_tunnel.dart';
+import 'traffic_statistics.dart';
 
 /// OpenVPN private material never crosses this boundary. The CSR is public;
 /// activation material is passed once to native code for encrypted import and
@@ -38,6 +39,13 @@ class OpenVpnBridge {
 
   Future<bool> isNetworkProtectionActive() async =>
       await _channel.invokeMethod<bool>('isNetworkProtectionActive') ?? false;
+
+  /// Counters of the current tunnel, read passively: never starts a runtime.
+  /// Null when no verified tunnel can be read.
+  Future<TrafficStatistics?> trafficStatistics() async =>
+      TrafficStatistics.fromChannel(
+        await _channel.invokeMethod<Object?>('trafficStatistics'),
+      );
 
   Future<NetworkProtectionStatus> networkProtectionStatus() async {
     final value = await _channel.invokeMapMethod<Object?, Object?>(

@@ -878,5 +878,12 @@
   "Renvoyer l’e-mail": "Sake aika imel",
   "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "An aika imel. Buɗe mahaɗin da ke cikinsa, sannan sake gwada haɗawa.",
   "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "An aika imel yanzu-yanzu. Za ka iya neman wani cikin daƙiƙa {seconds}.",
-  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "Ba a iya aika imel ɗin ba. Sake gwadawa daga baya."
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "Ba a iya aika imel ɗin ba. Sake gwadawa daga baya.",
+  "Reçu": "An karɓa",
+  "Envoyé": "An aika",
+  "{value} o": "{value}\u00a0B",
+  "{value} Ko": "{value}\u00a0KB",
+  "{value} Mo": "{value}\u00a0MB",
+  "{value} Go": "{value}\u00a0GB",
+  "{value} To": "{value}\u00a0TB"
 }

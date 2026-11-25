@@ -878,5 +878,12 @@
   "Renvoyer l’e-mail": "Znova pošlji e-sporočilo",
   "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "E-sporočilo je poslano. Odprite povezavo v njem in se nato znova poskusite povezati.",
   "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "E-sporočilo je bilo pravkar poslano. Novo lahko zahtevate čez {seconds} s.",
-  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "E-sporočila ni bilo mogoče poslati. Poskusite znova pozneje."
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "E-sporočila ni bilo mogoče poslati. Poskusite znova pozneje.",
+  "Reçu": "Prejeto",
+  "Envoyé": "Poslano",
+  "{value} o": "{value}\u00a0B",
+  "{value} Ko": "{value}\u00a0KB",
+  "{value} Mo": "{value}\u00a0MB",
+  "{value} Go": "{value}\u00a0GB",
+  "{value} To": "{value}\u00a0TB"
 }

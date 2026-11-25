@@ -878,5 +878,12 @@
   "Renvoyer l’e-mail": "ইমেইল আবার পাঠান",
   "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "ইমেইল পাঠানো হয়েছে। এতে থাকা লিংকটি খুলুন, তারপর আবার সংযুক্ত হওয়ার চেষ্টা করুন।",
   "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "এইমাত্র একটি ইমেইল পাঠানো হয়েছে। {seconds} সেকেন্ড পর আরেকটির জন্য অনুরোধ করতে পারবেন।",
-  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "ইমেইল পাঠানো যায়নি। পরে আবার চেষ্টা করুন।"
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "ইমেইল পাঠানো যায়নি। পরে আবার চেষ্টা করুন।",
+  "Reçu": "প্রাপ্ত",
+  "Envoyé": "প্রেরিত",
+  "{value} o": "{value}\u00a0B",
+  "{value} Ko": "{value}\u00a0KB",
+  "{value} Mo": "{value}\u00a0MB",
+  "{value} Go": "{value}\u00a0GB",
+  "{value} To": "{value}\u00a0TB"
 }

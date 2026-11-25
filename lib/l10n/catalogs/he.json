@@ -878,5 +878,12 @@
   "Renvoyer l’e-mail": "שליחת הדוא״ל מחדש",
   "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "הדוא״ל נשלח. יש לפתוח את הקישור שבו ולאחר מכן לנסות להתחבר שוב.",
   "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "דוא״ל נשלח זה עתה. ניתן יהיה לבקש דוא״ל נוסף בעוד {seconds} שניות.",
-  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "לא ניתן לשלוח את הדוא״ל. יש לנסות שוב מאוחר יותר."
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "לא ניתן לשלוח את הדוא״ל. יש לנסות שוב מאוחר יותר.",
+  "Reçu": "התקבל",
+  "Envoyé": "נשלח",
+  "{value} o": "{value}\u00a0B",
+  "{value} Ko": "{value}\u00a0KB",
+  "{value} Mo": "{value}\u00a0MB",
+  "{value} Go": "{value}\u00a0GB",
+  "{value} To": "{value}\u00a0TB"
 }

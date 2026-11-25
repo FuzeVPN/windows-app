@@ -878,5 +878,12 @@
   "Renvoyer l’e-mail": "重新傳送電子郵件",
   "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "電子郵件已傳送。請開啟其中的連結，然後再次嘗試連線。",
   "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "剛剛已傳送一封電子郵件。您可以在 {seconds} 秒後再次要求傳送。",
-  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "無法傳送電子郵件。請稍後重試。"
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "無法傳送電子郵件。請稍後重試。",
+  "Reçu": "已接收",
+  "Envoyé": "已傳送",
+  "{value} o": "{value}\u00a0B",
+  "{value} Ko": "{value}\u00a0KB",
+  "{value} Mo": "{value}\u00a0MB",
+  "{value} Go": "{value}\u00a0GB",
+  "{value} To": "{value}\u00a0TB"
 }

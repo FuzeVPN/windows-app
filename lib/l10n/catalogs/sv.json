@@ -878,5 +878,12 @@
   "Renvoyer l’e-mail": "Skicka e-post igen",
   "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "E-postmeddelandet har skickats. Öppna länken i det och försök sedan ansluta igen.",
   "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "Ett e-postmeddelande har just skickats. Du kan begära ett nytt om {seconds} s.",
-  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "E-postmeddelandet kunde inte skickas. Försök igen senare."
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "E-postmeddelandet kunde inte skickas. Försök igen senare.",
+  "Reçu": "Mottaget",
+  "Envoyé": "Skickat",
+  "{value} o": "{value}\u00a0B",
+  "{value} Ko": "{value}\u00a0kB",
+  "{value} Mo": "{value}\u00a0MB",
+  "{value} Go": "{value}\u00a0GB",
+  "{value} To": "{value}\u00a0TB"
 }
