@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fuzevpn_windows/app_controller.dart';
 import 'package:fuzevpn_windows/core/models.dart';
 import 'package:fuzevpn_windows/core/split_tunnel.dart';
+import 'package:fuzevpn_windows/core/traffic_statistics.dart';
 import 'package:fuzevpn_windows/l10n/app_localizations.dart';
 import 'package:fuzevpn_windows/main.dart';
 
@@ -197,6 +198,51 @@ void main() {
     expect(find.textContaining('01:0'), findsOneWidget);
     expect(find.textContaining('octet'), findsNothing);
     expect(find.textContaining('IP publique'), findsNothing);
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
+    expect(controller.trafficReads, 1);
+    expect(find.textContaining('Reçu'), findsNothing);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets('affiche le volume reçu et envoyé lu sur le tunnel', (
+    tester,
+  ) async {
+    final connectedAt = DateTime.now().subtract(const Duration(seconds: 8));
+    final controller = TestController()
+      ..locations = locations
+      ..selectedLocation = locations.first
+      ..isLoadingLocations = false
+      ..vpnStatus = VpnStatus.connected
+      ..connectedAt = connectedAt
+      ..traffic = const TrafficStatistics(
+        received: 564 * 1024,
+        sent: 20 * 1024 * 1024,
+      );
+    await pumpApp(tester, controller);
+    expect(find.textContaining('Reçu'), findsNothing);
+
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
+    expect(find.text('Reçu : 564 Ko'), findsOneWidget);
+    expect(find.text('Envoyé : 20 Mo'), findsOneWidget);
+
+    // Two seconds later the counters are read again.
+    controller.traffic = const TrafficStatistics(
+      received: 1536 * 1024,
+      sent: 20 * 1024 * 1024,
+    );
+    await tester.pump(const Duration(seconds: 2));
+    await tester.pump();
+    expect(controller.trafficReads, 2);
+    expect(find.text('Reçu : 1,5 Mo'), findsOneWidget);
+
+    // The figures of an earlier connection are never shown for a new one.
+    controller
+      ..connectedAt = DateTime.now()
+      ..notifyListeners();
+    await tester.pump();
+    expect(find.textContaining('Reçu'), findsNothing);
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
@@ -680,6 +726,15 @@ class TestController extends AppController {
   Future<void> setSplitTunnel(SplitTunnelSettings value) async {
     splitTunnel = value;
     notifyListeners();
+  }
+
+  TrafficStatistics? traffic;
+  int trafficReads = 0;
+
+  @override
+  Future<TrafficStatistics?> trafficStatistics() async {
+    trafficReads++;
+    return traffic;
   }
 
   @override

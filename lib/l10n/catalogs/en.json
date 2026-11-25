@@ -878,5 +878,12 @@
   "Renvoyer l’e-mail": "Resend email",
   "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "Email sent. Open the link it contains, then try connecting again.",
   "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "An email was just sent. You can request another one in {seconds} s.",
-  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "The email could not be sent. Try again later."
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "The email could not be sent. Try again later.",
+  "Reçu": "Received",
+  "Envoyé": "Sent",
+  "{value} o": "{value}\u00a0B",
+  "{value} Ko": "{value}\u00a0KB",
+  "{value} Mo": "{value}\u00a0MB",
+  "{value} Go": "{value}\u00a0GB",
+  "{value} To": "{value}\u00a0TB"
 }

@@ -878,5 +878,12 @@
   "Renvoyer l’e-mail": "மின்னஞ்சலை மீண்டும் அனுப்பு",
   "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "மின்னஞ்சல் அனுப்பப்பட்டது. அதிலுள்ள இணைப்பைத் திறந்து, பிறகு மீண்டும் இணைக்க முயற்சிக்கவும்.",
   "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "ஒரு மின்னஞ்சல் இப்போதுதான் அனுப்பப்பட்டது. {seconds} விநாடிகளில் மற்றொன்றைக் கோரலாம்.",
-  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "மின்னஞ்சலை அனுப்ப முடியவில்லை. பிறகு மீண்டும் முயற்சிக்கவும்."
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "மின்னஞ்சலை அனுப்ப முடியவில்லை. பிறகு மீண்டும் முயற்சிக்கவும்.",
+  "Reçu": "பெறப்பட்டது",
+  "Envoyé": "அனுப்பப்பட்டது",
+  "{value} o": "{value}\u00a0B",
+  "{value} Ko": "{value}\u00a0KB",
+  "{value} Mo": "{value}\u00a0MB",
+  "{value} Go": "{value}\u00a0GB",
+  "{value} To": "{value}\u00a0TB"
 }

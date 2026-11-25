@@ -879,6 +879,17 @@ bool OpenVpnCoreConnected() {
   return client && client->connected() &&
       IsTunnelNetworkProtectionActive(NetworkProtectionOwner::open_vpn);
 }
+bool OpenVpnCoreTrafficStatistics(std::uint64_t* received, std::uint64_t* sent) {
+  std::lock_guard<std::mutex> lock(core_mutex);
+  if (!client || !client->connected() ||
+      !IsTunnelNetworkProtectionActive(NetworkProtectionOwner::open_vpn)) return false;
+  // With DCO the core refreshes these from the driver before answering.
+  const auto stats = client->transport_stats();
+  if (stats.bytesIn < 0 || stats.bytesOut < 0) return false;
+  *received = static_cast<std::uint64_t>(stats.bytesIn);
+  *sent = static_cast<std::uint64_t>(stats.bytesOut);
+  return true;
+}
 bool OpenVpnCoreStopped() {
   std::lock_guard<std::mutex> lock(core_mutex);
   return !client && !thread.joinable() && !pending_cleanup;

@@ -878,5 +878,12 @@
   "Renvoyer l’e-mail": "Reenviar e-mail",
   "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "E-mail enviado. Abra o link contido nele e, em seguida, tente se conectar novamente.",
   "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "Um e-mail acabou de ser enviado. Você poderá solicitar outro em {seconds} s.",
-  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "Não foi possível enviar o e-mail. Tente novamente mais tarde."
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "Não foi possível enviar o e-mail. Tente novamente mais tarde.",
+  "Reçu": "Recebido",
+  "Envoyé": "Enviado",
+  "{value} o": "{value}\u00a0B",
+  "{value} Ko": "{value}\u00a0KB",
+  "{value} Mo": "{value}\u00a0MB",
+  "{value} Go": "{value}\u00a0GB",
+  "{value} To": "{value}\u00a0TB"
 }

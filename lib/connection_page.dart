@@ -485,13 +485,46 @@ class _ConnectionSummary extends StatefulWidget {
 
 class _ConnectionSummaryState extends State<_ConnectionSummary> {
   Timer? _timer;
+  // Counters read for the connection that started at [_trafficSession].
+  TrafficStatistics? _traffic;
+  DateTime? _trafficSession;
+  bool _trafficReading = false;
 
   @override
   void initState() {
     super.initState();
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      if (mounted && widget.controller.connectedAt != null) setState(() {});
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!mounted) return;
+      if (widget.controller.connectedAt != null) setState(() {});
+      // Counters are read every 2 seconds, only while this page shows a
+      // connected tunnel.
+      if (timer.tick.isOdd) unawaited(_refreshTraffic());
     });
+  }
+
+  Future<void> _refreshTraffic() async {
+    final controller = widget.controller;
+    final session = controller.connectedAt;
+    if (_trafficReading ||
+        session == null ||
+        controller.vpnStatus != VpnStatus.connected) {
+      return;
+    }
+    _trafficReading = true;
+    try {
+      final traffic = await controller.trafficStatistics();
+      if (!mounted ||
+          controller.connectedAt != session ||
+          controller.vpnStatus != VpnStatus.connected) {
+        return;
+      }
+      setState(() {
+        _traffic = traffic;
+        _trafficSession = session;
+      });
+    } finally {
+      _trafficReading = false;
+    }
   }
 
   @override
@@ -512,6 +545,12 @@ class _ConnectionSummaryState extends State<_ConnectionSummary> {
     final protocol = connected
         ? controller.activeProtocol ?? controller.vpnProtocol
         : controller.vpnProtocol;
+    final traffic =
+        connected &&
+            controller.connectedAt != null &&
+            _trafficSession == controller.connectedAt
+        ? _traffic
+        : null;
     final locationInfo = Row(
       children: [
         Container(
@@ -626,6 +665,28 @@ class _ConnectionSummaryState extends State<_ConnectionSummary> {
                   label: context.tr('Durée de connexion'),
                   value: _formatDuration(controller.connectedDuration),
                 ),
+              if (traffic != null) ...[
+                _ConnectionDetail(
+                  key: const ValueKey('connection-traffic-received'),
+                  icon: Icons.arrow_downward_rounded,
+                  label: context.tr('Reçu'),
+                  value: formatByteCount(
+                    traffic.received,
+                    Localizations.localeOf(context),
+                    context.tr,
+                  ),
+                ),
+                _ConnectionDetail(
+                  key: const ValueKey('connection-traffic-sent'),
+                  icon: Icons.arrow_upward_rounded,
+                  label: context.tr('Envoyé'),
+                  value: formatByteCount(
+                    traffic.sent,
+                    Localizations.localeOf(context),
+                    context.tr,
+                  ),
+                ),
+              ],
             ],
           ),
         ),
@@ -636,6 +697,7 @@ class _ConnectionSummaryState extends State<_ConnectionSummary> {
 
 class _ConnectionDetail extends StatelessWidget {
   const _ConnectionDetail({
+    super.key,
     required this.icon,
     required this.label,
     required this.value,

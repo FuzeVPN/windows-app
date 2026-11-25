@@ -878,5 +878,12 @@
   "Renvoyer l’e-mail": "E-poçtu yenidən göndərin",
   "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "E-poçt göndərildi. İçindəki keçidi açın, sonra yenidən qoşulmağa cəhd edin.",
   "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "E-poçt indicə göndərildi. {seconds} saniyədən sonra başqasını tələb edə bilərsiniz.",
-  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "E-poçt göndərilə bilmədi. Daha sonra yenidən cəhd edin."
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "E-poçt göndərilə bilmədi. Daha sonra yenidən cəhd edin.",
+  "Reçu": "Qəbul edildi",
+  "Envoyé": "Göndərildi",
+  "{value} o": "{value}\u00a0B",
+  "{value} Ko": "{value}\u00a0KB",
+  "{value} Mo": "{value}\u00a0MB",
+  "{value} Go": "{value}\u00a0GB",
+  "{value} To": "{value}\u00a0TB"
 }

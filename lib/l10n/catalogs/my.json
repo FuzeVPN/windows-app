@@ -878,5 +878,12 @@
   "Renvoyer l’e-mail": "အီးမေးလ် ပြန်ပို့ရန်",
   "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "အီးမေးလ် ပို့ပြီးပါပြီ။ ၎င်းထဲရှိ လင့်ခ်ကို ဖွင့်ပြီးနောက် ထပ်မံ ချိတ်ဆက်ကြည့်ပါ။",
   "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "အီးမေးလ်တစ်စောင် ယခုလေးတင် ပို့ထားပါသည်။ {seconds} စက္ကန့်အကြာတွင် နောက်တစ်စောင် တောင်းဆိုနိုင်ပါမည်။",
-  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "အီးမေးလ်ကို ပို့မရပါ။ နောက်မှ ထပ်ကြိုးစားပါ။"
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "အီးမေးလ်ကို ပို့မရပါ။ နောက်မှ ထပ်ကြိုးစားပါ။",
+  "Reçu": "လက်ခံရရှိ",
+  "Envoyé": "ပေးပို့ပြီး",
+  "{value} o": "{value}\u00a0B",
+  "{value} Ko": "{value}\u00a0KB",
+  "{value} Mo": "{value}\u00a0MB",
+  "{value} Go": "{value}\u00a0GB",
+  "{value} To": "{value}\u00a0TB"
 }

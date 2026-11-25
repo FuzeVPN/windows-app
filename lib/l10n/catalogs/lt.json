@@ -878,5 +878,12 @@
   "Renvoyer l’e-mail": "Siųsti el. laišką dar kartą",
   "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "El. laiškas išsiųstas. Atidarykite jame esančią nuorodą ir bandykite prisijungti prie VPN dar kartą.",
   "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "El. laiškas ką tik išsiųstas. Kito laiško galėsite paprašyti po {seconds} sek.",
-  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "Nepavyko išsiųsti el. laiško. Bandykite vėliau."
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "Nepavyko išsiųsti el. laiško. Bandykite vėliau.",
+  "Reçu": "Gauta",
+  "Envoyé": "Išsiųsta",
+  "{value} o": "{value}\u00a0B",
+  "{value} Ko": "{value}\u00a0KB",
+  "{value} Mo": "{value}\u00a0MB",
+  "{value} Go": "{value}\u00a0GB",
+  "{value} To": "{value}\u00a0TB"
 }

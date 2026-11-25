@@ -878,5 +878,12 @@
   "Renvoyer l’e-mail": "ಇಮೇಲ್ ಮರುಕಳುಹಿಸಿ",
   "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "ಇಮೇಲ್ ಕಳುಹಿಸಲಾಗಿದೆ. ಅದರಲ್ಲಿರುವ ಲಿಂಕ್ ತೆರೆಯಿರಿ, ನಂತರ ಮತ್ತೆ ಸಂಪರ್ಕಿಸಲು ಪ್ರಯತ್ನಿಸಿ.",
   "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "ಇದೀಗ ಒಂದು ಇಮೇಲ್ ಕಳುಹಿಸಲಾಗಿದೆ. {seconds} ಸೆಕೆಂಡುಗಳಲ್ಲಿ ನೀವು ಇನ್ನೊಂದನ್ನು ವಿನಂತಿಸಬಹುದು.",
-  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "ಇಮೇಲ್ ಕಳುಹಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ."
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "ಇಮೇಲ್ ಕಳುಹಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "Reçu": "ಸ್ವೀಕರಿಸಲಾಗಿದೆ",
+  "Envoyé": "ಕಳುಹಿಸಲಾಗಿದೆ",
+  "{value} o": "{value}\u00a0B",
+  "{value} Ko": "{value}\u00a0KB",
+  "{value} Mo": "{value}\u00a0MB",
+  "{value} Go": "{value}\u00a0GB",
+  "{value} To": "{value}\u00a0TB"
 }

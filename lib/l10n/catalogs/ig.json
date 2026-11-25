@@ -878,5 +878,12 @@
   "Renvoyer l’e-mail": "Ziga ozi-e ọzọ",
   "E-mail envoyé. Ouvrez le lien qu’il contient, puis réessayez de vous connecter.": "Ezigala ozi-e. Mepee linkị dị n'ime ya, wee gbalịa ijikọ ọzọ.",
   "Un e-mail vient d’être envoyé. Vous pourrez en demander un autre dans {seconds} s.": "Ezigala otu ozi-e ugbu a. Ị nwere ike ịrịọ nke ọzọ n'ime sekọnd {seconds}.",
-  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "Enweghị ike izipu ozi-e ahụ. Gbalịa ọzọ ma emechaa."
+  "L’e-mail n’a pas pu être envoyé. Réessayez plus tard.": "Enweghị ike izipu ozi-e ahụ. Gbalịa ọzọ ma emechaa.",
+  "Reçu": "Natara",
+  "Envoyé": "Ezigara",
+  "{value} o": "{value}\u00a0B",
+  "{value} Ko": "{value}\u00a0KB",
+  "{value} Mo": "{value}\u00a0MB",
+  "{value} Go": "{value}\u00a0GB",
+  "{value} To": "{value}\u00a0TB"
 }
