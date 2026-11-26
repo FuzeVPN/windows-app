@@ -19,6 +19,8 @@
 #include "secure_store_channel.h"
 #include "diagnostics_snapshot.h"
 #include "diagnostics_local.h"
+#include "distribution_mode.h"
+#include "maintenance_state.h"
 #include "single_instance.h"
 #include "utils.h"
 #include "window_close_policy.h"
@@ -27,6 +29,7 @@
 namespace {
 
 constexpr UINT kConnectivityRestoredMessage = WM_APP + 41;
+constexpr UINT_PTR kMaintenanceTimer = 0x4655;
 constexpr wchar_t kStartupRegistryPath[] =
     L"Software\\Microsoft\\Windows\\CurrentVersion\\Run";
 constexpr wchar_t kStartupValueName[] = L"FuzeVPN";
@@ -251,6 +254,12 @@ bool FlutterWindow::OnCreate() {
   tls_trust_channel_ = std::make_unique<TlsTrustChannel>(
       flutter_controller_->engine(), GetHandle());
   connectivity_notification_ = RegisterConnectivityNotification(this);
+  // Setup holds the maintenance gate while it replaces files and waits for
+  // this app to exit. Quit like the tray's Quit as soon as a gate appears.
+  if (fuzevpn_distribution::CurrentMode() == fuzevpn_distribution::Mode::installed) {
+    maintenance_was_blocked_ = fuzevpn_maintenance::IsBlocked();
+    SetTimer(GetHandle(), kMaintenanceTimer, 1000, nullptr);
+  }
   SetChildContent(flutter_controller_->view()->GetNativeWindow());
 
   const bool started_minimized = StartedMinimized();
@@ -395,6 +404,14 @@ FlutterWindow::MessageHandler(HWND hwnd, UINT const message,
     case WM_APP + 98:
       DestroyWindow(hwnd);
       return 0;
+    case WM_TIMER:
+      if (wparam == kMaintenanceTimer) {
+        const bool blocked = fuzevpn_maintenance::IsBlocked();
+        if (blocked && !maintenance_was_blocked_) DestroyWindow(hwnd);
+        maintenance_was_blocked_ = blocked;
+        return 0;
+      }
+      break;
     case kPrivilegedCallCompletedMessage:
       ProcessPrivilegedCallCompletions();
       return 0;

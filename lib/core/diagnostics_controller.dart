@@ -19,7 +19,7 @@ class DiagnosticsController extends ChangeNotifier {
     this.collectSnapshot,
     String appVersion = const String.fromEnvironment(
       'FLUTTER_BUILD_NAME',
-      defaultValue: '1.0.24',
+      defaultValue: '1.3.1',
     ),
     int? appBuild,
     DateTime Function()? now,

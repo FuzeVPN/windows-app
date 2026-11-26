@@ -24,7 +24,11 @@
            AppSearch returns its containing directory. -->
       <ComponentSearch Id="PreviousInstallFolder" Guid="{7BFDFB64-AEB8-4957-8C31-F4B4C62EE911}" Type="file" />
     </Property>
-    <Property Id="MSIRESTARTMANAGERCONTROL" Value="Disable" />
+    <!-- Restart Manager matches files in use by full path; the legacy check
+         matches module names, so any app loading the system msvcp140.dll was
+         reported, and its scan took up to 90 s. Detection only: the maintenance
+         actions stop the service and wait for the app themselves. -->
+    <Property Id="MSIRESTARTMANAGERCONTROL" Value="DisableShutdown" />
     <Property Id="REBOOT" Value="ReallySuppress" />
     <Property Id="ARPNOMODIFY" Value="1" />
     <Property Id="ARPPRODUCTICON" Value="FuzeVpnIcon" />
