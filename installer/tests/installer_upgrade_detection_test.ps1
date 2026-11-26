@@ -35,6 +35,7 @@ $button = $theme.SelectSingleNode('//*[local-name()="Button" and @Name="InstallB
 Assert ($button.SelectSingleNode('*[local-name()="Text" and @Condition="InstallLocationExists"]').InnerText -eq '#(loc.UpdateButton)') 'An existing installation must show the localized update action.'
 Assert ($bundle.SelectSingleNode('//*[local-name()="MsiPackage"]').Visible -eq 'no') 'Bundle installs must hide the chained MSI registration to avoid duplicate app entries.'
 Assert ($bundle.SelectSingleNode('//*[local-name()="MsiPackage"]').GetAttribute('DisplayFilesInUseDialogCondition', 'http://wixtoolset.org/schemas/v4/wxs/bal') -eq '0') 'Setup must never show the files-in-use dialog; maintenance actions stop the service and wait for the app.'
+Assert ($bundle.SelectSingleNode('//*[local-name()="Chain"]').DisableSystemRestore -eq 'yes') 'Setup must not create a System Restore point; the VSS snapshot froze the system.'
 Assert ($package.SelectSingleNode('//*[local-name()="Property" and @Id="MSIRESTARTMANAGERCONTROL"]').Value -eq 'DisableShutdown') 'Files in use must be detected by full path (Restart Manager), without closing or restarting anything.'
 Assert ($null -eq $package.SelectSingleNode('//*[local-name()="Property" and @Id="ARPSYSTEMCOMPONENT"]')) 'Direct MSI distribution must remain independently discoverable and uninstallable.'
 Write-Host 'Installer upgrade detection, public metadata, caller preferences and registration checks passed. No installer or service was executed.'
