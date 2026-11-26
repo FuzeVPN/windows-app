@@ -10,6 +10,7 @@
 #include <openvpn/win/bounded_process.hpp>
 #include <openvpn/win/command_context.hpp>
 #include <openvpn/win/nrpt_session.hpp>
+#include <openvpn/win/fuze_network_journal.hpp>
 #include <openvpn/win/network_postcondition.hpp>
 #include <openvpn/win/network_command_cleanup.hpp>
 #include <openvpn/win/owned_route_state.hpp>
@@ -141,6 +142,45 @@ void NrptRecovery() {
       "only exact owned orphan generations removed; third-party/GPO/live/unknown rules preserved");
   Check(!RecoverNrptSessions(std::vector<std::wstring>{stale}, probe, [](const auto&) { return false; }),
       "failed removal is not reported successful");
+}
+void NetworkJournalNames() {
+  using namespace openvpn::Win;
+  JournalOwner owner;
+  Check(ParseJournalOwnerName(JournalOwnerName({4242, 133000000000000000ULL}), &owner) &&
+      owner == JournalOwner{4242, 133000000000000000ULL}, "journal owner name round trips");
+  for (const wchar_t* bad : {L"", L"12", L"0-5", L"12-0", L"-5", L"4294967296-5", L"12-x", L"012-5"})
+    Check(!ParseJournalOwnerName(bad, &owner), "malformed journal owner rejected");
+
+  MIB_IPFORWARD_ROW2 exclusion{};
+  Check(BuildOwnedRouteRow("1.0.0.0", 24, 7, "192.168.1.1", 1, &exclusion), "exclusion row built");
+  exclusion.InterfaceLuid.Value = 0x0006000000000000ULL;
+  const auto name = JournalRouteName(exclusion);
+  Check(name && *name == L"R|4|0006000000000000|1.0.0.0|24|192.168.1.1",
+      "a route is journaled as its exact deletion tuple");
+  MIB_IPFORWARD_ROW2 parsed{};
+  Check(name && ParseJournalRouteName(*name, &parsed) &&
+      parsed.InterfaceLuid.Value == exclusion.InterfaceLuid.Value &&
+      parsed.DestinationPrefix.PrefixLength == 24 &&
+      parsed.DestinationPrefix.Prefix.Ipv4.sin_addr.S_un.S_addr ==
+          exclusion.DestinationPrefix.Prefix.Ipv4.sin_addr.S_un.S_addr &&
+      parsed.NextHop.Ipv4.sin_addr.S_un.S_addr == exclusion.NextHop.Ipv4.sin_addr.S_un.S_addr,
+      "a journaled route parses back to the same tuple");
+
+  MIB_IPFORWARD_ROW2 half{};
+  Check(BuildOwnedRouteRow("8000::", 1, 9, "fe80::8", 1, &half), "IPv6 row built");
+  half.InterfaceLuid.Value = 0x00abcdef00000001ULL;
+  const auto ipv6 = JournalRouteName(half);
+  Check(ipv6 && *ipv6 == L"R|6|00abcdef00000001|8000::|1|fe80::8" &&
+      ParseJournalRouteName(*ipv6, &parsed) && parsed.DestinationPrefix.PrefixLength == 1,
+      "IPv6 routes round trip");
+  for (const wchar_t* bad : {L"R|4|0006000000000000|1.0.0.0|33|192.168.1.1",
+                             L"R|4|0000000000000000|1.0.0.0|24|192.168.1.1",
+                             L"R|4|000600000000000G|1.0.0.0|24|192.168.1.1",
+                             L"R|4|0006000000000000|::|24|192.168.1.1",
+                             L"R|4|0006000000000000|1.0.0.0|24",
+                             L"X|4|0006000000000000|1.0.0.0|24|192.168.1.1",
+                             L"R|4|0006000000000000|1.0.0.0|24|192.168.1.1|extra"})
+    Check(!ParseJournalRouteName(bad, &parsed), "malformed journal route rejected");
 }
 void NetworkPostconditions() {
   using namespace openvpn::Win;
@@ -358,7 +398,7 @@ int wmain(int argc, wchar_t** argv) try {
   const DWORD length = GetModuleFileNameW(nullptr, executable.data(), static_cast<DWORD>(executable.size()));
   Check(length && length < executable.size(), "test executable path available");
   executable.resize(length);
-  AddressValidation(); DriverVersions(); SanitizedDiagnostics(); NrptRecovery(); NetworkPostconditions(); AdapterDnsCommands(); CommandDiagnostics(); CleanupRetries(); OwnedRoutes(); ActionFailures(); ChildProcesses(executable);
+  AddressValidation(); DriverVersions(); SanitizedDiagnostics(); NrptRecovery(); NetworkJournalNames(); NetworkPostconditions(); AdapterDnsCommands(); CommandDiagnostics(); CleanupRetries(); OwnedRoutes(); ActionFailures(); ChildProcesses(executable);
   std::cout << "OpenVPN safety tests passed (no VPN, service, registry writes or network).\n";
   return EXIT_SUCCESS;
 } catch (const std::exception& failure) {

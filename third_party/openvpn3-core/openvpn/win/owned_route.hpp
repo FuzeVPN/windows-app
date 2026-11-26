@@ -9,6 +9,7 @@
 #include <openvpn/common/action.hpp>
 #include <openvpn/win/command_context.hpp>
 #include <openvpn/win/call.hpp>
+#include <openvpn/win/fuze_network_journal.hpp>
 #include <openvpn/win/owned_route_state.hpp>
 #include <openvpn/win/owned_route_row.hpp>
 
@@ -45,13 +46,17 @@ public:
                 throw;
             }
             route_->ownership.MarkCreated();
+            JournalOwnedRoute(route_->row, true);
             status = Lookup();
         } else if (create_) {
             status = route_->ownership.CreateRoute([&] { return CreateIpForwardEntry2(&route_->row); });
+            if (status == ERROR_SUCCESS && route_->ownership.owned()) JournalOwnedRoute(route_->row, true);
         } else {
+            const bool owned = route_->ownership.owned();
             if (route_->ownership.uncertain()) status = route_->ownership.ReconcileUncertain(Lookup());
             if (status == ERROR_SUCCESS)
                 status = route_->ownership.RemoveRoute([&] { return DeleteIpForwardEntry2(&route_->row); });
+            if (status == ERROR_SUCCESS && owned) JournalOwnedRoute(route_->row, false);
         }
         output << to_string() << '\n';
         if (status != ERROR_SUCCESS) {

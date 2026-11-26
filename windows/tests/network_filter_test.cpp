@@ -575,7 +575,33 @@ void SplitTunnelPolicies() {
   Check(Permitted(To("2001:db8::10", 443)) && !Permitted(To("2001:4860::1", 443)),
         "only excluded IPv6 escapes the mandatory IPv6 block");
   Check(!Permitted(To("203.0.113.53", 53, IPPROTO_UDP)), "DNS protection covers excluded ranges");
+  // Local network access switched off blocks it even without the kill switch,
+  // whose absence otherwise leaves on-link routes reachable.
+  Check(!Permitted(To("192.168.1.20", 445)) && !Permitted(To("192.168.1.20", 50000, IPPROTO_TCP, true)),
+        "local network blocked in both directions when its access is off");
+  Check(!Permitted(To("224.0.0.251", 5353, IPPROTO_UDP)) && !Permitted(To("fe80::1", 5353, IPPROTO_UDP)),
+        "local discovery blocked when local network access is off");
+  Check(Permitted(tunnel), "VPN DNS in a private range still reaches the tunnel");
+  Flow dhcp = To("255.255.255.255", 67, IPPROTO_UDP);
+  wchar_t system_directory[MAX_PATH]{};
+  GetSystemDirectoryW(system_directory, MAX_PATH);
+  dhcp.app = std::wstring(system_directory) + L"\\svchost.exe";
+  dhcp.local_port = 68;
+  Check(Permitted(dhcp), "DHCP broadcast outranks the local network block");
   Check(DisableNetworkProtection(owner) && sessions.empty(), "selective fixture removed");
+
+  // A local range the user excluded explicitly stays reachable; local
+  // network access switched on opens the rest, kill switch or not.
+  const auto printer = SplitOptions(false, "exclude", {"192.168.1.0/24"}, false);
+  Check(PromoteNetworkProtection(owner, 42, printer), "promote explicit local exclusion");
+  Check(Permitted(To("192.168.1.20", 445)) && !Permitted(To("192.168.2.20", 445)),
+        "an explicitly excluded local range survives the local network block");
+  Check(DisableNetworkProtection(owner) && sessions.empty(), "explicit local fixture removed");
+  const auto lan_open = SplitOptions(false, "exclude", {"203.0.113.0/24"}, true);
+  Check(PromoteNetworkProtection(owner, 42, lan_open), "promote open local network");
+  Check(Permitted(To("192.168.1.20", 445)) && Permitted(To("224.0.0.251", 5353, IPPROTO_UDP)),
+        "local network reachable when its access is on");
+  Check(DisableNetworkProtection(owner) && sessions.empty(), "open local network fixture removed");
 
   // Even with every selective protection off, split tunneling keeps DNS in
   // the VPN: WireGuard's own firewall is never armed without a /0.

@@ -817,9 +817,9 @@ class _SplitTunnelPanelState extends State<_SplitTunnelPanel> {
           key: const ValueKey('split-tunnel-enabled'),
           secondary: const Icon(Icons.call_split_outlined),
           title: Text(context.tr('Activer le tunnel fractionné')),
-          subtitle: Text(
-            context.tr('Désactivé, tout le trafic passe par le VPN.'),
-          ),
+          subtitle: settings.enabled
+              ? null
+              : Text(context.tr('Désactivé, tout le trafic passe par le VPN.')),
           value: settings.enabled,
           onChanged: editable
               ? (value) => save(settings.copyWith(enabled: value))
@@ -896,48 +896,49 @@ class _SplitTunnelPanelState extends State<_SplitTunnelPanel> {
                 key: ValueKey('split-tunnel-range-${range.cidr}'),
                 leading: const Icon(Icons.router_outlined),
                 title: Text(range.toString(), textDirection: TextDirection.ltr),
-                trailing: IconButton(
-                  tooltip: context.tr('Retirer'),
-                  icon: const Icon(Icons.close),
-                  onPressed: editable
-                      ? () => save(settings.withoutRange(range))
-                      : null,
-                ),
+                // While locked, the list is shown without any edit control.
+                trailing: editable
+                    ? IconButton(
+                        tooltip: context.tr('Retirer'),
+                        icon: const Icon(Icons.close),
+                        onPressed: () => save(settings.withoutRange(range)),
+                      )
+                    : null,
               ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(22, 12, 22, 8),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: TextField(
-                    key: const ValueKey('split-tunnel-range-field'),
-                    controller: _rangeController,
-                    enabled: editable,
-                    textDirection: TextDirection.ltr,
-                    decoration: InputDecoration(
-                      labelText: context.tr('Adresse IP ou plage CIDR'),
-                      hintText: '192.168.1.0/24',
-                      errorText: _rangeError == null
-                          ? null
-                          : context.tr(_rangeError!),
-                      errorMaxLines: 3,
+          if (editable)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(22, 12, 22, 8),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: TextField(
+                      key: const ValueKey('split-tunnel-range-field'),
+                      controller: _rangeController,
+                      textDirection: TextDirection.ltr,
+                      decoration: InputDecoration(
+                        labelText: context.tr('Adresse IP ou plage CIDR'),
+                        hintText: '192.168.1.0/24',
+                        errorText: _rangeError == null
+                            ? null
+                            : context.tr(_rangeError!),
+                        errorMaxLines: 3,
+                      ),
+                      onSubmitted: (_) => _addRange(),
                     ),
-                    onSubmitted: editable ? (_) => _addRange() : null,
                   ),
-                ),
-                const SizedBox(width: 12),
-                Padding(
-                  padding: const EdgeInsets.only(top: 6),
-                  child: FilledButton.tonal(
-                    key: const ValueKey('split-tunnel-add'),
-                    onPressed: editable ? _addRange : null,
-                    child: Text(context.tr('Ajouter')),
+                  const SizedBox(width: 12),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 6),
+                    child: FilledButton.tonal(
+                      key: const ValueKey('split-tunnel-add'),
+                      onPressed: _addRange,
+                      child: Text(context.tr('Ajouter')),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
           Padding(
             padding: const EdgeInsets.fromLTRB(22, 8, 22, 16),
             child: Text(

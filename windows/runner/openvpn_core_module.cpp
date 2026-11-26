@@ -39,6 +39,7 @@
 #undef FUZEVPN_OPENVPN_CONFIGURATION_DIAGNOSTIC
 #include <openvpn/win/command_context.hpp>
 #include <openvpn/win/nrpt_session.hpp>
+#include <openvpn/win/fuze_network_journal.hpp>
 #include "openvpn_ip_validation.h"
 #include "openvpn_attempt_failure.h"
 #include "diagnostics_network.h"
@@ -959,6 +960,9 @@ bool OpenVpnCoreDeleteIdentity() { std::lock_guard<std::mutex> lock(core_mutex);
 bool OpenVpnCoreRecoverNetworkState() {
   std::lock_guard<std::mutex> lock(core_mutex);
   if (client || thread.joinable() || pending_cleanup) return false;
+  // Routes a runtime that ended abnormally left behind, such as split-tunnel
+  // exclusions on the physical interface. Best effort: never blocks startup.
+  openvpn::Win::RecoverOrphanedRoutes();
   bool success = true, changed = false;
   for (const wchar_t* path : {openvpn::Win::Reg::gpol_nrpt_subkey,
                               openvpn::Win::Reg::local_nrpt_subkey}) {

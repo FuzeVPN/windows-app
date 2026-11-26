@@ -381,12 +381,17 @@ bool AddSplitTunnelFilters(HANDLE engine, const GUID& sublayer,
   const auto& split = options.split;
   if (!split.active()) return true;
   const bool include = split.mode == fuzevpn::SplitTunnelMode::include;
-  std::vector<fuzevpn::IpPrefix> bypass;
+  std::vector<fuzevpn::IpPrefix> bypass, blocked_lan;
   if (!include) {
     bypass = split.prefixes;
+    const auto& lan = fuzevpn::LocalNetworkPrefixes();
     if (split.allow_lan) {
-      const auto& lan = fuzevpn::LocalNetworkPrefixes();
       bypass.insert(bypass.end(), lan.begin(), lan.end());
+    } else {
+      // Local network access switched off means blocked, kill switch or not:
+      // its on-link routes would otherwise keep it reachable. A local range
+      // the user excluded explicitly stays reachable.
+      blocked_lan = fuzevpn::SubtractIpPrefixes(lan, split.prefixes);
     }
   }
   for (const GUID& layer :
@@ -425,6 +430,12 @@ bool AddSplitTunnelFilters(HANDLE engine, const GUID& sublayer,
       if (!AddSplitTunnelRangeFilter(engine, layer, sublayer, prefix, FWP_ACTION_PERMIT,
                                      kSplitTunnelPermitWeight, not_loopback,
                                      L"FuzeVPN — tunnel fractionné, exclusion")) return false;
+    }
+    for (const auto& prefix : blocked_lan) {
+      if (prefix.ipv6 != ipv6_layer) continue;
+      if (!AddSplitTunnelRangeFilter(engine, layer, sublayer, prefix, FWP_ACTION_BLOCK,
+                                     kSplitTunnelBlockWeight, not_loopback,
+                                     L"FuzeVPN — tunnel fractionné, réseau local")) return false;
     }
   }
   return true;
