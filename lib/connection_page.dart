@@ -485,9 +485,12 @@ class _ConnectionSummary extends StatefulWidget {
 
 class _ConnectionSummaryState extends State<_ConnectionSummary> {
   Timer? _timer;
-  // Counters read for the connection that started at [_trafficSession].
+  // Counters read for the connection that started at [_trafficSession]. A
+  // tunnel found already running when the window opened has no known start:
+  // its counters are still the engine's own, so they are shown as well.
   TrafficStatistics? _traffic;
   DateTime? _trafficSession;
+  bool _trafficRead = false;
   bool _trafficReading = false;
 
   @override
@@ -495,6 +498,9 @@ class _ConnectionSummaryState extends State<_ConnectionSummary> {
     super.initState();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (!mounted) return;
+      if (widget.controller.vpnStatus != VpnStatus.connected) {
+        _trafficRead = false;
+      }
       if (widget.controller.connectedAt != null) setState(() {});
       // Counters are read every 2 seconds, only while this page shows a
       // connected tunnel.
@@ -505,9 +511,7 @@ class _ConnectionSummaryState extends State<_ConnectionSummary> {
   Future<void> _refreshTraffic() async {
     final controller = widget.controller;
     final session = controller.connectedAt;
-    if (_trafficReading ||
-        session == null ||
-        controller.vpnStatus != VpnStatus.connected) {
+    if (_trafficReading || controller.vpnStatus != VpnStatus.connected) {
       return;
     }
     _trafficReading = true;
@@ -521,6 +525,7 @@ class _ConnectionSummaryState extends State<_ConnectionSummary> {
       setState(() {
         _traffic = traffic;
         _trafficSession = session;
+        _trafficRead = true;
       });
     } finally {
       _trafficReading = false;
@@ -546,9 +551,7 @@ class _ConnectionSummaryState extends State<_ConnectionSummary> {
         ? controller.activeProtocol ?? controller.vpnProtocol
         : controller.vpnProtocol;
     final traffic =
-        connected &&
-            controller.connectedAt != null &&
-            _trafficSession == controller.connectedAt
+        connected && _trafficRead && _trafficSession == controller.connectedAt
         ? _traffic
         : null;
     final locationInfo = Row(

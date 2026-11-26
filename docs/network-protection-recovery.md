@@ -169,15 +169,17 @@ défaut sont refusées.
 - **Réseau local** (exclusion seulement) : liste fixe de plages non routables
   (RFC 1918, link-local, ULA et multidiffusion locale), jamais « le
   sous-réseau annoncé ». Un réseau hostile ne peut donc pas élargir
-  l’exception (TunnelCrack LocalNet).
+  l’exception (TunnelCrack LocalNet). Désactivé, l’accès est bloqué même sans
+  kill switch, sauf pour une plage locale ajoutée explicitement aux
+  exclusions. DHCP et la découverte de voisins IPv6 restent autorisés (0xF).
 - **DNS** : les serveurs DNS du VPN restent toujours routés dans le tunnel.
   Un blocage des ports 53 et 853 hors tunnel prime sur toutes les
   exceptions, même sans kill switch ni protection DNS.
 
 Côté WFP, les exceptions sont des filtres de la session dynamique, en deux
 plages de poids :
-- poids 0xE : blocage du DNS et, en inclusion avec kill switch, des plages
-  protégées ;
+- poids 0xE : blocage du DNS, du réseau local quand son accès est désactivé
+  et, en inclusion avec kill switch, des plages protégées ;
 - poids 0xD : autorisation des plages exclues ou du trafic hors inclusion.
 
 Ces plages se situent sous les autorisations moteur et interface VPN (0xF), et
@@ -194,6 +196,23 @@ Tant que le tunnel fractionné est actif :
   exceptions depuis son propre sous-calque.
 - OpenVPN ne reçoit ni `block-local` ni `block-ipv6`, pour la même raison.
   La politique du service reste alors la seule protection.
+
+### Routes et adaptateur OpenVPN
+
+Les routes qu’OpenVPN crée hors du tunnel (serveur, exclusions) et
+l’adaptateur DCO qu’il tient sont notés dans une clé volatile,
+`HKLM\SOFTWARE\FuzeVPN\OpenVpnNetworkState`, par processus propriétaire. Un
+redémarrage de Windows l’efface en même temps que cet état.
+- Au démarrage du runtime, les routes d’un propriétaire disparu sont
+  supprimées, tuple exact par tuple exact.
+- Un adaptateur DCO qui garde des adresses ou des routes est normalement
+  ignoré, car un autre VPN peut l’utiliser. Il est récupéré seulement si tous
+  ceux qui l’ont tenu sont des processus FuzeVPN disparus, et pendant que nous
+  détenons son handle exclusif. Sans cela, un crash du service empêchait toute
+  connexion OpenVPN jusqu’au redémarrage de Windows.
+- Pendant une connexion, si Windows supprime l’une de ces routes (interface
+  tombée), le retour d’une route par défaut relance aussitôt la session
+  OpenVPN, qui les recrée. Il n’est plus nécessaire d’attendre son keepalive.
 
 Le trafic exclu sort avec l’adresse IP réelle.
 

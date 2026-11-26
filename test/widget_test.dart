@@ -247,6 +247,31 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
+  testWidgets('affiche le volume d’un tunnel trouvé déjà actif au démarrage', (
+    tester,
+  ) async {
+    // The window restarted while the service kept the tunnel: its start time
+    // is unknown, but the engine's counters still describe this tunnel.
+    final controller = TestController()
+      ..locations = locations
+      ..selectedLocation = locations.first
+      ..isLoadingLocations = false
+      ..vpnStatus = VpnStatus.connected
+      ..traffic = const TrafficStatistics(received: 2048, sent: 1024);
+    await pumpApp(tester, controller);
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
+    expect(find.text('Reçu : 2,0 Ko'), findsOneWidget);
+    expect(find.text('Envoyé : 1,0 Ko'), findsOneWidget);
+
+    controller
+      ..vpnStatus = VpnStatus.disconnected
+      ..notifyListeners();
+    await tester.pump(const Duration(seconds: 1));
+    expect(find.textContaining('Reçu'), findsNothing);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
   testWidgets('ouvre directement l’onglet Appareils depuis la limite', (
     tester,
   ) async {
