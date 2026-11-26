@@ -3,7 +3,6 @@
 #include "openvpn_driver_version.h"
 #include "openvpn_diagnostic_state.h"
 #include "openvpn_worker_completion.h"
-#include "openvpn_route_watch.h"
 #include "openvpn_failure_classification_test.h"
 #include "openvpn_address_configuration_test.h"
 #include "openvpn_cleanup_diagnostic_test.h"
@@ -182,22 +181,6 @@ void NetworkJournalNames() {
                              L"X|4|0006000000000000|1.0.0.0|24|192.168.1.1",
                              L"R|4|0006000000000000|1.0.0.0|24|192.168.1.1|extra"})
     Check(!ParseJournalRouteName(bad, &parsed), "malformed journal route rejected");
-}
-void RouteLossDecisions() {
-  using fuzevpn::ClassifyOpenVpnRouteChange;
-  using Change = fuzevpn::OpenVpnRouteChange;
-  Check(ClassifyOpenVpnRouteChange(true, false, false, false, true) == Change::owned_route_lost,
-      "an owned exclusion or server route removed outside the tunnel is a loss");
-  Check(ClassifyOpenVpnRouteChange(true, false, false, false, false) == Change::ignore,
-      "someone else's route removed is ignored");
-  Check(ClassifyOpenVpnRouteChange(true, false, true, false, true) == Change::ignore &&
-      ClassifyOpenVpnRouteChange(false, true, true, true, false) == Change::ignore,
-      "changes on the tunnel interface itself are ignored");
-  Check(ClassifyOpenVpnRouteChange(false, true, false, true, false) == Change::network_restored,
-      "a default route back on a physical interface restores the network");
-  Check(ClassifyOpenVpnRouteChange(false, true, false, false, false) == Change::ignore &&
-      ClassifyOpenVpnRouteChange(true, false, false, true, false) == Change::ignore,
-      "other route additions and default route removals change nothing");
 }
 void NetworkPostconditions() {
   using namespace openvpn::Win;
@@ -415,7 +398,7 @@ int wmain(int argc, wchar_t** argv) try {
   const DWORD length = GetModuleFileNameW(nullptr, executable.data(), static_cast<DWORD>(executable.size()));
   Check(length && length < executable.size(), "test executable path available");
   executable.resize(length);
-  AddressValidation(); DriverVersions(); SanitizedDiagnostics(); NrptRecovery(); NetworkJournalNames(); RouteLossDecisions(); NetworkPostconditions(); AdapterDnsCommands(); CommandDiagnostics(); CleanupRetries(); OwnedRoutes(); ActionFailures(); ChildProcesses(executable);
+  AddressValidation(); DriverVersions(); SanitizedDiagnostics(); NrptRecovery(); NetworkJournalNames(); NetworkPostconditions(); AdapterDnsCommands(); CommandDiagnostics(); CleanupRetries(); OwnedRoutes(); ActionFailures(); ChildProcesses(executable);
   std::cout << "OpenVPN safety tests passed (no VPN, service, registry writes or network).\n";
   return EXIT_SUCCESS;
 } catch (const std::exception& failure) {

@@ -158,18 +158,6 @@ inline void JournalOwnedRoute(const MIB_IPFORWARD_ROW2& row, bool present) noexc
     }
 }
 
-inline bool JournalHasOwnedRoute(const MIB_IPFORWARD_ROW2& row) noexcept {
-    try {
-        const auto name = JournalRouteName(row);
-        if (!name) return false;
-        const JournalKey key(OpenJournalOwnerKey(CurrentJournalOwner(), false));
-        return key.get() &&
-            RegQueryValueExW(key.get(), name->c_str(), nullptr, nullptr, nullptr, nullptr) == ERROR_SUCCESS;
-    } catch (...) {
-        return false;
-    }
-}
-
 inline void JournalDcoAdapter(ULONG index) noexcept {
     NET_LUID luid{};
     if (ConvertInterfaceIndexToLuid(index, &luid) != NO_ERROR || !luid.Value) return;

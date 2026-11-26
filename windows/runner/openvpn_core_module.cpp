@@ -16,7 +16,6 @@
 #include <mutex>
 #include <optional>
 #include <thread>
-#include <utility>
 #include <vector>
 
 #include <openssl/ec.h>
@@ -43,7 +42,6 @@
 #include <openvpn/win/fuze_network_journal.hpp>
 #include "openvpn_ip_validation.h"
 #include "openvpn_attempt_failure.h"
-#include "openvpn_route_watch.h"
 #include "diagnostics_network.h"
 
 // ovpncli.cpp establishes the required Windows header order for OpenVPN Core.
@@ -490,70 +488,10 @@ class AdapterEvents final : public openvpn::ClientAPI::MyClientEvents {
   EngineInterfaceReceiver* receiver_;
 };
 
-// While a tunnel is up, watches for the loss of the routes this runtime owns
-// outside it (see openvpn_route_watch.h) and asks the core to reconnect once
-// the network is back. The core reconnect is thread safe and re-creates them.
-class RouteLossWatcher {
- public:
-  RouteLossWatcher() = default;
-  RouteLossWatcher(const RouteLossWatcher&) = delete;
-  RouteLossWatcher& operator=(const RouteLossWatcher&) = delete;
-  ~RouteLossWatcher() { Stop(); }
-
-  void Start(openvpn::ClientAPI::OpenVPNClient* client, std::uint64_t tunnel_luid) {
-    std::lock_guard<std::mutex> lock(mutex_);
-    client_ = client;
-    tunnel_luid_ = tunnel_luid;
-    lost_ = false;
-    if (!handle_ &&
-        NotifyRouteChange2(AF_UNSPEC, &RouteLossWatcher::Changed, this, FALSE, &handle_) != NO_ERROR)
-      handle_ = nullptr;
-  }
-
-  // Never called from the notification callback: cancelling waits for it.
-  void Stop() {
-    HANDLE handle = nullptr;
-    {
-      std::lock_guard<std::mutex> lock(mutex_);
-      client_ = nullptr;
-      handle = std::exchange(handle_, nullptr);
-    }
-    if (handle) CancelMibChangeNotify2(handle);
-  }
-
- private:
-  static VOID NETIOAPI_API_ Changed(PVOID context, PMIB_IPFORWARD_ROW2 row,
-                                    MIB_NOTIFICATION_TYPE type) {
-    auto* self = static_cast<RouteLossWatcher*>(context);
-    if (!self || !row) return;
-    std::lock_guard<std::mutex> lock(self->mutex_);
-    if (!self->client_) return;
-    const bool deleted = type == MibDeleteInstance;
-    const bool tunnel = row->InterfaceLuid.Value == self->tunnel_luid_;
-    const auto change = fuzevpn::ClassifyOpenVpnRouteChange(
-        deleted, type == MibAddInstance, tunnel, row->DestinationPrefix.PrefixLength == 0,
-        deleted && !tunnel && openvpn::Win::JournalHasOwnedRoute(*row));
-    if (change == fuzevpn::OpenVpnRouteChange::owned_route_lost) {
-      self->lost_ = true;
-    } else if (change == fuzevpn::OpenVpnRouteChange::network_restored && self->lost_) {
-      self->lost_ = false;
-      // Leave Windows a moment to finish configuring the interface.
-      self->client_->reconnect(2);
-    }
-  }
-
-  std::mutex mutex_;
-  HANDLE handle_ = nullptr;
-  openvpn::ClientAPI::OpenVPNClient* client_ = nullptr;
-  std::uint64_t tunnel_luid_ = 0;
-  bool lost_ = false;
-};
-
 class Client final : public openvpn::ClientAPI::OpenVPNClient,
                      public EngineInterfaceReceiver {
  public:
   explicit Client(const NetworkProtectionOptions& protection) : protection_(protection) {}
-  ~Client() override { route_watch_.Stop(); }
   void SetEngineInterface(std::uint32_t index) override {
     NET_LUID luid{};
     interface_luid_ = index != 0 && index != 0xffffffffU &&
@@ -576,8 +514,6 @@ class Client final : public openvpn::ClientAPI::OpenVPNClient,
       if (!protection_ready) {
         SetFailure("network_protection_failed");
         stop();
-      } else {
-        route_watch_.Start(this, interface_luid_);
       }
       commands->connection_deadline = 0;
     } else if (event.name == "RECONNECTING") {
@@ -625,7 +561,7 @@ class Client final : public openvpn::ClientAPI::OpenVPNClient,
     worker_completion_.Run(mutex_, condition_, std::forward<Work>(work),
         [this](const openvpn::ClientAPI::Status& status) { Complete(status); });
   }
-  void RequestStop() { route_watch_.Stop(); commands->cancelled.store(true); stop(); }
+  void RequestStop() { commands->cancelled.store(true); stop(); }
   bool WaitForCompletion(std::chrono::seconds maximum) {
     std::unique_lock<std::mutex> lock(mutex_);
     return condition_.wait_for(lock, maximum, [this] { return worker_completion_.finished(); });
@@ -646,7 +582,6 @@ class Client final : public openvpn::ClientAPI::OpenVPNClient,
   NetworkProtectionOptions protection_;
   std::uint64_t interface_luid_ = 0;
   fuzevpn::OpenVpnWorkerCompletion worker_completion_;
-  RouteLossWatcher route_watch_;
 };
 
 std::unique_ptr<Client> client;

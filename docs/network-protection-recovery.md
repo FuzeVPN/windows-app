@@ -210,9 +210,11 @@ redémarrage de Windows l’efface en même temps que cet état.
   ceux qui l’ont tenu sont des processus FuzeVPN disparus, et pendant que nous
   détenons son handle exclusif. Sans cela, un crash du service empêchait toute
   connexion OpenVPN jusqu’au redémarrage de Windows.
-- Pendant une connexion, si Windows supprime l’une de ces routes (interface
-  tombée), le retour d’une route par défaut relance aussitôt la session
-  OpenVPN, qui les recrée. Il n’est plus nécessaire d’attendre son keepalive.
+- Limite connue : quand une interface tombe, Windows supprime ces routes
+  pendant la connexion. OpenVPN ne les recrée qu’à sa propre reconnexion,
+  après son keepalive (environ 3 minutes). Relancer la session dès le retour
+  du réseau bloquait le moteur DCO dans un appel noyau ; ce n’est donc pas
+  fait.
 
 Le trafic exclu sort avec l’adresse IP réelle.
 
