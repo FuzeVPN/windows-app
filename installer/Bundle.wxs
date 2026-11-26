@@ -31,7 +31,9 @@
     <SetVariable Id="DefaultDesktopShortcut" Variable="DesktopShortcut" Type="numeric" Value="0"
         After="RestoreDesktopShortcut" Condition="DesktopShortcut = -1" />
     <Variable Name="BuildNotice" Type="string" Value="$(var.BuildNotice)" />
-    <Chain>
+    <!-- Burn otherwise creates a System Restore point on every run: a VSS
+         snapshot that froze Explorer for about 30 s before MSI started. -->
+    <Chain DisableSystemRestore="yes">
       <!-- The only real holders are our service and app, which the package's
            maintenance actions stop and wait for: never ask the user to close apps. -->
       <MsiPackage Id="FuzeVpnMsi" SourceFile="$(var.MsiPath)" Vital="yes" Compressed="yes" Visible="no"
